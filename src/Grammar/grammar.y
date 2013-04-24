@@ -2,14 +2,14 @@
 
 %include {
 #include <iostream>
-#include "tokens.h"
-#include "grammar.h"
+#include "../../include/Grammar/tokens.h"
+#include "../../include/Grammar/grammar.h"
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <stdlib.h>
-#include "lexglobal.h"
+/*#include "lexglobal.h"*/
 #include <assert.h>
 #include <math.h>
 #define BUFS 1024

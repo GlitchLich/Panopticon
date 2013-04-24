@@ -1,0 +1,53 @@
+New Language - SC meets Cinder meets OSCthulhu meets Live-coding meets Haskell
+
+-Interpreted
+-Dynamically Typed
+-Infix
+-No semi colons or commas
+
+Types:
+
+bool
+Number 
+String
+Array
+Function
+Monad 
+Primitive
+Variable
+
+Need:
+-Scope! No access to variables outside of scope. There are variables at global scope.
+-Always pass by value
+-Streams/Patterns
+-Maybe,IO,Networking
+-Include everything?
+-Lazy Evaluation + Promises. C++-11:
+"In C++11 such lazy futures can be created by passing the std::launch::sync launch policy to std::async, along with the function to compute the value."
+
+Syntax:
+
+Define a Function:
+doubleMe x = 
+	x + x
+
+mulShit x y = x * y
+
+Use a Function:
+doubleMe( 2 3 )
+
+Array:
+[0 1 2 3]
+
+Control Structure:
+nthElement :: [a] -> Int -> Maybe a 
+nthElement [] a = Nothing
+nthElement (x:xs) a 	: a <= 0 = Nothing
+			: a == 1 = Just x
+                    	: a > 1 = nthElement xs (a-1)
+			. = Nothing //default case
+
+
+"Some compilers, such as gcc, add extra keywords for a programmer to explicitly mark external functions as pure, to enable such optimizations"
+
+
