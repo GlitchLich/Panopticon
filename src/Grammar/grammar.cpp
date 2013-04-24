@@ -4,17 +4,17 @@
 /* First off, code is included that follows the "include" declaration
 ** in the input grammar file. */
 #include <stdio.h>
-#line 3 "grammar.y"
+#line 3 "./src/Grammar/grammar.y"
 
 #include <iostream>
-#include "tokens.h"
-#include "grammar.h"
+#include "../../include/Grammar/tokens.h"
+#include "../../include/Grammar/grammar.h"
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <stdlib.h>
-#include "lexglobal.h"
+/*#include "lexglobal.h"*/
 #include <assert.h>
 #include <math.h>
 #define BUFS 1024
@@ -26,14 +26,14 @@
 /*    std::cout << "In token_destructor t.value= " << t.value << std::endl;*/
 /*    std::cout << "In token_destructor t.n= " << t.n << std::endl;*/
     }
-#line 30 "grammar.c"
+#line 30 "./src/Grammar/grammar.c"
 /* Next is all token values, in a form suitable for use by makeheaders.
 ** This section will be null unless lemon is run with the -m switch.
 */
-/*
+/* 
 ** These constants (all generated automatically by the parser generator)
 ** specify the various kinds of tokens (terminals) that the parser
-** understands.
+** understands. 
 **
 ** Each symbol here is a terminal symbol in the grammar.
 */
@@ -50,7 +50,7 @@
 **                       and nonterminals.  "int" is used otherwise.
 **    YYNOCODE           is a number of type YYCODETYPE which corresponds
 **                       to no legal terminal or nonterminal number.  This
-**                       number is used to fill in empty slots of the hash
+**                       number is used to fill in empty slots of the hash 
 **                       table.
 **    YYFALLBACK         If defined, this indicates that one or more tokens
 **                       have fall-back values which should be used if the
@@ -59,7 +59,7 @@
 **                       and nonterminal numbers.  "unsigned char" is
 **                       used if there are fewer than 250 rules and
 **                       states combined.  "int" is used otherwise.
-**    ParseTOKENTYPE     is the data type used for minor tokens given
+**    ParseTOKENTYPE     is the data type used for minor tokens given 
 **                       directly to the parser from the tokenizer.
 **    YYMINORTYPE        is the data type used for all minor tokens.
 **                       This is typically a union of many types, one of
@@ -117,7 +117,7 @@ static const YYMINORTYPE yyzerominor = { 0 };
 /* Next are the tables used to determine what action to take based on the
 ** current state and lookahead token.  These tables are used to implement
 ** functions that take a state number and lookahead value and return an
-** action integer.
+** action integer.  
 **
 ** Suppose the action integer is N.  Then the action is determined as
 ** follows
@@ -142,7 +142,7 @@ static const YYMINORTYPE yyzerominor = { 0 };
 ** If the index value yy_shift_ofst[S]+X is out of range or if the value
 ** yy_lookahead[yy_shift_ofst[S]+X] is not equal to X or if yy_shift_ofst[S]
 ** is equal to YY_SHIFT_USE_DFLT, it means that the action is not in the table
-** and that yy_default[S] should be used instead.
+** and that yy_default[S] should be used instead.  
 **
 ** The formula above is for computing the action when the lookahead is
 ** a terminal symbol.  If the lookahead is a non-terminal (as occurs after
@@ -252,7 +252,7 @@ static const YYACTIONTYPE yy_default[] = {
 
 /* The next table maps tokens into fallback tokens.  If a construct
 ** like the following:
-**
+** 
 **      %fallback ID X Y Z.
 **
 ** appears in the grammar, then ID becomes a fallback token for X, Y,
@@ -311,10 +311,10 @@ static char *yyTracePrompt = 0;
 #endif /* NDEBUG */
 
 #ifndef NDEBUG
-/*
+/* 
 ** Turn parser tracing on by giving a stream to which to write the trace
 ** and a prompt to preface each trace message.  Tracing is turned off
-** by making either argument NULL
+** by making either argument NULL 
 **
 ** Inputs:
 ** <ul>
@@ -339,18 +339,18 @@ void ParseTrace(FILE *TraceFILE, char *zTracePrompt){
 #ifndef NDEBUG
 /* For tracing shifts, the names of all terminals and nonterminals
 ** are required.  The following table supplies these names */
-static const char *const yyTokenName[] = {
-  "$",             "OR",            "AND",           "BITXOR",
-  "BITOR",         "BITAND",        "EQUALTO",       "NOTEQUALTO",
-  "GREATERTHAN",   "GORE",          "LESSTHAN",      "LORE",
-  "SHIFTL",        "SHIFTR",        "PLUS",          "MINUS",
-  "DIVIDE",        "TIMES",         "MODULO",        "POW",
-  "NOT",           "BITNOT",        "UMINUS",        "LPAREN",
-  "RPAREN",        "COMMA",         "LBRAC",         "RBRAC",
-  "ASSIGN",        "NEWLINE",       "NUM",           "STRING",
-  "error",         "expr",          "id",            "main",
-  "in",            "start",         "spec",          "top_stmt",
-  "stmt",          "retval",        "invoke",        "value",
+static const char *const yyTokenName[] = { 
+  "$",             "OR",            "AND",           "BITXOR",      
+  "BITOR",         "BITAND",        "EQUALTO",       "NOTEQUALTO",  
+  "GREATERTHAN",   "GORE",          "LESSTHAN",      "LORE",        
+  "SHIFTL",        "SHIFTR",        "PLUS",          "MINUS",       
+  "DIVIDE",        "TIMES",         "MODULO",        "POW",         
+  "NOT",           "BITNOT",        "UMINUS",        "LPAREN",      
+  "RPAREN",        "COMMA",         "LBRAC",         "RBRAC",       
+  "ASSIGN",        "NEWLINE",       "NUM",           "STRING",      
+  "error",         "expr",          "id",            "main",        
+  "in",            "start",         "spec",          "top_stmt",    
+  "stmt",          "retval",        "invoke",        "value",       
 };
 #endif /* NDEBUG */
 
@@ -418,7 +418,7 @@ static void yyGrowStack(yyParser *p){
 }
 #endif
 
-/*
+/* 
 ** This function allocates a new parser.
 ** The only argument is a pointer to a function which works like
 ** malloc.
@@ -462,7 +462,7 @@ static void yy_destructor(
     /* Here is inserted the actions which take place when a
     ** terminal or non-terminal is destroyed.  This can happen
     ** when the symbol is popped from the stack during a
-    ** reduce or during error processing or when a parser is
+    ** reduce or during error processing or when a parser is 
     ** being destroyed before it is finished parsing.
     **
     ** Note: during a reduce, the only symbols destroyed are those
@@ -502,9 +502,9 @@ static void yy_destructor(
     case 30: /* NUM */
     case 31: /* STRING */
 {
-#line 29 "grammar.y"
- token_destructor((yypminor->yy0));
-#line 508 "grammar.c"
+#line 29 "./src/Grammar/grammar.y"
+ token_destructor((yypminor->yy0)); 
+#line 508 "./src/Grammar/grammar.c"
 }
       break;
     default:  break;   /* If no destructor action specified: do nothing */
@@ -537,7 +537,7 @@ static int yy_pop_parser_stack(yyParser *pParser){
   return yymajor;
 }
 
-/*
+/* 
 ** Deallocate and destroy a parser.  Destructors are all called for
 ** all stack elements before shutting the parser down.
 **
@@ -586,7 +586,7 @@ static int yy_find_shift_action(
 ){
   int i;
   int stateno = pParser->yystack[pParser->yyidx].stateno;
-
+ 
   if( stateno>YY_SHIFT_COUNT
    || (i = yy_shift_ofst[stateno])==YY_SHIFT_USE_DFLT ){
     return yy_default[stateno];
@@ -611,7 +611,7 @@ static int yy_find_shift_action(
 #ifdef YYWILDCARD
       {
         int j = i - iLookAhead + YYWILDCARD;
-        if(
+        if( 
 #if YY_SHIFT_MIN+YYWILDCARD<0
           j>=0 &&
 #endif
@@ -705,7 +705,7 @@ static void yy_shift(
     yypParser->yyidxMax = yypParser->yyidx;
   }
 #endif
-#if YYSTACKDEPTH>0
+#if YYSTACKDEPTH>0 
   if( yypParser->yyidx>=YYSTACKDEPTH ){
     yyStackOverflow(yypParser, yypMinor);
     return;
@@ -795,7 +795,7 @@ static void yy_reduce(
   ParseARG_FETCH;
   yymsp = &yypParser->yystack[yypParser->yyidx];
 #ifndef NDEBUG
-  if( yyTraceFILE && yyruleno>=0
+  if( yyTraceFILE && yyruleno>=0 
         && yyruleno<(int)(sizeof(yyRuleName)/sizeof(yyRuleName[0])) ){
     fprintf(yyTraceFILE, "%sReduce [%s].\n", yyTracePrompt,
       yyRuleName[yyruleno]);
@@ -808,7 +808,7 @@ static void yy_reduce(
   ** not set the value of its left-hand side nonterminal.  Leaving the
   ** value of the nonterminal uninitialized is utterly harmless as long
   ** as the value is never used.  So really the only thing this code
-  ** accomplishes is to quieten purify.
+  ** accomplishes is to quieten purify.  
   **
   ** 2007-01-16:  The wireshark project (www.wireshark.org) reports that
   ** without this code, their parser segfaults.  I'm not sure what there
@@ -830,14 +830,14 @@ static void yy_reduce(
   **     break;
   */
       case 2: /* in ::= in start NEWLINE */
-#line 64 "grammar.y"
+#line 64 "./src/Grammar/grammar.y"
 {
   yy_destructor(yypParser,29,&yymsp[0].minor);
 }
-#line 838 "grammar.c"
+#line 838 "./src/Grammar/grammar.c"
         break;
       case 3: /* start ::= spec */
-#line 72 "grammar.y"
+#line 72 "./src/Grammar/grammar.y"
 {
     switch(yymsp[0].minor.yy0.type)
     {
@@ -850,7 +850,7 @@ static void yy_reduce(
     }
     std::cout << "Result.n=" << yymsp[0].minor.yy0.n << std::endl;
 }
-#line 854 "grammar.c"
+#line 854 "./src/Grammar/grammar.c"
         break;
       case 4: /* spec ::= top_stmt */
       case 5: /* top_stmt ::= stmt */ yytestcase(yyruleno==5);
@@ -858,7 +858,7 @@ static void yy_reduce(
       case 7: /* expr ::= retval */ yytestcase(yyruleno==7);
       case 8: /* retval ::= invoke */ yytestcase(yyruleno==8);
       case 9: /* invoke ::= value */ yytestcase(yyruleno==9);
-#line 86 "grammar.y"
+#line 86 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = yymsp[0].minor.yy0.type;
     switch(yymsp[0].minor.yy0.type)
@@ -873,56 +873,56 @@ static void yy_reduce(
     }
     yygotominor.yy0.n = yymsp[0].minor.yy0.n+1;
 }
-#line 877 "grammar.c"
+#line 877 "./src/Grammar/grammar.c"
         break;
       case 10: /* value ::= NUM */
-#line 195 "grammar.y"
+#line 195 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = yymsp[0].minor.yy0.data.number;
     yygotominor.yy0.type = INT;
     yygotominor.yy0.n = yymsp[0].minor.yy0.n+1;
 }
-#line 886 "grammar.c"
+#line 886 "./src/Grammar/grammar.c"
         break;
       case 11: /* value ::= STRING */
-#line 202 "grammar.y"
+#line 202 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.string = strdup(yymsp[0].minor.yy0.data.string);
     yygotominor.yy0.stringLength = (int)strlen(yymsp[0].minor.yy0.data.string);
     yygotominor.yy0.type = STRING;
     yygotominor.yy0.n = yymsp[0].minor.yy0.n+1;
 }
-#line 896 "grammar.c"
+#line 896 "./src/Grammar/grammar.c"
         break;
       case 12: /* expr ::= expr MINUS expr */
-#line 211 "grammar.y"
+#line 211 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = yymsp[-2].minor.yy0.data.number - yymsp[0].minor.yy0.data.number;
     yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1  + yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,15,&yymsp[-1].minor);
 }
-#line 905 "grammar.c"
+#line 905 "./src/Grammar/grammar.c"
         break;
       case 13: /* expr ::= expr PLUS expr */
-#line 217 "grammar.y"
+#line 217 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = yymsp[-2].minor.yy0.data.number + yymsp[0].minor.yy0.data.number;
     yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1  + yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,14,&yymsp[-1].minor);
 }
-#line 914 "grammar.c"
+#line 914 "./src/Grammar/grammar.c"
         break;
       case 14: /* expr ::= expr TIMES expr */
-#line 223 "grammar.y"
+#line 223 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = yymsp[-2].minor.yy0.data.number * yymsp[0].minor.yy0.data.number;
     yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1  + yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,17,&yymsp[-1].minor);
 }
-#line 923 "grammar.c"
+#line 923 "./src/Grammar/grammar.c"
         break;
       case 15: /* expr ::= expr DIVIDE expr */
-#line 229 "grammar.y"
+#line 229 "./src/Grammar/grammar.y"
 {
     if(yymsp[0].minor.yy0.data.number != 0)
     {
@@ -935,161 +935,161 @@ static void yy_reduce(
     }
   yy_destructor(yypParser,16,&yymsp[-1].minor);
 }
-#line 939 "grammar.c"
+#line 939 "./src/Grammar/grammar.c"
         break;
       case 16: /* expr ::= expr LESSTHAN expr */
-#line 242 "grammar.y"
+#line 242 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = yymsp[-2].minor.yy0.data.number < yymsp[0].minor.yy0.data.number;
     yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,10,&yymsp[-1].minor);
 }
-#line 948 "grammar.c"
+#line 948 "./src/Grammar/grammar.c"
         break;
       case 17: /* expr ::= expr GREATERTHAN expr */
-#line 248 "grammar.y"
+#line 248 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = yymsp[-2].minor.yy0.data.number > yymsp[0].minor.yy0.data.number;
     yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,8,&yymsp[-1].minor);
 }
-#line 957 "grammar.c"
+#line 957 "./src/Grammar/grammar.c"
         break;
       case 18: /* expr ::= expr EQUALTO expr */
-#line 254 "grammar.y"
+#line 254 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = yymsp[-2].minor.yy0.data.number == yymsp[0].minor.yy0.data.number;
     yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,6,&yymsp[-1].minor);
 }
-#line 966 "grammar.c"
+#line 966 "./src/Grammar/grammar.c"
         break;
       case 19: /* expr ::= expr NOTEQUALTO expr */
-#line 260 "grammar.y"
+#line 260 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = yymsp[-2].minor.yy0.data.number != yymsp[0].minor.yy0.data.number;
     yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,7,&yymsp[-1].minor);
 }
-#line 975 "grammar.c"
+#line 975 "./src/Grammar/grammar.c"
         break;
       case 20: /* expr ::= expr GORE expr */
-#line 266 "grammar.y"
+#line 266 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = yymsp[-2].minor.yy0.data.number >= yymsp[0].minor.yy0.data.number;
     yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,9,&yymsp[-1].minor);
 }
-#line 984 "grammar.c"
+#line 984 "./src/Grammar/grammar.c"
         break;
       case 21: /* expr ::= expr LORE expr */
-#line 272 "grammar.y"
+#line 272 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = yymsp[-2].minor.yy0.data.number <= yymsp[0].minor.yy0.data.number;
     yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,11,&yymsp[-1].minor);
 }
-#line 993 "grammar.c"
+#line 993 "./src/Grammar/grammar.c"
         break;
       case 22: /* expr ::= LPAREN expr RPAREN */
-#line 278 "grammar.y"
+#line 278 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = yymsp[-1].minor.yy0.data.number;
     yygotominor.yy0.n = yymsp[-1].minor.yy0.n+1;
   yy_destructor(yypParser,23,&yymsp[-2].minor);
   yy_destructor(yypParser,24,&yymsp[0].minor);
 }
-#line 1003 "grammar.c"
+#line 1003 "./src/Grammar/grammar.c"
         break;
       case 23: /* expr ::= expr SHIFTL expr */
-#line 284 "grammar.y"
+#line 284 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = (int)yymsp[-2].minor.yy0.data.number << (int)yymsp[0].minor.yy0.data.number;
     yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,12,&yymsp[-1].minor);
 }
-#line 1012 "grammar.c"
+#line 1012 "./src/Grammar/grammar.c"
         break;
       case 24: /* expr ::= expr SHIFTR expr */
-#line 290 "grammar.y"
+#line 290 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = (int)yymsp[-2].minor.yy0.data.number >> (int)yymsp[0].minor.yy0.data.number;
     yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,13,&yymsp[-1].minor);
 }
-#line 1021 "grammar.c"
+#line 1021 "./src/Grammar/grammar.c"
         break;
       case 25: /* expr ::= expr AND expr */
-#line 296 "grammar.y"
+#line 296 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = (int)yymsp[-2].minor.yy0.data.number && (int)yymsp[0].minor.yy0.data.number;
     yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,2,&yymsp[-1].minor);
 }
-#line 1030 "grammar.c"
+#line 1030 "./src/Grammar/grammar.c"
         break;
       case 26: /* expr ::= expr OR expr */
-#line 302 "grammar.y"
+#line 302 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = (int)yymsp[-2].minor.yy0.data.number || (int)yymsp[0].minor.yy0.data.number;
     yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,1,&yymsp[-1].minor);
 }
-#line 1039 "grammar.c"
+#line 1039 "./src/Grammar/grammar.c"
         break;
       case 27: /* expr ::= NOT expr */
-#line 308 "grammar.y"
+#line 308 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = !((int)yymsp[0].minor.yy0.data.number);
     yygotominor.yy0.n = yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,20,&yymsp[-1].minor);
 }
-#line 1048 "grammar.c"
+#line 1048 "./src/Grammar/grammar.c"
         break;
       case 28: /* expr ::= expr BITAND expr */
-#line 314 "grammar.y"
+#line 314 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = (int)yymsp[-2].minor.yy0.data.number & (int)yymsp[0].minor.yy0.data.number;
     yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,5,&yymsp[-1].minor);
 }
-#line 1057 "grammar.c"
+#line 1057 "./src/Grammar/grammar.c"
         break;
       case 29: /* expr ::= expr BITOR expr */
-#line 320 "grammar.y"
+#line 320 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = (int)yymsp[-2].minor.yy0.data.number | (int)yymsp[0].minor.yy0.data.number;
     yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,4,&yymsp[-1].minor);
 }
-#line 1066 "grammar.c"
+#line 1066 "./src/Grammar/grammar.c"
         break;
       case 30: /* expr ::= BITNOT expr */
-#line 326 "grammar.y"
+#line 326 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = ~((int)yymsp[0].minor.yy0.data.number);
     yygotominor.yy0.n = yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,21,&yymsp[-1].minor);
 }
-#line 1075 "grammar.c"
+#line 1075 "./src/Grammar/grammar.c"
         break;
       case 31: /* expr ::= MINUS expr */
-#line 332 "grammar.y"
+#line 332 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = -1 * yymsp[0].minor.yy0.data.number;
     yygotominor.yy0.n = yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,15,&yymsp[-1].minor);
 }
-#line 1084 "grammar.c"
+#line 1084 "./src/Grammar/grammar.c"
         break;
       case 32: /* expr ::= expr MODULO expr */
-#line 338 "grammar.y"
+#line 338 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = fmod(yymsp[-2].minor.yy0.data.number,yymsp[0].minor.yy0.data.number);
     yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,18,&yymsp[-1].minor);
 }
-#line 1093 "grammar.c"
+#line 1093 "./src/Grammar/grammar.c"
         break;
       default:
       /* (0) main ::= in */ yytestcase(yyruleno==0);
@@ -1153,10 +1153,10 @@ static void yy_syntax_error(
 ){
   ParseARG_FETCH;
 #define TOKEN (yyminor.yy0)
-#line 58 "grammar.y"
+#line 58 "./src/Grammar/grammar.y"
 
 std::cout << "Syntax error!" << std::endl;
-#line 1160 "grammar.c"
+#line 1160 "./src/Grammar/grammar.c"
   ParseARG_STORE; /* Suppress warning about unused %extra_argument variable */
 }
 
@@ -1175,10 +1175,10 @@ static void yy_accept(
   while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
   /* Here code is inserted which will be executed whenever the
   ** parser accepts */
-#line 53 "grammar.y"
+#line 53 "./src/Grammar/grammar.y"
 
 printf("parsing complete!\n\n\n");
-#line 1182 "grammar.c"
+#line 1182 "./src/Grammar/grammar.c"
   ParseARG_STORE; /* Suppress warning about unused %extra_argument variable */
 }
 
@@ -1263,7 +1263,7 @@ void Parse(
 #ifdef YYERRORSYMBOL
       /* A syntax error has occurred.
       ** The response to an error depends upon whether or not the
-      ** grammar defines an error token "ERROR".
+      ** grammar defines an error token "ERROR".  
       **
       ** This is what we do if the grammar does define ERROR:
       **
@@ -1326,7 +1326,7 @@ void Parse(
       yy_syntax_error(yypParser,yymajor,yyminorunion);
       yy_destructor(yypParser,(YYCODETYPE)yymajor,&yyminorunion);
       yymajor = YYNOCODE;
-
+      
 #else  /* YYERRORSYMBOL is not defined */
       /* This is what we do if the grammar does not define ERROR:
       **
@@ -1350,64 +1350,4 @@ void Parse(
     }
   }while( yymajor!=YYNOCODE && yypParser->yyidx>=0 );
   return;
-}
-
-
-/**
- * We have to declare these here - they're not  in any header files
- * we can inclde.  yyparse() is declared with an empty argument list
- * so that it is compatible with the generated C code from bison.
- *
- */
-
-extern FILE *yyin;
-typedef struct yy_buffer_state *YY_BUFFER_STATE;
-
-extern "C" {
-int             yylex( void );
-YY_BUFFER_STATE yy_scan_string( const char * );
-void            yy_delete_buffer( YY_BUFFER_STATE );
-}
-
-
-int main(int argc,char** argv)
-{
-    int n;
-    int yv;
-    char buf[BUFS+1];
-    void* pParser = ParseAlloc (malloc);
-
-    struct Token t0,t1;
-    struct Token mToken;
-
-    t0.n=0;
-    t0.data.number=0;
-
-    std::cout << "Size of string: " << sizeof(const char*) << std::endl;
-    std::cout << "Size of double: " << sizeof(double) << std::endl;
-    std::cout << "Size of data: " << sizeof(Data) << std::endl;
-    std::cout << "Size of token: " << sizeof(Token) << std::endl;
-    std::cout << "Size of void*: " << sizeof(void*) << std::endl;
-    std::cout << "Enter an expression like 3+5 <return>" << std::endl;
-    std::cout << "  Terminate with ^D" << std::endl;
-
-    while ( ( n=read(fileno(stdin), buf, BUFS )) >  0)
-    {
-        buf[n]='\0';
-        yy_scan_string(buf);
-        // on EOF yylex will return 0
-        while( (yv=yylex()) != 0)
-        {
-//            std::cout << " yylex() " << yv << " yylval.dval " << yylval.dval << std::endl;
-            t0.data.number=yylval.dval;
-            t0.data.string=yylval.sval;
-            Parse (pParser, yv, t0);
-        }
-
-
-    }
-
-    Parse (pParser, 0, t0);
-    ParseFree(pParser, free );
-
 }

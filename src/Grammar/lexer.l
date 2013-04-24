@@ -1,6 +1,6 @@
 %{
-#include "lexglobal.h" 
-#include "grammar.h"
+#include "../../include/Grammar/lexglobal.h"
+#include "../../include/Grammar/grammar.h"
 #include <string.h>
 #include <math.h>
 #include <stdio.h>
