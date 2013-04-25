@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <stack>
 #include <string>
+#include "../../include/core/errors.h"
 
 namespace panopticon
 {
@@ -69,7 +70,7 @@ typedef union
 struct object
 {
     Data data;
-    Type type;
+    int type;
     unsigned n;
 };
 
