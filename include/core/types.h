@@ -53,12 +53,13 @@ struct object;
 typedef double Number;
 typedef std::vector<object> Array;
 typedef std::unordered_map<std::string, object> Map;
+typedef std::string String;
 
 // Data type union
 typedef union
 {
     Number number;
-    std::string* string;
+    String* string;
     bool boolean;
     Function* function;
     Array* array;
