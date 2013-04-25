@@ -19,3 +19,8 @@
     You should have received a copy of the GNU General Public License
     along with Panopticon.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+namespace panopticon
+{
+
+} // panopticon namespace

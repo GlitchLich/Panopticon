@@ -1,7 +1,7 @@
 #ifndef PARSE_H
 #define PARSE_H
 
-struct Token;
+#include "tokens.h"
 
 #define ParseTOKENTYPE Token
 #define ParseARG_PDECL

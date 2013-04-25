@@ -21,12 +21,17 @@
 #include <stdio.h>
 #include <string.h>
 
+#undef STRING
+#undef NUM
+
+using namespace panopticon;
+
     void token_destructor(Token t)
     {
 /*    std::cout << "In token_destructor t.value= " << t.value << std::endl;*/
 /*    std::cout << "In token_destructor t.n= " << t.n << std::endl;*/
     }
-#line 30 "./src/Grammar/grammar.c"
+#line 35 "./src/Grammar/grammar.c"
 /* Next is all token values, in a form suitable for use by makeheaders.
 ** This section will be null unless lemon is run with the -m switch.
 */
@@ -502,9 +507,9 @@ static void yy_destructor(
     case 30: /* NUM */
     case 31: /* STRING */
 {
-#line 29 "./src/Grammar/grammar.y"
+#line 34 "./src/Grammar/grammar.y"
  token_destructor((yypminor->yy0)); 
-#line 508 "./src/Grammar/grammar.c"
+#line 513 "./src/Grammar/grammar.c"
 }
       break;
     default:  break;   /* If no destructor action specified: do nothing */
@@ -830,18 +835,18 @@ static void yy_reduce(
   **     break;
   */
       case 2: /* in ::= in start NEWLINE */
-#line 64 "./src/Grammar/grammar.y"
+#line 69 "./src/Grammar/grammar.y"
 {
   yy_destructor(yypParser,29,&yymsp[0].minor);
 }
-#line 838 "./src/Grammar/grammar.c"
+#line 843 "./src/Grammar/grammar.c"
         break;
       case 3: /* start ::= spec */
-#line 72 "./src/Grammar/grammar.y"
+#line 77 "./src/Grammar/grammar.y"
 {
     switch(yymsp[0].minor.yy0.type)
     {
-    case INT:
+    case NUMBER:
         std::cout << "Result.data.number=" << yymsp[0].minor.yy0.data.number << std::endl;
         break;
     case STRING:
@@ -850,7 +855,7 @@ static void yy_reduce(
     }
     std::cout << "Result.n=" << yymsp[0].minor.yy0.n << std::endl;
 }
-#line 854 "./src/Grammar/grammar.c"
+#line 859 "./src/Grammar/grammar.c"
         break;
       case 4: /* spec ::= top_stmt */
       case 5: /* top_stmt ::= stmt */ yytestcase(yyruleno==5);
@@ -858,71 +863,69 @@ static void yy_reduce(
       case 7: /* expr ::= retval */ yytestcase(yyruleno==7);
       case 8: /* retval ::= invoke */ yytestcase(yyruleno==8);
       case 9: /* invoke ::= value */ yytestcase(yyruleno==9);
-#line 86 "./src/Grammar/grammar.y"
+#line 91 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = yymsp[0].minor.yy0.type;
     switch(yymsp[0].minor.yy0.type)
     {
-    case INT:
+    case NUMBER:
         yygotominor.yy0.data.number = yymsp[0].minor.yy0.data.number;
         break;
     case STRING:
-        yygotominor.yy0.data.string = strdup(yymsp[0].minor.yy0.data.string);
-        yygotominor.yy0.stringLength = yymsp[0].minor.yy0.stringLength;
+        yygotominor.yy0.data.string = new String(yymsp[0].minor.yy0.data.string->c_str());
         break;
     }
     yygotominor.yy0.n = yymsp[0].minor.yy0.n+1;
 }
-#line 877 "./src/Grammar/grammar.c"
+#line 881 "./src/Grammar/grammar.c"
         break;
       case 10: /* value ::= NUM */
-#line 195 "./src/Grammar/grammar.y"
+#line 194 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = yymsp[0].minor.yy0.data.number;
-    yygotominor.yy0.type = INT;
+    yygotominor.yy0.type = NUMBER;
     yygotominor.yy0.n = yymsp[0].minor.yy0.n+1;
 }
-#line 886 "./src/Grammar/grammar.c"
+#line 890 "./src/Grammar/grammar.c"
         break;
       case 11: /* value ::= STRING */
-#line 202 "./src/Grammar/grammar.y"
+#line 201 "./src/Grammar/grammar.y"
 {
-    yygotominor.yy0.data.string = strdup(yymsp[0].minor.yy0.data.string);
-    yygotominor.yy0.stringLength = (int)strlen(yymsp[0].minor.yy0.data.string);
+    yygotominor.yy0.data.string = new String(yymsp[0].minor.yy0.data.string->c_str());
     yygotominor.yy0.type = STRING;
     yygotominor.yy0.n = yymsp[0].minor.yy0.n+1;
 }
-#line 896 "./src/Grammar/grammar.c"
+#line 899 "./src/Grammar/grammar.c"
         break;
       case 12: /* expr ::= expr MINUS expr */
-#line 211 "./src/Grammar/grammar.y"
+#line 209 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = yymsp[-2].minor.yy0.data.number - yymsp[0].minor.yy0.data.number;
     yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1  + yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,15,&yymsp[-1].minor);
 }
-#line 905 "./src/Grammar/grammar.c"
+#line 908 "./src/Grammar/grammar.c"
         break;
       case 13: /* expr ::= expr PLUS expr */
-#line 217 "./src/Grammar/grammar.y"
+#line 215 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = yymsp[-2].minor.yy0.data.number + yymsp[0].minor.yy0.data.number;
     yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1  + yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,14,&yymsp[-1].minor);
 }
-#line 914 "./src/Grammar/grammar.c"
+#line 917 "./src/Grammar/grammar.c"
         break;
       case 14: /* expr ::= expr TIMES expr */
-#line 223 "./src/Grammar/grammar.y"
+#line 221 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = yymsp[-2].minor.yy0.data.number * yymsp[0].minor.yy0.data.number;
     yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1  + yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,17,&yymsp[-1].minor);
 }
-#line 923 "./src/Grammar/grammar.c"
+#line 926 "./src/Grammar/grammar.c"
         break;
       case 15: /* expr ::= expr DIVIDE expr */
-#line 229 "./src/Grammar/grammar.y"
+#line 227 "./src/Grammar/grammar.y"
 {
     if(yymsp[0].minor.yy0.data.number != 0)
     {
@@ -935,161 +938,161 @@ static void yy_reduce(
     }
   yy_destructor(yypParser,16,&yymsp[-1].minor);
 }
-#line 939 "./src/Grammar/grammar.c"
+#line 942 "./src/Grammar/grammar.c"
         break;
       case 16: /* expr ::= expr LESSTHAN expr */
-#line 242 "./src/Grammar/grammar.y"
+#line 240 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = yymsp[-2].minor.yy0.data.number < yymsp[0].minor.yy0.data.number;
     yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,10,&yymsp[-1].minor);
 }
-#line 948 "./src/Grammar/grammar.c"
+#line 951 "./src/Grammar/grammar.c"
         break;
       case 17: /* expr ::= expr GREATERTHAN expr */
-#line 248 "./src/Grammar/grammar.y"
+#line 246 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = yymsp[-2].minor.yy0.data.number > yymsp[0].minor.yy0.data.number;
     yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,8,&yymsp[-1].minor);
 }
-#line 957 "./src/Grammar/grammar.c"
+#line 960 "./src/Grammar/grammar.c"
         break;
       case 18: /* expr ::= expr EQUALTO expr */
-#line 254 "./src/Grammar/grammar.y"
+#line 252 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = yymsp[-2].minor.yy0.data.number == yymsp[0].minor.yy0.data.number;
     yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,6,&yymsp[-1].minor);
 }
-#line 966 "./src/Grammar/grammar.c"
+#line 969 "./src/Grammar/grammar.c"
         break;
       case 19: /* expr ::= expr NOTEQUALTO expr */
-#line 260 "./src/Grammar/grammar.y"
+#line 258 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = yymsp[-2].minor.yy0.data.number != yymsp[0].minor.yy0.data.number;
     yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,7,&yymsp[-1].minor);
 }
-#line 975 "./src/Grammar/grammar.c"
+#line 978 "./src/Grammar/grammar.c"
         break;
       case 20: /* expr ::= expr GORE expr */
-#line 266 "./src/Grammar/grammar.y"
+#line 264 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = yymsp[-2].minor.yy0.data.number >= yymsp[0].minor.yy0.data.number;
     yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,9,&yymsp[-1].minor);
 }
-#line 984 "./src/Grammar/grammar.c"
+#line 987 "./src/Grammar/grammar.c"
         break;
       case 21: /* expr ::= expr LORE expr */
-#line 272 "./src/Grammar/grammar.y"
+#line 270 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = yymsp[-2].minor.yy0.data.number <= yymsp[0].minor.yy0.data.number;
     yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,11,&yymsp[-1].minor);
 }
-#line 993 "./src/Grammar/grammar.c"
+#line 996 "./src/Grammar/grammar.c"
         break;
       case 22: /* expr ::= LPAREN expr RPAREN */
-#line 278 "./src/Grammar/grammar.y"
+#line 276 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = yymsp[-1].minor.yy0.data.number;
     yygotominor.yy0.n = yymsp[-1].minor.yy0.n+1;
   yy_destructor(yypParser,23,&yymsp[-2].minor);
   yy_destructor(yypParser,24,&yymsp[0].minor);
 }
-#line 1003 "./src/Grammar/grammar.c"
+#line 1006 "./src/Grammar/grammar.c"
         break;
       case 23: /* expr ::= expr SHIFTL expr */
-#line 284 "./src/Grammar/grammar.y"
+#line 282 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = (int)yymsp[-2].minor.yy0.data.number << (int)yymsp[0].minor.yy0.data.number;
     yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,12,&yymsp[-1].minor);
 }
-#line 1012 "./src/Grammar/grammar.c"
+#line 1015 "./src/Grammar/grammar.c"
         break;
       case 24: /* expr ::= expr SHIFTR expr */
-#line 290 "./src/Grammar/grammar.y"
+#line 288 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = (int)yymsp[-2].minor.yy0.data.number >> (int)yymsp[0].minor.yy0.data.number;
     yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,13,&yymsp[-1].minor);
 }
-#line 1021 "./src/Grammar/grammar.c"
+#line 1024 "./src/Grammar/grammar.c"
         break;
       case 25: /* expr ::= expr AND expr */
-#line 296 "./src/Grammar/grammar.y"
+#line 294 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = (int)yymsp[-2].minor.yy0.data.number && (int)yymsp[0].minor.yy0.data.number;
     yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,2,&yymsp[-1].minor);
 }
-#line 1030 "./src/Grammar/grammar.c"
+#line 1033 "./src/Grammar/grammar.c"
         break;
       case 26: /* expr ::= expr OR expr */
-#line 302 "./src/Grammar/grammar.y"
+#line 300 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = (int)yymsp[-2].minor.yy0.data.number || (int)yymsp[0].minor.yy0.data.number;
     yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,1,&yymsp[-1].minor);
 }
-#line 1039 "./src/Grammar/grammar.c"
+#line 1042 "./src/Grammar/grammar.c"
         break;
       case 27: /* expr ::= NOT expr */
-#line 308 "./src/Grammar/grammar.y"
+#line 306 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = !((int)yymsp[0].minor.yy0.data.number);
     yygotominor.yy0.n = yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,20,&yymsp[-1].minor);
 }
-#line 1048 "./src/Grammar/grammar.c"
+#line 1051 "./src/Grammar/grammar.c"
         break;
       case 28: /* expr ::= expr BITAND expr */
-#line 314 "./src/Grammar/grammar.y"
+#line 312 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = (int)yymsp[-2].minor.yy0.data.number & (int)yymsp[0].minor.yy0.data.number;
     yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,5,&yymsp[-1].minor);
 }
-#line 1057 "./src/Grammar/grammar.c"
+#line 1060 "./src/Grammar/grammar.c"
         break;
       case 29: /* expr ::= expr BITOR expr */
-#line 320 "./src/Grammar/grammar.y"
+#line 318 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = (int)yymsp[-2].minor.yy0.data.number | (int)yymsp[0].minor.yy0.data.number;
     yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,4,&yymsp[-1].minor);
 }
-#line 1066 "./src/Grammar/grammar.c"
+#line 1069 "./src/Grammar/grammar.c"
         break;
       case 30: /* expr ::= BITNOT expr */
-#line 326 "./src/Grammar/grammar.y"
+#line 324 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = ~((int)yymsp[0].minor.yy0.data.number);
     yygotominor.yy0.n = yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,21,&yymsp[-1].minor);
 }
-#line 1075 "./src/Grammar/grammar.c"
+#line 1078 "./src/Grammar/grammar.c"
         break;
       case 31: /* expr ::= MINUS expr */
-#line 332 "./src/Grammar/grammar.y"
+#line 330 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = -1 * yymsp[0].minor.yy0.data.number;
     yygotominor.yy0.n = yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,15,&yymsp[-1].minor);
 }
-#line 1084 "./src/Grammar/grammar.c"
+#line 1087 "./src/Grammar/grammar.c"
         break;
       case 32: /* expr ::= expr MODULO expr */
-#line 338 "./src/Grammar/grammar.y"
+#line 336 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = fmod(yymsp[-2].minor.yy0.data.number,yymsp[0].minor.yy0.data.number);
     yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,18,&yymsp[-1].minor);
 }
-#line 1093 "./src/Grammar/grammar.c"
+#line 1096 "./src/Grammar/grammar.c"
         break;
       default:
       /* (0) main ::= in */ yytestcase(yyruleno==0);
@@ -1153,10 +1156,10 @@ static void yy_syntax_error(
 ){
   ParseARG_FETCH;
 #define TOKEN (yyminor.yy0)
-#line 58 "./src/Grammar/grammar.y"
+#line 63 "./src/Grammar/grammar.y"
 
 std::cout << "Syntax error!" << std::endl;
-#line 1160 "./src/Grammar/grammar.c"
+#line 1163 "./src/Grammar/grammar.c"
   ParseARG_STORE; /* Suppress warning about unused %extra_argument variable */
 }
 
@@ -1175,10 +1178,10 @@ static void yy_accept(
   while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
   /* Here code is inserted which will be executed whenever the
   ** parser accepts */
-#line 53 "./src/Grammar/grammar.y"
+#line 58 "./src/Grammar/grammar.y"
 
 printf("parsing complete!\n\n\n");
-#line 1182 "./src/Grammar/grammar.c"
+#line 1185 "./src/Grammar/grammar.c"
   ParseARG_STORE; /* Suppress warning about unused %extra_argument variable */
 }
 
