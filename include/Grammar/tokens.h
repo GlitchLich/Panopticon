@@ -1,12 +1,13 @@
-enum DataTypes{INT,STRING,BOOL};
-typedef union{
-    double number;
-    const char* string;
-    bool boolean;
-} Data;
-struct Token {
-    int type;
-    int stringLength;
-    Data data;
-    unsigned n;
-};
+#ifndef TOKENS_H
+#define TOKENS_H
+
+#include "core/types.h"
+
+namespace panopticon
+{
+
+}
+
+typedef panopticon::object Token;
+
+#endif

@@ -16,6 +16,9 @@
 #include <stdio.h>
 #include <string.h>
 
+#undef STRING
+#undef NUM
+
     void token_destructor(Token t)
     {
 /*    std::cout << "In token_destructor t.value= " << t.value << std::endl;*/
@@ -72,10 +75,10 @@ start ::= spec(A).
 {
     switch(A.type)
     {
-    case INT:
+    case panopticon::NUMBER:
         std::cout << "Result.data.number=" << A.data.number << std::endl;
         break;
-    case STRING:
+    case panopticon::STRING:
         std::cout << "Result.data.string=" << A.data.string << std::endl;
         break;
     }
@@ -87,12 +90,11 @@ spec(A) ::= top_stmt(B).
     A.type = B.type;
     switch(B.type)
     {
-    case INT:
+    case panopticon::NUMBER:
         A.data.number = B.data.number;
         break;
-    case STRING:
-        A.data.string = strdup(B.data.string);
-        A.stringLength = B.stringLength;
+    case panopticon::STRING:
+        A.data.string = new std::string(B.data.string->c_str());
         break;
     }
     A.n = B.n+1;
@@ -102,12 +104,11 @@ top_stmt(A) ::= stmt(B).
     A.type = B.type;
     switch(B.type)
     {
-    case INT:
+    case panopticon::NUMBER:
         A.data.number = B.data.number;
         break;
-    case STRING:
-        A.data.string = strdup(B.data.string);
-        A.stringLength = B.stringLength;
+    case panopticon::STRING:
+        A.data.string = new std::string(B.data.string->c_str());
         break;
     }
     A.n = B.n+1;
@@ -118,12 +119,11 @@ stmt(A) ::= expr(B).
     A.type = B.type;
     switch(B.type)
     {
-    case INT:
+    case panopticon::NUMBER:
         A.data.number = B.data.number;
         break;
-    case STRING:
-        A.data.string = strdup(B.data.string);
-        A.stringLength = B.stringLength;
+    case panopticon::STRING:
+        A.data.string = new std::string(B.data.string->c_str());
         break;
     }
     A.n = B.n+1;
@@ -135,12 +135,11 @@ expr(A) ::= retval(B).
     A.type = B.type;
     switch(B.type)
     {
-    case INT:
+    case panopticon::NUMBER:
         A.data.number = B.data.number;
         break;
-    case STRING:
-        A.data.string = strdup(B.data.string);
-        A.stringLength = B.stringLength;
+    case panopticon::STRING:
+        A.data.string = new std::string(B.data.string->c_str());
         break;
     }
     A.n = B.n+1;
@@ -152,12 +151,11 @@ retval(A) ::= invoke(B).
     A.type = B.type;
     switch(B.type)
     {
-    case INT:
+    case panopticon::NUMBER:
         A.data.number = B.data.number;
         break;
-    case STRING:
-        A.data.string = strdup(B.data.string);
-        A.stringLength = B.stringLength;
+    case panopticon::STRING:
+        A.data.string = new std::string(B.data.string->c_str());
         break;
     }
     A.n = B.n+1;
@@ -179,12 +177,11 @@ invoke(A) ::= value(B).
     A.type = B.type;
     switch(B.type)
     {
-    case INT:
+    case panopticon::NUMBER:
         A.data.number = B.data.number;
         break;
-    case STRING:
-        A.data.string = strdup(B.data.string);
-        A.stringLength = B.stringLength;
+    case panopticon::STRING:
+        A.data.string = new std::string(B.data.string->c_str());
         break;
     }
     A.n = B.n+1;
@@ -194,15 +191,14 @@ invoke(A) ::= value(B).
 value(A) ::= NUM(B).
 {
     A.data.number = B.data.number;
-    A.type = INT;
+    A.type = panopticon::NUMBER;
     A.n = B.n+1;
 }
 
 value(A) ::= STRING(B).
 {
-    A.data.string = strdup(B.data.string);
-    A.stringLength = (int)strlen(B.data.string);
-    A.type = STRING;
+    A.data.string = new std::string(B.data.string->c_str());
+    A.type = panopticon::STRING;
     A.n = B.n+1;
 }
 
