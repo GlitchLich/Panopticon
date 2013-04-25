@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <stack>
 #include <string>
+#include <cstring>
 
 namespace panopticon
 {
@@ -48,6 +49,7 @@ enum Type
 // Forward declarations
 struct Function;
 struct object;
+struct Nil { };
 
 /* typedefs for types in Panopticon */
 typedef double Number;
@@ -56,7 +58,7 @@ typedef std::unordered_map<std::string, object> Map;
 typedef std::string String;
 
 // Data type union
-typedef union
+union Data
 {
     Number number;
     String* string;
@@ -64,7 +66,7 @@ typedef union
     Function* function;
     Array* array;
     Map* map;
-} Data;
+};
 
 struct object
 {
