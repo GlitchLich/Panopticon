@@ -65,13 +65,13 @@ int main(int argc,char** argv)
     struct panopticon::object t0,t1;
     struct panopticon::object mToken;
 
-    t0.n=0;
+//    t0.n=0;
     t0.data.number=0;
 
     //    std::cout << "Size of string: " << sizeof(const char*) << std::endl;
     //    std::cout << "Size of double: " << sizeof(double) << std::endl;
     //    std::cout << "Size of data: " << sizeof(panopticon::Data) << std::endl;
-    std::cout << "Size of token: " << sizeof(panopticon::object) << std::endl;
+    std::cout << "Size of token: " << sizeof(t0) << std::endl;
     //    std::cout << "Size of void*: " << sizeof(void*) << std::endl;
     std::cout << "Enter an expression like 3+5 <return>" << std::endl;
     std::cout << "  Terminate with ^D" << std::endl;
@@ -91,6 +91,10 @@ int main(int argc,char** argv)
                 break;
             case STRING:
                 t0.data.string = new std::string(yylval.sval);
+                if(yylval.sval!=0)
+                {
+                    delete yylval.sval;
+                }
                 break;
             case BOOLEAN:
                 t0.data.boolean = yylval.bval;

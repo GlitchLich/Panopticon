@@ -6,8 +6,8 @@ State 0:
           in ::= * error
           error ::= * OPENQUOTEERROR
 
-                OPENQUOTEERROR shift  100
-                         error shift  101
+                OPENQUOTEERROR shift  113
+                         error shift  114
                           main accept
                             in shift  1
                      {default} reduce 1
@@ -21,8 +21,11 @@ State 1:
           top_stmt ::= * stmt
           stmt ::= * expr
           expr ::= * retval
-          retval ::= * invoke
-          invoke ::= * value
+          retval ::= * access
+          access ::= * identifier
+          access ::= * array
+          array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          identifier ::= * value
           value ::= * num
           value ::= * string
           value ::= * bool
@@ -79,29 +82,448 @@ State 1:
           num ::= * MINUS num
           num ::= * num MODULO num
           num ::= * num POW num
+          array ::= * array PLUSPLUS array
+          array ::= * array PLUS array
+          array ::= * num PLUS array
+          array ::= * array PLUS num
 
                              $ reduce 0
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                       NEWLINE shift  116
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                          expr shift  111
-                         start shift  99
-                          spec shift  114
-                      top_stmt shift  113
-                          stmt shift  112
-                        retval shift  110
-                        invoke shift  109
-                         value shift  108
-                           num shift  45
-                        string shift  53
-                          bool shift  62
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                         LBRAC shift  2
+                       NEWLINE shift  133
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                          expr shift  128
+                         start shift  112
+                          spec shift  131
+                      top_stmt shift  130
+                          stmt shift  129
+                        retval shift  127
+                        access shift  126
+                    identifier shift  125
+                         array shift  99
+                         value shift  122
+                           num shift  51
+                        string shift  60
+                          bool shift  69
 
 State 2:
+          stmt ::= * expr
+          expr ::= * retval
+          retval ::= * access
+          access ::= * identifier
+          stmt_list ::= * stmt
+          stmt_list ::= * stmt_list stmt
+          access ::= * array
+          array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          array ::= LBRAC * maybe_empty_stmt_list RBRAC
+     (15) maybe_empty_stmt_list ::= *
+          maybe_empty_stmt_list ::= * stmt_list
+          identifier ::= * value
+          value ::= * num
+          value ::= * string
+          value ::= * bool
+          num ::= * NUM
+          string ::= * STRING
+          bool ::= * BOOLEAN
+          string ::= * string PLUS num
+          string ::= * string PLUSPLUS num
+          string ::= * num PLUS string
+          string ::= * num PLUSPLUS string
+          string ::= * string PLUS bool
+          string ::= * string PLUSPLUS bool
+          string ::= * bool PLUS string
+          string ::= * bool PLUSPLUS string
+          bool ::= * LPAREN bool RPAREN
+          bool ::= * bool PLUS bool
+          bool ::= * bool TIMES bool
+          bool ::= * bool EQUALTO bool
+          bool ::= * bool NOTEQUALTO bool
+          bool ::= * bool AND bool
+          bool ::= * bool OR bool
+          bool ::= * NOT bool
+          string ::= * LPAREN string RPAREN
+          string ::= * string MINUS string
+          string ::= * string PLUS string
+          string ::= * string PLUSPLUS string
+          num ::= * string TIMES string
+          bool ::= * string EQUALTO string
+          num ::= * string DIVIDE string
+          bool ::= * string LESSTHAN string
+          bool ::= * string GREATERTHAN string
+          bool ::= * string NOTEQUALTO string
+          bool ::= * string GORE string
+          bool ::= * string LORE string
+          num ::= * LPAREN num RPAREN
+          num ::= * num MINUS num
+          num ::= * num PLUS num
+          num ::= * num TIMES num
+          num ::= * num DIVIDE num
+          bool ::= * num LESSTHAN num
+          bool ::= * num GREATERTHAN num
+          bool ::= * num EQUALTO num
+          bool ::= * num NOTEQUALTO num
+          bool ::= * num GORE num
+          bool ::= * num LORE num
+          bool ::= * num AND num
+          bool ::= * num OR num
+          bool ::= * NOT num
+          num ::= * num SHIFTL num
+          num ::= * num SHIFTR num
+          num ::= * num BITAND num
+          num ::= * num BITOR num
+          num ::= * BITNOT num
+          num ::= * MINUS num
+          num ::= * num MODULO num
+          num ::= * num POW num
+          array ::= * array PLUSPLUS array
+          array ::= * array PLUS array
+          array ::= * num PLUS array
+          array ::= * array PLUS num
+
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                         LBRAC shift  2
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                          expr shift  128
+                          stmt shift  124
+                        retval shift  127
+                        access shift  126
+                    identifier shift  125
+                     stmt_list shift  3
+                         array shift  99
+         maybe_empty_stmt_list shift  101
+                         value shift  122
+                           num shift  51
+                        string shift  60
+                          bool shift  69
+                     {default} reduce 15
+
+State 3:
+          stmt ::= * expr
+          expr ::= * retval
+          retval ::= * access
+          access ::= * identifier
+          stmt_list ::= stmt_list * stmt
+          access ::= * array
+          array ::= * LBRAC maybe_empty_stmt_list RBRAC
+     (16) maybe_empty_stmt_list ::= stmt_list *
+          identifier ::= * value
+          value ::= * num
+          value ::= * string
+          value ::= * bool
+          num ::= * NUM
+          string ::= * STRING
+          bool ::= * BOOLEAN
+          string ::= * string PLUS num
+          string ::= * string PLUSPLUS num
+          string ::= * num PLUS string
+          string ::= * num PLUSPLUS string
+          string ::= * string PLUS bool
+          string ::= * string PLUSPLUS bool
+          string ::= * bool PLUS string
+          string ::= * bool PLUSPLUS string
+          bool ::= * LPAREN bool RPAREN
+          bool ::= * bool PLUS bool
+          bool ::= * bool TIMES bool
+          bool ::= * bool EQUALTO bool
+          bool ::= * bool NOTEQUALTO bool
+          bool ::= * bool AND bool
+          bool ::= * bool OR bool
+          bool ::= * NOT bool
+          string ::= * LPAREN string RPAREN
+          string ::= * string MINUS string
+          string ::= * string PLUS string
+          string ::= * string PLUSPLUS string
+          num ::= * string TIMES string
+          bool ::= * string EQUALTO string
+          num ::= * string DIVIDE string
+          bool ::= * string LESSTHAN string
+          bool ::= * string GREATERTHAN string
+          bool ::= * string NOTEQUALTO string
+          bool ::= * string GORE string
+          bool ::= * string LORE string
+          num ::= * LPAREN num RPAREN
+          num ::= * num MINUS num
+          num ::= * num PLUS num
+          num ::= * num TIMES num
+          num ::= * num DIVIDE num
+          bool ::= * num LESSTHAN num
+          bool ::= * num GREATERTHAN num
+          bool ::= * num EQUALTO num
+          bool ::= * num NOTEQUALTO num
+          bool ::= * num GORE num
+          bool ::= * num LORE num
+          bool ::= * num AND num
+          bool ::= * num OR num
+          bool ::= * NOT num
+          num ::= * num SHIFTL num
+          num ::= * num SHIFTR num
+          num ::= * num BITAND num
+          num ::= * num BITOR num
+          num ::= * BITNOT num
+          num ::= * MINUS num
+          num ::= * num MODULO num
+          num ::= * num POW num
+          array ::= * array PLUSPLUS array
+          array ::= * array PLUS array
+          array ::= * num PLUS array
+          array ::= * array PLUS num
+
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                         LBRAC shift  2
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                          expr shift  128
+                          stmt shift  123
+                        retval shift  127
+                        access shift  126
+                    identifier shift  125
+                         array shift  99
+                         value shift  122
+                           num shift  51
+                        string shift  60
+                          bool shift  69
+                     {default} reduce 16
+
+State 4:
+          array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          num ::= * NUM
+          string ::= * STRING
+          bool ::= * BOOLEAN
+          string ::= * string PLUS num
+          string ::= * string PLUSPLUS num
+          string ::= * num PLUS string
+          string ::= * num PLUSPLUS string
+          string ::= * string PLUS bool
+          string ::= * string PLUSPLUS bool
+          string ::= * bool PLUS string
+          string ::= * bool PLUSPLUS string
+          bool ::= * LPAREN bool RPAREN
+          bool ::= * bool PLUS bool
+          bool ::= * bool TIMES bool
+          bool ::= * bool EQUALTO bool
+          bool ::= * bool NOTEQUALTO bool
+          bool ::= * bool AND bool
+          bool ::= * bool OR bool
+          bool ::= * NOT bool
+          string ::= * LPAREN string RPAREN
+          string ::= * string MINUS string
+          string ::= * string PLUS string
+          string ::= * string PLUSPLUS string
+          num ::= * string TIMES string
+          bool ::= * string EQUALTO string
+          num ::= * string DIVIDE string
+          bool ::= * string LESSTHAN string
+          bool ::= * string GREATERTHAN string
+          bool ::= * string NOTEQUALTO string
+          bool ::= * string GORE string
+          bool ::= * string LORE string
+          num ::= * LPAREN num RPAREN
+          num ::= * num MINUS num
+          num ::= * num PLUS num
+          num ::= * num TIMES num
+          num ::= * num DIVIDE num
+          bool ::= * num LESSTHAN num
+          bool ::= * num GREATERTHAN num
+          bool ::= * num EQUALTO num
+          bool ::= * num NOTEQUALTO num
+          bool ::= * num GORE num
+          bool ::= * num LORE num
+          bool ::= * num AND num
+          bool ::= * num OR num
+          bool ::= * NOT num
+          num ::= * num SHIFTL num
+          num ::= * num SHIFTR num
+          num ::= * num BITAND num
+          num ::= * num BITOR num
+          num ::= * BITNOT num
+          num ::= * MINUS num
+          num ::= * num MODULO num
+          num ::= * num POW num
+          array ::= * array PLUSPLUS array
+          array ::= * array PLUS array
+          array ::= array PLUS * array
+          array ::= * num PLUS array
+          array ::= * array PLUS num
+          array ::= array PLUS * num
+
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                         LBRAC shift  2
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                         array shift  102
+                           num shift  53
+                        string shift  61
+                          bool shift  72
+
+State 5:
+          array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          num ::= * NUM
+          string ::= * STRING
+          bool ::= * BOOLEAN
+          string ::= * string PLUS num
+          string ::= * string PLUSPLUS num
+          string ::= * num PLUS string
+          string ::= num PLUS * string
+          string ::= * num PLUSPLUS string
+          string ::= * string PLUS bool
+          string ::= * string PLUSPLUS bool
+          string ::= * bool PLUS string
+          string ::= * bool PLUSPLUS string
+          bool ::= * LPAREN bool RPAREN
+          bool ::= * bool PLUS bool
+          bool ::= * bool TIMES bool
+          bool ::= * bool EQUALTO bool
+          bool ::= * bool NOTEQUALTO bool
+          bool ::= * bool AND bool
+          bool ::= * bool OR bool
+          bool ::= * NOT bool
+          string ::= * LPAREN string RPAREN
+          string ::= * string MINUS string
+          string ::= * string PLUS string
+          string ::= * string PLUSPLUS string
+          num ::= * string TIMES string
+          bool ::= * string EQUALTO string
+          num ::= * string DIVIDE string
+          bool ::= * string LESSTHAN string
+          bool ::= * string GREATERTHAN string
+          bool ::= * string NOTEQUALTO string
+          bool ::= * string GORE string
+          bool ::= * string LORE string
+          num ::= * LPAREN num RPAREN
+          num ::= * num MINUS num
+          num ::= * num PLUS num
+          num ::= num PLUS * num
+          num ::= * num TIMES num
+          num ::= * num DIVIDE num
+          bool ::= * num LESSTHAN num
+          bool ::= * num GREATERTHAN num
+          bool ::= * num EQUALTO num
+          bool ::= * num NOTEQUALTO num
+          bool ::= * num GORE num
+          bool ::= * num LORE num
+          bool ::= * num AND num
+          bool ::= * num OR num
+          bool ::= * NOT num
+          num ::= * num SHIFTL num
+          num ::= * num SHIFTR num
+          num ::= * num BITAND num
+          num ::= * num BITOR num
+          num ::= * BITNOT num
+          num ::= * MINUS num
+          num ::= * num MODULO num
+          num ::= * num POW num
+          array ::= * array PLUSPLUS array
+          array ::= * array PLUS array
+          array ::= * num PLUS array
+          array ::= num PLUS * array
+          array ::= * array PLUS num
+
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                         LBRAC shift  2
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                         array shift  103
+                           num shift  74
+                        string shift  88
+                          bool shift  72
+
+State 6:
+          array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          num ::= * NUM
+          string ::= * STRING
+          bool ::= * BOOLEAN
+          string ::= * string PLUS num
+          string ::= * string PLUSPLUS num
+          string ::= * num PLUS string
+          string ::= * num PLUSPLUS string
+          string ::= * string PLUS bool
+          string ::= * string PLUSPLUS bool
+          string ::= * bool PLUS string
+          string ::= * bool PLUSPLUS string
+          bool ::= * LPAREN bool RPAREN
+          bool ::= * bool PLUS bool
+          bool ::= * bool TIMES bool
+          bool ::= * bool EQUALTO bool
+          bool ::= * bool NOTEQUALTO bool
+          bool ::= * bool AND bool
+          bool ::= * bool OR bool
+          bool ::= * NOT bool
+          string ::= * LPAREN string RPAREN
+          string ::= * string MINUS string
+          string ::= * string PLUS string
+          string ::= * string PLUSPLUS string
+          num ::= * string TIMES string
+          bool ::= * string EQUALTO string
+          num ::= * string DIVIDE string
+          bool ::= * string LESSTHAN string
+          bool ::= * string GREATERTHAN string
+          bool ::= * string NOTEQUALTO string
+          bool ::= * string GORE string
+          bool ::= * string LORE string
+          num ::= * LPAREN num RPAREN
+          num ::= * num MINUS num
+          num ::= * num PLUS num
+          num ::= * num TIMES num
+          num ::= * num DIVIDE num
+          bool ::= * num LESSTHAN num
+          bool ::= * num GREATERTHAN num
+          bool ::= * num EQUALTO num
+          bool ::= * num NOTEQUALTO num
+          bool ::= * num GORE num
+          bool ::= * num LORE num
+          bool ::= * num AND num
+          bool ::= * num OR num
+          bool ::= * NOT num
+          num ::= * num SHIFTL num
+          num ::= * num SHIFTR num
+          num ::= * num BITAND num
+          num ::= * num BITOR num
+          num ::= * BITNOT num
+          num ::= * MINUS num
+          num ::= * num MODULO num
+          num ::= * num POW num
+          array ::= * array PLUSPLUS array
+          array ::= array PLUSPLUS * array
+          array ::= * array PLUS array
+          array ::= * num PLUS array
+          array ::= * array PLUS num
+
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                         LBRAC shift  2
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                         array shift  100
+                           num shift  49
+                        string shift  61
+                          bool shift  72
+
+State 7:
           num ::= * NUM
           string ::= * STRING
           bool ::= * BOOLEAN
@@ -157,18 +579,18 @@ State 2:
           num ::= * num MODULO num
           num ::= * num POW num
 
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  83
-                        string shift  54
-                          bool shift  65
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  91
+                        string shift  61
+                          bool shift  72
 
-State 3:
+State 8:
           num ::= * NUM
           string ::= * STRING
           bool ::= * BOOLEAN
@@ -224,18 +646,18 @@ State 3:
           num ::= * num MODULO num
           num ::= * num POW num
 
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  84
-                        string shift  54
-                          bool shift  65
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  92
+                        string shift  61
+                          bool shift  72
 
-State 4:
+State 9:
           num ::= * NUM
           string ::= * STRING
           bool ::= * BOOLEAN
@@ -291,18 +713,18 @@ State 4:
           num ::= * num MODULO num
           num ::= * num POW num
 
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  44
-                        string shift  54
-                          bool shift  66
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  50
+                        string shift  61
+                          bool shift  73
 
-State 5:
+State 10:
           num ::= * NUM
           string ::= * STRING
           bool ::= * BOOLEAN
@@ -358,18 +780,18 @@ State 5:
           num ::= * num MODULO num
           num ::= * num POW num
 
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  44
-                        string shift  54
-                          bool shift  69
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  50
+                        string shift  61
+                          bool shift  76
 
-State 6:
+State 11:
           num ::= * NUM
           string ::= * STRING
           bool ::= * BOOLEAN
@@ -425,18 +847,18 @@ State 6:
           num ::= * num MODULO num
           num ::= * num POW num
 
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  44
-                        string shift  54
-                          bool shift  75
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  50
+                        string shift  61
+                          bool shift  83
 
-State 7:
+State 12:
           num ::= * NUM
           string ::= * STRING
           bool ::= * BOOLEAN
@@ -492,18 +914,18 @@ State 7:
           num ::= * num MODULO num
           num ::= * num POW num
 
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  44
-                        string shift  54
-                          bool shift  76
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  50
+                        string shift  61
+                          bool shift  84
 
-State 8:
+State 13:
           num ::= * NUM
           string ::= * STRING
           bool ::= * BOOLEAN
@@ -559,18 +981,18 @@ State 8:
           num ::= * num MODULO num
           num ::= * num POW num
 
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  44
-                        string shift  54
-                          bool shift  92
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  50
+                        string shift  61
+                          bool shift  105
 
-State 9:
+State 14:
           num ::= * NUM
           string ::= * STRING
           bool ::= * BOOLEAN
@@ -627,18 +1049,18 @@ State 9:
           num ::= * num MODULO num
           num ::= * num POW num
 
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  85
-                        string shift  54
-                          bool shift  93
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  93
+                        string shift  61
+                          bool shift  106
 
-State 10:
+State 15:
           num ::= * NUM
           string ::= * STRING
           bool ::= * BOOLEAN
@@ -694,18 +1116,18 @@ State 10:
           num ::= * num POW num
           num ::= num POW * num
 
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  86
-                        string shift  54
-                          bool shift  65
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  94
+                        string shift  61
+                          bool shift  72
 
-State 11:
+State 16:
           num ::= * NUM
           string ::= * STRING
           bool ::= * BOOLEAN
@@ -761,18 +1183,18 @@ State 11:
           num ::= num MODULO * num
           num ::= * num POW num
 
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  87
-                        string shift  54
-                          bool shift  65
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  95
+                        string shift  61
+                          bool shift  72
 
-State 12:
+State 17:
           num ::= * NUM
           string ::= * STRING
           bool ::= * BOOLEAN
@@ -828,18 +1250,18 @@ State 12:
           num ::= * num MODULO num
           num ::= * num POW num
 
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  48
-                        string shift  54
-                          bool shift  65
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  55
+                        string shift  61
+                          bool shift  72
 
-State 13:
+State 18:
           num ::= * NUM
           string ::= * STRING
           bool ::= * BOOLEAN
@@ -895,18 +1317,18 @@ State 13:
           num ::= * num MODULO num
           num ::= * num POW num
 
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  49
-                        string shift  54
-                          bool shift  65
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  56
+                        string shift  61
+                          bool shift  72
 
-State 14:
+State 19:
           num ::= * NUM
           string ::= * STRING
           bool ::= * BOOLEAN
@@ -962,18 +1384,18 @@ State 14:
           num ::= * num MODULO num
           num ::= * num POW num
 
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  63
-                        string shift  54
-                          bool shift  65
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  70
+                        string shift  61
+                          bool shift  72
 
-State 15:
+State 20:
           num ::= * NUM
           string ::= * STRING
           bool ::= * BOOLEAN
@@ -1029,18 +1451,18 @@ State 15:
           num ::= * num MODULO num
           num ::= * num POW num
 
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  64
-                        string shift  54
-                          bool shift  65
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  71
+                        string shift  61
+                          bool shift  72
 
-State 16:
+State 21:
           num ::= * NUM
           string ::= * STRING
           bool ::= * BOOLEAN
@@ -1096,18 +1518,18 @@ State 16:
           num ::= * num MODULO num
           num ::= * num POW num
 
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  46
-                        string shift  54
-                          bool shift  65
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  52
+                        string shift  61
+                          bool shift  72
 
-State 17:
+State 22:
           num ::= * NUM
           string ::= * STRING
           bool ::= * BOOLEAN
@@ -1163,18 +1585,18 @@ State 17:
           num ::= * num MODULO num
           num ::= * num POW num
 
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  47
-                        string shift  54
-                          bool shift  65
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  54
+                        string shift  61
+                          bool shift  72
 
-State 18:
+State 23:
           num ::= * NUM
           string ::= * STRING
           bool ::= * BOOLEAN
@@ -1230,18 +1652,18 @@ State 18:
           num ::= * num MODULO num
           num ::= * num POW num
 
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  55
-                        string shift  54
-                          bool shift  65
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  62
+                        string shift  61
+                          bool shift  72
 
-State 19:
+State 24:
           num ::= * NUM
           string ::= * STRING
           bool ::= * BOOLEAN
@@ -1297,18 +1719,18 @@ State 19:
           num ::= * num MODULO num
           num ::= * num POW num
 
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  56
-                        string shift  54
-                          bool shift  65
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  63
+                        string shift  61
+                          bool shift  72
 
-State 20:
+State 25:
           num ::= * NUM
           string ::= * STRING
           bool ::= * BOOLEAN
@@ -1364,18 +1786,18 @@ State 20:
           num ::= * num MODULO num
           num ::= * num POW num
 
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  50
-                        string shift  54
-                          bool shift  65
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  57
+                        string shift  61
+                          bool shift  72
 
-State 21:
+State 26:
           num ::= * NUM
           string ::= * STRING
           bool ::= * BOOLEAN
@@ -1431,18 +1853,18 @@ State 21:
           num ::= * num MODULO num
           num ::= * num POW num
 
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  51
-                        string shift  54
-                          bool shift  65
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  58
+                        string shift  61
+                          bool shift  72
 
-State 22:
+State 27:
           num ::= * NUM
           string ::= * STRING
           bool ::= * BOOLEAN
@@ -1498,18 +1920,18 @@ State 22:
           num ::= * num MODULO num
           num ::= * num POW num
 
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  57
-                        string shift  54
-                          bool shift  65
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  64
+                        string shift  61
+                          bool shift  72
 
-State 23:
+State 28:
           num ::= * NUM
           string ::= * STRING
           bool ::= * BOOLEAN
@@ -1565,18 +1987,18 @@ State 23:
           num ::= * num MODULO num
           num ::= * num POW num
 
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  58
-                        string shift  54
-                          bool shift  65
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  65
+                        string shift  61
+                          bool shift  72
 
-State 24:
+State 29:
           num ::= * NUM
           string ::= * STRING
           bool ::= * BOOLEAN
@@ -1632,18 +2054,18 @@ State 24:
           num ::= * num MODULO num
           num ::= * num POW num
 
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  88
-                        string shift  54
-                          bool shift  65
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  96
+                        string shift  61
+                          bool shift  72
 
-State 25:
+State 30:
           num ::= * NUM
           string ::= * STRING
           bool ::= * BOOLEAN
@@ -1699,18 +2121,18 @@ State 25:
           num ::= * num MODULO num
           num ::= * num POW num
 
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  89
-                        string shift  54
-                          bool shift  65
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  97
+                        string shift  61
+                          bool shift  72
 
-State 26:
+State 31:
           num ::= * NUM
           string ::= * STRING
           bool ::= * BOOLEAN
@@ -1766,18 +2188,18 @@ State 26:
           num ::= * num MODULO num
           num ::= * num POW num
 
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  70
-                        string shift  54
-                          bool shift  65
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  77
+                        string shift  61
+                          bool shift  72
 
-State 27:
+State 32:
           num ::= * NUM
           string ::= * STRING
           bool ::= * BOOLEAN
@@ -1835,18 +2257,18 @@ State 27:
           num ::= * num MODULO num
           num ::= * num POW num
 
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  43
-                        string shift  52
-                          bool shift  61
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  48
+                        string shift  59
+                          bool shift  68
 
-State 28:
+State 33:
           num ::= * NUM
           string ::= * STRING
           bool ::= * BOOLEAN
@@ -1902,18 +2324,18 @@ State 28:
           num ::= * num MODULO num
           num ::= * num POW num
 
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  44
-                        string shift  94
-                          bool shift  65
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  50
+                        string shift  107
+                          bool shift  72
 
-State 29:
+State 34:
           num ::= * NUM
           string ::= * STRING
           bool ::= * BOOLEAN
@@ -1970,18 +2392,18 @@ State 29:
           num ::= * num MODULO num
           num ::= * num POW num
 
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  44
-                        string shift  77
-                          bool shift  90
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  50
+                        string shift  85
+                          bool shift  98
 
-State 30:
+State 35:
           num ::= * NUM
           string ::= * STRING
           bool ::= * BOOLEAN
@@ -2037,18 +2459,86 @@ State 30:
           num ::= * num MODULO num
           num ::= * num POW num
 
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  44
-                        string shift  95
-                          bool shift  65
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  50
+                        string shift  108
+                          bool shift  72
 
-State 31:
+State 36:
+          num ::= * NUM
+          string ::= * STRING
+          bool ::= * BOOLEAN
+          string ::= * string PLUS num
+          string ::= * string PLUSPLUS num
+          string ::= * num PLUS string
+          string ::= num PLUS * string
+          string ::= * num PLUSPLUS string
+          string ::= * string PLUS bool
+          string ::= * string PLUSPLUS bool
+          string ::= * bool PLUS string
+          string ::= * bool PLUSPLUS string
+          bool ::= * LPAREN bool RPAREN
+          bool ::= * bool PLUS bool
+          bool ::= * bool TIMES bool
+          bool ::= * bool EQUALTO bool
+          bool ::= * bool NOTEQUALTO bool
+          bool ::= * bool AND bool
+          bool ::= * bool OR bool
+          bool ::= * NOT bool
+          string ::= * LPAREN string RPAREN
+          string ::= * string MINUS string
+          string ::= * string PLUS string
+          string ::= * string PLUSPLUS string
+          num ::= * string TIMES string
+          bool ::= * string EQUALTO string
+          num ::= * string DIVIDE string
+          bool ::= * string LESSTHAN string
+          bool ::= * string GREATERTHAN string
+          bool ::= * string NOTEQUALTO string
+          bool ::= * string GORE string
+          bool ::= * string LORE string
+          num ::= * LPAREN num RPAREN
+          num ::= * num MINUS num
+          num ::= * num PLUS num
+          num ::= num PLUS * num
+          num ::= * num TIMES num
+          num ::= * num DIVIDE num
+          bool ::= * num LESSTHAN num
+          bool ::= * num GREATERTHAN num
+          bool ::= * num EQUALTO num
+          bool ::= * num NOTEQUALTO num
+          bool ::= * num GORE num
+          bool ::= * num LORE num
+          bool ::= * num AND num
+          bool ::= * num OR num
+          bool ::= * NOT num
+          num ::= * num SHIFTL num
+          num ::= * num SHIFTR num
+          num ::= * num BITAND num
+          num ::= * num BITOR num
+          num ::= * BITNOT num
+          num ::= * MINUS num
+          num ::= * num MODULO num
+          num ::= * num POW num
+
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  78
+                        string shift  88
+                          bool shift  72
+
+State 37:
           num ::= * NUM
           string ::= * STRING
           bool ::= * BOOLEAN
@@ -2104,18 +2594,18 @@ State 31:
           num ::= * num MODULO num
           num ::= * num POW num
 
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  44
-                        string shift  71
-                          bool shift  65
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  50
+                        string shift  79
+                          bool shift  72
 
-State 32:
+State 38:
           num ::= * NUM
           string ::= * STRING
           bool ::= * BOOLEAN
@@ -2171,18 +2661,18 @@ State 32:
           num ::= * num MODULO num
           num ::= * num POW num
 
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  44
-                        string shift  72
-                          bool shift  65
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  50
+                        string shift  80
+                          bool shift  72
 
-State 33:
+State 39:
           num ::= * NUM
           string ::= * STRING
           bool ::= * BOOLEAN
@@ -2238,18 +2728,18 @@ State 33:
           num ::= * num MODULO num
           num ::= * num POW num
 
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  44
-                        string shift  59
-                          bool shift  65
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  50
+                        string shift  66
+                          bool shift  72
 
-State 34:
+State 40:
           num ::= * NUM
           string ::= * STRING
           bool ::= * BOOLEAN
@@ -2305,18 +2795,18 @@ State 34:
           num ::= * num MODULO num
           num ::= * num POW num
 
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  44
-                        string shift  73
-                          bool shift  65
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  50
+                        string shift  81
+                          bool shift  72
 
-State 35:
+State 41:
           num ::= * NUM
           string ::= * STRING
           bool ::= * BOOLEAN
@@ -2372,18 +2862,18 @@ State 35:
           num ::= * num MODULO num
           num ::= * num POW num
 
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  44
-                        string shift  74
-                          bool shift  65
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  50
+                        string shift  82
+                          bool shift  72
 
-State 36:
+State 42:
           num ::= * NUM
           string ::= * STRING
           bool ::= * BOOLEAN
@@ -2439,18 +2929,18 @@ State 36:
           num ::= * num MODULO num
           num ::= * num POW num
 
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  44
-                        string shift  96
-                          bool shift  65
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  50
+                        string shift  109
+                          bool shift  72
 
-State 37:
+State 43:
           num ::= * NUM
           string ::= * STRING
           bool ::= * BOOLEAN
@@ -2506,18 +2996,18 @@ State 37:
           num ::= * num MODULO num
           num ::= * num POW num
 
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  44
-                        string shift  60
-                          bool shift  65
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  50
+                        string shift  67
+                          bool shift  72
 
-State 38:
+State 44:
           num ::= * NUM
           string ::= * STRING
           bool ::= * BOOLEAN
@@ -2573,18 +3063,18 @@ State 38:
           num ::= * num MODULO num
           num ::= * num POW num
 
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  44
-                        string shift  97
-                          bool shift  65
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  50
+                        string shift  110
+                          bool shift  72
 
-State 39:
+State 45:
           num ::= * NUM
           string ::= * STRING
           bool ::= * BOOLEAN
@@ -2640,18 +3130,18 @@ State 39:
           num ::= * num MODULO num
           num ::= * num POW num
 
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  44
-                        string shift  78
-                          bool shift  65
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  50
+                        string shift  86
+                          bool shift  72
 
-State 40:
+State 46:
           num ::= * NUM
           string ::= * STRING
           bool ::= * BOOLEAN
@@ -2709,18 +3199,18 @@ State 40:
           num ::= * num MODULO num
           num ::= * num POW num
 
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  82
-                        string shift  98
-                          bool shift  91
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  90
+                        string shift  111
+                          bool shift  104
 
-State 41:
+State 47:
           num ::= * NUM
           string ::= * STRING
           bool ::= * BOOLEAN
@@ -2778,86 +3268,18 @@ State 41:
           num ::= * num MODULO num
           num ::= * num POW num
 
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  68
-                        string shift  79
-                          bool shift  81
+                         MINUS shift  7
+                           NOT shift  14
+                        BITNOT shift  8
+                        LPAREN shift  32
+                           NUM shift  121
+                        STRING shift  120
+                       BOOLEAN shift  119
+                           num shift  75
+                        string shift  87
+                          bool shift  89
 
-State 42:
-          num ::= * NUM
-          string ::= * STRING
-          bool ::= * BOOLEAN
-          string ::= * string PLUS num
-          string ::= * string PLUSPLUS num
-          string ::= * num PLUS string
-          string ::= num PLUS * string
-          string ::= * num PLUSPLUS string
-          string ::= * string PLUS bool
-          string ::= * string PLUSPLUS bool
-          string ::= * bool PLUS string
-          string ::= * bool PLUSPLUS string
-          bool ::= * LPAREN bool RPAREN
-          bool ::= * bool PLUS bool
-          bool ::= * bool TIMES bool
-          bool ::= * bool EQUALTO bool
-          bool ::= * bool NOTEQUALTO bool
-          bool ::= * bool AND bool
-          bool ::= * bool OR bool
-          bool ::= * NOT bool
-          string ::= * LPAREN string RPAREN
-          string ::= * string MINUS string
-          string ::= * string PLUS string
-          string ::= * string PLUSPLUS string
-          num ::= * string TIMES string
-          bool ::= * string EQUALTO string
-          num ::= * string DIVIDE string
-          bool ::= * string LESSTHAN string
-          bool ::= * string GREATERTHAN string
-          bool ::= * string NOTEQUALTO string
-          bool ::= * string GORE string
-          bool ::= * string LORE string
-          num ::= * LPAREN num RPAREN
-          num ::= * num MINUS num
-          num ::= * num PLUS num
-          num ::= num PLUS * num
-          num ::= * num TIMES num
-          num ::= * num DIVIDE num
-          bool ::= * num LESSTHAN num
-          bool ::= * num GREATERTHAN num
-          bool ::= * num EQUALTO num
-          bool ::= * num NOTEQUALTO num
-          bool ::= * num GORE num
-          bool ::= * num LORE num
-          bool ::= * num AND num
-          bool ::= * num OR num
-          bool ::= * NOT num
-          num ::= * num SHIFTL num
-          num ::= * num SHIFTR num
-          num ::= * num BITAND num
-          num ::= * num BITOR num
-          num ::= * BITNOT num
-          num ::= * MINUS num
-          num ::= * num MODULO num
-          num ::= * num POW num
-
-                         MINUS shift  2
-                           NOT shift  9
-                        BITNOT shift  3
-                        LPAREN shift  27
-                           NUM shift  107
-                        STRING shift  106
-                       BOOLEAN shift  105
-                           num shift  67
-                        string shift  80
-                          bool shift  65
-
-State 43:
+State 48:
           string ::= num * PLUS string
           string ::= num * PLUSPLUS string
           num ::= LPAREN num * RPAREN
@@ -2880,238 +3302,26 @@ State 43:
           num ::= num * MODULO num
           num ::= num * POW num
 
-                            OR shift  16
-                           AND shift  17
-                         BITOR shift  12
-                        BITAND shift  13
-                       EQUALTO shift  21
-                    NOTEQUALTO shift  20
-                   GREATERTHAN shift  22
-                          GORE shift  19
-                      LESSTHAN shift  23
-                          LORE shift  18
-                        SHIFTL shift  15
-                        SHIFTR shift  14
-                          PLUS shift  42
-                         MINUS shift  26
-                        DIVIDE shift  24
-                         TIMES shift  25
-                        MODULO shift  11
-                           POW shift  10
-                      PLUSPLUS shift  30
-                        RPAREN shift  103
-
-State 44:
-          string ::= num * PLUS string
-          string ::= num * PLUSPLUS string
-          num ::= num * MINUS num
-          num ::= num * PLUS num
-          num ::= num * TIMES num
-          num ::= num * DIVIDE num
-          bool ::= num * LESSTHAN num
-          bool ::= num * GREATERTHAN num
-          bool ::= num * EQUALTO num
-          bool ::= num * NOTEQUALTO num
-          bool ::= num * GORE num
-          bool ::= num * LORE num
-          bool ::= num * AND num
-          bool ::= num * OR num
-          num ::= num * SHIFTL num
-          num ::= num * SHIFTR num
-          num ::= num * BITAND num
-          num ::= num * BITOR num
-          num ::= num * MODULO num
-          num ::= num * POW num
-
-                            OR shift  16
-                           AND shift  17
-                         BITOR shift  12
-                        BITAND shift  13
-                       EQUALTO shift  21
-                    NOTEQUALTO shift  20
-                   GREATERTHAN shift  22
-                          GORE shift  19
-                      LESSTHAN shift  23
-                          LORE shift  18
-                        SHIFTL shift  15
-                        SHIFTR shift  14
-                          PLUS shift  42
-                         MINUS shift  26
-                        DIVIDE shift  24
-                         TIMES shift  25
-                        MODULO shift  11
-                           POW shift  10
-                      PLUSPLUS shift  30
-
-State 45:
-     (11) value ::= num *
-          string ::= num * PLUS string
-          string ::= num * PLUSPLUS string
-          num ::= num * MINUS num
-          num ::= num * PLUS num
-          num ::= num * TIMES num
-          num ::= num * DIVIDE num
-          bool ::= num * LESSTHAN num
-          bool ::= num * GREATERTHAN num
-          bool ::= num * EQUALTO num
-          bool ::= num * NOTEQUALTO num
-          bool ::= num * GORE num
-          bool ::= num * LORE num
-          bool ::= num * AND num
-          bool ::= num * OR num
-          num ::= num * SHIFTL num
-          num ::= num * SHIFTR num
-          num ::= num * BITAND num
-          num ::= num * BITOR num
-          num ::= num * MODULO num
-          num ::= num * POW num
-
-                            OR shift  16
-                           AND shift  17
-                         BITOR shift  12
-                        BITAND shift  13
-                       EQUALTO shift  21
-                    NOTEQUALTO shift  20
-                   GREATERTHAN shift  22
-                          GORE shift  19
-                      LESSTHAN shift  23
-                          LORE shift  18
-                        SHIFTL shift  15
-                        SHIFTR shift  14
-                          PLUS shift  42
-                         MINUS shift  26
-                        DIVIDE shift  24
-                         TIMES shift  25
-                        MODULO shift  11
-                           POW shift  10
-                      PLUSPLUS shift  30
-                     {default} reduce 11
-
-State 46:
-          string ::= num * PLUS string
-          string ::= num * PLUSPLUS string
-          num ::= num * MINUS num
-          num ::= num * PLUS num
-          num ::= num * TIMES num
-          num ::= num * DIVIDE num
-          bool ::= num * LESSTHAN num
-          bool ::= num * GREATERTHAN num
-          bool ::= num * EQUALTO num
-          bool ::= num * NOTEQUALTO num
-          bool ::= num * GORE num
-          bool ::= num * LORE num
-          bool ::= num * AND num
-          bool ::= num * OR num
-     (57) bool ::= num OR num *
-          num ::= num * SHIFTL num
-          num ::= num * SHIFTR num
-          num ::= num * BITAND num
-          num ::= num * BITOR num
-          num ::= num * MODULO num
-          num ::= num * POW num
-
-                           AND shift  17
-                         BITOR shift  12
-                        BITAND shift  13
-                       EQUALTO shift  21
-                    NOTEQUALTO shift  20
-                   GREATERTHAN shift  22
-                          GORE shift  19
-                      LESSTHAN shift  23
-                          LORE shift  18
-                        SHIFTL shift  15
-                        SHIFTR shift  14
-                          PLUS shift  42
-                         MINUS shift  26
-                        DIVIDE shift  24
-                         TIMES shift  25
-                        MODULO shift  11
-                           POW shift  10
-                      PLUSPLUS shift  30
-                     {default} reduce 57
-
-State 47:
-          string ::= num * PLUS string
-          string ::= num * PLUSPLUS string
-          num ::= num * MINUS num
-          num ::= num * PLUS num
-          num ::= num * TIMES num
-          num ::= num * DIVIDE num
-          bool ::= num * LESSTHAN num
-          bool ::= num * GREATERTHAN num
-          bool ::= num * EQUALTO num
-          bool ::= num * NOTEQUALTO num
-          bool ::= num * GORE num
-          bool ::= num * LORE num
-          bool ::= num * AND num
-     (56) bool ::= num AND num *
-          bool ::= num * OR num
-          num ::= num * SHIFTL num
-          num ::= num * SHIFTR num
-          num ::= num * BITAND num
-          num ::= num * BITOR num
-          num ::= num * MODULO num
-          num ::= num * POW num
-
-                         BITOR shift  12
-                        BITAND shift  13
-                       EQUALTO shift  21
-                    NOTEQUALTO shift  20
-                   GREATERTHAN shift  22
-                          GORE shift  19
-                      LESSTHAN shift  23
-                          LORE shift  18
-                        SHIFTL shift  15
-                        SHIFTR shift  14
-                          PLUS shift  42
-                         MINUS shift  26
-                        DIVIDE shift  24
-                         TIMES shift  25
-                        MODULO shift  11
-                           POW shift  10
-                      PLUSPLUS shift  30
-                     {default} reduce 56
-
-State 48:
-          string ::= num * PLUS string
-          string ::= num * PLUSPLUS string
-          num ::= num * MINUS num
-          num ::= num * PLUS num
-          num ::= num * TIMES num
-          num ::= num * DIVIDE num
-          bool ::= num * LESSTHAN num
-          bool ::= num * GREATERTHAN num
-          bool ::= num * EQUALTO num
-          bool ::= num * NOTEQUALTO num
-          bool ::= num * GORE num
-          bool ::= num * LORE num
-          bool ::= num * AND num
-          bool ::= num * OR num
-          num ::= num * SHIFTL num
-          num ::= num * SHIFTR num
-          num ::= num * BITAND num
-          num ::= num * BITOR num
-     (62) num ::= num BITOR num *
-          num ::= num * MODULO num
-          num ::= num * POW num
-
-                        BITAND shift  13
-                       EQUALTO shift  21
-                    NOTEQUALTO shift  20
-                   GREATERTHAN shift  22
-                          GORE shift  19
-                      LESSTHAN shift  23
-                          LORE shift  18
-                        SHIFTL shift  15
-                        SHIFTR shift  14
-                          PLUS shift  42
-                         MINUS shift  26
-                        DIVIDE shift  24
-                         TIMES shift  25
-                        MODULO shift  11
-                           POW shift  10
-                      PLUSPLUS shift  30
-                     {default} reduce 62
+                            OR shift  21
+                           AND shift  22
+                         BITOR shift  17
+                        BITAND shift  18
+                       EQUALTO shift  26
+                    NOTEQUALTO shift  25
+                   GREATERTHAN shift  27
+                          GORE shift  24
+                      LESSTHAN shift  28
+                          LORE shift  23
+                        SHIFTL shift  20
+                        SHIFTR shift  19
+                          PLUS shift  36
+                         MINUS shift  31
+                        DIVIDE shift  29
+                         TIMES shift  30
+                        MODULO shift  16
+                           POW shift  15
+                      PLUSPLUS shift  35
+                        RPAREN shift  117
 
 State 49:
           string ::= num * PLUS string
@@ -3131,27 +3341,30 @@ State 49:
           num ::= num * SHIFTL num
           num ::= num * SHIFTR num
           num ::= num * BITAND num
-     (61) num ::= num BITAND num *
           num ::= num * BITOR num
           num ::= num * MODULO num
           num ::= num * POW num
+          array ::= num * PLUS array
 
-                       EQUALTO shift  21
-                    NOTEQUALTO shift  20
-                   GREATERTHAN shift  22
-                          GORE shift  19
-                      LESSTHAN shift  23
-                          LORE shift  18
-                        SHIFTL shift  15
-                        SHIFTR shift  14
-                          PLUS shift  42
-                         MINUS shift  26
-                        DIVIDE shift  24
-                         TIMES shift  25
-                        MODULO shift  11
-                           POW shift  10
-                      PLUSPLUS shift  30
-                     {default} reduce 61
+                            OR shift  21
+                           AND shift  22
+                         BITOR shift  17
+                        BITAND shift  18
+                       EQUALTO shift  26
+                    NOTEQUALTO shift  25
+                   GREATERTHAN shift  27
+                          GORE shift  24
+                      LESSTHAN shift  28
+                          LORE shift  23
+                        SHIFTL shift  20
+                        SHIFTR shift  19
+                          PLUS shift  5
+                         MINUS shift  31
+                        DIVIDE shift  29
+                         TIMES shift  30
+                        MODULO shift  16
+                           POW shift  15
+                      PLUSPLUS shift  35
 
 State 50:
           string ::= num * PLUS string
@@ -3164,7 +3377,6 @@ State 50:
           bool ::= num * GREATERTHAN num
           bool ::= num * EQUALTO num
           bool ::= num * NOTEQUALTO num
-     (53) bool ::= num NOTEQUALTO num *
           bool ::= num * GORE num
           bool ::= num * LORE num
           bool ::= num * AND num
@@ -3176,22 +3388,28 @@ State 50:
           num ::= num * MODULO num
           num ::= num * POW num
 
-                   GREATERTHAN shift  22
-                          GORE shift  19
-                      LESSTHAN shift  23
-                          LORE shift  18
-                        SHIFTL shift  15
-                        SHIFTR shift  14
-                          PLUS shift  42
-                         MINUS shift  26
-                        DIVIDE shift  24
-                         TIMES shift  25
-                        MODULO shift  11
-                           POW shift  10
-                      PLUSPLUS shift  30
-                     {default} reduce 53
+                            OR shift  21
+                           AND shift  22
+                         BITOR shift  17
+                        BITAND shift  18
+                       EQUALTO shift  26
+                    NOTEQUALTO shift  25
+                   GREATERTHAN shift  27
+                          GORE shift  24
+                      LESSTHAN shift  28
+                          LORE shift  23
+                        SHIFTL shift  20
+                        SHIFTR shift  19
+                          PLUS shift  36
+                         MINUS shift  31
+                        DIVIDE shift  29
+                         TIMES shift  30
+                        MODULO shift  16
+                           POW shift  15
+                      PLUSPLUS shift  35
 
 State 51:
+     (18) value ::= num *
           string ::= num * PLUS string
           string ::= num * PLUSPLUS string
           num ::= num * MINUS num
@@ -3201,7 +3419,299 @@ State 51:
           bool ::= num * LESSTHAN num
           bool ::= num * GREATERTHAN num
           bool ::= num * EQUALTO num
-     (52) bool ::= num EQUALTO num *
+          bool ::= num * NOTEQUALTO num
+          bool ::= num * GORE num
+          bool ::= num * LORE num
+          bool ::= num * AND num
+          bool ::= num * OR num
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+          num ::= num * MODULO num
+          num ::= num * POW num
+          array ::= num * PLUS array
+
+                            OR shift  21
+                           AND shift  22
+                         BITOR shift  17
+                        BITAND shift  18
+                       EQUALTO shift  26
+                    NOTEQUALTO shift  25
+                   GREATERTHAN shift  27
+                          GORE shift  24
+                      LESSTHAN shift  28
+                          LORE shift  23
+                        SHIFTL shift  20
+                        SHIFTR shift  19
+                          PLUS shift  5
+                         MINUS shift  31
+                         MINUS reduce 18  ** Parsing conflict **
+                        DIVIDE shift  29
+                         TIMES shift  30
+                        MODULO shift  16
+                           POW shift  15
+                      PLUSPLUS shift  35
+                     {default} reduce 18
+
+State 52:
+          string ::= num * PLUS string
+          string ::= num * PLUSPLUS string
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+          bool ::= num * LESSTHAN num
+          bool ::= num * GREATERTHAN num
+          bool ::= num * EQUALTO num
+          bool ::= num * NOTEQUALTO num
+          bool ::= num * GORE num
+          bool ::= num * LORE num
+          bool ::= num * AND num
+          bool ::= num * OR num
+     (64) bool ::= num OR num *
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+          num ::= num * MODULO num
+          num ::= num * POW num
+
+                           AND shift  22
+                         BITOR shift  17
+                        BITAND shift  18
+                       EQUALTO shift  26
+                    NOTEQUALTO shift  25
+                   GREATERTHAN shift  27
+                          GORE shift  24
+                      LESSTHAN shift  28
+                          LORE shift  23
+                        SHIFTL shift  20
+                        SHIFTR shift  19
+                          PLUS shift  36
+                         MINUS shift  31
+                        DIVIDE shift  29
+                         TIMES shift  30
+                        MODULO shift  16
+                           POW shift  15
+                      PLUSPLUS shift  35
+                     {default} reduce 64
+
+State 53:
+          string ::= num * PLUS string
+          string ::= num * PLUSPLUS string
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+          bool ::= num * LESSTHAN num
+          bool ::= num * GREATERTHAN num
+          bool ::= num * EQUALTO num
+          bool ::= num * NOTEQUALTO num
+          bool ::= num * GORE num
+          bool ::= num * LORE num
+          bool ::= num * AND num
+          bool ::= num * OR num
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+          num ::= num * MODULO num
+          num ::= num * POW num
+          array ::= num * PLUS array
+     (77) array ::= array PLUS num *
+
+                            OR shift  21
+                           AND shift  22
+                         BITOR shift  17
+                        BITAND shift  18
+                       EQUALTO shift  26
+                    NOTEQUALTO shift  25
+                   GREATERTHAN shift  27
+                          GORE shift  24
+                      LESSTHAN shift  28
+                          LORE shift  23
+                        SHIFTL shift  20
+                        SHIFTR shift  19
+                        DIVIDE shift  29
+                         TIMES shift  30
+                        MODULO shift  16
+                           POW shift  15
+                      PLUSPLUS shift  35
+                     {default} reduce 77
+
+State 54:
+          string ::= num * PLUS string
+          string ::= num * PLUSPLUS string
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+          bool ::= num * LESSTHAN num
+          bool ::= num * GREATERTHAN num
+          bool ::= num * EQUALTO num
+          bool ::= num * NOTEQUALTO num
+          bool ::= num * GORE num
+          bool ::= num * LORE num
+          bool ::= num * AND num
+     (63) bool ::= num AND num *
+          bool ::= num * OR num
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+          num ::= num * MODULO num
+          num ::= num * POW num
+
+                         BITOR shift  17
+                        BITAND shift  18
+                       EQUALTO shift  26
+                    NOTEQUALTO shift  25
+                   GREATERTHAN shift  27
+                          GORE shift  24
+                      LESSTHAN shift  28
+                          LORE shift  23
+                        SHIFTL shift  20
+                        SHIFTR shift  19
+                          PLUS shift  36
+                         MINUS shift  31
+                        DIVIDE shift  29
+                         TIMES shift  30
+                        MODULO shift  16
+                           POW shift  15
+                      PLUSPLUS shift  35
+                     {default} reduce 63
+
+State 55:
+          string ::= num * PLUS string
+          string ::= num * PLUSPLUS string
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+          bool ::= num * LESSTHAN num
+          bool ::= num * GREATERTHAN num
+          bool ::= num * EQUALTO num
+          bool ::= num * NOTEQUALTO num
+          bool ::= num * GORE num
+          bool ::= num * LORE num
+          bool ::= num * AND num
+          bool ::= num * OR num
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+     (69) num ::= num BITOR num *
+          num ::= num * MODULO num
+          num ::= num * POW num
+
+                        BITAND shift  18
+                       EQUALTO shift  26
+                    NOTEQUALTO shift  25
+                   GREATERTHAN shift  27
+                          GORE shift  24
+                      LESSTHAN shift  28
+                          LORE shift  23
+                        SHIFTL shift  20
+                        SHIFTR shift  19
+                          PLUS shift  36
+                         MINUS shift  31
+                        DIVIDE shift  29
+                         TIMES shift  30
+                        MODULO shift  16
+                           POW shift  15
+                      PLUSPLUS shift  35
+                     {default} reduce 69
+
+State 56:
+          string ::= num * PLUS string
+          string ::= num * PLUSPLUS string
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+          bool ::= num * LESSTHAN num
+          bool ::= num * GREATERTHAN num
+          bool ::= num * EQUALTO num
+          bool ::= num * NOTEQUALTO num
+          bool ::= num * GORE num
+          bool ::= num * LORE num
+          bool ::= num * AND num
+          bool ::= num * OR num
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+          num ::= num * BITAND num
+     (68) num ::= num BITAND num *
+          num ::= num * BITOR num
+          num ::= num * MODULO num
+          num ::= num * POW num
+
+                       EQUALTO shift  26
+                    NOTEQUALTO shift  25
+                   GREATERTHAN shift  27
+                          GORE shift  24
+                      LESSTHAN shift  28
+                          LORE shift  23
+                        SHIFTL shift  20
+                        SHIFTR shift  19
+                          PLUS shift  36
+                         MINUS shift  31
+                        DIVIDE shift  29
+                         TIMES shift  30
+                        MODULO shift  16
+                           POW shift  15
+                      PLUSPLUS shift  35
+                     {default} reduce 68
+
+State 57:
+          string ::= num * PLUS string
+          string ::= num * PLUSPLUS string
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+          bool ::= num * LESSTHAN num
+          bool ::= num * GREATERTHAN num
+          bool ::= num * EQUALTO num
+          bool ::= num * NOTEQUALTO num
+     (60) bool ::= num NOTEQUALTO num *
+          bool ::= num * GORE num
+          bool ::= num * LORE num
+          bool ::= num * AND num
+          bool ::= num * OR num
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+          num ::= num * MODULO num
+          num ::= num * POW num
+
+                   GREATERTHAN shift  27
+                          GORE shift  24
+                      LESSTHAN shift  28
+                          LORE shift  23
+                        SHIFTL shift  20
+                        SHIFTR shift  19
+                          PLUS shift  36
+                         MINUS shift  31
+                        DIVIDE shift  29
+                         TIMES shift  30
+                        MODULO shift  16
+                           POW shift  15
+                      PLUSPLUS shift  35
+                     {default} reduce 60
+
+State 58:
+          string ::= num * PLUS string
+          string ::= num * PLUSPLUS string
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+          bool ::= num * LESSTHAN num
+          bool ::= num * GREATERTHAN num
+          bool ::= num * EQUALTO num
+     (59) bool ::= num EQUALTO num *
           bool ::= num * NOTEQUALTO num
           bool ::= num * GORE num
           bool ::= num * LORE num
@@ -3214,22 +3724,22 @@ State 51:
           num ::= num * MODULO num
           num ::= num * POW num
 
-                   GREATERTHAN shift  22
-                          GORE shift  19
-                      LESSTHAN shift  23
-                          LORE shift  18
-                        SHIFTL shift  15
-                        SHIFTR shift  14
-                          PLUS shift  42
-                         MINUS shift  26
-                        DIVIDE shift  24
-                         TIMES shift  25
-                        MODULO shift  11
-                           POW shift  10
-                      PLUSPLUS shift  30
-                     {default} reduce 52
+                   GREATERTHAN shift  27
+                          GORE shift  24
+                      LESSTHAN shift  28
+                          LORE shift  23
+                        SHIFTL shift  20
+                        SHIFTR shift  19
+                          PLUS shift  36
+                         MINUS shift  31
+                        DIVIDE shift  29
+                         TIMES shift  30
+                        MODULO shift  16
+                           POW shift  15
+                      PLUSPLUS shift  35
+                     {default} reduce 59
 
-State 52:
+State 59:
           string ::= string * PLUS num
           string ::= string * PLUSPLUS num
           string ::= string * PLUS bool
@@ -3247,245 +3757,21 @@ State 52:
           bool ::= string * GORE string
           bool ::= string * LORE string
 
-                       EQUALTO shift  37
-                    NOTEQUALTO shift  33
-                   GREATERTHAN shift  34
-                          GORE shift  32
-                      LESSTHAN shift  35
-                          LORE shift  31
-                          PLUS shift  41
-                         MINUS shift  39
-                        DIVIDE shift  36
-                         TIMES shift  38
-                      PLUSPLUS shift  40
-                        RPAREN shift  104
-
-State 53:
-     (12) value ::= string *
-          string ::= string * PLUS num
-          string ::= string * PLUSPLUS num
-          string ::= string * PLUS bool
-          string ::= string * PLUSPLUS bool
-          string ::= string * MINUS string
-          string ::= string * PLUS string
-          string ::= string * PLUSPLUS string
-          num ::= string * TIMES string
-          bool ::= string * EQUALTO string
-          num ::= string * DIVIDE string
-          bool ::= string * LESSTHAN string
-          bool ::= string * GREATERTHAN string
-          bool ::= string * NOTEQUALTO string
-          bool ::= string * GORE string
-          bool ::= string * LORE string
-
-                       EQUALTO shift  37
-                    NOTEQUALTO shift  33
-                   GREATERTHAN shift  34
-                          GORE shift  32
-                      LESSTHAN shift  35
-                          LORE shift  31
-                          PLUS shift  41
-                         MINUS shift  39
-                        DIVIDE shift  36
-                         TIMES shift  38
-                      PLUSPLUS shift  40
-                     {default} reduce 12
-
-State 54:
-          string ::= string * PLUS num
-          string ::= string * PLUSPLUS num
-          string ::= string * PLUS bool
-          string ::= string * PLUSPLUS bool
-          string ::= string * MINUS string
-          string ::= string * PLUS string
-          string ::= string * PLUSPLUS string
-          num ::= string * TIMES string
-          bool ::= string * EQUALTO string
-          num ::= string * DIVIDE string
-          bool ::= string * LESSTHAN string
-          bool ::= string * GREATERTHAN string
-          bool ::= string * NOTEQUALTO string
-          bool ::= string * GORE string
-          bool ::= string * LORE string
-
-                       EQUALTO shift  37
-                    NOTEQUALTO shift  33
-                   GREATERTHAN shift  34
-                          GORE shift  32
-                      LESSTHAN shift  35
-                          LORE shift  31
-                          PLUS shift  41
-                         MINUS shift  39
-                        DIVIDE shift  36
-                         TIMES shift  38
-                      PLUSPLUS shift  40
-
-State 55:
-          string ::= num * PLUS string
-          string ::= num * PLUSPLUS string
-          num ::= num * MINUS num
-          num ::= num * PLUS num
-          num ::= num * TIMES num
-          num ::= num * DIVIDE num
-          bool ::= num * LESSTHAN num
-          bool ::= num * GREATERTHAN num
-          bool ::= num * EQUALTO num
-          bool ::= num * NOTEQUALTO num
-          bool ::= num * GORE num
-          bool ::= num * LORE num
-     (55) bool ::= num LORE num *
-          bool ::= num * AND num
-          bool ::= num * OR num
-          num ::= num * SHIFTL num
-          num ::= num * SHIFTR num
-          num ::= num * BITAND num
-          num ::= num * BITOR num
-          num ::= num * MODULO num
-          num ::= num * POW num
-
-                        SHIFTL shift  15
-                        SHIFTR shift  14
-                          PLUS shift  42
-                         MINUS shift  26
-                        DIVIDE shift  24
-                         TIMES shift  25
-                        MODULO shift  11
-                           POW shift  10
-                      PLUSPLUS shift  30
-                     {default} reduce 55
-
-State 56:
-          string ::= num * PLUS string
-          string ::= num * PLUSPLUS string
-          num ::= num * MINUS num
-          num ::= num * PLUS num
-          num ::= num * TIMES num
-          num ::= num * DIVIDE num
-          bool ::= num * LESSTHAN num
-          bool ::= num * GREATERTHAN num
-          bool ::= num * EQUALTO num
-          bool ::= num * NOTEQUALTO num
-          bool ::= num * GORE num
-     (54) bool ::= num GORE num *
-          bool ::= num * LORE num
-          bool ::= num * AND num
-          bool ::= num * OR num
-          num ::= num * SHIFTL num
-          num ::= num * SHIFTR num
-          num ::= num * BITAND num
-          num ::= num * BITOR num
-          num ::= num * MODULO num
-          num ::= num * POW num
-
-                        SHIFTL shift  15
-                        SHIFTR shift  14
-                          PLUS shift  42
-                         MINUS shift  26
-                        DIVIDE shift  24
-                         TIMES shift  25
-                        MODULO shift  11
-                           POW shift  10
-                      PLUSPLUS shift  30
-                     {default} reduce 54
-
-State 57:
-          string ::= num * PLUS string
-          string ::= num * PLUSPLUS string
-          num ::= num * MINUS num
-          num ::= num * PLUS num
-          num ::= num * TIMES num
-          num ::= num * DIVIDE num
-          bool ::= num * LESSTHAN num
-          bool ::= num * GREATERTHAN num
-     (51) bool ::= num GREATERTHAN num *
-          bool ::= num * EQUALTO num
-          bool ::= num * NOTEQUALTO num
-          bool ::= num * GORE num
-          bool ::= num * LORE num
-          bool ::= num * AND num
-          bool ::= num * OR num
-          num ::= num * SHIFTL num
-          num ::= num * SHIFTR num
-          num ::= num * BITAND num
-          num ::= num * BITOR num
-          num ::= num * MODULO num
-          num ::= num * POW num
-
-                        SHIFTL shift  15
-                        SHIFTR shift  14
-                          PLUS shift  42
-                         MINUS shift  26
-                        DIVIDE shift  24
-                         TIMES shift  25
-                        MODULO shift  11
-                           POW shift  10
-                      PLUSPLUS shift  30
-                     {default} reduce 51
-
-State 58:
-          string ::= num * PLUS string
-          string ::= num * PLUSPLUS string
-          num ::= num * MINUS num
-          num ::= num * PLUS num
-          num ::= num * TIMES num
-          num ::= num * DIVIDE num
-          bool ::= num * LESSTHAN num
-     (50) bool ::= num LESSTHAN num *
-          bool ::= num * GREATERTHAN num
-          bool ::= num * EQUALTO num
-          bool ::= num * NOTEQUALTO num
-          bool ::= num * GORE num
-          bool ::= num * LORE num
-          bool ::= num * AND num
-          bool ::= num * OR num
-          num ::= num * SHIFTL num
-          num ::= num * SHIFTR num
-          num ::= num * BITAND num
-          num ::= num * BITOR num
-          num ::= num * MODULO num
-          num ::= num * POW num
-
-                        SHIFTL shift  15
-                        SHIFTR shift  14
-                          PLUS shift  42
-                         MINUS shift  26
-                        DIVIDE shift  24
-                         TIMES shift  25
-                        MODULO shift  11
-                           POW shift  10
-                      PLUSPLUS shift  30
-                     {default} reduce 50
-
-State 59:
-          string ::= string * PLUS num
-          string ::= string * PLUSPLUS num
-          string ::= string * PLUS bool
-          string ::= string * PLUSPLUS bool
-          string ::= string * MINUS string
-          string ::= string * PLUS string
-          string ::= string * PLUSPLUS string
-          num ::= string * TIMES string
-          bool ::= string * EQUALTO string
-          num ::= string * DIVIDE string
-          bool ::= string * LESSTHAN string
-          bool ::= string * GREATERTHAN string
-          bool ::= string * NOTEQUALTO string
-     (42) bool ::= string NOTEQUALTO string *
-          bool ::= string * GORE string
-          bool ::= string * LORE string
-
-                   GREATERTHAN shift  34
-                          GORE shift  32
-                      LESSTHAN shift  35
-                          LORE shift  31
-                          PLUS shift  41
-                         MINUS shift  39
-                        DIVIDE shift  36
-                         TIMES shift  38
-                      PLUSPLUS shift  40
-                     {default} reduce 42
+                       EQUALTO shift  43
+                    NOTEQUALTO shift  39
+                   GREATERTHAN shift  40
+                          GORE shift  38
+                      LESSTHAN shift  41
+                          LORE shift  37
+                          PLUS shift  47
+                         MINUS shift  45
+                        DIVIDE shift  42
+                         TIMES shift  44
+                      PLUSPLUS shift  46
+                        RPAREN shift  118
 
 State 60:
+     (19) value ::= string *
           string ::= string * PLUS num
           string ::= string * PLUSPLUS num
           string ::= string * PLUS bool
@@ -3495,7 +3781,6 @@ State 60:
           string ::= string * PLUSPLUS string
           num ::= string * TIMES string
           bool ::= string * EQUALTO string
-     (38) bool ::= string EQUALTO string *
           num ::= string * DIVIDE string
           bool ::= string * LESSTHAN string
           bool ::= string * GREATERTHAN string
@@ -3503,56 +3788,82 @@ State 60:
           bool ::= string * GORE string
           bool ::= string * LORE string
 
-                   GREATERTHAN shift  34
-                          GORE shift  32
-                      LESSTHAN shift  35
-                          LORE shift  31
-                          PLUS shift  41
-                         MINUS shift  39
-                        DIVIDE shift  36
-                         TIMES shift  38
-                      PLUSPLUS shift  40
-                     {default} reduce 38
+                       EQUALTO shift  43
+                    NOTEQUALTO shift  39
+                   GREATERTHAN shift  40
+                          GORE shift  38
+                      LESSTHAN shift  41
+                          LORE shift  37
+                          PLUS shift  47
+                         MINUS shift  45
+                         MINUS reduce 19  ** Parsing conflict **
+                        DIVIDE shift  42
+                         TIMES shift  44
+                      PLUSPLUS shift  46
+                     {default} reduce 19
 
 State 61:
-          string ::= bool * PLUS string
-          string ::= bool * PLUSPLUS string
-          bool ::= LPAREN bool * RPAREN
-          bool ::= bool * PLUS bool
-          bool ::= bool * TIMES bool
-          bool ::= bool * EQUALTO bool
-          bool ::= bool * NOTEQUALTO bool
-          bool ::= bool * AND bool
-          bool ::= bool * OR bool
+          string ::= string * PLUS num
+          string ::= string * PLUSPLUS num
+          string ::= string * PLUS bool
+          string ::= string * PLUSPLUS bool
+          string ::= string * MINUS string
+          string ::= string * PLUS string
+          string ::= string * PLUSPLUS string
+          num ::= string * TIMES string
+          bool ::= string * EQUALTO string
+          num ::= string * DIVIDE string
+          bool ::= string * LESSTHAN string
+          bool ::= string * GREATERTHAN string
+          bool ::= string * NOTEQUALTO string
+          bool ::= string * GORE string
+          bool ::= string * LORE string
 
-                            OR shift  4
-                           AND shift  5
-                       EQUALTO shift  7
-                    NOTEQUALTO shift  6
-                          PLUS shift  29
-                         TIMES shift  8
-                      PLUSPLUS shift  28
-                        RPAREN shift  102
+                       EQUALTO shift  43
+                    NOTEQUALTO shift  39
+                   GREATERTHAN shift  40
+                          GORE shift  38
+                      LESSTHAN shift  41
+                          LORE shift  37
+                          PLUS shift  47
+                         MINUS shift  45
+                        DIVIDE shift  42
+                         TIMES shift  44
+                      PLUSPLUS shift  46
 
 State 62:
-     (13) value ::= bool *
-          string ::= bool * PLUS string
-          string ::= bool * PLUSPLUS string
-          bool ::= bool * PLUS bool
-          bool ::= bool * TIMES bool
-          bool ::= bool * EQUALTO bool
-          bool ::= bool * NOTEQUALTO bool
-          bool ::= bool * AND bool
-          bool ::= bool * OR bool
+          string ::= num * PLUS string
+          string ::= num * PLUSPLUS string
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+          bool ::= num * LESSTHAN num
+          bool ::= num * GREATERTHAN num
+          bool ::= num * EQUALTO num
+          bool ::= num * NOTEQUALTO num
+          bool ::= num * GORE num
+          bool ::= num * LORE num
+     (62) bool ::= num LORE num *
+          bool ::= num * AND num
+          bool ::= num * OR num
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+          num ::= num * MODULO num
+          num ::= num * POW num
 
-                            OR shift  4
-                           AND shift  5
-                       EQUALTO shift  7
-                    NOTEQUALTO shift  6
-                          PLUS shift  29
-                         TIMES shift  8
-                      PLUSPLUS shift  28
-                     {default} reduce 13
+                        SHIFTL shift  20
+                        SHIFTR shift  19
+                          PLUS shift  36
+                         MINUS shift  31
+                        DIVIDE shift  29
+                         TIMES shift  30
+                        MODULO shift  16
+                           POW shift  15
+                      PLUSPLUS shift  35
+                     {default} reduce 62
 
 State 63:
           string ::= num * PLUS string
@@ -3566,25 +3877,27 @@ State 63:
           bool ::= num * EQUALTO num
           bool ::= num * NOTEQUALTO num
           bool ::= num * GORE num
+     (61) bool ::= num GORE num *
           bool ::= num * LORE num
           bool ::= num * AND num
           bool ::= num * OR num
           num ::= num * SHIFTL num
           num ::= num * SHIFTR num
-     (60) num ::= num SHIFTR num *
           num ::= num * BITAND num
           num ::= num * BITOR num
           num ::= num * MODULO num
           num ::= num * POW num
 
-                          PLUS shift  42
-                         MINUS shift  26
-                        DIVIDE shift  24
-                         TIMES shift  25
-                        MODULO shift  11
-                           POW shift  10
-                      PLUSPLUS shift  30
-                     {default} reduce 60
+                        SHIFTL shift  20
+                        SHIFTR shift  19
+                          PLUS shift  36
+                         MINUS shift  31
+                        DIVIDE shift  29
+                         TIMES shift  30
+                        MODULO shift  16
+                           POW shift  15
+                      PLUSPLUS shift  35
+                     {default} reduce 61
 
 State 64:
           string ::= num * PLUS string
@@ -3595,6 +3908,7 @@ State 64:
           num ::= num * DIVIDE num
           bool ::= num * LESSTHAN num
           bool ::= num * GREATERTHAN num
+     (58) bool ::= num GREATERTHAN num *
           bool ::= num * EQUALTO num
           bool ::= num * NOTEQUALTO num
           bool ::= num * GORE num
@@ -3602,120 +3916,137 @@ State 64:
           bool ::= num * AND num
           bool ::= num * OR num
           num ::= num * SHIFTL num
-     (59) num ::= num SHIFTL num *
           num ::= num * SHIFTR num
           num ::= num * BITAND num
           num ::= num * BITOR num
           num ::= num * MODULO num
           num ::= num * POW num
 
-                          PLUS shift  42
-                         MINUS shift  26
-                        DIVIDE shift  24
-                         TIMES shift  25
-                        MODULO shift  11
-                           POW shift  10
-                      PLUSPLUS shift  30
-                     {default} reduce 59
+                        SHIFTL shift  20
+                        SHIFTR shift  19
+                          PLUS shift  36
+                         MINUS shift  31
+                        DIVIDE shift  29
+                         TIMES shift  30
+                        MODULO shift  16
+                           POW shift  15
+                      PLUSPLUS shift  35
+                     {default} reduce 58
 
 State 65:
-          string ::= bool * PLUS string
-          string ::= bool * PLUSPLUS string
-          bool ::= bool * PLUS bool
-          bool ::= bool * TIMES bool
-          bool ::= bool * EQUALTO bool
-          bool ::= bool * NOTEQUALTO bool
-          bool ::= bool * AND bool
-          bool ::= bool * OR bool
+          string ::= num * PLUS string
+          string ::= num * PLUSPLUS string
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+          bool ::= num * LESSTHAN num
+     (57) bool ::= num LESSTHAN num *
+          bool ::= num * GREATERTHAN num
+          bool ::= num * EQUALTO num
+          bool ::= num * NOTEQUALTO num
+          bool ::= num * GORE num
+          bool ::= num * LORE num
+          bool ::= num * AND num
+          bool ::= num * OR num
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+          num ::= num * MODULO num
+          num ::= num * POW num
 
-                            OR shift  4
-                           AND shift  5
-                       EQUALTO shift  7
-                    NOTEQUALTO shift  6
-                          PLUS shift  29
-                         TIMES shift  8
-                      PLUSPLUS shift  28
+                        SHIFTL shift  20
+                        SHIFTR shift  19
+                          PLUS shift  36
+                         MINUS shift  31
+                        DIVIDE shift  29
+                         TIMES shift  30
+                        MODULO shift  16
+                           POW shift  15
+                      PLUSPLUS shift  35
+                     {default} reduce 57
 
 State 66:
-          string ::= bool * PLUS string
-          string ::= bool * PLUSPLUS string
-          bool ::= bool * PLUS bool
-          bool ::= bool * TIMES bool
-          bool ::= bool * EQUALTO bool
-          bool ::= bool * NOTEQUALTO bool
-          bool ::= bool * AND bool
-          bool ::= bool * OR bool
-     (31) bool ::= bool OR bool *
+          string ::= string * PLUS num
+          string ::= string * PLUSPLUS num
+          string ::= string * PLUS bool
+          string ::= string * PLUSPLUS bool
+          string ::= string * MINUS string
+          string ::= string * PLUS string
+          string ::= string * PLUSPLUS string
+          num ::= string * TIMES string
+          bool ::= string * EQUALTO string
+          num ::= string * DIVIDE string
+          bool ::= string * LESSTHAN string
+          bool ::= string * GREATERTHAN string
+          bool ::= string * NOTEQUALTO string
+     (49) bool ::= string NOTEQUALTO string *
+          bool ::= string * GORE string
+          bool ::= string * LORE string
 
-                           AND shift  5
-                       EQUALTO shift  7
-                    NOTEQUALTO shift  6
-                          PLUS shift  29
-                         TIMES shift  8
-                      PLUSPLUS shift  28
-                     {default} reduce 31
+                   GREATERTHAN shift  40
+                          GORE shift  38
+                      LESSTHAN shift  41
+                          LORE shift  37
+                          PLUS shift  47
+                         MINUS shift  45
+                        DIVIDE shift  42
+                         TIMES shift  44
+                      PLUSPLUS shift  46
+                     {default} reduce 49
 
 State 67:
-          string ::= num * PLUS string
-          string ::= num * PLUSPLUS string
-          num ::= num * MINUS num
-          num ::= num * PLUS num
-     (47) num ::= num PLUS num *
-          num ::= num * TIMES num
-          num ::= num * DIVIDE num
-          bool ::= num * LESSTHAN num
-          bool ::= num * GREATERTHAN num
-          bool ::= num * EQUALTO num
-          bool ::= num * NOTEQUALTO num
-          bool ::= num * GORE num
-          bool ::= num * LORE num
-          bool ::= num * AND num
-          bool ::= num * OR num
-          num ::= num * SHIFTL num
-          num ::= num * SHIFTR num
-          num ::= num * BITAND num
-          num ::= num * BITOR num
-          num ::= num * MODULO num
-          num ::= num * POW num
+          string ::= string * PLUS num
+          string ::= string * PLUSPLUS num
+          string ::= string * PLUS bool
+          string ::= string * PLUSPLUS bool
+          string ::= string * MINUS string
+          string ::= string * PLUS string
+          string ::= string * PLUSPLUS string
+          num ::= string * TIMES string
+          bool ::= string * EQUALTO string
+     (45) bool ::= string EQUALTO string *
+          num ::= string * DIVIDE string
+          bool ::= string * LESSTHAN string
+          bool ::= string * GREATERTHAN string
+          bool ::= string * NOTEQUALTO string
+          bool ::= string * GORE string
+          bool ::= string * LORE string
 
-                        DIVIDE shift  24
-                         TIMES shift  25
-                        MODULO shift  11
-                           POW shift  10
-                      PLUSPLUS shift  30
-                     {default} reduce 47
+                   GREATERTHAN shift  40
+                          GORE shift  38
+                      LESSTHAN shift  41
+                          LORE shift  37
+                          PLUS shift  47
+                         MINUS shift  45
+                        DIVIDE shift  42
+                         TIMES shift  44
+                      PLUSPLUS shift  46
+                     {default} reduce 45
 
 State 68:
-     (17) string ::= string PLUS num *
-          string ::= num * PLUS string
-          string ::= num * PLUSPLUS string
-          num ::= num * MINUS num
-          num ::= num * PLUS num
-          num ::= num * TIMES num
-          num ::= num * DIVIDE num
-          bool ::= num * LESSTHAN num
-          bool ::= num * GREATERTHAN num
-          bool ::= num * EQUALTO num
-          bool ::= num * NOTEQUALTO num
-          bool ::= num * GORE num
-          bool ::= num * LORE num
-          bool ::= num * AND num
-          bool ::= num * OR num
-          num ::= num * SHIFTL num
-          num ::= num * SHIFTR num
-          num ::= num * BITAND num
-          num ::= num * BITOR num
-          num ::= num * MODULO num
-          num ::= num * POW num
+          string ::= bool * PLUS string
+          string ::= bool * PLUSPLUS string
+          bool ::= LPAREN bool * RPAREN
+          bool ::= bool * PLUS bool
+          bool ::= bool * TIMES bool
+          bool ::= bool * EQUALTO bool
+          bool ::= bool * NOTEQUALTO bool
+          bool ::= bool * AND bool
+          bool ::= bool * OR bool
 
-                        DIVIDE shift  24
-                         TIMES shift  25
-                        MODULO shift  11
-                           POW shift  10
-                      PLUSPLUS shift  30
-                     {default} reduce 17
+                            OR shift  9
+                           AND shift  10
+                       EQUALTO shift  12
+                    NOTEQUALTO shift  11
+                          PLUS shift  34
+                         TIMES shift  13
+                      PLUSPLUS shift  33
+                        RPAREN shift  116
 
 State 69:
+     (20) value ::= bool *
           string ::= bool * PLUS string
           string ::= bool * PLUSPLUS string
           bool ::= bool * PLUS bool
@@ -3723,21 +4054,154 @@ State 69:
           bool ::= bool * EQUALTO bool
           bool ::= bool * NOTEQUALTO bool
           bool ::= bool * AND bool
-     (30) bool ::= bool AND bool *
           bool ::= bool * OR bool
 
-                       EQUALTO shift  7
-                    NOTEQUALTO shift  6
-                          PLUS shift  29
-                         TIMES shift  8
-                      PLUSPLUS shift  28
-                     {default} reduce 30
+                            OR shift  9
+                           AND shift  10
+                       EQUALTO shift  12
+                    NOTEQUALTO shift  11
+                          PLUS shift  34
+                         TIMES shift  13
+                      PLUSPLUS shift  33
+                     {default} reduce 20
 
 State 70:
           string ::= num * PLUS string
           string ::= num * PLUSPLUS string
           num ::= num * MINUS num
-     (46) num ::= num MINUS num *
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+          bool ::= num * LESSTHAN num
+          bool ::= num * GREATERTHAN num
+          bool ::= num * EQUALTO num
+          bool ::= num * NOTEQUALTO num
+          bool ::= num * GORE num
+          bool ::= num * LORE num
+          bool ::= num * AND num
+          bool ::= num * OR num
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+     (67) num ::= num SHIFTR num *
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+          num ::= num * MODULO num
+          num ::= num * POW num
+
+                          PLUS shift  36
+                         MINUS shift  31
+                        DIVIDE shift  29
+                         TIMES shift  30
+                        MODULO shift  16
+                           POW shift  15
+                      PLUSPLUS shift  35
+                     {default} reduce 67
+
+State 71:
+          string ::= num * PLUS string
+          string ::= num * PLUSPLUS string
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+          bool ::= num * LESSTHAN num
+          bool ::= num * GREATERTHAN num
+          bool ::= num * EQUALTO num
+          bool ::= num * NOTEQUALTO num
+          bool ::= num * GORE num
+          bool ::= num * LORE num
+          bool ::= num * AND num
+          bool ::= num * OR num
+          num ::= num * SHIFTL num
+     (66) num ::= num SHIFTL num *
+          num ::= num * SHIFTR num
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+          num ::= num * MODULO num
+          num ::= num * POW num
+
+                          PLUS shift  36
+                         MINUS shift  31
+                        DIVIDE shift  29
+                         TIMES shift  30
+                        MODULO shift  16
+                           POW shift  15
+                      PLUSPLUS shift  35
+                     {default} reduce 66
+
+State 72:
+          string ::= bool * PLUS string
+          string ::= bool * PLUSPLUS string
+          bool ::= bool * PLUS bool
+          bool ::= bool * TIMES bool
+          bool ::= bool * EQUALTO bool
+          bool ::= bool * NOTEQUALTO bool
+          bool ::= bool * AND bool
+          bool ::= bool * OR bool
+
+                            OR shift  9
+                           AND shift  10
+                       EQUALTO shift  12
+                    NOTEQUALTO shift  11
+                          PLUS shift  34
+                         TIMES shift  13
+                      PLUSPLUS shift  33
+
+State 73:
+          string ::= bool * PLUS string
+          string ::= bool * PLUSPLUS string
+          bool ::= bool * PLUS bool
+          bool ::= bool * TIMES bool
+          bool ::= bool * EQUALTO bool
+          bool ::= bool * NOTEQUALTO bool
+          bool ::= bool * AND bool
+          bool ::= bool * OR bool
+     (38) bool ::= bool OR bool *
+
+                           AND shift  10
+                       EQUALTO shift  12
+                    NOTEQUALTO shift  11
+                          PLUS shift  34
+                         TIMES shift  13
+                      PLUSPLUS shift  33
+                     {default} reduce 38
+
+State 74:
+          string ::= num * PLUS string
+          string ::= num * PLUSPLUS string
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+     (54) num ::= num PLUS num *
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+          bool ::= num * LESSTHAN num
+          bool ::= num * GREATERTHAN num
+          bool ::= num * EQUALTO num
+          bool ::= num * NOTEQUALTO num
+          bool ::= num * GORE num
+          bool ::= num * LORE num
+          bool ::= num * AND num
+          bool ::= num * OR num
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+          num ::= num * MODULO num
+          num ::= num * POW num
+          array ::= num * PLUS array
+
+                        DIVIDE shift  29
+                         TIMES shift  30
+                        MODULO shift  16
+                           POW shift  15
+                      PLUSPLUS shift  35
+                     {default} reduce 54
+
+State 75:
+     (24) string ::= string PLUS num *
+          string ::= num * PLUS string
+          string ::= num * PLUSPLUS string
+          num ::= num * MINUS num
           num ::= num * PLUS num
           num ::= num * TIMES num
           num ::= num * DIVIDE num
@@ -3756,128 +4220,12 @@ State 70:
           num ::= num * MODULO num
           num ::= num * POW num
 
-                        DIVIDE shift  24
-                         TIMES shift  25
-                        MODULO shift  11
-                           POW shift  10
-                      PLUSPLUS shift  30
-                     {default} reduce 46
-
-State 71:
-          string ::= string * PLUS num
-          string ::= string * PLUSPLUS num
-          string ::= string * PLUS bool
-          string ::= string * PLUSPLUS bool
-          string ::= string * MINUS string
-          string ::= string * PLUS string
-          string ::= string * PLUSPLUS string
-          num ::= string * TIMES string
-          bool ::= string * EQUALTO string
-          num ::= string * DIVIDE string
-          bool ::= string * LESSTHAN string
-          bool ::= string * GREATERTHAN string
-          bool ::= string * NOTEQUALTO string
-          bool ::= string * GORE string
-          bool ::= string * LORE string
-     (44) bool ::= string LORE string *
-
-                          PLUS shift  41
-                         MINUS shift  39
-                        DIVIDE shift  36
-                         TIMES shift  38
-                      PLUSPLUS shift  40
-                     {default} reduce 44
-
-State 72:
-          string ::= string * PLUS num
-          string ::= string * PLUSPLUS num
-          string ::= string * PLUS bool
-          string ::= string * PLUSPLUS bool
-          string ::= string * MINUS string
-          string ::= string * PLUS string
-          string ::= string * PLUSPLUS string
-          num ::= string * TIMES string
-          bool ::= string * EQUALTO string
-          num ::= string * DIVIDE string
-          bool ::= string * LESSTHAN string
-          bool ::= string * GREATERTHAN string
-          bool ::= string * NOTEQUALTO string
-          bool ::= string * GORE string
-     (43) bool ::= string GORE string *
-          bool ::= string * LORE string
-
-                          PLUS shift  41
-                         MINUS shift  39
-                        DIVIDE shift  36
-                         TIMES shift  38
-                      PLUSPLUS shift  40
-                     {default} reduce 43
-
-State 73:
-          string ::= string * PLUS num
-          string ::= string * PLUSPLUS num
-          string ::= string * PLUS bool
-          string ::= string * PLUSPLUS bool
-          string ::= string * MINUS string
-          string ::= string * PLUS string
-          string ::= string * PLUSPLUS string
-          num ::= string * TIMES string
-          bool ::= string * EQUALTO string
-          num ::= string * DIVIDE string
-          bool ::= string * LESSTHAN string
-          bool ::= string * GREATERTHAN string
-     (41) bool ::= string GREATERTHAN string *
-          bool ::= string * NOTEQUALTO string
-          bool ::= string * GORE string
-          bool ::= string * LORE string
-
-                          PLUS shift  41
-                         MINUS shift  39
-                        DIVIDE shift  36
-                         TIMES shift  38
-                      PLUSPLUS shift  40
-                     {default} reduce 41
-
-State 74:
-          string ::= string * PLUS num
-          string ::= string * PLUSPLUS num
-          string ::= string * PLUS bool
-          string ::= string * PLUSPLUS bool
-          string ::= string * MINUS string
-          string ::= string * PLUS string
-          string ::= string * PLUSPLUS string
-          num ::= string * TIMES string
-          bool ::= string * EQUALTO string
-          num ::= string * DIVIDE string
-          bool ::= string * LESSTHAN string
-     (40) bool ::= string LESSTHAN string *
-          bool ::= string * GREATERTHAN string
-          bool ::= string * NOTEQUALTO string
-          bool ::= string * GORE string
-          bool ::= string * LORE string
-
-                          PLUS shift  41
-                         MINUS shift  39
-                        DIVIDE shift  36
-                         TIMES shift  38
-                      PLUSPLUS shift  40
-                     {default} reduce 40
-
-State 75:
-          string ::= bool * PLUS string
-          string ::= bool * PLUSPLUS string
-          bool ::= bool * PLUS bool
-          bool ::= bool * TIMES bool
-          bool ::= bool * EQUALTO bool
-          bool ::= bool * NOTEQUALTO bool
-     (29) bool ::= bool NOTEQUALTO bool *
-          bool ::= bool * AND bool
-          bool ::= bool * OR bool
-
-                          PLUS shift  29
-                         TIMES shift  8
-                      PLUSPLUS shift  28
-                     {default} reduce 29
+                        DIVIDE shift  29
+                         TIMES shift  30
+                        MODULO shift  16
+                           POW shift  15
+                      PLUSPLUS shift  35
+                     {default} reduce 24
 
 State 76:
           string ::= bool * PLUS string
@@ -3885,61 +4233,77 @@ State 76:
           bool ::= bool * PLUS bool
           bool ::= bool * TIMES bool
           bool ::= bool * EQUALTO bool
-     (28) bool ::= bool EQUALTO bool *
           bool ::= bool * NOTEQUALTO bool
           bool ::= bool * AND bool
+     (37) bool ::= bool AND bool *
           bool ::= bool * OR bool
 
-                          PLUS shift  29
-                         TIMES shift  8
-                      PLUSPLUS shift  28
-                     {default} reduce 28
+                       EQUALTO shift  12
+                    NOTEQUALTO shift  11
+                          PLUS shift  34
+                         TIMES shift  13
+                      PLUSPLUS shift  33
+                     {default} reduce 37
 
 State 77:
-          string ::= string * PLUS num
-          string ::= string * PLUSPLUS num
-          string ::= string * PLUS bool
-          string ::= string * PLUSPLUS bool
-     (23) string ::= bool PLUS string *
-          string ::= string * MINUS string
-          string ::= string * PLUS string
-          string ::= string * PLUSPLUS string
-          num ::= string * TIMES string
-          bool ::= string * EQUALTO string
-          num ::= string * DIVIDE string
-          bool ::= string * LESSTHAN string
-          bool ::= string * GREATERTHAN string
-          bool ::= string * NOTEQUALTO string
-          bool ::= string * GORE string
-          bool ::= string * LORE string
+          string ::= num * PLUS string
+          string ::= num * PLUSPLUS string
+          num ::= num * MINUS num
+     (53) num ::= num MINUS num *
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+          bool ::= num * LESSTHAN num
+          bool ::= num * GREATERTHAN num
+          bool ::= num * EQUALTO num
+          bool ::= num * NOTEQUALTO num
+          bool ::= num * GORE num
+          bool ::= num * LORE num
+          bool ::= num * AND num
+          bool ::= num * OR num
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+          num ::= num * MODULO num
+          num ::= num * POW num
 
-                        DIVIDE shift  36
-                         TIMES shift  38
-                      PLUSPLUS shift  40
-                     {default} reduce 23
+                        DIVIDE shift  29
+                         TIMES shift  30
+                        MODULO shift  16
+                           POW shift  15
+                      PLUSPLUS shift  35
+                     {default} reduce 53
 
 State 78:
-          string ::= string * PLUS num
-          string ::= string * PLUSPLUS num
-          string ::= string * PLUS bool
-          string ::= string * PLUSPLUS bool
-          string ::= string * MINUS string
-     (34) string ::= string MINUS string *
-          string ::= string * PLUS string
-          string ::= string * PLUSPLUS string
-          num ::= string * TIMES string
-          bool ::= string * EQUALTO string
-          num ::= string * DIVIDE string
-          bool ::= string * LESSTHAN string
-          bool ::= string * GREATERTHAN string
-          bool ::= string * NOTEQUALTO string
-          bool ::= string * GORE string
-          bool ::= string * LORE string
+          string ::= num * PLUS string
+          string ::= num * PLUSPLUS string
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+     (54) num ::= num PLUS num *
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+          bool ::= num * LESSTHAN num
+          bool ::= num * GREATERTHAN num
+          bool ::= num * EQUALTO num
+          bool ::= num * NOTEQUALTO num
+          bool ::= num * GORE num
+          bool ::= num * LORE num
+          bool ::= num * AND num
+          bool ::= num * OR num
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+          num ::= num * MODULO num
+          num ::= num * POW num
 
-                        DIVIDE shift  36
-                         TIMES shift  38
-                      PLUSPLUS shift  40
-                     {default} reduce 34
+                        DIVIDE shift  29
+                         TIMES shift  30
+                        MODULO shift  16
+                           POW shift  15
+                      PLUSPLUS shift  35
+                     {default} reduce 54
 
 State 79:
           string ::= string * PLUS num
@@ -3948,7 +4312,6 @@ State 79:
           string ::= string * PLUSPLUS bool
           string ::= string * MINUS string
           string ::= string * PLUS string
-     (35) string ::= string PLUS string *
           string ::= string * PLUSPLUS string
           num ::= string * TIMES string
           bool ::= string * EQUALTO string
@@ -3958,16 +4321,18 @@ State 79:
           bool ::= string * NOTEQUALTO string
           bool ::= string * GORE string
           bool ::= string * LORE string
+     (51) bool ::= string LORE string *
 
-                        DIVIDE shift  36
-                         TIMES shift  38
-                      PLUSPLUS shift  40
-                     {default} reduce 35
+                          PLUS shift  47
+                         MINUS shift  45
+                        DIVIDE shift  42
+                         TIMES shift  44
+                      PLUSPLUS shift  46
+                     {default} reduce 51
 
 State 80:
           string ::= string * PLUS num
           string ::= string * PLUSPLUS num
-     (19) string ::= num PLUS string *
           string ::= string * PLUS bool
           string ::= string * PLUSPLUS bool
           string ::= string * MINUS string
@@ -3980,492 +4345,731 @@ State 80:
           bool ::= string * GREATERTHAN string
           bool ::= string * NOTEQUALTO string
           bool ::= string * GORE string
+     (50) bool ::= string GORE string *
           bool ::= string * LORE string
 
-                        DIVIDE shift  36
-                         TIMES shift  38
-                      PLUSPLUS shift  40
-                     {default} reduce 19
+                          PLUS shift  47
+                         MINUS shift  45
+                        DIVIDE shift  42
+                         TIMES shift  44
+                      PLUSPLUS shift  46
+                     {default} reduce 50
 
 State 81:
-     (21) string ::= string PLUS bool *
-          string ::= bool * PLUS string
-          string ::= bool * PLUSPLUS string
-          bool ::= bool * PLUS bool
-          bool ::= bool * TIMES bool
-          bool ::= bool * EQUALTO bool
-          bool ::= bool * NOTEQUALTO bool
-          bool ::= bool * AND bool
-          bool ::= bool * OR bool
+          string ::= string * PLUS num
+          string ::= string * PLUSPLUS num
+          string ::= string * PLUS bool
+          string ::= string * PLUSPLUS bool
+          string ::= string * MINUS string
+          string ::= string * PLUS string
+          string ::= string * PLUSPLUS string
+          num ::= string * TIMES string
+          bool ::= string * EQUALTO string
+          num ::= string * DIVIDE string
+          bool ::= string * LESSTHAN string
+          bool ::= string * GREATERTHAN string
+     (48) bool ::= string GREATERTHAN string *
+          bool ::= string * NOTEQUALTO string
+          bool ::= string * GORE string
+          bool ::= string * LORE string
 
-                         TIMES shift  8
-                      PLUSPLUS shift  28
-                     {default} reduce 21
-
-State 82:
-     (18) string ::= string PLUSPLUS num *
-          string ::= num * PLUS string
-          string ::= num * PLUSPLUS string
-          num ::= num * MINUS num
-          num ::= num * PLUS num
-          num ::= num * TIMES num
-          num ::= num * DIVIDE num
-          bool ::= num * LESSTHAN num
-          bool ::= num * GREATERTHAN num
-          bool ::= num * EQUALTO num
-          bool ::= num * NOTEQUALTO num
-          bool ::= num * GORE num
-          bool ::= num * LORE num
-          bool ::= num * AND num
-          bool ::= num * OR num
-          num ::= num * SHIFTL num
-          num ::= num * SHIFTR num
-          num ::= num * BITAND num
-          num ::= num * BITOR num
-          num ::= num * MODULO num
-          num ::= num * POW num
-
-                           POW shift  10
-                      PLUSPLUS shift  30
-                     {default} reduce 18
-
-State 83:
-          string ::= num * PLUS string
-          string ::= num * PLUSPLUS string
-          num ::= num * MINUS num
-          num ::= num * PLUS num
-          num ::= num * TIMES num
-          num ::= num * DIVIDE num
-          bool ::= num * LESSTHAN num
-          bool ::= num * GREATERTHAN num
-          bool ::= num * EQUALTO num
-          bool ::= num * NOTEQUALTO num
-          bool ::= num * GORE num
-          bool ::= num * LORE num
-          bool ::= num * AND num
-          bool ::= num * OR num
-          num ::= num * SHIFTL num
-          num ::= num * SHIFTR num
-          num ::= num * BITAND num
-          num ::= num * BITOR num
-     (64) num ::= MINUS num *
-          num ::= num * MODULO num
-          num ::= num * POW num
-
-                           POW shift  10
-                      PLUSPLUS shift  30
-                     {default} reduce 64
-
-State 84:
-          string ::= num * PLUS string
-          string ::= num * PLUSPLUS string
-          num ::= num * MINUS num
-          num ::= num * PLUS num
-          num ::= num * TIMES num
-          num ::= num * DIVIDE num
-          bool ::= num * LESSTHAN num
-          bool ::= num * GREATERTHAN num
-          bool ::= num * EQUALTO num
-          bool ::= num * NOTEQUALTO num
-          bool ::= num * GORE num
-          bool ::= num * LORE num
-          bool ::= num * AND num
-          bool ::= num * OR num
-          num ::= num * SHIFTL num
-          num ::= num * SHIFTR num
-          num ::= num * BITAND num
-          num ::= num * BITOR num
-     (63) num ::= BITNOT num *
-          num ::= num * MODULO num
-          num ::= num * POW num
-
-                           POW shift  10
-                      PLUSPLUS shift  30
-                     {default} reduce 63
-
-State 85:
-          string ::= num * PLUS string
-          string ::= num * PLUSPLUS string
-          num ::= num * MINUS num
-          num ::= num * PLUS num
-          num ::= num * TIMES num
-          num ::= num * DIVIDE num
-          bool ::= num * LESSTHAN num
-          bool ::= num * GREATERTHAN num
-          bool ::= num * EQUALTO num
-          bool ::= num * NOTEQUALTO num
-          bool ::= num * GORE num
-          bool ::= num * LORE num
-          bool ::= num * AND num
-          bool ::= num * OR num
-     (58) bool ::= NOT num *
-          num ::= num * SHIFTL num
-          num ::= num * SHIFTR num
-          num ::= num * BITAND num
-          num ::= num * BITOR num
-          num ::= num * MODULO num
-          num ::= num * POW num
-
-                           POW shift  10
-                      PLUSPLUS shift  30
-                     {default} reduce 58
-
-State 86:
-          string ::= num * PLUS string
-          string ::= num * PLUSPLUS string
-          num ::= num * MINUS num
-          num ::= num * PLUS num
-          num ::= num * TIMES num
-          num ::= num * DIVIDE num
-          bool ::= num * LESSTHAN num
-          bool ::= num * GREATERTHAN num
-          bool ::= num * EQUALTO num
-          bool ::= num * NOTEQUALTO num
-          bool ::= num * GORE num
-          bool ::= num * LORE num
-          bool ::= num * AND num
-          bool ::= num * OR num
-          num ::= num * SHIFTL num
-          num ::= num * SHIFTR num
-          num ::= num * BITAND num
-          num ::= num * BITOR num
-          num ::= num * MODULO num
-          num ::= num * POW num
-     (66) num ::= num POW num *
-
-                           POW shift  10
-                      PLUSPLUS shift  30
-                     {default} reduce 66
-
-State 87:
-          string ::= num * PLUS string
-          string ::= num * PLUSPLUS string
-          num ::= num * MINUS num
-          num ::= num * PLUS num
-          num ::= num * TIMES num
-          num ::= num * DIVIDE num
-          bool ::= num * LESSTHAN num
-          bool ::= num * GREATERTHAN num
-          bool ::= num * EQUALTO num
-          bool ::= num * NOTEQUALTO num
-          bool ::= num * GORE num
-          bool ::= num * LORE num
-          bool ::= num * AND num
-          bool ::= num * OR num
-          num ::= num * SHIFTL num
-          num ::= num * SHIFTR num
-          num ::= num * BITAND num
-          num ::= num * BITOR num
-          num ::= num * MODULO num
-     (65) num ::= num MODULO num *
-          num ::= num * POW num
-
-                           POW shift  10
-                      PLUSPLUS shift  30
-                     {default} reduce 65
-
-State 88:
-          string ::= num * PLUS string
-          string ::= num * PLUSPLUS string
-          num ::= num * MINUS num
-          num ::= num * PLUS num
-          num ::= num * TIMES num
-          num ::= num * DIVIDE num
-     (49) num ::= num DIVIDE num *
-          bool ::= num * LESSTHAN num
-          bool ::= num * GREATERTHAN num
-          bool ::= num * EQUALTO num
-          bool ::= num * NOTEQUALTO num
-          bool ::= num * GORE num
-          bool ::= num * LORE num
-          bool ::= num * AND num
-          bool ::= num * OR num
-          num ::= num * SHIFTL num
-          num ::= num * SHIFTR num
-          num ::= num * BITAND num
-          num ::= num * BITOR num
-          num ::= num * MODULO num
-          num ::= num * POW num
-
-                           POW shift  10
-                      PLUSPLUS shift  30
-                     {default} reduce 49
-
-State 89:
-          string ::= num * PLUS string
-          string ::= num * PLUSPLUS string
-          num ::= num * MINUS num
-          num ::= num * PLUS num
-          num ::= num * TIMES num
-     (48) num ::= num TIMES num *
-          num ::= num * DIVIDE num
-          bool ::= num * LESSTHAN num
-          bool ::= num * GREATERTHAN num
-          bool ::= num * EQUALTO num
-          bool ::= num * NOTEQUALTO num
-          bool ::= num * GORE num
-          bool ::= num * LORE num
-          bool ::= num * AND num
-          bool ::= num * OR num
-          num ::= num * SHIFTL num
-          num ::= num * SHIFTR num
-          num ::= num * BITAND num
-          num ::= num * BITOR num
-          num ::= num * MODULO num
-          num ::= num * POW num
-
-                           POW shift  10
-                      PLUSPLUS shift  30
+                          PLUS shift  47
+                         MINUS shift  45
+                        DIVIDE shift  42
+                         TIMES shift  44
+                      PLUSPLUS shift  46
                      {default} reduce 48
 
-State 90:
-          string ::= bool * PLUS string
-          string ::= bool * PLUSPLUS string
-          bool ::= bool * PLUS bool
-     (26) bool ::= bool PLUS bool *
-          bool ::= bool * TIMES bool
-          bool ::= bool * EQUALTO bool
-          bool ::= bool * NOTEQUALTO bool
-          bool ::= bool * AND bool
-          bool ::= bool * OR bool
+State 82:
+          string ::= string * PLUS num
+          string ::= string * PLUSPLUS num
+          string ::= string * PLUS bool
+          string ::= string * PLUSPLUS bool
+          string ::= string * MINUS string
+          string ::= string * PLUS string
+          string ::= string * PLUSPLUS string
+          num ::= string * TIMES string
+          bool ::= string * EQUALTO string
+          num ::= string * DIVIDE string
+          bool ::= string * LESSTHAN string
+     (47) bool ::= string LESSTHAN string *
+          bool ::= string * GREATERTHAN string
+          bool ::= string * NOTEQUALTO string
+          bool ::= string * GORE string
+          bool ::= string * LORE string
 
-                         TIMES shift  8
-                      PLUSPLUS shift  28
-                     {default} reduce 26
+                          PLUS shift  47
+                         MINUS shift  45
+                        DIVIDE shift  42
+                         TIMES shift  44
+                      PLUSPLUS shift  46
+                     {default} reduce 47
 
-State 91:
-     (22) string ::= string PLUSPLUS bool *
-          string ::= bool * PLUS string
-          string ::= bool * PLUSPLUS string
-          bool ::= bool * PLUS bool
-          bool ::= bool * TIMES bool
-          bool ::= bool * EQUALTO bool
-          bool ::= bool * NOTEQUALTO bool
-          bool ::= bool * AND bool
-          bool ::= bool * OR bool
-
-                      PLUSPLUS shift  28
-                     {default} reduce 22
-
-State 92:
-          string ::= bool * PLUS string
-          string ::= bool * PLUSPLUS string
-          bool ::= bool * PLUS bool
-          bool ::= bool * TIMES bool
-     (27) bool ::= bool TIMES bool *
-          bool ::= bool * EQUALTO bool
-          bool ::= bool * NOTEQUALTO bool
-          bool ::= bool * AND bool
-          bool ::= bool * OR bool
-
-                      PLUSPLUS shift  28
-                     {default} reduce 27
-
-State 93:
+State 83:
           string ::= bool * PLUS string
           string ::= bool * PLUSPLUS string
           bool ::= bool * PLUS bool
           bool ::= bool * TIMES bool
           bool ::= bool * EQUALTO bool
           bool ::= bool * NOTEQUALTO bool
+     (36) bool ::= bool NOTEQUALTO bool *
           bool ::= bool * AND bool
           bool ::= bool * OR bool
-     (32) bool ::= NOT bool *
 
-                      PLUSPLUS shift  28
-                     {default} reduce 32
-
-State 94:
-          string ::= string * PLUS num
-          string ::= string * PLUSPLUS num
-          string ::= string * PLUS bool
-          string ::= string * PLUSPLUS bool
-     (24) string ::= bool PLUSPLUS string *
-          string ::= string * MINUS string
-          string ::= string * PLUS string
-          string ::= string * PLUSPLUS string
-          num ::= string * TIMES string
-          bool ::= string * EQUALTO string
-          num ::= string * DIVIDE string
-          bool ::= string * LESSTHAN string
-          bool ::= string * GREATERTHAN string
-          bool ::= string * NOTEQUALTO string
-          bool ::= string * GORE string
-          bool ::= string * LORE string
-
-                      PLUSPLUS shift  40
-                     {default} reduce 24
-
-State 95:
-          string ::= string * PLUS num
-          string ::= string * PLUSPLUS num
-     (20) string ::= num PLUSPLUS string *
-          string ::= string * PLUS bool
-          string ::= string * PLUSPLUS bool
-          string ::= string * MINUS string
-          string ::= string * PLUS string
-          string ::= string * PLUSPLUS string
-          num ::= string * TIMES string
-          bool ::= string * EQUALTO string
-          num ::= string * DIVIDE string
-          bool ::= string * LESSTHAN string
-          bool ::= string * GREATERTHAN string
-          bool ::= string * NOTEQUALTO string
-          bool ::= string * GORE string
-          bool ::= string * LORE string
-
-                      PLUSPLUS shift  40
-                     {default} reduce 20
-
-State 96:
-          string ::= string * PLUS num
-          string ::= string * PLUSPLUS num
-          string ::= string * PLUS bool
-          string ::= string * PLUSPLUS bool
-          string ::= string * MINUS string
-          string ::= string * PLUS string
-          string ::= string * PLUSPLUS string
-          num ::= string * TIMES string
-          bool ::= string * EQUALTO string
-          num ::= string * DIVIDE string
-     (39) num ::= string DIVIDE string *
-          bool ::= string * LESSTHAN string
-          bool ::= string * GREATERTHAN string
-          bool ::= string * NOTEQUALTO string
-          bool ::= string * GORE string
-          bool ::= string * LORE string
-
-                      PLUSPLUS shift  40
-                     {default} reduce 39
-
-State 97:
-          string ::= string * PLUS num
-          string ::= string * PLUSPLUS num
-          string ::= string * PLUS bool
-          string ::= string * PLUSPLUS bool
-          string ::= string * MINUS string
-          string ::= string * PLUS string
-          string ::= string * PLUSPLUS string
-          num ::= string * TIMES string
-     (37) num ::= string TIMES string *
-          bool ::= string * EQUALTO string
-          num ::= string * DIVIDE string
-          bool ::= string * LESSTHAN string
-          bool ::= string * GREATERTHAN string
-          bool ::= string * NOTEQUALTO string
-          bool ::= string * GORE string
-          bool ::= string * LORE string
-
-                      PLUSPLUS shift  40
-                     {default} reduce 37
-
-State 98:
-          string ::= string * PLUS num
-          string ::= string * PLUSPLUS num
-          string ::= string * PLUS bool
-          string ::= string * PLUSPLUS bool
-          string ::= string * MINUS string
-          string ::= string * PLUS string
-          string ::= string * PLUSPLUS string
-     (36) string ::= string PLUSPLUS string *
-          num ::= string * TIMES string
-          bool ::= string * EQUALTO string
-          num ::= string * DIVIDE string
-          bool ::= string * LESSTHAN string
-          bool ::= string * GREATERTHAN string
-          bool ::= string * NOTEQUALTO string
-          bool ::= string * GORE string
-          bool ::= string * LORE string
-
-                      PLUSPLUS shift  40
+                          PLUS shift  34
+                         TIMES shift  13
+                      PLUSPLUS shift  33
                      {default} reduce 36
 
-State 99:
-          in ::= in start * NEWLINE
+State 84:
+          string ::= bool * PLUS string
+          string ::= bool * PLUSPLUS string
+          bool ::= bool * PLUS bool
+          bool ::= bool * TIMES bool
+          bool ::= bool * EQUALTO bool
+     (35) bool ::= bool EQUALTO bool *
+          bool ::= bool * NOTEQUALTO bool
+          bool ::= bool * AND bool
+          bool ::= bool * OR bool
 
-                       NEWLINE shift  115
+                          PLUS shift  34
+                         TIMES shift  13
+                      PLUSPLUS shift  33
+                     {default} reduce 35
 
-State 100:
-     (68) error ::= OPENQUOTEERROR *
+State 85:
+          string ::= string * PLUS num
+          string ::= string * PLUSPLUS num
+          string ::= string * PLUS bool
+          string ::= string * PLUSPLUS bool
+     (30) string ::= bool PLUS string *
+          string ::= string * MINUS string
+          string ::= string * PLUS string
+          string ::= string * PLUSPLUS string
+          num ::= string * TIMES string
+          bool ::= string * EQUALTO string
+          num ::= string * DIVIDE string
+          bool ::= string * LESSTHAN string
+          bool ::= string * GREATERTHAN string
+          bool ::= string * NOTEQUALTO string
+          bool ::= string * GORE string
+          bool ::= string * LORE string
 
-                     {default} reduce 68
+                        DIVIDE shift  42
+                         TIMES shift  44
+                      PLUSPLUS shift  46
+                     {default} reduce 30
 
-State 101:
-     (67) in ::= error *
+State 86:
+          string ::= string * PLUS num
+          string ::= string * PLUSPLUS num
+          string ::= string * PLUS bool
+          string ::= string * PLUSPLUS bool
+          string ::= string * MINUS string
+     (41) string ::= string MINUS string *
+          string ::= string * PLUS string
+          string ::= string * PLUSPLUS string
+          num ::= string * TIMES string
+          bool ::= string * EQUALTO string
+          num ::= string * DIVIDE string
+          bool ::= string * LESSTHAN string
+          bool ::= string * GREATERTHAN string
+          bool ::= string * NOTEQUALTO string
+          bool ::= string * GORE string
+          bool ::= string * LORE string
 
-                     {default} reduce 67
+                        DIVIDE shift  42
+                         TIMES shift  44
+                      PLUSPLUS shift  46
+                     {default} reduce 41
 
-State 102:
-     (25) bool ::= LPAREN bool RPAREN *
+State 87:
+          string ::= string * PLUS num
+          string ::= string * PLUSPLUS num
+          string ::= string * PLUS bool
+          string ::= string * PLUSPLUS bool
+          string ::= string * MINUS string
+          string ::= string * PLUS string
+     (42) string ::= string PLUS string *
+          string ::= string * PLUSPLUS string
+          num ::= string * TIMES string
+          bool ::= string * EQUALTO string
+          num ::= string * DIVIDE string
+          bool ::= string * LESSTHAN string
+          bool ::= string * GREATERTHAN string
+          bool ::= string * NOTEQUALTO string
+          bool ::= string * GORE string
+          bool ::= string * LORE string
 
+                        DIVIDE shift  42
+                         TIMES shift  44
+                      PLUSPLUS shift  46
+                     {default} reduce 42
+
+State 88:
+          string ::= string * PLUS num
+          string ::= string * PLUSPLUS num
+     (26) string ::= num PLUS string *
+          string ::= string * PLUS bool
+          string ::= string * PLUSPLUS bool
+          string ::= string * MINUS string
+          string ::= string * PLUS string
+          string ::= string * PLUSPLUS string
+          num ::= string * TIMES string
+          bool ::= string * EQUALTO string
+          num ::= string * DIVIDE string
+          bool ::= string * LESSTHAN string
+          bool ::= string * GREATERTHAN string
+          bool ::= string * NOTEQUALTO string
+          bool ::= string * GORE string
+          bool ::= string * LORE string
+
+                        DIVIDE shift  42
+                         TIMES shift  44
+                      PLUSPLUS shift  46
+                     {default} reduce 26
+
+State 89:
+     (28) string ::= string PLUS bool *
+          string ::= bool * PLUS string
+          string ::= bool * PLUSPLUS string
+          bool ::= bool * PLUS bool
+          bool ::= bool * TIMES bool
+          bool ::= bool * EQUALTO bool
+          bool ::= bool * NOTEQUALTO bool
+          bool ::= bool * AND bool
+          bool ::= bool * OR bool
+
+                         TIMES shift  13
+                      PLUSPLUS shift  33
+                     {default} reduce 28
+
+State 90:
+     (25) string ::= string PLUSPLUS num *
+          string ::= num * PLUS string
+          string ::= num * PLUSPLUS string
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+          bool ::= num * LESSTHAN num
+          bool ::= num * GREATERTHAN num
+          bool ::= num * EQUALTO num
+          bool ::= num * NOTEQUALTO num
+          bool ::= num * GORE num
+          bool ::= num * LORE num
+          bool ::= num * AND num
+          bool ::= num * OR num
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+          num ::= num * MODULO num
+          num ::= num * POW num
+
+                           POW shift  15
+                      PLUSPLUS shift  35
                      {default} reduce 25
 
-State 103:
-     (45) num ::= LPAREN num RPAREN *
+State 91:
+          string ::= num * PLUS string
+          string ::= num * PLUSPLUS string
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+          bool ::= num * LESSTHAN num
+          bool ::= num * GREATERTHAN num
+          bool ::= num * EQUALTO num
+          bool ::= num * NOTEQUALTO num
+          bool ::= num * GORE num
+          bool ::= num * LORE num
+          bool ::= num * AND num
+          bool ::= num * OR num
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+     (71) num ::= MINUS num *
+          num ::= num * MODULO num
+          num ::= num * POW num
 
-                     {default} reduce 45
+                           POW shift  15
+                      PLUSPLUS shift  35
+                     {default} reduce 71
 
-State 104:
-     (33) string ::= LPAREN string RPAREN *
+State 92:
+          string ::= num * PLUS string
+          string ::= num * PLUSPLUS string
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+          bool ::= num * LESSTHAN num
+          bool ::= num * GREATERTHAN num
+          bool ::= num * EQUALTO num
+          bool ::= num * NOTEQUALTO num
+          bool ::= num * GORE num
+          bool ::= num * LORE num
+          bool ::= num * AND num
+          bool ::= num * OR num
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+     (70) num ::= BITNOT num *
+          num ::= num * MODULO num
+          num ::= num * POW num
 
+                           POW shift  15
+                      PLUSPLUS shift  35
+                     {default} reduce 70
+
+State 93:
+          string ::= num * PLUS string
+          string ::= num * PLUSPLUS string
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+          bool ::= num * LESSTHAN num
+          bool ::= num * GREATERTHAN num
+          bool ::= num * EQUALTO num
+          bool ::= num * NOTEQUALTO num
+          bool ::= num * GORE num
+          bool ::= num * LORE num
+          bool ::= num * AND num
+          bool ::= num * OR num
+     (65) bool ::= NOT num *
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+          num ::= num * MODULO num
+          num ::= num * POW num
+
+                           POW shift  15
+                      PLUSPLUS shift  35
+                     {default} reduce 65
+
+State 94:
+          string ::= num * PLUS string
+          string ::= num * PLUSPLUS string
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+          bool ::= num * LESSTHAN num
+          bool ::= num * GREATERTHAN num
+          bool ::= num * EQUALTO num
+          bool ::= num * NOTEQUALTO num
+          bool ::= num * GORE num
+          bool ::= num * LORE num
+          bool ::= num * AND num
+          bool ::= num * OR num
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+          num ::= num * MODULO num
+          num ::= num * POW num
+     (73) num ::= num POW num *
+
+                           POW shift  15
+                      PLUSPLUS shift  35
+                     {default} reduce 73
+
+State 95:
+          string ::= num * PLUS string
+          string ::= num * PLUSPLUS string
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+          bool ::= num * LESSTHAN num
+          bool ::= num * GREATERTHAN num
+          bool ::= num * EQUALTO num
+          bool ::= num * NOTEQUALTO num
+          bool ::= num * GORE num
+          bool ::= num * LORE num
+          bool ::= num * AND num
+          bool ::= num * OR num
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+          num ::= num * MODULO num
+     (72) num ::= num MODULO num *
+          num ::= num * POW num
+
+                           POW shift  15
+                      PLUSPLUS shift  35
+                     {default} reduce 72
+
+State 96:
+          string ::= num * PLUS string
+          string ::= num * PLUSPLUS string
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+     (56) num ::= num DIVIDE num *
+          bool ::= num * LESSTHAN num
+          bool ::= num * GREATERTHAN num
+          bool ::= num * EQUALTO num
+          bool ::= num * NOTEQUALTO num
+          bool ::= num * GORE num
+          bool ::= num * LORE num
+          bool ::= num * AND num
+          bool ::= num * OR num
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+          num ::= num * MODULO num
+          num ::= num * POW num
+
+                           POW shift  15
+                      PLUSPLUS shift  35
+                     {default} reduce 56
+
+State 97:
+          string ::= num * PLUS string
+          string ::= num * PLUSPLUS string
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+     (55) num ::= num TIMES num *
+          num ::= num * DIVIDE num
+          bool ::= num * LESSTHAN num
+          bool ::= num * GREATERTHAN num
+          bool ::= num * EQUALTO num
+          bool ::= num * NOTEQUALTO num
+          bool ::= num * GORE num
+          bool ::= num * LORE num
+          bool ::= num * AND num
+          bool ::= num * OR num
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+          num ::= num * MODULO num
+          num ::= num * POW num
+
+                           POW shift  15
+                      PLUSPLUS shift  35
+                     {default} reduce 55
+
+State 98:
+          string ::= bool * PLUS string
+          string ::= bool * PLUSPLUS string
+          bool ::= bool * PLUS bool
+     (33) bool ::= bool PLUS bool *
+          bool ::= bool * TIMES bool
+          bool ::= bool * EQUALTO bool
+          bool ::= bool * NOTEQUALTO bool
+          bool ::= bool * AND bool
+          bool ::= bool * OR bool
+
+                         TIMES shift  13
+                      PLUSPLUS shift  33
                      {default} reduce 33
 
-State 105:
-     (16) bool ::= BOOLEAN *
+State 99:
+     (13) access ::= array *
+          array ::= array * PLUSPLUS array
+          array ::= array * PLUS array
+          array ::= array * PLUS num
 
-                     {default} reduce 16
+                          PLUS shift  4
+                      PLUSPLUS shift  6
+                     {default} reduce 13
+
+State 100:
+          array ::= array * PLUSPLUS array
+     (74) array ::= array PLUSPLUS array *
+          array ::= array * PLUS array
+          array ::= array * PLUS num
+
+                      PLUSPLUS shift  6
+                     {default} reduce 74
+
+State 101:
+          array ::= LBRAC maybe_empty_stmt_list * RBRAC
+
+                         RBRAC shift  115
+
+State 102:
+          array ::= array * PLUSPLUS array
+          array ::= array * PLUS array
+     (75) array ::= array PLUS array *
+          array ::= array * PLUS num
+
+                      PLUSPLUS shift  6
+                     {default} reduce 75
+
+State 103:
+          array ::= array * PLUSPLUS array
+          array ::= array * PLUS array
+     (76) array ::= num PLUS array *
+          array ::= array * PLUS num
+
+                      PLUSPLUS shift  6
+                     {default} reduce 76
+
+State 104:
+     (29) string ::= string PLUSPLUS bool *
+          string ::= bool * PLUS string
+          string ::= bool * PLUSPLUS string
+          bool ::= bool * PLUS bool
+          bool ::= bool * TIMES bool
+          bool ::= bool * EQUALTO bool
+          bool ::= bool * NOTEQUALTO bool
+          bool ::= bool * AND bool
+          bool ::= bool * OR bool
+
+                      PLUSPLUS shift  33
+                     {default} reduce 29
+
+State 105:
+          string ::= bool * PLUS string
+          string ::= bool * PLUSPLUS string
+          bool ::= bool * PLUS bool
+          bool ::= bool * TIMES bool
+     (34) bool ::= bool TIMES bool *
+          bool ::= bool * EQUALTO bool
+          bool ::= bool * NOTEQUALTO bool
+          bool ::= bool * AND bool
+          bool ::= bool * OR bool
+
+                      PLUSPLUS shift  33
+                     {default} reduce 34
 
 State 106:
-     (15) string ::= STRING *
+          string ::= bool * PLUS string
+          string ::= bool * PLUSPLUS string
+          bool ::= bool * PLUS bool
+          bool ::= bool * TIMES bool
+          bool ::= bool * EQUALTO bool
+          bool ::= bool * NOTEQUALTO bool
+          bool ::= bool * AND bool
+          bool ::= bool * OR bool
+     (39) bool ::= NOT bool *
 
-                     {default} reduce 15
+                      PLUSPLUS shift  33
+                     {default} reduce 39
 
 State 107:
-     (14) num ::= NUM *
+          string ::= string * PLUS num
+          string ::= string * PLUSPLUS num
+          string ::= string * PLUS bool
+          string ::= string * PLUSPLUS bool
+     (31) string ::= bool PLUSPLUS string *
+          string ::= string * MINUS string
+          string ::= string * PLUS string
+          string ::= string * PLUSPLUS string
+          num ::= string * TIMES string
+          bool ::= string * EQUALTO string
+          num ::= string * DIVIDE string
+          bool ::= string * LESSTHAN string
+          bool ::= string * GREATERTHAN string
+          bool ::= string * NOTEQUALTO string
+          bool ::= string * GORE string
+          bool ::= string * LORE string
+
+                      PLUSPLUS shift  46
+                     {default} reduce 31
+
+State 108:
+          string ::= string * PLUS num
+          string ::= string * PLUSPLUS num
+     (27) string ::= num PLUSPLUS string *
+          string ::= string * PLUS bool
+          string ::= string * PLUSPLUS bool
+          string ::= string * MINUS string
+          string ::= string * PLUS string
+          string ::= string * PLUSPLUS string
+          num ::= string * TIMES string
+          bool ::= string * EQUALTO string
+          num ::= string * DIVIDE string
+          bool ::= string * LESSTHAN string
+          bool ::= string * GREATERTHAN string
+          bool ::= string * NOTEQUALTO string
+          bool ::= string * GORE string
+          bool ::= string * LORE string
+
+                      PLUSPLUS shift  46
+                     {default} reduce 27
+
+State 109:
+          string ::= string * PLUS num
+          string ::= string * PLUSPLUS num
+          string ::= string * PLUS bool
+          string ::= string * PLUSPLUS bool
+          string ::= string * MINUS string
+          string ::= string * PLUS string
+          string ::= string * PLUSPLUS string
+          num ::= string * TIMES string
+          bool ::= string * EQUALTO string
+          num ::= string * DIVIDE string
+     (46) num ::= string DIVIDE string *
+          bool ::= string * LESSTHAN string
+          bool ::= string * GREATERTHAN string
+          bool ::= string * NOTEQUALTO string
+          bool ::= string * GORE string
+          bool ::= string * LORE string
+
+                      PLUSPLUS shift  46
+                     {default} reduce 46
+
+State 110:
+          string ::= string * PLUS num
+          string ::= string * PLUSPLUS num
+          string ::= string * PLUS bool
+          string ::= string * PLUSPLUS bool
+          string ::= string * MINUS string
+          string ::= string * PLUS string
+          string ::= string * PLUSPLUS string
+          num ::= string * TIMES string
+     (44) num ::= string TIMES string *
+          bool ::= string * EQUALTO string
+          num ::= string * DIVIDE string
+          bool ::= string * LESSTHAN string
+          bool ::= string * GREATERTHAN string
+          bool ::= string * NOTEQUALTO string
+          bool ::= string * GORE string
+          bool ::= string * LORE string
+
+                      PLUSPLUS shift  46
+                     {default} reduce 44
+
+State 111:
+          string ::= string * PLUS num
+          string ::= string * PLUSPLUS num
+          string ::= string * PLUS bool
+          string ::= string * PLUSPLUS bool
+          string ::= string * MINUS string
+          string ::= string * PLUS string
+          string ::= string * PLUSPLUS string
+     (43) string ::= string PLUSPLUS string *
+          num ::= string * TIMES string
+          bool ::= string * EQUALTO string
+          num ::= string * DIVIDE string
+          bool ::= string * LESSTHAN string
+          bool ::= string * GREATERTHAN string
+          bool ::= string * NOTEQUALTO string
+          bool ::= string * GORE string
+          bool ::= string * LORE string
+
+                      PLUSPLUS shift  46
+                     {default} reduce 43
+
+State 112:
+          in ::= in start * NEWLINE
+
+                       NEWLINE shift  132
+
+State 113:
+     (79) error ::= OPENQUOTEERROR *
+
+                     {default} reduce 79
+
+State 114:
+     (78) in ::= error *
+
+                     {default} reduce 78
+
+State 115:
+     (14) array ::= LBRAC maybe_empty_stmt_list RBRAC *
 
                      {default} reduce 14
 
-State 108:
-     (10) invoke ::= value *
+State 116:
+     (32) bool ::= LPAREN bool RPAREN *
+
+                     {default} reduce 32
+
+State 117:
+     (52) num ::= LPAREN num RPAREN *
+
+                     {default} reduce 52
+
+State 118:
+     (40) string ::= LPAREN string RPAREN *
+
+                     {default} reduce 40
+
+State 119:
+     (23) bool ::= BOOLEAN *
+
+                     {default} reduce 23
+
+State 120:
+     (22) string ::= STRING *
+
+                     {default} reduce 22
+
+State 121:
+     (21) num ::= NUM *
+
+                     {default} reduce 21
+
+State 122:
+     (17) identifier ::= value *
+
+                     {default} reduce 17
+
+State 123:
+     (12) stmt_list ::= stmt_list stmt *
+
+                     {default} reduce 12
+
+State 124:
+     (11) stmt_list ::= stmt *
+
+                     {default} reduce 11
+
+State 125:
+     (10) access ::= identifier *
 
                      {default} reduce 10
 
-State 109:
-      (9) retval ::= invoke *
+State 126:
+      (9) retval ::= access *
 
                      {default} reduce 9
 
-State 110:
+State 127:
       (8) expr ::= retval *
 
                      {default} reduce 8
 
-State 111:
+State 128:
       (7) stmt ::= expr *
 
                      {default} reduce 7
 
-State 112:
+State 129:
       (6) top_stmt ::= stmt *
 
                      {default} reduce 6
 
-State 113:
+State 130:
       (5) spec ::= top_stmt *
 
                      {default} reduce 5
 
-State 114:
+State 131:
       (4) start ::= spec *
 
                      {default} reduce 4
 
-State 115:
+State 132:
       (3) in ::= in start NEWLINE *
 
                      {default} reduce 3
 
-State 116:
+State 133:
       (2) in ::= in NEWLINE *
 
                      {default} reduce 2
@@ -4508,17 +5112,21 @@ Symbols:
    33: BOOLEAN
    34: OPENQUOTEERROR
    35: error: OPENQUOTEERROR
-   36: expr: MINUS NOT BITNOT LPAREN NUM STRING BOOLEAN
+   36: expr: MINUS NOT BITNOT LPAREN LBRAC NUM STRING BOOLEAN
    37: id:
-   38: main: <lambda> MINUS NOT BITNOT LPAREN NEWLINE NUM STRING BOOLEAN OPENQUOTEERROR
-   39: in: <lambda> MINUS NOT BITNOT LPAREN NEWLINE NUM STRING BOOLEAN OPENQUOTEERROR
-   40: start: MINUS NOT BITNOT LPAREN NUM STRING BOOLEAN
-   41: spec: MINUS NOT BITNOT LPAREN NUM STRING BOOLEAN
-   42: top_stmt: MINUS NOT BITNOT LPAREN NUM STRING BOOLEAN
-   43: stmt: MINUS NOT BITNOT LPAREN NUM STRING BOOLEAN
-   44: retval: MINUS NOT BITNOT LPAREN NUM STRING BOOLEAN
-   45: invoke: MINUS NOT BITNOT LPAREN NUM STRING BOOLEAN
-   46: value: MINUS NOT BITNOT LPAREN NUM STRING BOOLEAN
-   47: num: MINUS NOT BITNOT LPAREN NUM STRING BOOLEAN
-   48: string: MINUS NOT BITNOT LPAREN NUM STRING BOOLEAN
-   49: bool: MINUS NOT BITNOT LPAREN NUM STRING BOOLEAN
+   38: main: <lambda> MINUS NOT BITNOT LPAREN LBRAC NEWLINE NUM STRING BOOLEAN OPENQUOTEERROR
+   39: in: <lambda> MINUS NOT BITNOT LPAREN LBRAC NEWLINE NUM STRING BOOLEAN OPENQUOTEERROR
+   40: start: MINUS NOT BITNOT LPAREN LBRAC NUM STRING BOOLEAN
+   41: spec: MINUS NOT BITNOT LPAREN LBRAC NUM STRING BOOLEAN
+   42: top_stmt: MINUS NOT BITNOT LPAREN LBRAC NUM STRING BOOLEAN
+   43: stmt: MINUS NOT BITNOT LPAREN LBRAC NUM STRING BOOLEAN
+   44: retval: MINUS NOT BITNOT LPAREN LBRAC NUM STRING BOOLEAN
+   45: access: MINUS NOT BITNOT LPAREN LBRAC NUM STRING BOOLEAN
+   46: identifier: MINUS NOT BITNOT LPAREN NUM STRING BOOLEAN
+   47: stmt_list: MINUS NOT BITNOT LPAREN LBRAC NUM STRING BOOLEAN
+   48: array: MINUS NOT BITNOT LPAREN LBRAC NUM STRING BOOLEAN
+   49: maybe_empty_stmt_list: <lambda> MINUS NOT BITNOT LPAREN LBRAC NUM STRING BOOLEAN
+   50: value: MINUS NOT BITNOT LPAREN NUM STRING BOOLEAN
+   51: num: MINUS NOT BITNOT LPAREN NUM STRING BOOLEAN
+   52: string: MINUS NOT BITNOT LPAREN NUM STRING BOOLEAN
+   53: bool: MINUS NOT BITNOT LPAREN NUM STRING BOOLEAN

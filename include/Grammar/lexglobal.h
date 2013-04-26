@@ -23,7 +23,7 @@
 #ifndef YYSTYPE
 typedef union {
   	double dval;
-	const char* sval;
+    char* sval;
     int bval;
   	struct symtab *symp;
 } yystype;
