@@ -24,7 +24,7 @@
 typedef union {
   	double dval;
 	const char* sval;
-	int bval;
+    int bval;
   	struct symtab *symp;
 } yystype;
 # define YYSTYPE yystype

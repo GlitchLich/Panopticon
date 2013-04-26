@@ -24,7 +24,7 @@
 #define OPERATORS_H
 
 #include "types.h"
-
+#include <sstream>
 /*
 //Types
     NIL = 0,
@@ -40,7 +40,7 @@ namespace panopticon
 {
 
 //STRING_STRING
-bool string_minus_string(object &a,const object b, const object c)
+inline bool string_minus_string(object &a,const object b, const object c)
 {
     a.type = STRING;
     a.data.string = new String(*b.data.string);
@@ -65,7 +65,7 @@ bool string_minus_string(object &a,const object b, const object c)
     return true;
 }
 
-bool string_plus_string(object &a,const object b, const object c)
+inline bool string_plus_string(object &a,const object b, const object c)
 {
     a.type = STRING;
     a.data.string = new String(*b.data.string);
@@ -81,7 +81,7 @@ bool string_plus_string(object &a,const object b, const object c)
     return true;
 }
 
-bool string_plusplus_string(object &a,const object b, const object c)
+inline bool string_plusplus_string(object &a,const object b, const object c)
 {
     a.type = STRING;
     a.data.string = new String(*b.data.string);
@@ -96,6 +96,168 @@ bool string_plusplus_string(object &a,const object b, const object c)
     return true;
 }
 
+//STRING_NUM
+bool string_plus_num(object &a,const object b, const object c)
+{
+    a.type = STRING;
+    a.data.string = new String(*b.data.string);
+    std::stringstream ss;
+    ss << c.data.number;
+    try
+    {
+        a.data.string->append(" ");
+        a.data.string->append(ss.str());
+    }
+    catch(std::exception e)
+    {
+        return false;
+    }
+    return true;
+}
+
+inline bool string_plusplus_num(object &a,const object b, const object c)
+{
+    a.type = STRING;
+    a.data.string = new String(*b.data.string);
+    std::stringstream ss;
+    ss << c.data.number;
+    try
+    {
+        a.data.string->append(ss.str());
+    }
+    catch(std::exception e)
+    {
+        return false;
+    }
+    return true;
+}
+
+inline bool num_plus_string(object &a,const object b, const object c)
+{
+    a.type = STRING;
+    std::stringstream ss;
+    ss << b.data.number;
+    a.data.string = new String(ss.str());
+    try
+    {
+        a.data.string->append(" ");
+        a.data.string->append(*c.data.string);
+    }
+    catch(std::exception e)
+    {
+        return false;
+    }
+    return true;
+}
+
+inline bool num_plusplus_string(object &a,const object b, const object c)
+{
+    a.type = STRING;
+    std::stringstream ss;
+    ss << b.data.number;
+    a.data.string = new String(ss.str());
+    try
+    {
+        a.data.string->append(*c.data.string);
+    }
+    catch(std::exception e)
+    {
+        return false;
+    }
+    return true;
+}
+
+//STRING_BOOL
+bool string_plus_bool(object &a,const object b, const object c)
+{
+    a.type = STRING;
+    a.data.string = new String(*b.data.string);
+    try
+    {
+        a.data.string->append(" ");
+        if(c.data.boolean)
+        {
+            a.data.string->append("true");
+        }
+        else
+        {
+            a.data.string->append("false");
+        }
+    }
+    catch(std::exception e)
+    {
+        return false;
+    }
+    return true;
+}
+
+bool string_plusplus_bool(object &a,const object b, const object c)
+{
+    a.type = STRING;
+    a.data.string = new String(*b.data.string);
+    try
+    {
+        if(c.data.boolean)
+        {
+            a.data.string->append("true");
+        }
+        else
+        {
+            a.data.string->append("false");
+        }
+    }
+    catch(std::exception e)
+    {
+        return false;
+    }
+    return true;
+}
+
+bool bool_plus_string(object &a,const object b, const object c)
+{
+    a.type = STRING;
+    try
+    {
+        if(b.data.boolean)
+        {
+            a.data.string = new String("true");
+        }
+        else
+        {
+            a.data.string = new String("false");
+        }
+        a.data.string->append(" ");
+        a.data.string->append(*c.data.string);
+    }
+    catch(std::exception e)
+    {
+        return false;
+    }
+    return true;
+}
+
+bool bool_plusplus_string(object &a,const object b, const object c)
+{
+    a.type = STRING;
+    try
+    {
+        if(b.data.boolean)
+        {
+            a.data.string = new String("true");
+        }
+        else
+        {
+            a.data.string = new String("false");
+        }
+
+        a.data.string->append(*c.data.string);
+    }
+    catch(std::exception e)
+    {
+        return false;
+    }
+    return true;
+}
 
 }
 #endif // OPERATORS_H

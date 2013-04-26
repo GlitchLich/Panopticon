@@ -28,8 +28,14 @@ namespace panopticon
 
 enum Errors
 {
-    UnknownError,
-    OpenQuoteError
+    UnknownError,//p0000
+    OpenQuoteError,//p0001
+    MulStringError,//p0002
+    DivideStringError,//p0003
+    IncorrectBooleanComparisonGreater,//p0004
+    IncorrectBooleanComparisonLesser,//p0005
+    IncorrectBooleanComparisonGORE,//p0006
+    IncorrectBooleanComparisonLORE//p0007
 };
 
 }

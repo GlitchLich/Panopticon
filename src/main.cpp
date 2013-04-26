@@ -92,6 +92,8 @@ int main(int argc,char** argv)
             case STRING:
                 t0.data.string = new std::string(yylval.sval);
                 break;
+            case BOOLEAN:
+                t0.data.boolean = yylval.bval;
             }
             Parse(pParser, yv, t0);
         }

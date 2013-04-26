@@ -43,7 +43,8 @@ enum Type
     STRING,
     FUNCTION,
     ARRAY,
-    MAP
+    MAP,
+    ERROR
 };
 
 // Forward declarations
