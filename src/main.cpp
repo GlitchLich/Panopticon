@@ -34,10 +34,10 @@ int main(int argc,char** argv)
     //This is how you read a string into the parser manually
     std::string output;
 
-    panopticon::exec("3*5\n",output);
+    panopticon::exec("3*5",output);
     std::cout << output;
 
-    optic::exec("5.1/10^2\n",output);
+    optic::exec("5.1/10^2",output);
     std::cout << output;
 }
 
