@@ -69,10 +69,10 @@ bool exec(std::string string, std::string& output)
     stream_out.str(std::string());
     try
     {
-//        if(string.c_str()[string.size()-1]!='\0'||string.c_str()[string.size()-1]!='\n'||string.c_str()[string.size()-1]!='\r')
-//        {
-//            string.append("\n");
-//        }
+        if(string.c_str()[string.size()-1]!='\0'||string.c_str()[string.size()-1]!='\n'||string.c_str()[string.size()-1]!='\r')
+        {
+            string.append("\n");
+        }
         yy_scan_string(string.c_str());
         while( (yv=yylex()) != 0)
         {
