@@ -16,10 +16,6 @@ namespace ide
 EditBuffer::EditBuffer(QWidget* parent) :
     QTextEdit(parent)
 {
-    /*
-    QRect newGeometry = parent->geometry();
-    newGeometry.setY(newGeometry.y() * 0.8);
-    setGeometry(newGeometry);*/
     setFont(monoFont);
 }
 
@@ -28,17 +24,17 @@ void EditBuffer::keyPressEvent(QKeyEvent *e)
     if((e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return) && e->modifiers() == Qt::ShiftModifier)
     {
         QString command;
+        std::string returnString;
 
         if(textCursor().selectedText().size() > 0)
             command = textCursor().selectedText();
         else
             command = textCursor().block().text();
 
-        MAIN_WINDOW->post(command);
 
-        if(panopticon::exec(command.toStdString()))
+        if(panopticon::exec(command.toStdString(), returnString))
         {
-            MAIN_WINDOW->post("SUCCESS!");
+            MAIN_WINDOW->post(returnString.c_str());
         }
     }
 
