@@ -25,6 +25,8 @@
 
 #include "types.h"
 #include <sstream>
+#include "../Grammar/parse.h"
+
 #undef STRING
 #undef NUM
 #undef BOOL
@@ -39,6 +41,7 @@
     ARRAY,
     MAP
 */
+namespace optic = panopticon;
 
 namespace panopticon
 {
@@ -50,28 +53,28 @@ inline void print_array(const object &A,int arrayNum=0)
 {
     if(arrayNum!=0)
     {
-        std::cout << " ";
+        out() << " ";
     }
-    std::cout << "[";
+    out() << "[";
     for(int i=0;i<A.data.array->size();++i)
     {
         const panopticon::object& B = A.data.array->at(i);
         switch(B.type)
         {
         case NUMBER:
-            std::cout << " " << B.data.number;
+            out() << " " << B.data.number;
             break;
         case STRING:
-            std::cout << " " << *(A.data.array->at(i).data.string);
+            out() << " " << *(A.data.array->at(i).data.string);
             break;
         case BOOL:
             if(B.data.boolean)
             {
-                std::cout << " true";
+                out() << " true";
             }
             else
             {
-                std::cout << " false";
+                out() << " false";
             }
             break;
         case ARRAY:
@@ -79,10 +82,10 @@ inline void print_array(const object &A,int arrayNum=0)
             break;
         }
     }
-    std::cout << " ] ";
+    out() << " ] ";
     if(arrayNum==0)
     {
-        std::cout << std::endl;
+        out() << std::endl;
     }
 }
 
@@ -182,7 +185,7 @@ inline bool is_numerical(const object &a)
             break;
         }
     }
-    endd:
+endd:
     return isNumerical;
 }
 
@@ -293,7 +296,7 @@ inline bool string_plus_num(object &a,const object b, const object c)
     }
     catch(std::exception &e)
     {
-        std::cerr << "Error String + Number: " << e.what() << std::endl;
+        out() << "Error String + Number: " << e.what() << std::endl;
         delete b.data.string;
         return false;
     }
@@ -312,7 +315,7 @@ inline bool string_plusplus_num(object &a,const object b, const object c)
     }
     catch(std::exception &e)
     {
-        std::cerr << "Error String ++ Number: " << e.what() << std::endl;
+        out() << "Error String ++ Number: " << e.what() << std::endl;
         delete b.data.string;
         return false;
     }
@@ -332,7 +335,7 @@ inline bool num_plus_string(object &a,const object b, const object c)
     }
     catch(std::exception &e)
     {
-        std::cerr << "Error Number + String: " << e.what() << std::endl;
+        out() << "Error Number + String: " << e.what() << std::endl;
         delete c.data.string;
         return false;
     }
@@ -351,7 +354,7 @@ inline bool num_plusplus_string(object &a,const object b, const object c)
     }
     catch(std::exception &e)
     {
-        std::cerr << "Error Number ++ String: " << e.what() << std::endl;
+        out() << "Error Number ++ String: " << e.what() << std::endl;
         delete c.data.string;
         return false;
     }
@@ -377,7 +380,7 @@ inline bool string_plus_bool(object &a,const object b, const object c)
     }
     catch(std::exception &e)
     {
-        std::cerr << "Error String + bool: " << e.what() << std::endl;
+        out() << "Error String + bool: " << e.what() << std::endl;
         delete b.data.string;
         return false;
     }
@@ -401,7 +404,7 @@ inline bool string_plusplus_bool(object &a,const object b, const object c)
     }
     catch(std::exception &e)
     {
-        std::cerr << "Error String ++ bool: " << e.what() << std::endl;
+        out() << "Error String ++ bool: " << e.what() << std::endl;
         delete b.data.string;
         return false;
     }
@@ -426,7 +429,7 @@ inline bool bool_plus_string(object &a,const object b, const object c)
     }
     catch(std::exception &e)
     {
-        std::cerr << "Error Boolean + String: " << e.what() << std::endl;
+        out() << "Error Boolean + String: " << e.what() << std::endl;
         delete c.data.string;
         return false;
     }
@@ -451,12 +454,84 @@ inline bool bool_plusplus_string(object &a,const object b, const object c)
     }
     catch(std::exception &e)
     {
-        std::cerr << "Error Boolean ++ String: " << e.what() << std::endl;
+        out() << "Error Boolean ++ String: " << e.what() << std::endl;
         delete c.data.string;
         return false;
     }
     delete c.data.string;
     return true;
+}
+
+//==================
+//GENERAL
+//==================
+inline object copy_object(const object& original)
+{
+    object copy;
+    copy.type = original.type;
+    switch(original.type)
+    {
+    case panopticon::NUMBER:
+    case panopticon::BOOL:
+        copy = original;
+        break;
+    case panopticon::STRING:
+        copy.data.string = new String(*copy.data.string);
+        break;
+    case panopticon::ARRAY:
+        copy.data.array = new Array();
+        copy.data.array->reserve(original.data.array->size());
+        for(int i=0;i<original.data.array->size();++i)
+        {
+            copy.data.array->push_back(copy_object(original.data.array->at(i)));
+        }
+        break;
+    }
+    return copy;
+}
+
+inline void delete_object(object& obj)
+{
+    switch(obj.type)
+    {
+    case optic::NUMBER:
+    case optic::BOOL:
+        break;
+    case optic::STRING:
+        delete obj.data.string;
+        break;
+    case optic::ARRAY:
+        panopticon::delete_array(obj);
+        break;
+    }
+}
+
+
+
+inline void print_object(const object& A)
+{
+    switch(A.type)
+    {
+    case panopticon::NUMBER:
+        out() << A.data.number << std::endl;
+        break;
+    case panopticon::STRING:
+        out() << *A.data.string << std::endl;
+        break;
+    case panopticon::BOOL:
+        if(A.data.boolean)
+        {
+            out() << "true" << std::endl;
+        }
+        else
+        {
+            out() << "false" << std::endl;
+        }
+        break;
+    case panopticon::ARRAY:
+        panopticon::print_array(A);
+        break;
+    }
 }
 
 }

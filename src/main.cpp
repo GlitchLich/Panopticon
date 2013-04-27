@@ -21,7 +21,7 @@
 */
 
 #include "Grammar/parse.h"
-
+#include <iostream>
 
 #ifndef PN_IDE
 int main(int argc,char** argv)
@@ -32,8 +32,13 @@ int main(int argc,char** argv)
 //    panopticon::command_line_loop();
 
     //This is how you read a string into the parser manually
-    panopticon::exec("3*5");
-    optic::exec("5.1/10^2");
+    std::string output;
+
+    panopticon::exec("3*5",output);
+    std::cout << output;
+
+    optic::exec("5.1/10^2",output);
+    std::cout << output;
 }
 
 #endif

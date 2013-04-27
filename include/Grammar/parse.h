@@ -24,6 +24,7 @@
 #define PARSE_H
 
 #include "tokens.h"
+#include <sstream>
 
 #define ParseTOKENTYPE Token
 #define ParseARG_PDECL
@@ -34,18 +35,22 @@ extern void Parse(
         int yymajor,                 /* The major token code number */
         ParseTOKENTYPE yyminor       /* The value for the token */
         ParseARG_PDECL               /* Optional %extra_argument parameter */
-      );
+        );
 extern void ParseFree(
-  void *p,                    /* The parser to be deleted */
-  void (*freeProc)(void*)     /* Function used to reclaim memory */
-);
+        void *p,                    /* The parser to be deleted */
+        void (*freeProc)(void*)     /* Function used to reclaim memory */
+        );
 
 namespace panopticon
 {
 
+extern bool cli;
+extern std::stringstream output_stream;
+extern std::ostream& out();
+
 extern void init();
 extern void command_line_loop();
-extern bool exec(std::string string);
+extern bool exec(std::string input, std::string &output);
 
 }
 
