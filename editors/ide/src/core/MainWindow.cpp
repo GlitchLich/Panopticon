@@ -144,13 +144,14 @@ MainWindow::MainWindow(QWidget* parent) :
     graphicsView.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     graphicsView.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     editBuffers.push_back(buffer);
-    postWindow = new QPlainTextEdit("__________\nPanopticon");
+    postWindow = new QPlainTextEdit("__________\nPanopticon\n");
     postWindow->setFont(monoFont);
     postWindow->setReadOnly(true);
     postWindow->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     postWindow->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     postWindow->setFrameShape(QTextEdit::NoFrame);
     postWindow->setFrameShadow(QTextEdit::Plain);
+    postWindow->moveCursor(QTextCursor::End);
     graphicsView.scene()->addWidget(postWindow);
     syntaxHighlighter.setDocument(focusedBuffer->document());
     // vLayout.addWidget(buffer);
@@ -175,7 +176,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::post(const QString &string)
 {
-    postWindow->appendPlainText(string);
+    postWindow->insertPlainText(string);
+    postWindow->moveCursor(QTextCursor::End);
 }
 
 void MainWindow::resizeEvent(QResizeEvent *e)
@@ -190,10 +192,10 @@ void MainWindow::resizeComponents()
 
     for(int i = 0; i < editBuffers.size(); ++i)
     {
-       editBuffers.at(i)->setGeometry(0, 0,width(), height() * 0.8);
+       editBuffers.at(i)->setGeometry(0, 0, width(), (double) height() * 0.8);
     }
 
-    postWindow->setGeometry(0, height() * 0.8, width(), height() * 0.2);
+    postWindow->setGeometry(0, (double) height() * 0.8, width(), (double) height() * 0.2);
 }
 
 } // ide namespace
