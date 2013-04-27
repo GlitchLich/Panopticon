@@ -14,4 +14,16 @@
 
 #include "MainWindow.h"
 
+namespace panopticon
+{
+
+namespace ide
+{
+
+extern MainWindow* MAIN_WINDOW;
+
+}
+
+}
+
 #endif // IDE_H

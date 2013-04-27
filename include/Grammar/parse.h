@@ -39,4 +39,15 @@ extern void ParseFree(
   void *p,                    /* The parser to be deleted */
   void (*freeProc)(void*)     /* Function used to reclaim memory */
 );
+
+namespace panopticon
+{
+
+extern void init();
+extern void command_line_loop();
+extern bool exec(std::string string);
+
+}
+
+namespace optic = panopticon;
 #endif // PARSE_H

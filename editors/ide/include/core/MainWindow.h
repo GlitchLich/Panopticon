@@ -78,6 +78,9 @@ public:
     explicit MainWindow(QWidget* parent = 0);
     ~MainWindow();
 
+public slots:
+    void post(const QString& string);
+
 protected:
 
     void resizeEvent(QResizeEvent *e);

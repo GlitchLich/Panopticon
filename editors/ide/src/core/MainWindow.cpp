@@ -158,6 +158,7 @@ MainWindow::MainWindow(QWidget* parent) :
     // glBackground.setLayout(&vLayout);
     showMaximized();
     buffer->setFocus();
+    buffer->grabKeyboard();
 }
 
 MainWindow::~MainWindow()
@@ -169,6 +170,11 @@ MainWindow::~MainWindow()
     }
 
     editBuffers.clear();
+}
+
+void MainWindow::post(const QString &string)
+{
+    postWindow->appendPlainText(string);
 }
 
 void MainWindow::resizeEvent(QResizeEvent *e)

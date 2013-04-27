@@ -4,5 +4,6 @@ set(Panopticon_SRC
    	${Panopticon_SRC}
    	${CMAKE_CURRENT_SOURCE_DIR}/grammar.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/lex.yy.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/parse.cpp
 	PARENT_SCOPE
 )

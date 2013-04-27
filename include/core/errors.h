@@ -35,7 +35,8 @@ enum Errors
     IncorrectBooleanComparisonGreater,//p0004
     IncorrectBooleanComparisonLesser,//p0005
     IncorrectBooleanComparisonGORE,//p0006
-    IncorrectBooleanComparisonLORE//p0007
+    IncorrectBooleanComparisonLORE,//p0007
+    IndexOutOfBounds//p0008
 };
 
 }

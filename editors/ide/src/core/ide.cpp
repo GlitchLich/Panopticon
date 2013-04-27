@@ -1,6 +1,8 @@
 #include <QApplication>
 #include "ide/include/core/ide.h"
 
+panopticon::ide::MainWindow* panopticon::ide::MAIN_WINDOW; // global pointer
+
 int main(int argc, char* argv[])
 {
     QApplication app(argc,argv);
@@ -18,6 +20,7 @@ int main(int argc, char* argv[])
     }
 
     panopticon::ide::MainWindow mainWindow;
+    panopticon::ide::MAIN_WINDOW = &mainWindow;
 
     /*
     QGuiApplication app(argc,argv);

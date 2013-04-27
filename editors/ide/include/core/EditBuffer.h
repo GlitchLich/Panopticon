@@ -16,6 +16,7 @@ class EditBuffer : public QTextEdit
 public:
     EditBuffer(QWidget* parent = 0);
 
+    void keyPressEvent(QKeyEvent *e);
 
 protected:
 
