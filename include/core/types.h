@@ -27,7 +27,8 @@
 #include <unordered_map>
 #include <stack>
 #include <string>
-#include "../../include/core/errors.h"
+#include <cstring>
+#include "core/errors.h"
 
 namespace panopticon
 {
@@ -77,6 +78,7 @@ enum Type
 // Forward declarations
 struct Function;
 struct object;
+struct Nil { };
 
 /* typedefs for types in Panopticon */
 typedef double Number;
@@ -86,7 +88,7 @@ typedef std::string String;
 typedef bool Boolean;
 
 // Data type union
-typedef union
+union Data
 {
     Number number;
     String* string;
@@ -94,7 +96,7 @@ typedef union
     Function* function;
     Array* array;
     Map* map;
-} Data;
+};
 
 struct object
 {

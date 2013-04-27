@@ -1,0 +1,152 @@
+QMainWindow {
+    background: black;
+    border: none;
+}
+
+QGraphicsView {
+    border: none;
+}
+
+QToolButton {
+    background: qlineargradient(
+       x1:0, y1:0, x2:0, y2:1,
+       stop:0 #ddd,
+       stop: 0.4 #aaa,
+       stop: 0.5 #999,
+       stop:1 #777
+     );
+    color: black;
+    border: 1px solid #000;
+}
+
+QToolButton::checked {
+    background: qlineargradient(
+        x1:0, y1:0, x2:0, y2:1,
+        stop:0 #333,
+        stop: 0.4 #888,
+        stop: 0.5 #999,
+        stop:0.9 #666
+        stop:1 #555
+     );
+}
+
+QToolButton:pressed {
+background: qlineargradient(
+    x1:0, y1:0, x2:0, y2:1,
+    stop:0 #333,
+    stop: 0.4 #888,
+    stop: 0.5 #999,
+    stop:0.9 #666
+    stop:1 #555
+ );
+}
+
+QTextEdit {
+    background: transparent;
+    color: #FFFFFF;
+    border: none;
+}
+
+QPlainTextEdit {
+    background: transparent;
+    color: #777777;
+    border: none
+}
+
+QLineEdit {
+    background: qlineargradient(
+       x1:0, y1:0, x2:0, y2:1,
+       stop: 0 #343,
+       stop:0.1 #899,
+       stop: 0.3 #abb,
+       stop: 0.5 #9aa,
+       stop:1 #898
+     );
+     border: 1px solid #222;
+     selection-background-color: rgba(255, 255, 255, 90);
+}
+
+QLineEdit::edit-focus {
+    border: 1px solid #333;
+}
+
+QListWidget {
+    background: qlineargradient(
+       x1:0, y1:0, x2:0, y2:1,
+       stop: 0 #777
+       stop:0.05 #fff,
+       stop: 0.2 #fff,
+       stop: 0.5 #ddd
+       stop:1 #ccc
+     );
+     border: 1px solid #222;
+     opacity: 0.9;
+}
+
+QListWidget::item:selected {
+    background: #333;
+    color: white;
+}
+
+QLabel {
+    color: rgb(230, 230, 230);
+}
+
+QScrollBar:horizontal {
+    border: 2px solid grey;
+    background: #32CC99;
+    height: 15px;
+    margin: 0px 20px 0 20px;
+}
+
+QScrollBar::handle:horizontal {
+    background: white;
+    min-width: 20px;
+}
+
+QScrollBar::add-line:horizontal {
+    border: 2px solid grey;
+    background: #32CC99;
+    width: 20px;
+    subcontrol-position: right;
+    subcontrol-origin: margin;
+}
+
+QScrollBar::sub-line:horizontal {
+    border: 2px solid grey;
+    background: #32CC99;
+    width: 20px;
+    subcontrol-position: left;
+    subcontrol-origin: margin;
+}
+
+QScrollBar:vertical {
+    border: 1px solid white;
+    background: none;
+    width: 15px;
+    margin: 20px 0 20px 0;
+}
+
+QScrollBar::handle:vertical {
+    background: none;
+    min-width: 20px;
+}
+
+QScrollBar::add-line:vertical {
+    border: 1px solid white;
+    background: none;
+    height: 20px;
+    subcontrol-position: bottom;
+    subcontrol-origin: margin;
+}
+
+QScrollBar::sub-line:vertical {
+    border: 1px solid white;
+    background: none;
+    height: 20px;
+    subcontrol-position: top;
+    subcontrol-origin: margin;
+}
+
+
+

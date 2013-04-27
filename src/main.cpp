@@ -23,6 +23,7 @@
 #include "Grammar/parse.h"
 #include <iostream>
 
+#ifndef PN_IDE
 int main(int argc,char** argv)
 {
     panopticon::init();
@@ -39,3 +40,5 @@ int main(int argc,char** argv)
     optic::exec("5.1/10^2",output);
     std::cout << output;
 }
+
+#endif
