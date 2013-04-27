@@ -125,7 +125,7 @@ MainWindow::MainWindow(QWidget* parent) :
     graphicsView(this),
     syntaxHighlighter(0)
 {
-    setGeometry(50, 50, 850, 650);
+    setGeometry(QApplication::desktop()->width() / 2 - 400, QApplication::desktop()->height() / 2 - 300, 800, 600);
     glBackground.setGeometry(this->geometry());
     setWindowTitle("Panopticon");
     setFont(mainFont);
@@ -154,9 +154,10 @@ MainWindow::MainWindow(QWidget* parent) :
     graphicsView.scene()->addWidget(postWindow);
     syntaxHighlighter.setDocument(focusedBuffer->document());
     // vLayout.addWidget(buffer);
+    // glBackground.setL1ayout(&vLayout);
 
-    // glBackground.setLayout(&vLayout);
-    showMaximized();
+    resizeComponents();
+    show();
     buffer->setFocus();
     buffer->grabKeyboard();
 }
@@ -180,15 +181,19 @@ void MainWindow::post(const QString &string)
 void MainWindow::resizeEvent(QResizeEvent *e)
 {
     QWidget::resizeEvent(e);
+    resizeComponents();
+}
 
-    graphicsView.setGeometry(0, 0, e->size().width(), e->size().height());
+void MainWindow::resizeComponents()
+{
+    graphicsView.setGeometry(0, 0, width(), height());
 
     for(int i = 0; i < editBuffers.size(); ++i)
     {
-       editBuffers.at(i)->setGeometry(0, 0,e->size().width(), e->size().height() * 0.8);
+       editBuffers.at(i)->setGeometry(0, 0,width(), height() * 0.8);
     }
 
-    postWindow->setGeometry(0, e->size().height() * 0.8, e->size().width(), e->size().height() * 0.2);
+    postWindow->setGeometry(0, height() * 0.8, width(), height() * 0.2);
 }
 
 } // ide namespace

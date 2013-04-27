@@ -84,6 +84,7 @@ public slots:
 protected:
 
     void resizeEvent(QResizeEvent *e);
+    void resizeComponents();
 
     GlWidget glBackground;
     QVBoxLayout vLayout;
