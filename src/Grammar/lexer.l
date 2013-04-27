@@ -4,6 +4,7 @@
 #include <string.h>
 #include <math.h>
 #include <stdio.h>
+//#include "../../include/core/panerrors.h"
 
 int line = 1, col = 1;
 
@@ -21,7 +22,7 @@ int line = 1, col = 1;
 
                                                 return 0;
                                                }
-
+[+]+[+]           {  return PLUSPLUS; }
 "+"           {  return PLUS; }
 "-"           {  return MINUS; }
 "*"           {  return TIMES; }
@@ -48,10 +49,11 @@ int line = 1, col = 1;
 "]"          {  return RBRAC;  }
 ","          { return COMMA;}
 "="          { return ASSIGN;}
-"\""+.*+"\""      {
+"\""+[__+-={}|:;?/>.<,~`!@#$%^&*()A-Za-z0-9 \t]*+"\"" {
     col += (int)strlen(yytext);
     yylval.sval=strndup(yytext+1,(int)strlen(yytext)-2);
     return STRING;}
+"\""+[__+-={}|:;?/>.<,~`!@#$%^&*()A-Za-z0-9 \t\n\r]* {yyerror(yytext,1);return OPENQUOTEERROR;}
 
 \n      { col = 0; ++line; return NEWLINE; }
 \r      { col = 0; ++line; return NEWLINE; }
@@ -60,7 +62,7 @@ int line = 1, col = 1;
 %%
 /**
  * reset the line and column count
- *
+ *  []
  *
  */
 void reset_lexer(void)
@@ -77,10 +79,20 @@ void reset_lexer(void)
  *
  *
  */
-void yyerror(char *s)
+void yyerror(char *s, int errorCode)
 {
-  printf("error: %s at line: %d col: %d\n",s,line,col);
-
+    switch(errorCode)
+    {
+    //panopticon::OpenQuoteError
+    case 1:
+        printf("Syntax Error p0001, dangling quotation mark: %s at line: %d col: %d\n",s,line,col);
+        break;
+    //panopticon::UnknownError
+    case 0:
+    default:
+        printf("Syntax Error p0000: %s at line: %d col: %d\n",s,line,col);
+        break;
+    }
 }
 
 int yywrap(void)

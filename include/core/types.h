@@ -6,6 +6,7 @@
 #include <stack>
 #include <string>
 #include <cstring>
+#include "core/errors.h"
 
 namespace panopticon
 {
@@ -71,7 +72,7 @@ union Data
 struct object
 {
     Data data;
-    Type type;
+    int type;
     unsigned n;
 };
 

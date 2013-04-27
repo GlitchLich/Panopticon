@@ -33,6 +33,7 @@ void            yy_delete_buffer( YY_BUFFER_STATE );
 }
 
 
+#ifndef PN_IDE
 int main(int argc,char** argv)
 {
     int n;
@@ -46,11 +47,11 @@ int main(int argc,char** argv)
     t0.n=0;
     t0.data.number=0;
 
-    std::cout << "Size of string: " << sizeof(const char*) << std::endl;
-    std::cout << "Size of double: " << sizeof(double) << std::endl;
-    std::cout << "Size of data: " << sizeof(panopticon::Data) << std::endl;
+    //    std::cout << "Size of string: " << sizeof(const char*) << std::endl;
+    //    std::cout << "Size of double: " << sizeof(double) << std::endl;
+    //    std::cout << "Size of data: " << sizeof(panopticon::Data) << std::endl;
     std::cout << "Size of token: " << sizeof(panopticon::object) << std::endl;
-    std::cout << "Size of void*: " << sizeof(void*) << std::endl;
+    //    std::cout << "Size of void*: " << sizeof(void*) << std::endl;
     std::cout << "Enter an expression like 3+5 <return>" << std::endl;
     std::cout << "  Terminate with ^D" << std::endl;
 
@@ -61,9 +62,20 @@ int main(int argc,char** argv)
         // on EOF yylex will return 0
         while( (yv=yylex()) != 0)
         {
-//            std::cout << " yylex() " << yv << " yylval.dval " << yylval.dval << std::endl;
-            t0.data.number = yylval.dval;
-            t0.data.string = new std::string(yylval.sval);
+            //            std::cout << " yylex() " << yv << " yylval.dval " << yylval.dval << std::endl;
+            switch(yv)
+            {
+            case NUM:
+                t0.data.number = yylval.dval;
+                break;
+            case STRING:
+                t0.data.string = new std::string(yylval.sval);
+                break;
+//            case OPENQUOTEERROR:
+//                yv = NEWLINE;
+//                std::cerr << "ERROR p0001: Dangling quotation mark." << std::endl;
+//                break;
+            }
             Parse(pParser, yv, t0);
         }
 
@@ -72,5 +84,6 @@ int main(int argc,char** argv)
 
     Parse (pParser, 0, t0);
     ParseFree(pParser, free );
-
 }
+
+#endif

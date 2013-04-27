@@ -1,14 +1,20 @@
 State 0:
           main ::= * in
       (1) in ::= *
+          in ::= * in NEWLINE
           in ::= * in start NEWLINE
+          in ::= * error
+          error ::= * OPENQUOTEERROR
 
+                OPENQUOTEERROR shift  52
+                         error shift  53
                           main accept
                             in shift  1
                      {default} reduce 1
 
 State 1:
       (0) main ::= in *
+          in ::= in * NEWLINE
           in ::= in * start NEWLINE
           start ::= * spec
           spec ::= * top_stmt
@@ -17,944 +23,853 @@ State 1:
           expr ::= * retval
           retval ::= * invoke
           invoke ::= * value
-          value ::= * NUM
-          value ::= * STRING
-          expr ::= * expr MINUS expr
-          expr ::= * expr PLUS expr
-          expr ::= * expr TIMES expr
-          expr ::= * expr DIVIDE expr
-          expr ::= * expr LESSTHAN expr
-          expr ::= * expr GREATERTHAN expr
-          expr ::= * expr EQUALTO expr
-          expr ::= * expr NOTEQUALTO expr
-          expr ::= * expr GORE expr
-          expr ::= * expr LORE expr
-          expr ::= * LPAREN expr RPAREN
-          expr ::= * expr SHIFTL expr
-          expr ::= * expr SHIFTR expr
-          expr ::= * expr AND expr
-          expr ::= * expr OR expr
-          expr ::= * NOT expr
-          expr ::= * expr BITAND expr
-          expr ::= * expr BITOR expr
-          expr ::= * BITNOT expr
-          expr ::= * MINUS expr
-          expr ::= * expr MODULO expr
+          value ::= * num
+          value ::= * string
+          num ::= * NUM
+          string ::= * STRING
+          string ::= * LPAREN string RPAREN
+          string ::= * string MINUS string
+          string ::= * string PLUS string
+          string ::= * string PLUSPLUS string
+          string ::= * string EQUALTO string
+          num ::= * LPAREN num RPAREN
+          num ::= * num MINUS num
+          num ::= * num PLUS num
+          num ::= * num TIMES num
+          num ::= * num DIVIDE num
+          num ::= * num LESSTHAN num
+          num ::= * num GREATERTHAN num
+          num ::= * num EQUALTO num
+          num ::= * num NOTEQUALTO num
+          num ::= * num GORE num
+          num ::= * num LORE num
+          num ::= * num SHIFTL num
+          num ::= * num SHIFTR num
+          num ::= * num AND num
+          num ::= * num OR num
+          num ::= * NOT num
+          num ::= * num BITAND num
+          num ::= * num BITOR num
+          num ::= * BITNOT num
+          num ::= * MINUS num
+          num ::= * num MODULO num
 
                              $ reduce 0
-                         MINUS shift  2
-                           NOT shift  4
-                        BITNOT shift  3
-                        LPAREN shift  5
-                           NUM shift  48
-                        STRING shift  47
-                          expr shift  24
-                         start shift  39
-                          spec shift  54
-                      top_stmt shift  53
-                          stmt shift  52
-                        retval shift  51
-                        invoke shift  50
-                         value shift  49
+                         MINUS shift  3
+                           NOT shift  5
+                        BITNOT shift  4
+                        LPAREN shift  2
+                       NEWLINE shift  72
+                           NUM shift  63
+                        STRING shift  55
+                          expr shift  67
+                         start shift  51
+                          spec shift  70
+                      top_stmt shift  69
+                          stmt shift  68
+                        retval shift  66
+                        invoke shift  65
+                         value shift  64
+                           num shift  30
+                        string shift  44
 
 State 2:
-          expr ::= * retval
-          retval ::= * invoke
-          invoke ::= * value
-          value ::= * NUM
-          value ::= * STRING
-          expr ::= * expr MINUS expr
-          expr ::= * expr PLUS expr
-          expr ::= * expr TIMES expr
-          expr ::= * expr DIVIDE expr
-          expr ::= * expr LESSTHAN expr
-          expr ::= * expr GREATERTHAN expr
-          expr ::= * expr EQUALTO expr
-          expr ::= * expr NOTEQUALTO expr
-          expr ::= * expr GORE expr
-          expr ::= * expr LORE expr
-          expr ::= * LPAREN expr RPAREN
-          expr ::= * expr SHIFTL expr
-          expr ::= * expr SHIFTR expr
-          expr ::= * expr AND expr
-          expr ::= * expr OR expr
-          expr ::= * NOT expr
-          expr ::= * expr BITAND expr
-          expr ::= * expr BITOR expr
-          expr ::= * BITNOT expr
-          expr ::= * MINUS expr
-          expr ::= MINUS * expr
-          expr ::= * expr MODULO expr
+          num ::= * NUM
+          string ::= * STRING
+          string ::= * LPAREN string RPAREN
+          string ::= LPAREN * string RPAREN
+          string ::= * string MINUS string
+          string ::= * string PLUS string
+          string ::= * string PLUSPLUS string
+          string ::= * string EQUALTO string
+          num ::= * LPAREN num RPAREN
+          num ::= LPAREN * num RPAREN
+          num ::= * num MINUS num
+          num ::= * num PLUS num
+          num ::= * num TIMES num
+          num ::= * num DIVIDE num
+          num ::= * num LESSTHAN num
+          num ::= * num GREATERTHAN num
+          num ::= * num EQUALTO num
+          num ::= * num NOTEQUALTO num
+          num ::= * num GORE num
+          num ::= * num LORE num
+          num ::= * num SHIFTL num
+          num ::= * num SHIFTR num
+          num ::= * num AND num
+          num ::= * num OR num
+          num ::= * NOT num
+          num ::= * num BITAND num
+          num ::= * num BITOR num
+          num ::= * BITNOT num
+          num ::= * MINUS num
+          num ::= * num MODULO num
 
-                         MINUS shift  2
-                           NOT shift  4
-                        BITNOT shift  3
-                        LPAREN shift  5
-                           NUM shift  48
-                        STRING shift  47
-                          expr shift  40
-                        retval shift  51
-                        invoke shift  50
-                         value shift  49
+                         MINUS shift  3
+                           NOT shift  5
+                        BITNOT shift  4
+                        LPAREN shift  2
+                           NUM shift  63
+                        STRING shift  55
+                           num shift  29
+                        string shift  41
 
 State 3:
-          expr ::= * retval
-          retval ::= * invoke
-          invoke ::= * value
-          value ::= * NUM
-          value ::= * STRING
-          expr ::= * expr MINUS expr
-          expr ::= * expr PLUS expr
-          expr ::= * expr TIMES expr
-          expr ::= * expr DIVIDE expr
-          expr ::= * expr LESSTHAN expr
-          expr ::= * expr GREATERTHAN expr
-          expr ::= * expr EQUALTO expr
-          expr ::= * expr NOTEQUALTO expr
-          expr ::= * expr GORE expr
-          expr ::= * expr LORE expr
-          expr ::= * LPAREN expr RPAREN
-          expr ::= * expr SHIFTL expr
-          expr ::= * expr SHIFTR expr
-          expr ::= * expr AND expr
-          expr ::= * expr OR expr
-          expr ::= * NOT expr
-          expr ::= * expr BITAND expr
-          expr ::= * expr BITOR expr
-          expr ::= * BITNOT expr
-          expr ::= BITNOT * expr
-          expr ::= * MINUS expr
-          expr ::= * expr MODULO expr
+          num ::= * NUM
+          num ::= * LPAREN num RPAREN
+          num ::= * num MINUS num
+          num ::= * num PLUS num
+          num ::= * num TIMES num
+          num ::= * num DIVIDE num
+          num ::= * num LESSTHAN num
+          num ::= * num GREATERTHAN num
+          num ::= * num EQUALTO num
+          num ::= * num NOTEQUALTO num
+          num ::= * num GORE num
+          num ::= * num LORE num
+          num ::= * num SHIFTL num
+          num ::= * num SHIFTR num
+          num ::= * num AND num
+          num ::= * num OR num
+          num ::= * NOT num
+          num ::= * num BITAND num
+          num ::= * num BITOR num
+          num ::= * BITNOT num
+          num ::= * MINUS num
+          num ::= MINUS * num
+          num ::= * num MODULO num
 
-                         MINUS shift  2
-                           NOT shift  4
-                        BITNOT shift  3
-                        LPAREN shift  5
-                           NUM shift  48
-                        STRING shift  47
-                          expr shift  41
-                        retval shift  51
-                        invoke shift  50
-                         value shift  49
+                         MINUS shift  3
+                           NOT shift  5
+                        BITNOT shift  4
+                        LPAREN shift  22
+                           NUM shift  63
+                           num shift  56
 
 State 4:
-          expr ::= * retval
-          retval ::= * invoke
-          invoke ::= * value
-          value ::= * NUM
-          value ::= * STRING
-          expr ::= * expr MINUS expr
-          expr ::= * expr PLUS expr
-          expr ::= * expr TIMES expr
-          expr ::= * expr DIVIDE expr
-          expr ::= * expr LESSTHAN expr
-          expr ::= * expr GREATERTHAN expr
-          expr ::= * expr EQUALTO expr
-          expr ::= * expr NOTEQUALTO expr
-          expr ::= * expr GORE expr
-          expr ::= * expr LORE expr
-          expr ::= * LPAREN expr RPAREN
-          expr ::= * expr SHIFTL expr
-          expr ::= * expr SHIFTR expr
-          expr ::= * expr AND expr
-          expr ::= * expr OR expr
-          expr ::= * NOT expr
-          expr ::= NOT * expr
-          expr ::= * expr BITAND expr
-          expr ::= * expr BITOR expr
-          expr ::= * BITNOT expr
-          expr ::= * MINUS expr
-          expr ::= * expr MODULO expr
+          num ::= * NUM
+          num ::= * LPAREN num RPAREN
+          num ::= * num MINUS num
+          num ::= * num PLUS num
+          num ::= * num TIMES num
+          num ::= * num DIVIDE num
+          num ::= * num LESSTHAN num
+          num ::= * num GREATERTHAN num
+          num ::= * num EQUALTO num
+          num ::= * num NOTEQUALTO num
+          num ::= * num GORE num
+          num ::= * num LORE num
+          num ::= * num SHIFTL num
+          num ::= * num SHIFTR num
+          num ::= * num AND num
+          num ::= * num OR num
+          num ::= * NOT num
+          num ::= * num BITAND num
+          num ::= * num BITOR num
+          num ::= * BITNOT num
+          num ::= BITNOT * num
+          num ::= * MINUS num
+          num ::= * num MODULO num
 
-                         MINUS shift  2
-                           NOT shift  4
-                        BITNOT shift  3
-                        LPAREN shift  5
-                           NUM shift  48
-                        STRING shift  47
-                          expr shift  42
-                        retval shift  51
-                        invoke shift  50
-                         value shift  49
+                         MINUS shift  3
+                           NOT shift  5
+                        BITNOT shift  4
+                        LPAREN shift  22
+                           NUM shift  63
+                           num shift  57
 
 State 5:
-          expr ::= * retval
-          retval ::= * invoke
-          invoke ::= * value
-          value ::= * NUM
-          value ::= * STRING
-          expr ::= * expr MINUS expr
-          expr ::= * expr PLUS expr
-          expr ::= * expr TIMES expr
-          expr ::= * expr DIVIDE expr
-          expr ::= * expr LESSTHAN expr
-          expr ::= * expr GREATERTHAN expr
-          expr ::= * expr EQUALTO expr
-          expr ::= * expr NOTEQUALTO expr
-          expr ::= * expr GORE expr
-          expr ::= * expr LORE expr
-          expr ::= * LPAREN expr RPAREN
-          expr ::= LPAREN * expr RPAREN
-          expr ::= * expr SHIFTL expr
-          expr ::= * expr SHIFTR expr
-          expr ::= * expr AND expr
-          expr ::= * expr OR expr
-          expr ::= * NOT expr
-          expr ::= * expr BITAND expr
-          expr ::= * expr BITOR expr
-          expr ::= * BITNOT expr
-          expr ::= * MINUS expr
-          expr ::= * expr MODULO expr
+          num ::= * NUM
+          num ::= * LPAREN num RPAREN
+          num ::= * num MINUS num
+          num ::= * num PLUS num
+          num ::= * num TIMES num
+          num ::= * num DIVIDE num
+          num ::= * num LESSTHAN num
+          num ::= * num GREATERTHAN num
+          num ::= * num EQUALTO num
+          num ::= * num NOTEQUALTO num
+          num ::= * num GORE num
+          num ::= * num LORE num
+          num ::= * num SHIFTL num
+          num ::= * num SHIFTR num
+          num ::= * num AND num
+          num ::= * num OR num
+          num ::= * NOT num
+          num ::= NOT * num
+          num ::= * num BITAND num
+          num ::= * num BITOR num
+          num ::= * BITNOT num
+          num ::= * MINUS num
+          num ::= * num MODULO num
 
-                         MINUS shift  2
-                           NOT shift  4
-                        BITNOT shift  3
-                        LPAREN shift  5
-                           NUM shift  48
-                        STRING shift  47
-                          expr shift  23
-                        retval shift  51
-                        invoke shift  50
-                         value shift  49
+                         MINUS shift  3
+                           NOT shift  5
+                        BITNOT shift  4
+                        LPAREN shift  22
+                           NUM shift  63
+                           num shift  58
 
 State 6:
-          expr ::= * retval
-          retval ::= * invoke
-          invoke ::= * value
-          value ::= * NUM
-          value ::= * STRING
-          expr ::= * expr MINUS expr
-          expr ::= * expr PLUS expr
-          expr ::= * expr TIMES expr
-          expr ::= * expr DIVIDE expr
-          expr ::= * expr LESSTHAN expr
-          expr ::= * expr GREATERTHAN expr
-          expr ::= * expr EQUALTO expr
-          expr ::= * expr NOTEQUALTO expr
-          expr ::= * expr GORE expr
-          expr ::= * expr LORE expr
-          expr ::= * LPAREN expr RPAREN
-          expr ::= * expr SHIFTL expr
-          expr ::= * expr SHIFTR expr
-          expr ::= * expr AND expr
-          expr ::= * expr OR expr
-          expr ::= * NOT expr
-          expr ::= * expr BITAND expr
-          expr ::= * expr BITOR expr
-          expr ::= * BITNOT expr
-          expr ::= * MINUS expr
-          expr ::= * expr MODULO expr
-          expr ::= expr MODULO * expr
+          num ::= * NUM
+          num ::= * LPAREN num RPAREN
+          num ::= * num MINUS num
+          num ::= * num PLUS num
+          num ::= * num TIMES num
+          num ::= * num DIVIDE num
+          num ::= * num LESSTHAN num
+          num ::= * num GREATERTHAN num
+          num ::= * num EQUALTO num
+          num ::= * num NOTEQUALTO num
+          num ::= * num GORE num
+          num ::= * num LORE num
+          num ::= * num SHIFTL num
+          num ::= * num SHIFTR num
+          num ::= * num AND num
+          num ::= * num OR num
+          num ::= * NOT num
+          num ::= * num BITAND num
+          num ::= * num BITOR num
+          num ::= * BITNOT num
+          num ::= * MINUS num
+          num ::= * num MODULO num
+          num ::= num MODULO * num
 
-                         MINUS shift  2
-                           NOT shift  4
-                        BITNOT shift  3
-                        LPAREN shift  5
-                           NUM shift  48
-                        STRING shift  47
-                          expr shift  44
-                        retval shift  51
-                        invoke shift  50
-                         value shift  49
+                         MINUS shift  3
+                           NOT shift  5
+                        BITNOT shift  4
+                        LPAREN shift  22
+                           NUM shift  63
+                           num shift  59
 
 State 7:
-          expr ::= * retval
-          retval ::= * invoke
-          invoke ::= * value
-          value ::= * NUM
-          value ::= * STRING
-          expr ::= * expr MINUS expr
-          expr ::= * expr PLUS expr
-          expr ::= * expr TIMES expr
-          expr ::= * expr DIVIDE expr
-          expr ::= * expr LESSTHAN expr
-          expr ::= * expr GREATERTHAN expr
-          expr ::= * expr EQUALTO expr
-          expr ::= * expr NOTEQUALTO expr
-          expr ::= * expr GORE expr
-          expr ::= * expr LORE expr
-          expr ::= * LPAREN expr RPAREN
-          expr ::= * expr SHIFTL expr
-          expr ::= * expr SHIFTR expr
-          expr ::= * expr AND expr
-          expr ::= * expr OR expr
-          expr ::= * NOT expr
-          expr ::= * expr BITAND expr
-          expr ::= * expr BITOR expr
-          expr ::= expr BITOR * expr
-          expr ::= * BITNOT expr
-          expr ::= * MINUS expr
-          expr ::= * expr MODULO expr
+          num ::= * NUM
+          num ::= * LPAREN num RPAREN
+          num ::= * num MINUS num
+          num ::= * num PLUS num
+          num ::= * num TIMES num
+          num ::= * num DIVIDE num
+          num ::= * num LESSTHAN num
+          num ::= * num GREATERTHAN num
+          num ::= * num EQUALTO num
+          num ::= * num NOTEQUALTO num
+          num ::= * num GORE num
+          num ::= * num LORE num
+          num ::= * num SHIFTL num
+          num ::= * num SHIFTR num
+          num ::= * num AND num
+          num ::= * num OR num
+          num ::= * NOT num
+          num ::= * num BITAND num
+          num ::= * num BITOR num
+          num ::= num BITOR * num
+          num ::= * BITNOT num
+          num ::= * MINUS num
+          num ::= * num MODULO num
 
-                         MINUS shift  2
-                           NOT shift  4
-                        BITNOT shift  3
-                        LPAREN shift  5
-                           NUM shift  48
-                        STRING shift  47
-                          expr shift  27
-                        retval shift  51
-                        invoke shift  50
-                         value shift  49
+                         MINUS shift  3
+                           NOT shift  5
+                        BITNOT shift  4
+                        LPAREN shift  22
+                           NUM shift  63
+                           num shift  33
 
 State 8:
-          expr ::= * retval
-          retval ::= * invoke
-          invoke ::= * value
-          value ::= * NUM
-          value ::= * STRING
-          expr ::= * expr MINUS expr
-          expr ::= * expr PLUS expr
-          expr ::= * expr TIMES expr
-          expr ::= * expr DIVIDE expr
-          expr ::= * expr LESSTHAN expr
-          expr ::= * expr GREATERTHAN expr
-          expr ::= * expr EQUALTO expr
-          expr ::= * expr NOTEQUALTO expr
-          expr ::= * expr GORE expr
-          expr ::= * expr LORE expr
-          expr ::= * LPAREN expr RPAREN
-          expr ::= * expr SHIFTL expr
-          expr ::= * expr SHIFTR expr
-          expr ::= * expr AND expr
-          expr ::= * expr OR expr
-          expr ::= * NOT expr
-          expr ::= * expr BITAND expr
-          expr ::= expr BITAND * expr
-          expr ::= * expr BITOR expr
-          expr ::= * BITNOT expr
-          expr ::= * MINUS expr
-          expr ::= * expr MODULO expr
+          num ::= * NUM
+          num ::= * LPAREN num RPAREN
+          num ::= * num MINUS num
+          num ::= * num PLUS num
+          num ::= * num TIMES num
+          num ::= * num DIVIDE num
+          num ::= * num LESSTHAN num
+          num ::= * num GREATERTHAN num
+          num ::= * num EQUALTO num
+          num ::= * num NOTEQUALTO num
+          num ::= * num GORE num
+          num ::= * num LORE num
+          num ::= * num SHIFTL num
+          num ::= * num SHIFTR num
+          num ::= * num AND num
+          num ::= * num OR num
+          num ::= * NOT num
+          num ::= * num BITAND num
+          num ::= num BITAND * num
+          num ::= * num BITOR num
+          num ::= * BITNOT num
+          num ::= * MINUS num
+          num ::= * num MODULO num
 
-                         MINUS shift  2
-                           NOT shift  4
-                        BITNOT shift  3
-                        LPAREN shift  5
-                           NUM shift  48
-                        STRING shift  47
-                          expr shift  28
-                        retval shift  51
-                        invoke shift  50
-                         value shift  49
+                         MINUS shift  3
+                           NOT shift  5
+                        BITNOT shift  4
+                        LPAREN shift  22
+                           NUM shift  63
+                           num shift  34
 
 State 9:
-          expr ::= * retval
-          retval ::= * invoke
-          invoke ::= * value
-          value ::= * NUM
-          value ::= * STRING
-          expr ::= * expr MINUS expr
-          expr ::= * expr PLUS expr
-          expr ::= * expr TIMES expr
-          expr ::= * expr DIVIDE expr
-          expr ::= * expr LESSTHAN expr
-          expr ::= * expr GREATERTHAN expr
-          expr ::= * expr EQUALTO expr
-          expr ::= * expr NOTEQUALTO expr
-          expr ::= * expr GORE expr
-          expr ::= * expr LORE expr
-          expr ::= * LPAREN expr RPAREN
-          expr ::= * expr SHIFTL expr
-          expr ::= * expr SHIFTR expr
-          expr ::= * expr AND expr
-          expr ::= * expr OR expr
-          expr ::= expr OR * expr
-          expr ::= * NOT expr
-          expr ::= * expr BITAND expr
-          expr ::= * expr BITOR expr
-          expr ::= * BITNOT expr
-          expr ::= * MINUS expr
-          expr ::= * expr MODULO expr
+          num ::= * NUM
+          num ::= * LPAREN num RPAREN
+          num ::= * num MINUS num
+          num ::= * num PLUS num
+          num ::= * num TIMES num
+          num ::= * num DIVIDE num
+          num ::= * num LESSTHAN num
+          num ::= * num GREATERTHAN num
+          num ::= * num EQUALTO num
+          num ::= * num NOTEQUALTO num
+          num ::= * num GORE num
+          num ::= * num LORE num
+          num ::= * num SHIFTL num
+          num ::= * num SHIFTR num
+          num ::= * num AND num
+          num ::= * num OR num
+          num ::= num OR * num
+          num ::= * NOT num
+          num ::= * num BITAND num
+          num ::= * num BITOR num
+          num ::= * BITNOT num
+          num ::= * MINUS num
+          num ::= * num MODULO num
 
-                         MINUS shift  2
-                           NOT shift  4
-                        BITNOT shift  3
-                        LPAREN shift  5
-                           NUM shift  48
-                        STRING shift  47
-                          expr shift  25
-                        retval shift  51
-                        invoke shift  50
-                         value shift  49
+                         MINUS shift  3
+                           NOT shift  5
+                        BITNOT shift  4
+                        LPAREN shift  22
+                           NUM shift  63
+                           num shift  31
 
 State 10:
-          expr ::= * retval
-          retval ::= * invoke
-          invoke ::= * value
-          value ::= * NUM
-          value ::= * STRING
-          expr ::= * expr MINUS expr
-          expr ::= * expr PLUS expr
-          expr ::= * expr TIMES expr
-          expr ::= * expr DIVIDE expr
-          expr ::= * expr LESSTHAN expr
-          expr ::= * expr GREATERTHAN expr
-          expr ::= * expr EQUALTO expr
-          expr ::= * expr NOTEQUALTO expr
-          expr ::= * expr GORE expr
-          expr ::= * expr LORE expr
-          expr ::= * LPAREN expr RPAREN
-          expr ::= * expr SHIFTL expr
-          expr ::= * expr SHIFTR expr
-          expr ::= * expr AND expr
-          expr ::= expr AND * expr
-          expr ::= * expr OR expr
-          expr ::= * NOT expr
-          expr ::= * expr BITAND expr
-          expr ::= * expr BITOR expr
-          expr ::= * BITNOT expr
-          expr ::= * MINUS expr
-          expr ::= * expr MODULO expr
+          num ::= * NUM
+          num ::= * LPAREN num RPAREN
+          num ::= * num MINUS num
+          num ::= * num PLUS num
+          num ::= * num TIMES num
+          num ::= * num DIVIDE num
+          num ::= * num LESSTHAN num
+          num ::= * num GREATERTHAN num
+          num ::= * num EQUALTO num
+          num ::= * num NOTEQUALTO num
+          num ::= * num GORE num
+          num ::= * num LORE num
+          num ::= * num SHIFTL num
+          num ::= * num SHIFTR num
+          num ::= * num AND num
+          num ::= num AND * num
+          num ::= * num OR num
+          num ::= * NOT num
+          num ::= * num BITAND num
+          num ::= * num BITOR num
+          num ::= * BITNOT num
+          num ::= * MINUS num
+          num ::= * num MODULO num
 
-                         MINUS shift  2
-                           NOT shift  4
-                        BITNOT shift  3
-                        LPAREN shift  5
-                           NUM shift  48
-                        STRING shift  47
-                          expr shift  26
-                        retval shift  51
-                        invoke shift  50
-                         value shift  49
+                         MINUS shift  3
+                           NOT shift  5
+                        BITNOT shift  4
+                        LPAREN shift  22
+                           NUM shift  63
+                           num shift  32
 
 State 11:
-          expr ::= * retval
-          retval ::= * invoke
-          invoke ::= * value
-          value ::= * NUM
-          value ::= * STRING
-          expr ::= * expr MINUS expr
-          expr ::= * expr PLUS expr
-          expr ::= * expr TIMES expr
-          expr ::= * expr DIVIDE expr
-          expr ::= * expr LESSTHAN expr
-          expr ::= * expr GREATERTHAN expr
-          expr ::= * expr EQUALTO expr
-          expr ::= * expr NOTEQUALTO expr
-          expr ::= * expr GORE expr
-          expr ::= * expr LORE expr
-          expr ::= * LPAREN expr RPAREN
-          expr ::= * expr SHIFTL expr
-          expr ::= * expr SHIFTR expr
-          expr ::= expr SHIFTR * expr
-          expr ::= * expr AND expr
-          expr ::= * expr OR expr
-          expr ::= * NOT expr
-          expr ::= * expr BITAND expr
-          expr ::= * expr BITOR expr
-          expr ::= * BITNOT expr
-          expr ::= * MINUS expr
-          expr ::= * expr MODULO expr
+          num ::= * NUM
+          num ::= * LPAREN num RPAREN
+          num ::= * num MINUS num
+          num ::= * num PLUS num
+          num ::= * num TIMES num
+          num ::= * num DIVIDE num
+          num ::= * num LESSTHAN num
+          num ::= * num GREATERTHAN num
+          num ::= * num EQUALTO num
+          num ::= * num NOTEQUALTO num
+          num ::= * num GORE num
+          num ::= * num LORE num
+          num ::= * num SHIFTL num
+          num ::= * num SHIFTR num
+          num ::= num SHIFTR * num
+          num ::= * num AND num
+          num ::= * num OR num
+          num ::= * NOT num
+          num ::= * num BITAND num
+          num ::= * num BITOR num
+          num ::= * BITNOT num
+          num ::= * MINUS num
+          num ::= * num MODULO num
 
-                         MINUS shift  2
-                           NOT shift  4
-                        BITNOT shift  3
-                        LPAREN shift  5
-                           NUM shift  48
-                        STRING shift  47
-                          expr shift  35
-                        retval shift  51
-                        invoke shift  50
-                         value shift  49
+                         MINUS shift  3
+                           NOT shift  5
+                        BITNOT shift  4
+                        LPAREN shift  22
+                           NUM shift  63
+                           num shift  42
 
 State 12:
-          expr ::= * retval
-          retval ::= * invoke
-          invoke ::= * value
-          value ::= * NUM
-          value ::= * STRING
-          expr ::= * expr MINUS expr
-          expr ::= * expr PLUS expr
-          expr ::= * expr TIMES expr
-          expr ::= * expr DIVIDE expr
-          expr ::= * expr LESSTHAN expr
-          expr ::= * expr GREATERTHAN expr
-          expr ::= * expr EQUALTO expr
-          expr ::= * expr NOTEQUALTO expr
-          expr ::= * expr GORE expr
-          expr ::= * expr LORE expr
-          expr ::= * LPAREN expr RPAREN
-          expr ::= * expr SHIFTL expr
-          expr ::= expr SHIFTL * expr
-          expr ::= * expr SHIFTR expr
-          expr ::= * expr AND expr
-          expr ::= * expr OR expr
-          expr ::= * NOT expr
-          expr ::= * expr BITAND expr
-          expr ::= * expr BITOR expr
-          expr ::= * BITNOT expr
-          expr ::= * MINUS expr
-          expr ::= * expr MODULO expr
+          num ::= * NUM
+          num ::= * LPAREN num RPAREN
+          num ::= * num MINUS num
+          num ::= * num PLUS num
+          num ::= * num TIMES num
+          num ::= * num DIVIDE num
+          num ::= * num LESSTHAN num
+          num ::= * num GREATERTHAN num
+          num ::= * num EQUALTO num
+          num ::= * num NOTEQUALTO num
+          num ::= * num GORE num
+          num ::= * num LORE num
+          num ::= * num SHIFTL num
+          num ::= num SHIFTL * num
+          num ::= * num SHIFTR num
+          num ::= * num AND num
+          num ::= * num OR num
+          num ::= * NOT num
+          num ::= * num BITAND num
+          num ::= * num BITOR num
+          num ::= * BITNOT num
+          num ::= * MINUS num
+          num ::= * num MODULO num
 
-                         MINUS shift  2
-                           NOT shift  4
-                        BITNOT shift  3
-                        LPAREN shift  5
-                           NUM shift  48
-                        STRING shift  47
-                          expr shift  36
-                        retval shift  51
-                        invoke shift  50
-                         value shift  49
+                         MINUS shift  3
+                           NOT shift  5
+                        BITNOT shift  4
+                        LPAREN shift  22
+                           NUM shift  63
+                           num shift  43
 
 State 13:
-          expr ::= * retval
-          retval ::= * invoke
-          invoke ::= * value
-          value ::= * NUM
-          value ::= * STRING
-          expr ::= * expr MINUS expr
-          expr ::= * expr PLUS expr
-          expr ::= * expr TIMES expr
-          expr ::= * expr DIVIDE expr
-          expr ::= * expr LESSTHAN expr
-          expr ::= * expr GREATERTHAN expr
-          expr ::= * expr EQUALTO expr
-          expr ::= * expr NOTEQUALTO expr
-          expr ::= * expr GORE expr
-          expr ::= * expr LORE expr
-          expr ::= expr LORE * expr
-          expr ::= * LPAREN expr RPAREN
-          expr ::= * expr SHIFTL expr
-          expr ::= * expr SHIFTR expr
-          expr ::= * expr AND expr
-          expr ::= * expr OR expr
-          expr ::= * NOT expr
-          expr ::= * expr BITAND expr
-          expr ::= * expr BITOR expr
-          expr ::= * BITNOT expr
-          expr ::= * MINUS expr
-          expr ::= * expr MODULO expr
+          num ::= * NUM
+          num ::= * LPAREN num RPAREN
+          num ::= * num MINUS num
+          num ::= * num PLUS num
+          num ::= * num TIMES num
+          num ::= * num DIVIDE num
+          num ::= * num LESSTHAN num
+          num ::= * num GREATERTHAN num
+          num ::= * num EQUALTO num
+          num ::= * num NOTEQUALTO num
+          num ::= * num GORE num
+          num ::= * num LORE num
+          num ::= num LORE * num
+          num ::= * num SHIFTL num
+          num ::= * num SHIFTR num
+          num ::= * num AND num
+          num ::= * num OR num
+          num ::= * NOT num
+          num ::= * num BITAND num
+          num ::= * num BITOR num
+          num ::= * BITNOT num
+          num ::= * MINUS num
+          num ::= * num MODULO num
 
-                         MINUS shift  2
-                           NOT shift  4
-                        BITNOT shift  3
-                        LPAREN shift  5
-                           NUM shift  48
-                        STRING shift  47
-                          expr shift  31
-                        retval shift  51
-                        invoke shift  50
-                         value shift  49
+                         MINUS shift  3
+                           NOT shift  5
+                        BITNOT shift  4
+                        LPAREN shift  22
+                           NUM shift  63
+                           num shift  37
 
 State 14:
-          expr ::= * retval
-          retval ::= * invoke
-          invoke ::= * value
-          value ::= * NUM
-          value ::= * STRING
-          expr ::= * expr MINUS expr
-          expr ::= * expr PLUS expr
-          expr ::= * expr TIMES expr
-          expr ::= * expr DIVIDE expr
-          expr ::= * expr LESSTHAN expr
-          expr ::= * expr GREATERTHAN expr
-          expr ::= * expr EQUALTO expr
-          expr ::= * expr NOTEQUALTO expr
-          expr ::= * expr GORE expr
-          expr ::= expr GORE * expr
-          expr ::= * expr LORE expr
-          expr ::= * LPAREN expr RPAREN
-          expr ::= * expr SHIFTL expr
-          expr ::= * expr SHIFTR expr
-          expr ::= * expr AND expr
-          expr ::= * expr OR expr
-          expr ::= * NOT expr
-          expr ::= * expr BITAND expr
-          expr ::= * expr BITOR expr
-          expr ::= * BITNOT expr
-          expr ::= * MINUS expr
-          expr ::= * expr MODULO expr
+          num ::= * NUM
+          num ::= * LPAREN num RPAREN
+          num ::= * num MINUS num
+          num ::= * num PLUS num
+          num ::= * num TIMES num
+          num ::= * num DIVIDE num
+          num ::= * num LESSTHAN num
+          num ::= * num GREATERTHAN num
+          num ::= * num EQUALTO num
+          num ::= * num NOTEQUALTO num
+          num ::= * num GORE num
+          num ::= num GORE * num
+          num ::= * num LORE num
+          num ::= * num SHIFTL num
+          num ::= * num SHIFTR num
+          num ::= * num AND num
+          num ::= * num OR num
+          num ::= * NOT num
+          num ::= * num BITAND num
+          num ::= * num BITOR num
+          num ::= * BITNOT num
+          num ::= * MINUS num
+          num ::= * num MODULO num
 
-                         MINUS shift  2
-                           NOT shift  4
-                        BITNOT shift  3
-                        LPAREN shift  5
-                           NUM shift  48
-                        STRING shift  47
-                          expr shift  32
-                        retval shift  51
-                        invoke shift  50
-                         value shift  49
+                         MINUS shift  3
+                           NOT shift  5
+                        BITNOT shift  4
+                        LPAREN shift  22
+                           NUM shift  63
+                           num shift  38
 
 State 15:
-          expr ::= * retval
-          retval ::= * invoke
-          invoke ::= * value
-          value ::= * NUM
-          value ::= * STRING
-          expr ::= * expr MINUS expr
-          expr ::= * expr PLUS expr
-          expr ::= * expr TIMES expr
-          expr ::= * expr DIVIDE expr
-          expr ::= * expr LESSTHAN expr
-          expr ::= * expr GREATERTHAN expr
-          expr ::= * expr EQUALTO expr
-          expr ::= * expr NOTEQUALTO expr
-          expr ::= expr NOTEQUALTO * expr
-          expr ::= * expr GORE expr
-          expr ::= * expr LORE expr
-          expr ::= * LPAREN expr RPAREN
-          expr ::= * expr SHIFTL expr
-          expr ::= * expr SHIFTR expr
-          expr ::= * expr AND expr
-          expr ::= * expr OR expr
-          expr ::= * NOT expr
-          expr ::= * expr BITAND expr
-          expr ::= * expr BITOR expr
-          expr ::= * BITNOT expr
-          expr ::= * MINUS expr
-          expr ::= * expr MODULO expr
+          num ::= * NUM
+          num ::= * LPAREN num RPAREN
+          num ::= * num MINUS num
+          num ::= * num PLUS num
+          num ::= * num TIMES num
+          num ::= * num DIVIDE num
+          num ::= * num LESSTHAN num
+          num ::= * num GREATERTHAN num
+          num ::= * num EQUALTO num
+          num ::= * num NOTEQUALTO num
+          num ::= num NOTEQUALTO * num
+          num ::= * num GORE num
+          num ::= * num LORE num
+          num ::= * num SHIFTL num
+          num ::= * num SHIFTR num
+          num ::= * num AND num
+          num ::= * num OR num
+          num ::= * NOT num
+          num ::= * num BITAND num
+          num ::= * num BITOR num
+          num ::= * BITNOT num
+          num ::= * MINUS num
+          num ::= * num MODULO num
 
-                         MINUS shift  2
-                           NOT shift  4
-                        BITNOT shift  3
-                        LPAREN shift  5
-                           NUM shift  48
-                        STRING shift  47
-                          expr shift  29
-                        retval shift  51
-                        invoke shift  50
-                         value shift  49
+                         MINUS shift  3
+                           NOT shift  5
+                        BITNOT shift  4
+                        LPAREN shift  22
+                           NUM shift  63
+                           num shift  35
 
 State 16:
-          expr ::= * retval
-          retval ::= * invoke
-          invoke ::= * value
-          value ::= * NUM
-          value ::= * STRING
-          expr ::= * expr MINUS expr
-          expr ::= * expr PLUS expr
-          expr ::= * expr TIMES expr
-          expr ::= * expr DIVIDE expr
-          expr ::= * expr LESSTHAN expr
-          expr ::= * expr GREATERTHAN expr
-          expr ::= * expr EQUALTO expr
-          expr ::= expr EQUALTO * expr
-          expr ::= * expr NOTEQUALTO expr
-          expr ::= * expr GORE expr
-          expr ::= * expr LORE expr
-          expr ::= * LPAREN expr RPAREN
-          expr ::= * expr SHIFTL expr
-          expr ::= * expr SHIFTR expr
-          expr ::= * expr AND expr
-          expr ::= * expr OR expr
-          expr ::= * NOT expr
-          expr ::= * expr BITAND expr
-          expr ::= * expr BITOR expr
-          expr ::= * BITNOT expr
-          expr ::= * MINUS expr
-          expr ::= * expr MODULO expr
+          num ::= * NUM
+          num ::= * LPAREN num RPAREN
+          num ::= * num MINUS num
+          num ::= * num PLUS num
+          num ::= * num TIMES num
+          num ::= * num DIVIDE num
+          num ::= * num LESSTHAN num
+          num ::= * num GREATERTHAN num
+          num ::= * num EQUALTO num
+          num ::= num EQUALTO * num
+          num ::= * num NOTEQUALTO num
+          num ::= * num GORE num
+          num ::= * num LORE num
+          num ::= * num SHIFTL num
+          num ::= * num SHIFTR num
+          num ::= * num AND num
+          num ::= * num OR num
+          num ::= * NOT num
+          num ::= * num BITAND num
+          num ::= * num BITOR num
+          num ::= * BITNOT num
+          num ::= * MINUS num
+          num ::= * num MODULO num
 
-                         MINUS shift  2
-                           NOT shift  4
-                        BITNOT shift  3
-                        LPAREN shift  5
-                           NUM shift  48
-                        STRING shift  47
-                          expr shift  30
-                        retval shift  51
-                        invoke shift  50
-                         value shift  49
+                         MINUS shift  3
+                           NOT shift  5
+                        BITNOT shift  4
+                        LPAREN shift  22
+                           NUM shift  63
+                           num shift  36
 
 State 17:
-          expr ::= * retval
-          retval ::= * invoke
-          invoke ::= * value
-          value ::= * NUM
-          value ::= * STRING
-          expr ::= * expr MINUS expr
-          expr ::= * expr PLUS expr
-          expr ::= * expr TIMES expr
-          expr ::= * expr DIVIDE expr
-          expr ::= * expr LESSTHAN expr
-          expr ::= * expr GREATERTHAN expr
-          expr ::= expr GREATERTHAN * expr
-          expr ::= * expr EQUALTO expr
-          expr ::= * expr NOTEQUALTO expr
-          expr ::= * expr GORE expr
-          expr ::= * expr LORE expr
-          expr ::= * LPAREN expr RPAREN
-          expr ::= * expr SHIFTL expr
-          expr ::= * expr SHIFTR expr
-          expr ::= * expr AND expr
-          expr ::= * expr OR expr
-          expr ::= * NOT expr
-          expr ::= * expr BITAND expr
-          expr ::= * expr BITOR expr
-          expr ::= * BITNOT expr
-          expr ::= * MINUS expr
-          expr ::= * expr MODULO expr
+          num ::= * NUM
+          num ::= * LPAREN num RPAREN
+          num ::= * num MINUS num
+          num ::= * num PLUS num
+          num ::= * num TIMES num
+          num ::= * num DIVIDE num
+          num ::= * num LESSTHAN num
+          num ::= * num GREATERTHAN num
+          num ::= num GREATERTHAN * num
+          num ::= * num EQUALTO num
+          num ::= * num NOTEQUALTO num
+          num ::= * num GORE num
+          num ::= * num LORE num
+          num ::= * num SHIFTL num
+          num ::= * num SHIFTR num
+          num ::= * num AND num
+          num ::= * num OR num
+          num ::= * NOT num
+          num ::= * num BITAND num
+          num ::= * num BITOR num
+          num ::= * BITNOT num
+          num ::= * MINUS num
+          num ::= * num MODULO num
 
-                         MINUS shift  2
-                           NOT shift  4
-                        BITNOT shift  3
-                        LPAREN shift  5
-                           NUM shift  48
-                        STRING shift  47
-                          expr shift  33
-                        retval shift  51
-                        invoke shift  50
-                         value shift  49
+                         MINUS shift  3
+                           NOT shift  5
+                        BITNOT shift  4
+                        LPAREN shift  22
+                           NUM shift  63
+                           num shift  39
 
 State 18:
-          expr ::= * retval
-          retval ::= * invoke
-          invoke ::= * value
-          value ::= * NUM
-          value ::= * STRING
-          expr ::= * expr MINUS expr
-          expr ::= * expr PLUS expr
-          expr ::= * expr TIMES expr
-          expr ::= * expr DIVIDE expr
-          expr ::= * expr LESSTHAN expr
-          expr ::= expr LESSTHAN * expr
-          expr ::= * expr GREATERTHAN expr
-          expr ::= * expr EQUALTO expr
-          expr ::= * expr NOTEQUALTO expr
-          expr ::= * expr GORE expr
-          expr ::= * expr LORE expr
-          expr ::= * LPAREN expr RPAREN
-          expr ::= * expr SHIFTL expr
-          expr ::= * expr SHIFTR expr
-          expr ::= * expr AND expr
-          expr ::= * expr OR expr
-          expr ::= * NOT expr
-          expr ::= * expr BITAND expr
-          expr ::= * expr BITOR expr
-          expr ::= * BITNOT expr
-          expr ::= * MINUS expr
-          expr ::= * expr MODULO expr
+          num ::= * NUM
+          num ::= * LPAREN num RPAREN
+          num ::= * num MINUS num
+          num ::= * num PLUS num
+          num ::= * num TIMES num
+          num ::= * num DIVIDE num
+          num ::= * num LESSTHAN num
+          num ::= num LESSTHAN * num
+          num ::= * num GREATERTHAN num
+          num ::= * num EQUALTO num
+          num ::= * num NOTEQUALTO num
+          num ::= * num GORE num
+          num ::= * num LORE num
+          num ::= * num SHIFTL num
+          num ::= * num SHIFTR num
+          num ::= * num AND num
+          num ::= * num OR num
+          num ::= * NOT num
+          num ::= * num BITAND num
+          num ::= * num BITOR num
+          num ::= * BITNOT num
+          num ::= * MINUS num
+          num ::= * num MODULO num
 
-                         MINUS shift  2
-                           NOT shift  4
-                        BITNOT shift  3
-                        LPAREN shift  5
-                           NUM shift  48
-                        STRING shift  47
-                          expr shift  34
-                        retval shift  51
-                        invoke shift  50
-                         value shift  49
+                         MINUS shift  3
+                           NOT shift  5
+                        BITNOT shift  4
+                        LPAREN shift  22
+                           NUM shift  63
+                           num shift  40
 
 State 19:
-          expr ::= * retval
-          retval ::= * invoke
-          invoke ::= * value
-          value ::= * NUM
-          value ::= * STRING
-          expr ::= * expr MINUS expr
-          expr ::= * expr PLUS expr
-          expr ::= * expr TIMES expr
-          expr ::= * expr DIVIDE expr
-          expr ::= expr DIVIDE * expr
-          expr ::= * expr LESSTHAN expr
-          expr ::= * expr GREATERTHAN expr
-          expr ::= * expr EQUALTO expr
-          expr ::= * expr NOTEQUALTO expr
-          expr ::= * expr GORE expr
-          expr ::= * expr LORE expr
-          expr ::= * LPAREN expr RPAREN
-          expr ::= * expr SHIFTL expr
-          expr ::= * expr SHIFTR expr
-          expr ::= * expr AND expr
-          expr ::= * expr OR expr
-          expr ::= * NOT expr
-          expr ::= * expr BITAND expr
-          expr ::= * expr BITOR expr
-          expr ::= * BITNOT expr
-          expr ::= * MINUS expr
-          expr ::= * expr MODULO expr
+          num ::= * NUM
+          num ::= * LPAREN num RPAREN
+          num ::= * num MINUS num
+          num ::= * num PLUS num
+          num ::= * num TIMES num
+          num ::= * num DIVIDE num
+          num ::= num DIVIDE * num
+          num ::= * num LESSTHAN num
+          num ::= * num GREATERTHAN num
+          num ::= * num EQUALTO num
+          num ::= * num NOTEQUALTO num
+          num ::= * num GORE num
+          num ::= * num LORE num
+          num ::= * num SHIFTL num
+          num ::= * num SHIFTR num
+          num ::= * num AND num
+          num ::= * num OR num
+          num ::= * NOT num
+          num ::= * num BITAND num
+          num ::= * num BITOR num
+          num ::= * BITNOT num
+          num ::= * MINUS num
+          num ::= * num MODULO num
 
-                         MINUS shift  2
-                           NOT shift  4
-                        BITNOT shift  3
-                        LPAREN shift  5
-                           NUM shift  48
-                        STRING shift  47
-                          expr shift  45
-                        retval shift  51
-                        invoke shift  50
-                         value shift  49
+                         MINUS shift  3
+                           NOT shift  5
+                        BITNOT shift  4
+                        LPAREN shift  22
+                           NUM shift  63
+                           num shift  60
 
 State 20:
-          expr ::= * retval
-          retval ::= * invoke
-          invoke ::= * value
-          value ::= * NUM
-          value ::= * STRING
-          expr ::= * expr MINUS expr
-          expr ::= * expr PLUS expr
-          expr ::= * expr TIMES expr
-          expr ::= expr TIMES * expr
-          expr ::= * expr DIVIDE expr
-          expr ::= * expr LESSTHAN expr
-          expr ::= * expr GREATERTHAN expr
-          expr ::= * expr EQUALTO expr
-          expr ::= * expr NOTEQUALTO expr
-          expr ::= * expr GORE expr
-          expr ::= * expr LORE expr
-          expr ::= * LPAREN expr RPAREN
-          expr ::= * expr SHIFTL expr
-          expr ::= * expr SHIFTR expr
-          expr ::= * expr AND expr
-          expr ::= * expr OR expr
-          expr ::= * NOT expr
-          expr ::= * expr BITAND expr
-          expr ::= * expr BITOR expr
-          expr ::= * BITNOT expr
-          expr ::= * MINUS expr
-          expr ::= * expr MODULO expr
+          num ::= * NUM
+          num ::= * LPAREN num RPAREN
+          num ::= * num MINUS num
+          num ::= * num PLUS num
+          num ::= * num TIMES num
+          num ::= num TIMES * num
+          num ::= * num DIVIDE num
+          num ::= * num LESSTHAN num
+          num ::= * num GREATERTHAN num
+          num ::= * num EQUALTO num
+          num ::= * num NOTEQUALTO num
+          num ::= * num GORE num
+          num ::= * num LORE num
+          num ::= * num SHIFTL num
+          num ::= * num SHIFTR num
+          num ::= * num AND num
+          num ::= * num OR num
+          num ::= * NOT num
+          num ::= * num BITAND num
+          num ::= * num BITOR num
+          num ::= * BITNOT num
+          num ::= * MINUS num
+          num ::= * num MODULO num
 
-                         MINUS shift  2
-                           NOT shift  4
-                        BITNOT shift  3
-                        LPAREN shift  5
-                           NUM shift  48
-                        STRING shift  47
-                          expr shift  46
-                        retval shift  51
-                        invoke shift  50
-                         value shift  49
+                         MINUS shift  3
+                           NOT shift  5
+                        BITNOT shift  4
+                        LPAREN shift  22
+                           NUM shift  63
+                           num shift  61
 
 State 21:
-          expr ::= * retval
-          retval ::= * invoke
-          invoke ::= * value
-          value ::= * NUM
-          value ::= * STRING
-          expr ::= * expr MINUS expr
-          expr ::= * expr PLUS expr
-          expr ::= expr PLUS * expr
-          expr ::= * expr TIMES expr
-          expr ::= * expr DIVIDE expr
-          expr ::= * expr LESSTHAN expr
-          expr ::= * expr GREATERTHAN expr
-          expr ::= * expr EQUALTO expr
-          expr ::= * expr NOTEQUALTO expr
-          expr ::= * expr GORE expr
-          expr ::= * expr LORE expr
-          expr ::= * LPAREN expr RPAREN
-          expr ::= * expr SHIFTL expr
-          expr ::= * expr SHIFTR expr
-          expr ::= * expr AND expr
-          expr ::= * expr OR expr
-          expr ::= * NOT expr
-          expr ::= * expr BITAND expr
-          expr ::= * expr BITOR expr
-          expr ::= * BITNOT expr
-          expr ::= * MINUS expr
-          expr ::= * expr MODULO expr
+          num ::= * NUM
+          num ::= * LPAREN num RPAREN
+          num ::= * num MINUS num
+          num ::= * num PLUS num
+          num ::= num PLUS * num
+          num ::= * num TIMES num
+          num ::= * num DIVIDE num
+          num ::= * num LESSTHAN num
+          num ::= * num GREATERTHAN num
+          num ::= * num EQUALTO num
+          num ::= * num NOTEQUALTO num
+          num ::= * num GORE num
+          num ::= * num LORE num
+          num ::= * num SHIFTL num
+          num ::= * num SHIFTR num
+          num ::= * num AND num
+          num ::= * num OR num
+          num ::= * NOT num
+          num ::= * num BITAND num
+          num ::= * num BITOR num
+          num ::= * BITNOT num
+          num ::= * MINUS num
+          num ::= * num MODULO num
 
-                         MINUS shift  2
-                           NOT shift  4
-                        BITNOT shift  3
-                        LPAREN shift  5
-                           NUM shift  48
-                        STRING shift  47
-                          expr shift  37
-                        retval shift  51
-                        invoke shift  50
-                         value shift  49
+                         MINUS shift  3
+                           NOT shift  5
+                        BITNOT shift  4
+                        LPAREN shift  22
+                           NUM shift  63
+                           num shift  47
 
 State 22:
-          expr ::= * retval
-          retval ::= * invoke
-          invoke ::= * value
-          value ::= * NUM
-          value ::= * STRING
-          expr ::= * expr MINUS expr
-          expr ::= expr MINUS * expr
-          expr ::= * expr PLUS expr
-          expr ::= * expr TIMES expr
-          expr ::= * expr DIVIDE expr
-          expr ::= * expr LESSTHAN expr
-          expr ::= * expr GREATERTHAN expr
-          expr ::= * expr EQUALTO expr
-          expr ::= * expr NOTEQUALTO expr
-          expr ::= * expr GORE expr
-          expr ::= * expr LORE expr
-          expr ::= * LPAREN expr RPAREN
-          expr ::= * expr SHIFTL expr
-          expr ::= * expr SHIFTR expr
-          expr ::= * expr AND expr
-          expr ::= * expr OR expr
-          expr ::= * NOT expr
-          expr ::= * expr BITAND expr
-          expr ::= * expr BITOR expr
-          expr ::= * BITNOT expr
-          expr ::= * MINUS expr
-          expr ::= * expr MODULO expr
+          num ::= * NUM
+          num ::= * LPAREN num RPAREN
+          num ::= LPAREN * num RPAREN
+          num ::= * num MINUS num
+          num ::= * num PLUS num
+          num ::= * num TIMES num
+          num ::= * num DIVIDE num
+          num ::= * num LESSTHAN num
+          num ::= * num GREATERTHAN num
+          num ::= * num EQUALTO num
+          num ::= * num NOTEQUALTO num
+          num ::= * num GORE num
+          num ::= * num LORE num
+          num ::= * num SHIFTL num
+          num ::= * num SHIFTR num
+          num ::= * num AND num
+          num ::= * num OR num
+          num ::= * NOT num
+          num ::= * num BITAND num
+          num ::= * num BITOR num
+          num ::= * BITNOT num
+          num ::= * MINUS num
+          num ::= * num MODULO num
 
-                         MINUS shift  2
-                           NOT shift  4
-                        BITNOT shift  3
-                        LPAREN shift  5
-                           NUM shift  48
-                        STRING shift  47
-                          expr shift  38
-                        retval shift  51
-                        invoke shift  50
-                         value shift  49
+                         MINUS shift  3
+                           NOT shift  5
+                        BITNOT shift  4
+                        LPAREN shift  22
+                           NUM shift  63
+                           num shift  29
 
 State 23:
-          expr ::= expr * MINUS expr
-          expr ::= expr * PLUS expr
-          expr ::= expr * TIMES expr
-          expr ::= expr * DIVIDE expr
-          expr ::= expr * LESSTHAN expr
-          expr ::= expr * GREATERTHAN expr
-          expr ::= expr * EQUALTO expr
-          expr ::= expr * NOTEQUALTO expr
-          expr ::= expr * GORE expr
-          expr ::= expr * LORE expr
-          expr ::= LPAREN expr * RPAREN
-          expr ::= expr * SHIFTL expr
-          expr ::= expr * SHIFTR expr
-          expr ::= expr * AND expr
-          expr ::= expr * OR expr
-          expr ::= expr * BITAND expr
-          expr ::= expr * BITOR expr
-          expr ::= expr * MODULO expr
+          num ::= * NUM
+          num ::= * LPAREN num RPAREN
+          num ::= * num MINUS num
+          num ::= num MINUS * num
+          num ::= * num PLUS num
+          num ::= * num TIMES num
+          num ::= * num DIVIDE num
+          num ::= * num LESSTHAN num
+          num ::= * num GREATERTHAN num
+          num ::= * num EQUALTO num
+          num ::= * num NOTEQUALTO num
+          num ::= * num GORE num
+          num ::= * num LORE num
+          num ::= * num SHIFTL num
+          num ::= * num SHIFTR num
+          num ::= * num AND num
+          num ::= * num OR num
+          num ::= * NOT num
+          num ::= * num BITAND num
+          num ::= * num BITOR num
+          num ::= * BITNOT num
+          num ::= * MINUS num
+          num ::= * num MODULO num
 
-                            OR shift  9
-                           AND shift  10
-                         BITOR shift  7
-                        BITAND shift  8
-                       EQUALTO shift  16
-                    NOTEQUALTO shift  15
-                   GREATERTHAN shift  17
-                          GORE shift  14
-                      LESSTHAN shift  18
-                          LORE shift  13
-                        SHIFTL shift  12
-                        SHIFTR shift  11
-                          PLUS shift  21
-                         MINUS shift  22
-                        DIVIDE shift  19
-                         TIMES shift  20
-                        MODULO shift  6
-                        RPAREN shift  43
+                         MINUS shift  3
+                           NOT shift  5
+                        BITNOT shift  4
+                        LPAREN shift  22
+                           NUM shift  63
+                           num shift  46
 
 State 24:
-      (6) stmt ::= expr *
-          expr ::= expr * MINUS expr
-          expr ::= expr * PLUS expr
-          expr ::= expr * TIMES expr
-          expr ::= expr * DIVIDE expr
-          expr ::= expr * LESSTHAN expr
-          expr ::= expr * GREATERTHAN expr
-          expr ::= expr * EQUALTO expr
-          expr ::= expr * NOTEQUALTO expr
-          expr ::= expr * GORE expr
-          expr ::= expr * LORE expr
-          expr ::= expr * SHIFTL expr
-          expr ::= expr * SHIFTR expr
-          expr ::= expr * AND expr
-          expr ::= expr * OR expr
-          expr ::= expr * BITAND expr
-          expr ::= expr * BITOR expr
-          expr ::= expr * MODULO expr
+          string ::= * STRING
+          string ::= * LPAREN string RPAREN
+          string ::= * string MINUS string
+          string ::= * string PLUS string
+          string ::= * string PLUSPLUS string
+          string ::= * string EQUALTO string
+          string ::= string EQUALTO * string
+
+                        LPAREN shift  27
+                        STRING shift  55
+                        string shift  45
+
+State 25:
+          string ::= * STRING
+          string ::= * LPAREN string RPAREN
+          string ::= * string MINUS string
+          string ::= * string PLUS string
+          string ::= * string PLUSPLUS string
+          string ::= string PLUSPLUS * string
+          string ::= * string EQUALTO string
+
+                        LPAREN shift  27
+                        STRING shift  55
+                        string shift  49
+
+State 26:
+          string ::= * STRING
+          string ::= * LPAREN string RPAREN
+          string ::= * string MINUS string
+          string ::= * string PLUS string
+          string ::= string PLUS * string
+          string ::= * string PLUSPLUS string
+          string ::= * string EQUALTO string
+
+                        LPAREN shift  27
+                        STRING shift  55
+                        string shift  50
+
+State 27:
+          string ::= * STRING
+          string ::= * LPAREN string RPAREN
+          string ::= LPAREN * string RPAREN
+          string ::= * string MINUS string
+          string ::= * string PLUS string
+          string ::= * string PLUSPLUS string
+          string ::= * string EQUALTO string
+
+                        LPAREN shift  27
+                        STRING shift  55
+                        string shift  41
+
+State 28:
+          string ::= * STRING
+          string ::= * LPAREN string RPAREN
+          string ::= * string MINUS string
+          string ::= string MINUS * string
+          string ::= * string PLUS string
+          string ::= * string PLUSPLUS string
+          string ::= * string EQUALTO string
+
+                        LPAREN shift  27
+                        STRING shift  55
+                        string shift  48
+
+State 29:
+          num ::= LPAREN num * RPAREN
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+          num ::= num * LESSTHAN num
+          num ::= num * GREATERTHAN num
+          num ::= num * EQUALTO num
+          num ::= num * NOTEQUALTO num
+          num ::= num * GORE num
+          num ::= num * LORE num
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+          num ::= num * AND num
+          num ::= num * OR num
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+          num ::= num * MODULO num
 
                             OR shift  9
                            AND shift  10
@@ -969,32 +884,33 @@ State 24:
                         SHIFTL shift  12
                         SHIFTR shift  11
                           PLUS shift  21
-                         MINUS shift  22
+                         MINUS shift  23
                         DIVIDE shift  19
                          TIMES shift  20
                         MODULO shift  6
-                     {default} reduce 6
+                        RPAREN shift  62
 
-State 25:
-          expr ::= expr * MINUS expr
-          expr ::= expr * PLUS expr
-          expr ::= expr * TIMES expr
-          expr ::= expr * DIVIDE expr
-          expr ::= expr * LESSTHAN expr
-          expr ::= expr * GREATERTHAN expr
-          expr ::= expr * EQUALTO expr
-          expr ::= expr * NOTEQUALTO expr
-          expr ::= expr * GORE expr
-          expr ::= expr * LORE expr
-          expr ::= expr * SHIFTL expr
-          expr ::= expr * SHIFTR expr
-          expr ::= expr * AND expr
-          expr ::= expr * OR expr
-     (26) expr ::= expr OR expr *
-          expr ::= expr * BITAND expr
-          expr ::= expr * BITOR expr
-          expr ::= expr * MODULO expr
+State 30:
+     (13) value ::= num *
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+          num ::= num * LESSTHAN num
+          num ::= num * GREATERTHAN num
+          num ::= num * EQUALTO num
+          num ::= num * NOTEQUALTO num
+          num ::= num * GORE num
+          num ::= num * LORE num
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+          num ::= num * AND num
+          num ::= num * OR num
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+          num ::= num * MODULO num
 
+                            OR shift  9
                            AND shift  10
                          BITOR shift  7
                         BITAND shift  8
@@ -1007,590 +923,721 @@ State 25:
                         SHIFTL shift  12
                         SHIFTR shift  11
                           PLUS shift  21
-                         MINUS shift  22
-                        DIVIDE shift  19
-                         TIMES shift  20
-                        MODULO shift  6
-                     {default} reduce 26
-
-State 26:
-          expr ::= expr * MINUS expr
-          expr ::= expr * PLUS expr
-          expr ::= expr * TIMES expr
-          expr ::= expr * DIVIDE expr
-          expr ::= expr * LESSTHAN expr
-          expr ::= expr * GREATERTHAN expr
-          expr ::= expr * EQUALTO expr
-          expr ::= expr * NOTEQUALTO expr
-          expr ::= expr * GORE expr
-          expr ::= expr * LORE expr
-          expr ::= expr * SHIFTL expr
-          expr ::= expr * SHIFTR expr
-          expr ::= expr * AND expr
-     (25) expr ::= expr AND expr *
-          expr ::= expr * OR expr
-          expr ::= expr * BITAND expr
-          expr ::= expr * BITOR expr
-          expr ::= expr * MODULO expr
-
-                         BITOR shift  7
-                        BITAND shift  8
-                       EQUALTO shift  16
-                    NOTEQUALTO shift  15
-                   GREATERTHAN shift  17
-                          GORE shift  14
-                      LESSTHAN shift  18
-                          LORE shift  13
-                        SHIFTL shift  12
-                        SHIFTR shift  11
-                          PLUS shift  21
-                         MINUS shift  22
-                        DIVIDE shift  19
-                         TIMES shift  20
-                        MODULO shift  6
-                     {default} reduce 25
-
-State 27:
-          expr ::= expr * MINUS expr
-          expr ::= expr * PLUS expr
-          expr ::= expr * TIMES expr
-          expr ::= expr * DIVIDE expr
-          expr ::= expr * LESSTHAN expr
-          expr ::= expr * GREATERTHAN expr
-          expr ::= expr * EQUALTO expr
-          expr ::= expr * NOTEQUALTO expr
-          expr ::= expr * GORE expr
-          expr ::= expr * LORE expr
-          expr ::= expr * SHIFTL expr
-          expr ::= expr * SHIFTR expr
-          expr ::= expr * AND expr
-          expr ::= expr * OR expr
-          expr ::= expr * BITAND expr
-          expr ::= expr * BITOR expr
-     (29) expr ::= expr BITOR expr *
-          expr ::= expr * MODULO expr
-
-                        BITAND shift  8
-                       EQUALTO shift  16
-                    NOTEQUALTO shift  15
-                   GREATERTHAN shift  17
-                          GORE shift  14
-                      LESSTHAN shift  18
-                          LORE shift  13
-                        SHIFTL shift  12
-                        SHIFTR shift  11
-                          PLUS shift  21
-                         MINUS shift  22
-                        DIVIDE shift  19
-                         TIMES shift  20
-                        MODULO shift  6
-                     {default} reduce 29
-
-State 28:
-          expr ::= expr * MINUS expr
-          expr ::= expr * PLUS expr
-          expr ::= expr * TIMES expr
-          expr ::= expr * DIVIDE expr
-          expr ::= expr * LESSTHAN expr
-          expr ::= expr * GREATERTHAN expr
-          expr ::= expr * EQUALTO expr
-          expr ::= expr * NOTEQUALTO expr
-          expr ::= expr * GORE expr
-          expr ::= expr * LORE expr
-          expr ::= expr * SHIFTL expr
-          expr ::= expr * SHIFTR expr
-          expr ::= expr * AND expr
-          expr ::= expr * OR expr
-          expr ::= expr * BITAND expr
-     (28) expr ::= expr BITAND expr *
-          expr ::= expr * BITOR expr
-          expr ::= expr * MODULO expr
-
-                       EQUALTO shift  16
-                    NOTEQUALTO shift  15
-                   GREATERTHAN shift  17
-                          GORE shift  14
-                      LESSTHAN shift  18
-                          LORE shift  13
-                        SHIFTL shift  12
-                        SHIFTR shift  11
-                          PLUS shift  21
-                         MINUS shift  22
-                        DIVIDE shift  19
-                         TIMES shift  20
-                        MODULO shift  6
-                     {default} reduce 28
-
-State 29:
-          expr ::= expr * MINUS expr
-          expr ::= expr * PLUS expr
-          expr ::= expr * TIMES expr
-          expr ::= expr * DIVIDE expr
-          expr ::= expr * LESSTHAN expr
-          expr ::= expr * GREATERTHAN expr
-          expr ::= expr * EQUALTO expr
-          expr ::= expr * NOTEQUALTO expr
-     (19) expr ::= expr NOTEQUALTO expr *
-          expr ::= expr * GORE expr
-          expr ::= expr * LORE expr
-          expr ::= expr * SHIFTL expr
-          expr ::= expr * SHIFTR expr
-          expr ::= expr * AND expr
-          expr ::= expr * OR expr
-          expr ::= expr * BITAND expr
-          expr ::= expr * BITOR expr
-          expr ::= expr * MODULO expr
-
-                   GREATERTHAN shift  17
-                          GORE shift  14
-                      LESSTHAN shift  18
-                          LORE shift  13
-                        SHIFTL shift  12
-                        SHIFTR shift  11
-                          PLUS shift  21
-                         MINUS shift  22
-                        DIVIDE shift  19
-                         TIMES shift  20
-                        MODULO shift  6
-                     {default} reduce 19
-
-State 30:
-          expr ::= expr * MINUS expr
-          expr ::= expr * PLUS expr
-          expr ::= expr * TIMES expr
-          expr ::= expr * DIVIDE expr
-          expr ::= expr * LESSTHAN expr
-          expr ::= expr * GREATERTHAN expr
-          expr ::= expr * EQUALTO expr
-     (18) expr ::= expr EQUALTO expr *
-          expr ::= expr * NOTEQUALTO expr
-          expr ::= expr * GORE expr
-          expr ::= expr * LORE expr
-          expr ::= expr * SHIFTL expr
-          expr ::= expr * SHIFTR expr
-          expr ::= expr * AND expr
-          expr ::= expr * OR expr
-          expr ::= expr * BITAND expr
-          expr ::= expr * BITOR expr
-          expr ::= expr * MODULO expr
-
-                   GREATERTHAN shift  17
-                          GORE shift  14
-                      LESSTHAN shift  18
-                          LORE shift  13
-                        SHIFTL shift  12
-                        SHIFTR shift  11
-                          PLUS shift  21
-                         MINUS shift  22
-                        DIVIDE shift  19
-                         TIMES shift  20
-                        MODULO shift  6
-                     {default} reduce 18
-
-State 31:
-          expr ::= expr * MINUS expr
-          expr ::= expr * PLUS expr
-          expr ::= expr * TIMES expr
-          expr ::= expr * DIVIDE expr
-          expr ::= expr * LESSTHAN expr
-          expr ::= expr * GREATERTHAN expr
-          expr ::= expr * EQUALTO expr
-          expr ::= expr * NOTEQUALTO expr
-          expr ::= expr * GORE expr
-          expr ::= expr * LORE expr
-     (21) expr ::= expr LORE expr *
-          expr ::= expr * SHIFTL expr
-          expr ::= expr * SHIFTR expr
-          expr ::= expr * AND expr
-          expr ::= expr * OR expr
-          expr ::= expr * BITAND expr
-          expr ::= expr * BITOR expr
-          expr ::= expr * MODULO expr
-
-                        SHIFTL shift  12
-                        SHIFTR shift  11
-                          PLUS shift  21
-                         MINUS shift  22
-                        DIVIDE shift  19
-                         TIMES shift  20
-                        MODULO shift  6
-                     {default} reduce 21
-
-State 32:
-          expr ::= expr * MINUS expr
-          expr ::= expr * PLUS expr
-          expr ::= expr * TIMES expr
-          expr ::= expr * DIVIDE expr
-          expr ::= expr * LESSTHAN expr
-          expr ::= expr * GREATERTHAN expr
-          expr ::= expr * EQUALTO expr
-          expr ::= expr * NOTEQUALTO expr
-          expr ::= expr * GORE expr
-     (20) expr ::= expr GORE expr *
-          expr ::= expr * LORE expr
-          expr ::= expr * SHIFTL expr
-          expr ::= expr * SHIFTR expr
-          expr ::= expr * AND expr
-          expr ::= expr * OR expr
-          expr ::= expr * BITAND expr
-          expr ::= expr * BITOR expr
-          expr ::= expr * MODULO expr
-
-                        SHIFTL shift  12
-                        SHIFTR shift  11
-                          PLUS shift  21
-                         MINUS shift  22
-                        DIVIDE shift  19
-                         TIMES shift  20
-                        MODULO shift  6
-                     {default} reduce 20
-
-State 33:
-          expr ::= expr * MINUS expr
-          expr ::= expr * PLUS expr
-          expr ::= expr * TIMES expr
-          expr ::= expr * DIVIDE expr
-          expr ::= expr * LESSTHAN expr
-          expr ::= expr * GREATERTHAN expr
-     (17) expr ::= expr GREATERTHAN expr *
-          expr ::= expr * EQUALTO expr
-          expr ::= expr * NOTEQUALTO expr
-          expr ::= expr * GORE expr
-          expr ::= expr * LORE expr
-          expr ::= expr * SHIFTL expr
-          expr ::= expr * SHIFTR expr
-          expr ::= expr * AND expr
-          expr ::= expr * OR expr
-          expr ::= expr * BITAND expr
-          expr ::= expr * BITOR expr
-          expr ::= expr * MODULO expr
-
-                        SHIFTL shift  12
-                        SHIFTR shift  11
-                          PLUS shift  21
-                         MINUS shift  22
-                        DIVIDE shift  19
-                         TIMES shift  20
-                        MODULO shift  6
-                     {default} reduce 17
-
-State 34:
-          expr ::= expr * MINUS expr
-          expr ::= expr * PLUS expr
-          expr ::= expr * TIMES expr
-          expr ::= expr * DIVIDE expr
-          expr ::= expr * LESSTHAN expr
-     (16) expr ::= expr LESSTHAN expr *
-          expr ::= expr * GREATERTHAN expr
-          expr ::= expr * EQUALTO expr
-          expr ::= expr * NOTEQUALTO expr
-          expr ::= expr * GORE expr
-          expr ::= expr * LORE expr
-          expr ::= expr * SHIFTL expr
-          expr ::= expr * SHIFTR expr
-          expr ::= expr * AND expr
-          expr ::= expr * OR expr
-          expr ::= expr * BITAND expr
-          expr ::= expr * BITOR expr
-          expr ::= expr * MODULO expr
-
-                        SHIFTL shift  12
-                        SHIFTR shift  11
-                          PLUS shift  21
-                         MINUS shift  22
-                        DIVIDE shift  19
-                         TIMES shift  20
-                        MODULO shift  6
-                     {default} reduce 16
-
-State 35:
-          expr ::= expr * MINUS expr
-          expr ::= expr * PLUS expr
-          expr ::= expr * TIMES expr
-          expr ::= expr * DIVIDE expr
-          expr ::= expr * LESSTHAN expr
-          expr ::= expr * GREATERTHAN expr
-          expr ::= expr * EQUALTO expr
-          expr ::= expr * NOTEQUALTO expr
-          expr ::= expr * GORE expr
-          expr ::= expr * LORE expr
-          expr ::= expr * SHIFTL expr
-          expr ::= expr * SHIFTR expr
-     (24) expr ::= expr SHIFTR expr *
-          expr ::= expr * AND expr
-          expr ::= expr * OR expr
-          expr ::= expr * BITAND expr
-          expr ::= expr * BITOR expr
-          expr ::= expr * MODULO expr
-
-                          PLUS shift  21
-                         MINUS shift  22
-                        DIVIDE shift  19
-                         TIMES shift  20
-                        MODULO shift  6
-                     {default} reduce 24
-
-State 36:
-          expr ::= expr * MINUS expr
-          expr ::= expr * PLUS expr
-          expr ::= expr * TIMES expr
-          expr ::= expr * DIVIDE expr
-          expr ::= expr * LESSTHAN expr
-          expr ::= expr * GREATERTHAN expr
-          expr ::= expr * EQUALTO expr
-          expr ::= expr * NOTEQUALTO expr
-          expr ::= expr * GORE expr
-          expr ::= expr * LORE expr
-          expr ::= expr * SHIFTL expr
-     (23) expr ::= expr SHIFTL expr *
-          expr ::= expr * SHIFTR expr
-          expr ::= expr * AND expr
-          expr ::= expr * OR expr
-          expr ::= expr * BITAND expr
-          expr ::= expr * BITOR expr
-          expr ::= expr * MODULO expr
-
-                          PLUS shift  21
-                         MINUS shift  22
-                        DIVIDE shift  19
-                         TIMES shift  20
-                        MODULO shift  6
-                     {default} reduce 23
-
-State 37:
-          expr ::= expr * MINUS expr
-          expr ::= expr * PLUS expr
-     (13) expr ::= expr PLUS expr *
-          expr ::= expr * TIMES expr
-          expr ::= expr * DIVIDE expr
-          expr ::= expr * LESSTHAN expr
-          expr ::= expr * GREATERTHAN expr
-          expr ::= expr * EQUALTO expr
-          expr ::= expr * NOTEQUALTO expr
-          expr ::= expr * GORE expr
-          expr ::= expr * LORE expr
-          expr ::= expr * SHIFTL expr
-          expr ::= expr * SHIFTR expr
-          expr ::= expr * AND expr
-          expr ::= expr * OR expr
-          expr ::= expr * BITAND expr
-          expr ::= expr * BITOR expr
-          expr ::= expr * MODULO expr
-
+                         MINUS shift  23
                         DIVIDE shift  19
                          TIMES shift  20
                         MODULO shift  6
                      {default} reduce 13
 
+State 31:
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+          num ::= num * LESSTHAN num
+          num ::= num * GREATERTHAN num
+          num ::= num * EQUALTO num
+          num ::= num * NOTEQUALTO num
+          num ::= num * GORE num
+          num ::= num * LORE num
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+          num ::= num * AND num
+          num ::= num * OR num
+     (36) num ::= num OR num *
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+          num ::= num * MODULO num
+
+                           AND shift  10
+                         BITOR shift  7
+                        BITAND shift  8
+                       EQUALTO shift  16
+                    NOTEQUALTO shift  15
+                   GREATERTHAN shift  17
+                          GORE shift  14
+                      LESSTHAN shift  18
+                          LORE shift  13
+                        SHIFTL shift  12
+                        SHIFTR shift  11
+                          PLUS shift  21
+                         MINUS shift  23
+                        DIVIDE shift  19
+                         TIMES shift  20
+                        MODULO shift  6
+                     {default} reduce 36
+
+State 32:
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+          num ::= num * LESSTHAN num
+          num ::= num * GREATERTHAN num
+          num ::= num * EQUALTO num
+          num ::= num * NOTEQUALTO num
+          num ::= num * GORE num
+          num ::= num * LORE num
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+          num ::= num * AND num
+     (35) num ::= num AND num *
+          num ::= num * OR num
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+          num ::= num * MODULO num
+
+                         BITOR shift  7
+                        BITAND shift  8
+                       EQUALTO shift  16
+                    NOTEQUALTO shift  15
+                   GREATERTHAN shift  17
+                          GORE shift  14
+                      LESSTHAN shift  18
+                          LORE shift  13
+                        SHIFTL shift  12
+                        SHIFTR shift  11
+                          PLUS shift  21
+                         MINUS shift  23
+                        DIVIDE shift  19
+                         TIMES shift  20
+                        MODULO shift  6
+                     {default} reduce 35
+
+State 33:
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+          num ::= num * LESSTHAN num
+          num ::= num * GREATERTHAN num
+          num ::= num * EQUALTO num
+          num ::= num * NOTEQUALTO num
+          num ::= num * GORE num
+          num ::= num * LORE num
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+          num ::= num * AND num
+          num ::= num * OR num
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+     (39) num ::= num BITOR num *
+          num ::= num * MODULO num
+
+                        BITAND shift  8
+                       EQUALTO shift  16
+                    NOTEQUALTO shift  15
+                   GREATERTHAN shift  17
+                          GORE shift  14
+                      LESSTHAN shift  18
+                          LORE shift  13
+                        SHIFTL shift  12
+                        SHIFTR shift  11
+                          PLUS shift  21
+                         MINUS shift  23
+                        DIVIDE shift  19
+                         TIMES shift  20
+                        MODULO shift  6
+                     {default} reduce 39
+
+State 34:
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+          num ::= num * LESSTHAN num
+          num ::= num * GREATERTHAN num
+          num ::= num * EQUALTO num
+          num ::= num * NOTEQUALTO num
+          num ::= num * GORE num
+          num ::= num * LORE num
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+          num ::= num * AND num
+          num ::= num * OR num
+          num ::= num * BITAND num
+     (38) num ::= num BITAND num *
+          num ::= num * BITOR num
+          num ::= num * MODULO num
+
+                       EQUALTO shift  16
+                    NOTEQUALTO shift  15
+                   GREATERTHAN shift  17
+                          GORE shift  14
+                      LESSTHAN shift  18
+                          LORE shift  13
+                        SHIFTL shift  12
+                        SHIFTR shift  11
+                          PLUS shift  21
+                         MINUS shift  23
+                        DIVIDE shift  19
+                         TIMES shift  20
+                        MODULO shift  6
+                     {default} reduce 38
+
+State 35:
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+          num ::= num * LESSTHAN num
+          num ::= num * GREATERTHAN num
+          num ::= num * EQUALTO num
+          num ::= num * NOTEQUALTO num
+     (30) num ::= num NOTEQUALTO num *
+          num ::= num * GORE num
+          num ::= num * LORE num
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+          num ::= num * AND num
+          num ::= num * OR num
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+          num ::= num * MODULO num
+
+                   GREATERTHAN shift  17
+                          GORE shift  14
+                      LESSTHAN shift  18
+                          LORE shift  13
+                        SHIFTL shift  12
+                        SHIFTR shift  11
+                          PLUS shift  21
+                         MINUS shift  23
+                        DIVIDE shift  19
+                         TIMES shift  20
+                        MODULO shift  6
+                     {default} reduce 30
+
+State 36:
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+          num ::= num * LESSTHAN num
+          num ::= num * GREATERTHAN num
+          num ::= num * EQUALTO num
+     (29) num ::= num EQUALTO num *
+          num ::= num * NOTEQUALTO num
+          num ::= num * GORE num
+          num ::= num * LORE num
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+          num ::= num * AND num
+          num ::= num * OR num
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+          num ::= num * MODULO num
+
+                   GREATERTHAN shift  17
+                          GORE shift  14
+                      LESSTHAN shift  18
+                          LORE shift  13
+                        SHIFTL shift  12
+                        SHIFTR shift  11
+                          PLUS shift  21
+                         MINUS shift  23
+                        DIVIDE shift  19
+                         TIMES shift  20
+                        MODULO shift  6
+                     {default} reduce 29
+
+State 37:
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+          num ::= num * LESSTHAN num
+          num ::= num * GREATERTHAN num
+          num ::= num * EQUALTO num
+          num ::= num * NOTEQUALTO num
+          num ::= num * GORE num
+          num ::= num * LORE num
+     (32) num ::= num LORE num *
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+          num ::= num * AND num
+          num ::= num * OR num
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+          num ::= num * MODULO num
+
+                        SHIFTL shift  12
+                        SHIFTR shift  11
+                          PLUS shift  21
+                         MINUS shift  23
+                        DIVIDE shift  19
+                         TIMES shift  20
+                        MODULO shift  6
+                     {default} reduce 32
+
 State 38:
-          expr ::= expr * MINUS expr
-     (12) expr ::= expr MINUS expr *
-          expr ::= expr * PLUS expr
-          expr ::= expr * TIMES expr
-          expr ::= expr * DIVIDE expr
-          expr ::= expr * LESSTHAN expr
-          expr ::= expr * GREATERTHAN expr
-          expr ::= expr * EQUALTO expr
-          expr ::= expr * NOTEQUALTO expr
-          expr ::= expr * GORE expr
-          expr ::= expr * LORE expr
-          expr ::= expr * SHIFTL expr
-          expr ::= expr * SHIFTR expr
-          expr ::= expr * AND expr
-          expr ::= expr * OR expr
-          expr ::= expr * BITAND expr
-          expr ::= expr * BITOR expr
-          expr ::= expr * MODULO expr
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+          num ::= num * LESSTHAN num
+          num ::= num * GREATERTHAN num
+          num ::= num * EQUALTO num
+          num ::= num * NOTEQUALTO num
+          num ::= num * GORE num
+     (31) num ::= num GORE num *
+          num ::= num * LORE num
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+          num ::= num * AND num
+          num ::= num * OR num
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+          num ::= num * MODULO num
+
+                        SHIFTL shift  12
+                        SHIFTR shift  11
+                          PLUS shift  21
+                         MINUS shift  23
+                        DIVIDE shift  19
+                         TIMES shift  20
+                        MODULO shift  6
+                     {default} reduce 31
+
+State 39:
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+          num ::= num * LESSTHAN num
+          num ::= num * GREATERTHAN num
+     (28) num ::= num GREATERTHAN num *
+          num ::= num * EQUALTO num
+          num ::= num * NOTEQUALTO num
+          num ::= num * GORE num
+          num ::= num * LORE num
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+          num ::= num * AND num
+          num ::= num * OR num
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+          num ::= num * MODULO num
+
+                        SHIFTL shift  12
+                        SHIFTR shift  11
+                          PLUS shift  21
+                         MINUS shift  23
+                        DIVIDE shift  19
+                         TIMES shift  20
+                        MODULO shift  6
+                     {default} reduce 28
+
+State 40:
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+          num ::= num * LESSTHAN num
+     (27) num ::= num LESSTHAN num *
+          num ::= num * GREATERTHAN num
+          num ::= num * EQUALTO num
+          num ::= num * NOTEQUALTO num
+          num ::= num * GORE num
+          num ::= num * LORE num
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+          num ::= num * AND num
+          num ::= num * OR num
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+          num ::= num * MODULO num
+
+                        SHIFTL shift  12
+                        SHIFTR shift  11
+                          PLUS shift  21
+                         MINUS shift  23
+                        DIVIDE shift  19
+                         TIMES shift  20
+                        MODULO shift  6
+                     {default} reduce 27
+
+State 41:
+          string ::= LPAREN string * RPAREN
+          string ::= string * MINUS string
+          string ::= string * PLUS string
+          string ::= string * PLUSPLUS string
+          string ::= string * EQUALTO string
+
+                       EQUALTO shift  24
+                          PLUS shift  26
+                         MINUS shift  28
+                      PLUSPLUS shift  25
+                        RPAREN shift  54
+
+State 42:
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+          num ::= num * LESSTHAN num
+          num ::= num * GREATERTHAN num
+          num ::= num * EQUALTO num
+          num ::= num * NOTEQUALTO num
+          num ::= num * GORE num
+          num ::= num * LORE num
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+     (34) num ::= num SHIFTR num *
+          num ::= num * AND num
+          num ::= num * OR num
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+          num ::= num * MODULO num
+
+                          PLUS shift  21
+                         MINUS shift  23
+                        DIVIDE shift  19
+                         TIMES shift  20
+                        MODULO shift  6
+                     {default} reduce 34
+
+State 43:
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+          num ::= num * LESSTHAN num
+          num ::= num * GREATERTHAN num
+          num ::= num * EQUALTO num
+          num ::= num * NOTEQUALTO num
+          num ::= num * GORE num
+          num ::= num * LORE num
+          num ::= num * SHIFTL num
+     (33) num ::= num SHIFTL num *
+          num ::= num * SHIFTR num
+          num ::= num * AND num
+          num ::= num * OR num
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+          num ::= num * MODULO num
+
+                          PLUS shift  21
+                         MINUS shift  23
+                        DIVIDE shift  19
+                         TIMES shift  20
+                        MODULO shift  6
+                     {default} reduce 33
+
+State 44:
+     (14) value ::= string *
+          string ::= string * MINUS string
+          string ::= string * PLUS string
+          string ::= string * PLUSPLUS string
+          string ::= string * EQUALTO string
+
+                       EQUALTO shift  24
+                          PLUS shift  26
+                         MINUS shift  28
+                      PLUSPLUS shift  25
+                     {default} reduce 14
+
+State 45:
+          string ::= string * MINUS string
+          string ::= string * PLUS string
+          string ::= string * PLUSPLUS string
+          string ::= string * EQUALTO string
+     (21) string ::= string EQUALTO string *
+
+                          PLUS shift  26
+                         MINUS shift  28
+                      PLUSPLUS shift  25
+                     {default} reduce 21
+
+State 46:
+          num ::= num * MINUS num
+     (23) num ::= num MINUS num *
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+          num ::= num * LESSTHAN num
+          num ::= num * GREATERTHAN num
+          num ::= num * EQUALTO num
+          num ::= num * NOTEQUALTO num
+          num ::= num * GORE num
+          num ::= num * LORE num
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+          num ::= num * AND num
+          num ::= num * OR num
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+          num ::= num * MODULO num
 
                         DIVIDE shift  19
                          TIMES shift  20
                         MODULO shift  6
-                     {default} reduce 12
-
-State 39:
-          in ::= in start * NEWLINE
-
-                       NEWLINE shift  55
-
-State 40:
-          expr ::= expr * MINUS expr
-          expr ::= expr * PLUS expr
-          expr ::= expr * TIMES expr
-          expr ::= expr * DIVIDE expr
-          expr ::= expr * LESSTHAN expr
-          expr ::= expr * GREATERTHAN expr
-          expr ::= expr * EQUALTO expr
-          expr ::= expr * NOTEQUALTO expr
-          expr ::= expr * GORE expr
-          expr ::= expr * LORE expr
-          expr ::= expr * SHIFTL expr
-          expr ::= expr * SHIFTR expr
-          expr ::= expr * AND expr
-          expr ::= expr * OR expr
-          expr ::= expr * BITAND expr
-          expr ::= expr * BITOR expr
-     (31) expr ::= MINUS expr *
-          expr ::= expr * MODULO expr
-
-                     {default} reduce 31
-
-State 41:
-          expr ::= expr * MINUS expr
-          expr ::= expr * PLUS expr
-          expr ::= expr * TIMES expr
-          expr ::= expr * DIVIDE expr
-          expr ::= expr * LESSTHAN expr
-          expr ::= expr * GREATERTHAN expr
-          expr ::= expr * EQUALTO expr
-          expr ::= expr * NOTEQUALTO expr
-          expr ::= expr * GORE expr
-          expr ::= expr * LORE expr
-          expr ::= expr * SHIFTL expr
-          expr ::= expr * SHIFTR expr
-          expr ::= expr * AND expr
-          expr ::= expr * OR expr
-          expr ::= expr * BITAND expr
-          expr ::= expr * BITOR expr
-     (30) expr ::= BITNOT expr *
-          expr ::= expr * MODULO expr
-
-                     {default} reduce 30
-
-State 42:
-          expr ::= expr * MINUS expr
-          expr ::= expr * PLUS expr
-          expr ::= expr * TIMES expr
-          expr ::= expr * DIVIDE expr
-          expr ::= expr * LESSTHAN expr
-          expr ::= expr * GREATERTHAN expr
-          expr ::= expr * EQUALTO expr
-          expr ::= expr * NOTEQUALTO expr
-          expr ::= expr * GORE expr
-          expr ::= expr * LORE expr
-          expr ::= expr * SHIFTL expr
-          expr ::= expr * SHIFTR expr
-          expr ::= expr * AND expr
-          expr ::= expr * OR expr
-     (27) expr ::= NOT expr *
-          expr ::= expr * BITAND expr
-          expr ::= expr * BITOR expr
-          expr ::= expr * MODULO expr
-
-                     {default} reduce 27
-
-State 43:
-     (22) expr ::= LPAREN expr RPAREN *
-
-                     {default} reduce 22
-
-State 44:
-          expr ::= expr * MINUS expr
-          expr ::= expr * PLUS expr
-          expr ::= expr * TIMES expr
-          expr ::= expr * DIVIDE expr
-          expr ::= expr * LESSTHAN expr
-          expr ::= expr * GREATERTHAN expr
-          expr ::= expr * EQUALTO expr
-          expr ::= expr * NOTEQUALTO expr
-          expr ::= expr * GORE expr
-          expr ::= expr * LORE expr
-          expr ::= expr * SHIFTL expr
-          expr ::= expr * SHIFTR expr
-          expr ::= expr * AND expr
-          expr ::= expr * OR expr
-          expr ::= expr * BITAND expr
-          expr ::= expr * BITOR expr
-          expr ::= expr * MODULO expr
-     (32) expr ::= expr MODULO expr *
-
-                     {default} reduce 32
-
-State 45:
-          expr ::= expr * MINUS expr
-          expr ::= expr * PLUS expr
-          expr ::= expr * TIMES expr
-          expr ::= expr * DIVIDE expr
-     (15) expr ::= expr DIVIDE expr *
-          expr ::= expr * LESSTHAN expr
-          expr ::= expr * GREATERTHAN expr
-          expr ::= expr * EQUALTO expr
-          expr ::= expr * NOTEQUALTO expr
-          expr ::= expr * GORE expr
-          expr ::= expr * LORE expr
-          expr ::= expr * SHIFTL expr
-          expr ::= expr * SHIFTR expr
-          expr ::= expr * AND expr
-          expr ::= expr * OR expr
-          expr ::= expr * BITAND expr
-          expr ::= expr * BITOR expr
-          expr ::= expr * MODULO expr
-
-                     {default} reduce 15
-
-State 46:
-          expr ::= expr * MINUS expr
-          expr ::= expr * PLUS expr
-          expr ::= expr * TIMES expr
-     (14) expr ::= expr TIMES expr *
-          expr ::= expr * DIVIDE expr
-          expr ::= expr * LESSTHAN expr
-          expr ::= expr * GREATERTHAN expr
-          expr ::= expr * EQUALTO expr
-          expr ::= expr * NOTEQUALTO expr
-          expr ::= expr * GORE expr
-          expr ::= expr * LORE expr
-          expr ::= expr * SHIFTL expr
-          expr ::= expr * SHIFTR expr
-          expr ::= expr * AND expr
-          expr ::= expr * OR expr
-          expr ::= expr * BITAND expr
-          expr ::= expr * BITOR expr
-          expr ::= expr * MODULO expr
-
-                     {default} reduce 14
+                     {default} reduce 23
 
 State 47:
-     (11) value ::= STRING *
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+     (24) num ::= num PLUS num *
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+          num ::= num * LESSTHAN num
+          num ::= num * GREATERTHAN num
+          num ::= num * EQUALTO num
+          num ::= num * NOTEQUALTO num
+          num ::= num * GORE num
+          num ::= num * LORE num
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+          num ::= num * AND num
+          num ::= num * OR num
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+          num ::= num * MODULO num
+
+                        DIVIDE shift  19
+                         TIMES shift  20
+                        MODULO shift  6
+                     {default} reduce 24
+
+State 48:
+          string ::= string * MINUS string
+     (18) string ::= string MINUS string *
+          string ::= string * PLUS string
+          string ::= string * PLUSPLUS string
+          string ::= string * EQUALTO string
+
+                      PLUSPLUS shift  25
+                     {default} reduce 18
+
+State 49:
+          string ::= string * MINUS string
+          string ::= string * PLUS string
+          string ::= string * PLUSPLUS string
+     (20) string ::= string PLUSPLUS string *
+          string ::= string * EQUALTO string
+
+                      PLUSPLUS shift  25
+                     {default} reduce 20
+
+State 50:
+          string ::= string * MINUS string
+          string ::= string * PLUS string
+     (19) string ::= string PLUS string *
+          string ::= string * PLUSPLUS string
+          string ::= string * EQUALTO string
+
+                      PLUSPLUS shift  25
+                     {default} reduce 19
+
+State 51:
+          in ::= in start * NEWLINE
+
+                       NEWLINE shift  71
+
+State 52:
+     (12) error ::= OPENQUOTEERROR *
+
+                     {default} reduce 12
+
+State 53:
+     (11) in ::= error *
 
                      {default} reduce 11
 
-State 48:
-     (10) value ::= NUM *
+State 54:
+     (17) string ::= LPAREN string RPAREN *
+
+                     {default} reduce 17
+
+State 55:
+     (16) string ::= STRING *
+
+                     {default} reduce 16
+
+State 56:
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+          num ::= num * LESSTHAN num
+          num ::= num * GREATERTHAN num
+          num ::= num * EQUALTO num
+          num ::= num * NOTEQUALTO num
+          num ::= num * GORE num
+          num ::= num * LORE num
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+          num ::= num * AND num
+          num ::= num * OR num
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+     (41) num ::= MINUS num *
+          num ::= num * MODULO num
+
+                     {default} reduce 41
+
+State 57:
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+          num ::= num * LESSTHAN num
+          num ::= num * GREATERTHAN num
+          num ::= num * EQUALTO num
+          num ::= num * NOTEQUALTO num
+          num ::= num * GORE num
+          num ::= num * LORE num
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+          num ::= num * AND num
+          num ::= num * OR num
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+     (40) num ::= BITNOT num *
+          num ::= num * MODULO num
+
+                     {default} reduce 40
+
+State 58:
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+          num ::= num * LESSTHAN num
+          num ::= num * GREATERTHAN num
+          num ::= num * EQUALTO num
+          num ::= num * NOTEQUALTO num
+          num ::= num * GORE num
+          num ::= num * LORE num
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+          num ::= num * AND num
+          num ::= num * OR num
+     (37) num ::= NOT num *
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+          num ::= num * MODULO num
+
+                     {default} reduce 37
+
+State 59:
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+          num ::= num * LESSTHAN num
+          num ::= num * GREATERTHAN num
+          num ::= num * EQUALTO num
+          num ::= num * NOTEQUALTO num
+          num ::= num * GORE num
+          num ::= num * LORE num
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+          num ::= num * AND num
+          num ::= num * OR num
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+          num ::= num * MODULO num
+     (42) num ::= num MODULO num *
+
+                     {default} reduce 42
+
+State 60:
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+          num ::= num * DIVIDE num
+     (26) num ::= num DIVIDE num *
+          num ::= num * LESSTHAN num
+          num ::= num * GREATERTHAN num
+          num ::= num * EQUALTO num
+          num ::= num * NOTEQUALTO num
+          num ::= num * GORE num
+          num ::= num * LORE num
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+          num ::= num * AND num
+          num ::= num * OR num
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+          num ::= num * MODULO num
+
+                     {default} reduce 26
+
+State 61:
+          num ::= num * MINUS num
+          num ::= num * PLUS num
+          num ::= num * TIMES num
+     (25) num ::= num TIMES num *
+          num ::= num * DIVIDE num
+          num ::= num * LESSTHAN num
+          num ::= num * GREATERTHAN num
+          num ::= num * EQUALTO num
+          num ::= num * NOTEQUALTO num
+          num ::= num * GORE num
+          num ::= num * LORE num
+          num ::= num * SHIFTL num
+          num ::= num * SHIFTR num
+          num ::= num * AND num
+          num ::= num * OR num
+          num ::= num * BITAND num
+          num ::= num * BITOR num
+          num ::= num * MODULO num
+
+                     {default} reduce 25
+
+State 62:
+     (22) num ::= LPAREN num RPAREN *
+
+                     {default} reduce 22
+
+State 63:
+     (15) num ::= NUM *
+
+                     {default} reduce 15
+
+State 64:
+     (10) invoke ::= value *
 
                      {default} reduce 10
 
-State 49:
-      (9) invoke ::= value *
+State 65:
+      (9) retval ::= invoke *
 
                      {default} reduce 9
 
-State 50:
-      (8) retval ::= invoke *
+State 66:
+      (8) expr ::= retval *
 
                      {default} reduce 8
 
-State 51:
-      (7) expr ::= retval *
+State 67:
+      (7) stmt ::= expr *
 
                      {default} reduce 7
 
-State 52:
-      (5) top_stmt ::= stmt *
+State 68:
+      (6) top_stmt ::= stmt *
+
+                     {default} reduce 6
+
+State 69:
+      (5) spec ::= top_stmt *
 
                      {default} reduce 5
 
-State 53:
-      (4) spec ::= top_stmt *
+State 70:
+      (4) start ::= spec *
 
                      {default} reduce 4
 
-State 54:
-      (3) start ::= spec *
+State 71:
+      (3) in ::= in start NEWLINE *
 
                      {default} reduce 3
 
-State 55:
-      (2) in ::= in start NEWLINE *
+State 72:
+      (2) in ::= in NEWLINE *
 
                      {default} reduce 2
 
@@ -1619,24 +1666,28 @@ Symbols:
    20: NOT
    21: BITNOT
    22: UMINUS
-   23: LPAREN
-   24: RPAREN
-   25: COMMA
-   26: LBRAC
-   27: RBRAC
-   28: ASSIGN
-   29: NEWLINE
-   30: NUM
-   31: STRING
-   32: error:
-   33: expr: MINUS NOT BITNOT LPAREN NUM STRING
-   34: id:
-   35: main: <lambda> MINUS NOT BITNOT LPAREN NUM STRING
-   36: in: <lambda> MINUS NOT BITNOT LPAREN NUM STRING
-   37: start: MINUS NOT BITNOT LPAREN NUM STRING
-   38: spec: MINUS NOT BITNOT LPAREN NUM STRING
-   39: top_stmt: MINUS NOT BITNOT LPAREN NUM STRING
-   40: stmt: MINUS NOT BITNOT LPAREN NUM STRING
-   41: retval: NUM STRING
-   42: invoke: NUM STRING
-   43: value: NUM STRING
+   23: PLUSPLUS
+   24: LPAREN
+   25: RPAREN
+   26: COMMA
+   27: LBRAC
+   28: RBRAC
+   29: ASSIGN
+   30: NEWLINE
+   31: OPENQUOTEERROR
+   32: NUM
+   33: STRING
+   34: error: OPENQUOTEERROR
+   35: expr: MINUS NOT BITNOT LPAREN NUM STRING
+   36: id:
+   37: main: <lambda> MINUS NOT BITNOT LPAREN NEWLINE OPENQUOTEERROR NUM STRING
+   38: in: <lambda> MINUS NOT BITNOT LPAREN NEWLINE OPENQUOTEERROR NUM STRING
+   39: start: MINUS NOT BITNOT LPAREN NUM STRING
+   40: spec: MINUS NOT BITNOT LPAREN NUM STRING
+   41: top_stmt: MINUS NOT BITNOT LPAREN NUM STRING
+   42: stmt: MINUS NOT BITNOT LPAREN NUM STRING
+   43: retval: MINUS NOT BITNOT LPAREN NUM STRING
+   44: invoke: MINUS NOT BITNOT LPAREN NUM STRING
+   45: value: MINUS NOT BITNOT LPAREN NUM STRING
+   46: num: MINUS NOT BITNOT LPAREN NUM
+   47: string: LPAREN STRING

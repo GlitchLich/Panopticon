@@ -1,0 +1,6 @@
+# This file is included by CMakeLists.txt, and is the single place where Panopticon version should be updated.
+# Note that you need to "make install" for this information to be copied into all places..
+
+set(PROJECT_VERSION_MAJOR 0)
+set(PROJECT_VERSION_MINOR 1)
+set(PROJECT_VERSION_PATCH .0)

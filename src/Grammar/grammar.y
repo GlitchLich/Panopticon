@@ -15,6 +15,7 @@
 #define BUFS 1024
 #include <stdio.h>
 #include <string.h>
+#include "core/operators.h"
 
 #undef STRING
 #undef NUM
@@ -50,7 +51,7 @@ using namespace panopticon;
 %left SHIFTL SHIFTR.
 %left PLUS MINUS.
 %left DIVIDE TIMES MODULO.
-%right POW NOT BITNOT UMINUS.
+%right POW NOT BITNOT UMINUS PLUSPLUS.
 %left LPAREN RPAREN COMMA LBRAC RBRAC.
 %left ASSIGN.
 
@@ -66,7 +67,10 @@ std::cout << "Syntax error!" << std::endl;
 
 main ::= in.
 in ::= .
+in ::= in NEWLINE.
 in ::= in start NEWLINE.
+
+/*error ::= OPENQUOTE.*/
 
 /*state ::= expr(A).   {*/
 /*    std::cout << "Result.value=" << A.value << std::endl;*/
@@ -75,16 +79,17 @@ in ::= in start NEWLINE.
 
 start ::= spec(A).
 {
+/*    std::cout << "Result.type="<< A.type << std::endl;*/
     switch(A.type)
     {
     case NUMBER:
-        std::cout << "Result.data.number=" << A.data.number << std::endl;
+        std::cout << "Number=" << A.data.number << std::endl;
         break;
     case STRING:
-        std::cout << "Result.data.string=" << A.data.string << std::endl;
+        std::cout << "String=" << *A.data.string << std::endl;
         break;
     }
-    std::cout << "Result.n=" << A.n << std::endl;
+/*    std::cout << "Result.n=" << A.n << std::endl;*/
 }
 /*spec ::= MOD STRING top_stmt.*/
 spec(A) ::= top_stmt(B).
@@ -189,42 +194,129 @@ invoke(A) ::= value(B).
     A.n = B.n+1;
 }
 
-//BASICS
-value(A) ::= NUM(B).
+in ::= error(B).
+{
+    switch(B)
+    {
+    case OpenQuoteError:
+/*        std::cerr << "ERROR p0001: Dangling quotation mark." << std::endl;*/
+        break;
+    default:
+/*        std::cerr << "ERROR p0000: UnknownError" << std::endl;*/
+        break;
+    }
+}
+
+error(A) ::= OPENQUOTEERROR(B).
+{
+    B.type = NUMBER;
+    A = OpenQuoteError;
+}
+
+
+value(A) ::= num(B).
 {
     A.data.number = B.data.number;
     A.type = NUMBER;
     A.n = B.n+1;
 }
 
-value(A) ::= STRING(B).
+value(A) ::= string(B).
 {
     A.data.string = new String(B.data.string->c_str());
     A.type = STRING;
     A.n = B.n+1;
 }
 
-//OPERATORS
-expr(A) ::= expr(B) MINUS expr(C).
+//BASICS
+num(A) ::= NUM(B).
 {
+    A.data.number = B.data.number;
+    A.type = NUMBER;
+    A.n = B.n+1;
+}
+
+string(A) ::= STRING(B).
+{
+    A.data.string = new String(B.data.string->c_str());
+    A.type = STRING;
+    A.n = B.n+1;
+}
+
+//FIX POINTERS!
+
+/*expr(A) ::= LPAREN expr(B) RPAREN.*/
+/*{*/
+/*    A.type = B.type;*/
+/*    A.data.number = B.data.number;*/
+/*    A.n = B.n+1;*/
+/*}*/
+
+//OPERATORS, STRING_STRING
+string(A) ::= LPAREN string(B) RPAREN.
+{
+    A.type = STRING;
+    A.data.string = B.data.string;
+    A.n = B.n+1;
+}
+
+string(A) ::= string(B) MINUS string(C).
+{
+    panopticon::string_minus_string(A,B,C);
+    A.n = B.n+1  + C.n+1;
+}
+
+string(A) ::= string(B) PLUS string(C).
+{
+    panopticon::string_plus_string(A,B,C);
+    A.n = B.n+1  + C.n+1;
+}
+
+string(A) ::= string(B) PLUSPLUS string(C).
+{
+    panopticon::string_plusplus_string(A,B,C);
+    A.n = B.n+1  + C.n+1;
+}
+
+string(A) ::= string(B) EQUALTO string(C).
+{
+    A.type = STRING;
+    A.data.number = B.data.number == C.data.number;
+    A.n = B.n+1+C.n+1;
+}
+
+//OPERATORS, NUMBER_NUMBER
+num(A) ::= LPAREN num(B) RPAREN.
+{
+    A.type = NUMBER;
+    A.data.number = B.data.number;
+    A.n = B.n+1;
+}
+
+num(A) ::= num(B) MINUS num(C).
+{
+    A.type = NUMBER;
     A.data.number = B.data.number - C.data.number;
     A.n = B.n+1  + C.n+1;
 }
 
-expr(A) ::= expr(B) PLUS  expr(C).
+num(A) ::= num(B) PLUS  num(C).
 {
+    A.type = NUMBER;
     A.data.number = B.data.number + C.data.number;
     A.n = B.n+1  + C.n+1;
 }
 
-expr(A) ::= expr(B) TIMES  expr(C).
+num(A) ::= num(B) TIMES  num(C).
 {
+    A.type = NUMBER;
     A.data.number = B.data.number * C.data.number;
     A.n = B.n+1  + C.n+1;
 }
 
-expr(A) ::= expr(B) DIVIDE expr(C).
+num(A) ::= num(B) DIVIDE num(C).
 {
+    A.type = NUMBER;
     if(C.data.number != 0)
     {
          A.data.number = B.data.number / C.data.number;
@@ -236,126 +328,114 @@ expr(A) ::= expr(B) DIVIDE expr(C).
     }
 }
 
-expr(A) ::= expr(B) LESSTHAN expr(C).
+num(A) ::= num(B) LESSTHAN num(C).
 {
+    A.type = NUMBER;
     A.data.number = B.data.number < C.data.number;
     A.n = B.n+1+C.n+1;
 }
 
-expr(A) ::= expr(B) GREATERTHAN expr(C).
+num(A) ::= num(B) GREATERTHAN num(C).
 {
+    A.type = NUMBER;
     A.data.number = B.data.number > C.data.number;
     A.n = B.n+1+C.n+1;
 }
 
-expr(A) ::= expr(B) EQUALTO expr(C).
+num(A) ::= num(B) EQUALTO num(C).
 {
+    A.type = NUMBER;
     A.data.number = B.data.number == C.data.number;
     A.n = B.n+1+C.n+1;
 }
 
-expr(A) ::= expr(B) NOTEQUALTO expr(C).
+num(A) ::= num(B) NOTEQUALTO num(C).
 {
+    A.type = NUMBER;
     A.data.number = B.data.number != C.data.number;
     A.n = B.n+1+C.n+1;
 }
 
-expr(A) ::= expr(B) GORE expr(C).
+num(A) ::= num(B) GORE num(C).
 {
+    A.type = NUMBER;
     A.data.number = B.data.number >= C.data.number;
     A.n = B.n+1+C.n+1;
 }
 
-expr(A) ::= expr(B) LORE expr(C).
+num(A) ::= num(B) LORE num(C).
 {
+    A.type = NUMBER;
     A.data.number = B.data.number <= C.data.number;
     A.n = B.n+1+C.n+1;
 }
 
-expr(A) ::= LPAREN expr(B) RPAREN.
+num(A) ::= num(B) SHIFTL num(C).
 {
-    A.data.number = B.data.number;
-    A.n = B.n+1;
-}
-
-expr(A) ::= expr(B) SHIFTL expr(C).
-{
+    A.type = NUMBER;
     A.data.number = (int)B.data.number << (int)C.data.number;
     A.n = B.n+1+C.n+1;
 }
 
-expr(A) ::= expr(B) SHIFTR expr(C).
+num(A) ::= num(B) SHIFTR num(C).
 {
+    A.type = NUMBER;
     A.data.number = (int)B.data.number >> (int)C.data.number;
     A.n = B.n+1+C.n+1;
 }
 
-expr(A) ::= expr(B) AND expr(C).
+num(A) ::= num(B) AND num(C).
 {
+    A.type = NUMBER;
     A.data.number = (int)B.data.number && (int)C.data.number;
     A.n = B.n+1+C.n+1;
 }
 
-expr(A) ::= expr(B) OR expr(C).
+num(A) ::= num(B) OR num(C).
 {
+    A.type = NUMBER;
     A.data.number = (int)B.data.number || (int)C.data.number;
     A.n = B.n+1+C.n+1;
 }
 
-expr(A) ::= NOT expr(B).
+num(A) ::= NOT num(B).
 {
+    A.type = NUMBER;
     A.data.number = !((int)B.data.number);
     A.n = B.n+1;
 }
 
-expr(A) ::= expr(B) BITAND expr(C).
+num(A) ::= num(B) BITAND num(C).
 {
+    A.type = NUMBER;
     A.data.number = (int)B.data.number & (int)C.data.number;
     A.n = B.n+1+C.n+1;
 }
 
-expr(A) ::= expr(B) BITOR expr(C).
+num(A) ::= num(B) BITOR num(C).
 {
+    A.type = NUMBER;
     A.data.number = (int)B.data.number | (int)C.data.number;
     A.n = B.n+1+C.n+1;
 }
 
-expr(A) ::= BITNOT expr(B).
+num(A) ::= BITNOT num(B).
 {
+    A.type = NUMBER;
     A.data.number = ~((int)B.data.number);
     A.n = B.n+1;
 }
 
-expr(A) ::= MINUS expr(B). [UMINUS]
+num(A) ::= MINUS num(B). [UMINUS]
 {
+    A.type = NUMBER;
     A.data.number = -1 * B.data.number;
     A.n = B.n+1;
 }
 
-expr(A) ::= expr(B) MODULO expr(C).
+num(A) ::= num(B) MODULO num(C).
 {
+    A.type = NUMBER;
     A.data.number = fmod(B.data.number,C.data.number);
     A.n = B.n+1+C.n+1;
 }
-
-/*numberSeq(A) ::= LBRAC expr(B) expr(B) RBRAC.*/
-/*{*/
-
-/*}*/
-
-/*expr(A) ::= TRUE.*/
-/*{*/
-/*    A.value = true;*/
-/*    A.n = B.n+1;*/
-/*}*/
-
-/*expr(A) ::= FALSE.*/
-/*{*/
-/*    A.value = false;*/
-/*    A.n = B.n+1;*/
-/*}*/
-/*function(FUNCTION) ::= returnType(TYPE) parameterList(PARAMS) EQUALS methodBody(BODY).*/
-/*{*/
-/*    FUNCTION = new FunctionNode(TYPE, PARAMS, BODY);*/
-/*}*/
-
