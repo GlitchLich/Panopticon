@@ -1,3 +1,25 @@
+/*
+    Panopticon - Audio/Graphics/Networking Language
+    Copyright (C) 2013 Chad McKinney and Curtis McKinney
+
+    All rights reserved.
+
+    This file is part of Panopticon.
+
+    Panopticon is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Panopticon is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Panopticon.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include <stdio.h>
 
 #include <iostream>
@@ -44,13 +66,13 @@ int main(int argc,char** argv)
     struct panopticon::object t0,t1;
     struct panopticon::object mToken;
 
-    t0.n=0;
+//    t0.n=0;
     t0.data.number=0;
 
     //    std::cout << "Size of string: " << sizeof(const char*) << std::endl;
     //    std::cout << "Size of double: " << sizeof(double) << std::endl;
     //    std::cout << "Size of data: " << sizeof(panopticon::Data) << std::endl;
-    std::cout << "Size of token: " << sizeof(panopticon::object) << std::endl;
+    std::cout << "Size of token: " << sizeof(t0) << std::endl;
     //    std::cout << "Size of void*: " << sizeof(void*) << std::endl;
     std::cout << "Enter an expression like 3+5 <return>" << std::endl;
     std::cout << "  Terminate with ^D" << std::endl;
@@ -70,11 +92,13 @@ int main(int argc,char** argv)
                 break;
             case STRING:
                 t0.data.string = new std::string(yylval.sval);
+                if(yylval.sval!=0)
+                {
+                    delete yylval.sval;
+                }
                 break;
-//            case OPENQUOTEERROR:
-//                yv = NEWLINE;
-//                std::cerr << "ERROR p0001: Dangling quotation mark." << std::endl;
-//                break;
+            case BOOLEAN:
+                t0.data.boolean = yylval.bval;
             }
             Parse(pParser, yv, t0);
         }

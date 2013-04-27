@@ -12,7 +12,8 @@ Number
 String
 Array
 Function
-Monad 
+Monad
+Namespace/Module?
 Primitive
 Variable
 
@@ -38,6 +39,10 @@ doubleMe( 2 3 )
 
 Array:
 [0 1 2 3]
+WE NEED HASKELL LIKE ARRAY FUNCTIONS, i.e.:
+Here, for example, is a definition of an array of the squares of numbers from 1 to 100: 
+
+squares                 =  array (1,100) [(i, i*i) | i <- [1..100]]
 
 Control Structure:
 nthElement :: [a] -> Int -> Maybe a 

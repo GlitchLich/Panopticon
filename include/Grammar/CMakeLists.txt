@@ -6,5 +6,6 @@ set(Panopticon_SRC
    	${CMAKE_CURRENT_SOURCE_DIR}/lexglobal.h
 	${CMAKE_CURRENT_SOURCE_DIR}/parse.h
 	${CMAKE_CURRENT_SOURCE_DIR}/tokens.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/parsingutilities.h
 	PARENT_SCOPE
 )

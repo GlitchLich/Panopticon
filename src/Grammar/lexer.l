@@ -17,11 +17,12 @@ int line = 1, col = 1;
 [0-9]+|[0-9]*\.[0-9]+    {                      col += (int) strlen(yytext);
                                                 yylval.dval = atof(yytext);
                                                 return NUM; }
+true       { yylval.bval = 1;return BOOLEAN;}
+false     { yylval.bval = 0;return BOOLEAN;}
 [ \t]   { col += (int) strlen(yytext); }               /* ignore but count white space */
-[A-Za-z][A-Za-z0-9]*                           { /* ignore but needed for variables */
-
-                                                return 0;
-                                               }
+[A-Za-z][A-Za-z0-9]* { /* ignore but needed for variables */
+    return 0;
+}
 [+]+[+]           {  return PLUSPLUS; }
 "+"           {  return PLUS; }
 "-"           {  return MINUS; }
@@ -49,7 +50,8 @@ int line = 1, col = 1;
 "]"          {  return RBRAC;  }
 ","          { return COMMA;}
 "="          { return ASSIGN;}
-"\""+[__+-={}|:;?/>.<,~`!@#$%^&*()A-Za-z0-9 \t]*+"\"" {
+"^"          { return POW;}
+[\"][^"]*[\"] {
     col += (int)strlen(yytext);
     yylval.sval=strndup(yytext+1,(int)strlen(yytext)-2);
     return STRING;}
