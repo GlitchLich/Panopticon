@@ -1040,20 +1040,39 @@ array(A) ::= array(B) PLUSPLUS num(C).
     delete B.data.array;
 }
 
-stmt(A) ::= array(B) LBRAC num(C) RBRAC. [INDEX]
+/*
+index(A) ::= array(B) LBRAC num(C) RBRAC. [INDEX]
 {
+    A.type = NUMBER;
     if(C.data.number<B.data.array->size())
     {
-        A = B.data.array->at(C.data.number);
+        A.data.number = C.data.number;
     }
     else
     {
         std::cerr << "Error p0008: Index out of bounds." << std::endl;
-        A = B;
     }
 }
 
-value::= value PLUS value.
+multi_index(A) ::= index(B) LBRAC num(C) RBRAC. [INDEX]
+{
+    A.type = ARRAY;
+    A.data.array = new std::vector<panopticon::object>();
+    A.data.array->reserve(2);
+    A.data.array->push_back(B.data.number);
+    A.data.array->push_back(C.data.number);
+}
+
+multi_index(A) ::= multi_index(B) LBRAC num(C) RBRAC. [INDEX]
+{
+    A.type = ARRAY;
+    A.data.array = new std::vector<panopticon::object>();
+    A.data.array->reserve(2);
+    A.data.array->push_back(B.data.number);
+    A.data.array->push_back(C.data.number);
+}
+*/
+/*value::= value PLUS value.*/
 
 /*value(A) ::= value(A).*/
 
