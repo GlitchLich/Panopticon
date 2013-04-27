@@ -86,13 +86,13 @@ using namespace panopticon;
 **                       defined, then do no error processing.
 */
 #define YYCODETYPE unsigned char
-#define YYNOCODE 55
+#define YYNOCODE 56
 #define YYACTIONTYPE unsigned char
 #define ParseTOKENTYPE Token
 typedef union {
   int yyinit;
   ParseTOKENTYPE yy0;
-  int yy109;
+  int yy111;
 } YYMINORTYPE;
 #ifndef YYSTACKDEPTH
 #define YYSTACKDEPTH 100
@@ -101,10 +101,10 @@ typedef union {
 #define ParseARG_PDECL
 #define ParseARG_FETCH
 #define ParseARG_STORE
-#define YYNSTATE 134
-#define YYNRULE 80
-#define YYERRORSYMBOL 35
-#define YYERRSYMDT yy109
+#define YYNSTATE 143
+#define YYNRULE 84
+#define YYERRORSYMBOL 36
+#define YYERRSYMDT yy111
 #define YY_NO_ACTION      (YYNSTATE+YYNRULE+2)
 #define YY_ACCEPT_ACTION  (YYNSTATE+YYNRULE+1)
 #define YY_ERROR_ACTION   (YYNSTATE+YYNRULE)
@@ -173,157 +173,170 @@ static const YYMINORTYPE yyzerominor = { 0 };
 **                     shifting non-terminals after a reduce.
 **  yy_default[]       Default action for each state.
 */
-#define YY_ACTTAB_COUNT (502)
+#define YY_ACTTAB_COUNT (555)
 static const YYACTIONTYPE yy_action[] = {
- /*     0 */    21,   22,  132,   17,   18,   26,   25,   27,   24,   28,
- /*    10 */    23,   20,   19,   36,   31,   29,   30,   16,   15,   75,
- /*    20 */    87,   89,   35,   46,  117,   33,   21,   22,    6,   17,
- /*    30 */    18,   26,   25,   27,   24,   28,   23,   20,   19,    5,
- /*    40 */    31,   29,   30,   16,   15,  115,   21,   22,   35,   17,
- /*    50 */    18,   26,   25,   27,   24,   28,   23,   20,   19,   36,
- /*    60 */    31,   29,   30,   16,   15,  113,  216,   22,   35,   17,
- /*    70 */    18,   26,   25,   27,   24,   28,   23,   20,   19,   36,
- /*    80 */    31,   29,   30,   16,   15,   90,  111,  104,   35,   17,
- /*    90 */    18,   26,   25,   27,   24,   28,   23,   20,   19,   36,
- /*   100 */    31,   29,   30,   16,   15,  216,   21,   22,   35,   17,
- /*   110 */    18,   26,   25,   27,   24,   28,   23,   20,   19,   42,
- /*   120 */    44,   29,   30,   16,   15,  216,   46,  216,   35,   18,
- /*   130 */    26,   25,   27,   24,   28,   23,   20,   19,   36,   31,
- /*   140 */    29,   30,   16,   15,   50,   86,   72,   35,   26,   25,
- /*   150 */    27,   24,   28,   23,   20,   19,   36,   31,   29,   30,
- /*   160 */    16,   15,   50,  110,   72,   35,   27,   24,   28,   23,
- /*   170 */    20,   19,   36,   31,   29,   30,   16,   15,   15,  128,
- /*   180 */   216,   35,   35,  112,  131,  130,  129,  127,  126,  125,
- /*   190 */   216,   99,  216,  122,   51,   60,   69,  216,   43,   39,
- /*   200 */    40,   38,   41,   37,   13,  216,   47,   45,   42,   44,
- /*   210 */    33,  128,   50,   67,   72,   46,  216,  118,  124,  127,
- /*   220 */   126,  125,    3,   99,  101,  122,   51,   60,   69,   43,
- /*   230 */    39,   40,   38,   41,   37,  128,  216,   47,   45,   42,
- /*   240 */    44,  134,  123,  127,  126,  125,   46,   99,    4,  122,
- /*   250 */    51,   60,   69,    9,   10,  216,    7,    6,   12,   11,
- /*   260 */   114,   14,    8,  215,    1,   32,   34,   34,    2,   13,
- /*   270 */    13,  133,  121,  120,  119,   33,   33,   40,   38,   41,
- /*   280 */    37,  216,  216,   47,   45,   42,   44,   50,  109,   72,
- /*   290 */   216,  216,   46,   20,   19,   36,   31,   29,   30,   16,
- /*   300 */    15,    9,   10,  216,   35,  216,   12,   11,  100,  216,
- /*   310 */     7,   49,   61,   72,   34,   14,    8,   13,  216,   32,
- /*   320 */   216,  216,    2,   33,  216,  116,  121,  120,  119,   36,
- /*   330 */    31,   29,   30,   16,   15,    7,  216,  216,   35,  216,
- /*   340 */    14,    8,  216,   10,   32,  216,  216,   12,   11,  216,
- /*   350 */   216,  121,  120,  119,  216,   34,  216,  216,   13,   47,
- /*   360 */    45,   42,   44,  216,   33,  216,   12,   11,   46,   29,
- /*   370 */    30,   16,   15,  216,   34,  103,   35,   13,   74,   88,
- /*   380 */    72,  102,  216,   33,   53,   61,   72,   50,   82,   72,
- /*   390 */    50,   81,   72,   50,   66,   72,  216,  216,  216,   50,
- /*   400 */    80,   72,  216,   50,   79,   72,  216,   78,   88,   72,
- /*   410 */    50,  108,   72,   50,   85,   98,   50,  107,   72,   48,
- /*   420 */    59,   68,   77,   61,   72,  216,   97,   61,   72,   96,
- /*   430 */    61,   72,   65,   61,   72,   64,   61,   72,   58,   61,
- /*   440 */    72,   57,   61,   72,   63,   61,   72,   62,   61,   72,
- /*   450 */   216,   54,   61,   72,  216,   52,   61,   72,  216,   71,
- /*   460 */    61,   72,   70,   61,   72,   56,   61,   72,   55,   61,
- /*   470 */    72,   95,   61,   72,   94,   61,   72,  216,   93,   61,
- /*   480 */   106,   50,   61,  105,   50,   61,   84,   50,   61,   83,
- /*   490 */    50,   61,   76,   50,   61,   73,   92,   61,   72,   91,
- /*   500 */    61,   72,
+ /*     0 */    24,   25,  141,   20,   21,   29,   28,   30,   27,   31,
+ /*    10 */    26,   23,   22,   50,   34,   32,   33,   19,   18,    8,
+ /*    20 */    37,   48,   38,   16,   36,  127,    7,   24,   25,   36,
+ /*    30 */    20,   21,   29,   28,   30,   27,   31,   26,   23,   22,
+ /*    40 */    50,   34,   32,   33,   19,   18,  124,   44,   46,   38,
+ /*    50 */    49,   47,   44,   46,   48,  123,  121,   24,   25,   48,
+ /*    60 */    20,   21,   29,   28,   30,   27,   31,   26,   23,   22,
+ /*    70 */    50,   34,   32,   33,   19,   18,  229,   24,   25,   38,
+ /*    80 */    20,   21,   29,   28,   30,   27,   31,   26,   23,   22,
+ /*    90 */     6,   34,   32,   33,   19,   18,  229,  229,   25,    5,
+ /*   100 */    20,   21,   29,   28,   30,   27,   31,   26,   23,   22,
+ /*   110 */    50,   34,   32,   33,   19,   18,   81,   94,   78,   38,
+ /*   120 */    20,   21,   29,   28,   30,   27,   31,   26,   23,   22,
+ /*   130 */    50,   34,   32,   33,   19,   18,  229,   24,   25,   38,
+ /*   140 */    20,   21,   29,   28,   30,   27,   31,   26,   23,   22,
+ /*   150 */   229,  229,   32,   33,   19,   18,   82,   93,   96,    5,
+ /*   160 */    21,   29,   28,   30,   27,   31,   26,   23,   22,   50,
+ /*   170 */    34,   32,   33,   19,   18,   97,  118,  111,   38,   29,
+ /*   180 */    28,   30,   27,   31,   26,   23,   22,   50,   34,   32,
+ /*   190 */    33,   19,   18,   55,   92,   78,   38,   30,   27,   31,
+ /*   200 */    26,   23,   22,   50,   34,   32,   33,   19,   18,  137,
+ /*   210 */   229,  229,   38,  120,  140,  139,  138,  136,  135,  134,
+ /*   220 */   229,   95,  229,  119,   54,   66,   75,  229,   45,   41,
+ /*   230 */    42,   40,   43,   39,  229,   16,   49,   47,   44,   46,
+ /*   240 */   122,   36,  137,  228,    1,   48,  229,  229,  128,  133,
+ /*   250 */   136,  135,  134,    3,   95,  107,  119,   54,   66,   75,
+ /*   260 */    45,   41,   42,   40,   43,   39,  137,  229,   49,   47,
+ /*   270 */    44,   46,  143,  132,  136,  135,  134,   48,   95,  229,
+ /*   280 */   119,   54,   66,   75,   18,   12,   13,   10,   38,  229,
+ /*   290 */    15,   14,   17,   11,  229,  229,  229,   35,   37,  229,
+ /*   300 */     2,   16,  229,  142,  131,  130,  129,   36,  229,   42,
+ /*   310 */    40,   43,   39,  229,  229,   49,   47,   44,   46,  229,
+ /*   320 */   125,   56,   66,   75,   48,   23,   22,   50,   34,   32,
+ /*   330 */    33,   19,   18,   12,   13,  229,   38,  229,   15,   14,
+ /*   340 */   229,   32,   33,   19,   18,  229,   37,    4,   38,   16,
+ /*   350 */    32,   33,   19,   18,   10,   36,    7,    5,  126,   17,
+ /*   360 */    11,    9,  229,  229,   35,  106,  229,    2,   58,   67,
+ /*   370 */    78,  131,  130,  129,   50,   34,   32,   33,   19,   18,
+ /*   380 */    10,  229,  229,   38,  229,   17,   11,  229,   13,  229,
+ /*   390 */    35,  108,   15,   14,   80,   94,   78,  131,  130,  129,
+ /*   400 */    37,  229,  229,   16,   15,   14,   55,  117,   78,   36,
+ /*   410 */   229,  229,   37,  229,  229,   16,  229,  229,  229,  110,
+ /*   420 */   229,   36,   53,  115,   78,  109,  229,  229,   59,   67,
+ /*   430 */    78,   55,   73,   78,  229,  229,   55,  116,   78,   55,
+ /*   440 */    88,   78,  229,   55,   87,   78,   55,   72,   78,   55,
+ /*   450 */    86,   78,   55,   85,   78,  229,   55,  115,   78,   55,
+ /*   460 */    91,  105,   55,  114,   78,   52,   65,   74,   84,   67,
+ /*   470 */    78,  229,  104,   67,   78,  103,   67,   78,   71,   67,
+ /*   480 */    78,   70,   67,   78,   64,   67,   78,  229,  229,   63,
+ /*   490 */    67,   78,   69,   67,   78,  229,   68,   67,   78,   60,
+ /*   500 */    67,   78,   57,   67,   78,   77,   67,   78,  229,   76,
+ /*   510 */    67,   78,   62,   67,   78,   61,   67,   78,  102,   67,
+ /*   520 */    78,  101,   67,   78,  229,  100,   67,  113,   55,   67,
+ /*   530 */   112,   55,   67,   90,   55,   67,   89,   55,   67,   83,
+ /*   540 */   229,  229,   55,   67,   79,   99,   67,   78,  229,   98,
+ /*   550 */    67,   78,   51,   67,   78,
 };
 static const YYCODETYPE yy_lookahead[] = {
- /*     0 */     1,    2,   30,    4,    5,    6,    7,    8,    9,   10,
- /*    10 */    11,   12,   13,   14,   15,   16,   17,   18,   19,   51,
- /*    20 */    52,   53,   23,   23,   25,   23,    1,    2,   23,    4,
- /*    30 */     5,    6,    7,    8,    9,   10,   11,   12,   13,   14,
- /*    40 */    15,   16,   17,   18,   19,   28,    1,    2,   23,    4,
- /*    50 */     5,    6,    7,    8,    9,   10,   11,   12,   13,   14,
- /*    60 */    15,   16,   17,   18,   19,   34,   54,    2,   23,    4,
- /*    70 */     5,    6,    7,    8,    9,   10,   11,   12,   13,   14,
- /*    80 */    15,   16,   17,   18,   19,   51,   52,   53,   23,    4,
- /*    90 */     5,    6,    7,    8,    9,   10,   11,   12,   13,   14,
- /*   100 */    15,   16,   17,   18,   19,   54,    1,    2,   23,    4,
- /*   110 */     5,    6,    7,    8,    9,   10,   11,   12,   13,   16,
- /*   120 */    17,   16,   17,   18,   19,   54,   23,   54,   23,    5,
- /*   130 */     6,    7,    8,    9,   10,   11,   12,   13,   14,   15,
- /*   140 */    16,   17,   18,   19,   51,   52,   53,   23,    6,    7,
- /*   150 */     8,    9,   10,   11,   12,   13,   14,   15,   16,   17,
- /*   160 */    18,   19,   51,   52,   53,   23,    8,    9,   10,   11,
- /*   170 */    12,   13,   14,   15,   16,   17,   18,   19,   19,   36,
- /*   180 */    54,   23,   23,   40,   41,   42,   43,   44,   45,   46,
- /*   190 */    54,   48,   54,   50,   51,   52,   53,   54,    6,    7,
- /*   200 */     8,    9,   10,   11,   17,   54,   14,   15,   16,   17,
- /*   210 */    23,   36,   51,   52,   53,   23,   54,   25,   43,   44,
- /*   220 */    45,   46,   47,   48,   49,   50,   51,   52,   53,    6,
- /*   230 */     7,    8,    9,   10,   11,   36,   54,   14,   15,   16,
- /*   240 */    17,    0,   43,   44,   45,   46,   23,   48,   14,   50,
- /*   250 */    51,   52,   53,    1,    2,   54,   15,   23,    6,    7,
- /*   260 */    35,   20,   21,   38,   39,   24,   14,   14,   27,   17,
- /*   270 */    17,   30,   31,   32,   33,   23,   23,    8,    9,   10,
- /*   280 */    11,   54,   54,   14,   15,   16,   17,   51,   52,   53,
- /*   290 */    54,   54,   23,   12,   13,   14,   15,   16,   17,   18,
- /*   300 */    19,    1,    2,   54,   23,   54,    6,    7,   48,   54,
- /*   310 */    15,   51,   52,   53,   14,   20,   21,   17,   54,   24,
- /*   320 */    54,   54,   27,   23,   54,   25,   31,   32,   33,   14,
- /*   330 */    15,   16,   17,   18,   19,   15,   54,   54,   23,   54,
- /*   340 */    20,   21,   54,    2,   24,   54,   54,    6,    7,   54,
- /*   350 */    54,   31,   32,   33,   54,   14,   54,   54,   17,   14,
- /*   360 */    15,   16,   17,   54,   23,   54,    6,    7,   23,   16,
- /*   370 */    17,   18,   19,   54,   14,   48,   23,   17,   51,   52,
- /*   380 */    53,   48,   54,   23,   51,   52,   53,   51,   52,   53,
- /*   390 */    51,   52,   53,   51,   52,   53,   54,   54,   54,   51,
- /*   400 */    52,   53,   54,   51,   52,   53,   54,   51,   52,   53,
- /*   410 */    51,   52,   53,   51,   52,   53,   51,   52,   53,   51,
- /*   420 */    52,   53,   51,   52,   53,   54,   51,   52,   53,   51,
- /*   430 */    52,   53,   51,   52,   53,   51,   52,   53,   51,   52,
- /*   440 */    53,   51,   52,   53,   51,   52,   53,   51,   52,   53,
- /*   450 */    54,   51,   52,   53,   54,   51,   52,   53,   54,   51,
- /*   460 */    52,   53,   51,   52,   53,   51,   52,   53,   51,   52,
- /*   470 */    53,   51,   52,   53,   51,   52,   53,   54,   51,   52,
- /*   480 */    53,   51,   52,   53,   51,   52,   53,   51,   52,   53,
- /*   490 */    51,   52,   53,   51,   52,   53,   51,   52,   53,   51,
- /*   500 */    52,   53,
+ /*     0 */     1,    2,   31,    4,    5,    6,    7,    8,    9,   10,
+ /*    10 */    11,   12,   13,   14,   15,   16,   17,   18,   19,   14,
+ /*    20 */    14,   23,   23,   17,   23,   26,   23,    1,    2,   23,
+ /*    30 */     4,    5,    6,    7,    8,    9,   10,   11,   12,   13,
+ /*    40 */    14,   15,   16,   17,   18,   19,   29,   16,   17,   23,
+ /*    50 */    14,   15,   16,   17,   23,   29,   35,    1,    2,   23,
+ /*    60 */     4,    5,    6,    7,    8,    9,   10,   11,   12,   13,
+ /*    70 */    14,   15,   16,   17,   18,   19,   55,    1,    2,   23,
+ /*    80 */     4,    5,    6,    7,    8,    9,   10,   11,   12,   13,
+ /*    90 */    14,   15,   16,   17,   18,   19,   55,   55,    2,   23,
+ /*   100 */     4,    5,    6,    7,    8,    9,   10,   11,   12,   13,
+ /*   110 */    14,   15,   16,   17,   18,   19,   52,   53,   54,   23,
+ /*   120 */     4,    5,    6,    7,    8,    9,   10,   11,   12,   13,
+ /*   130 */    14,   15,   16,   17,   18,   19,   55,    1,    2,   23,
+ /*   140 */     4,    5,    6,    7,    8,    9,   10,   11,   12,   13,
+ /*   150 */    55,   55,   16,   17,   18,   19,   52,   53,   54,   23,
+ /*   160 */     5,    6,    7,    8,    9,   10,   11,   12,   13,   14,
+ /*   170 */    15,   16,   17,   18,   19,   52,   53,   54,   23,    6,
+ /*   180 */     7,    8,    9,   10,   11,   12,   13,   14,   15,   16,
+ /*   190 */    17,   18,   19,   52,   53,   54,   23,    8,    9,   10,
+ /*   200 */    11,   12,   13,   14,   15,   16,   17,   18,   19,   37,
+ /*   210 */    55,   55,   23,   41,   42,   43,   44,   45,   46,   47,
+ /*   220 */    55,   49,   55,   51,   52,   53,   54,   55,    6,    7,
+ /*   230 */     8,    9,   10,   11,   55,   17,   14,   15,   16,   17,
+ /*   240 */    36,   23,   37,   39,   40,   23,   55,   55,   26,   44,
+ /*   250 */    45,   46,   47,   48,   49,   50,   51,   52,   53,   54,
+ /*   260 */     6,    7,    8,    9,   10,   11,   37,   55,   14,   15,
+ /*   270 */    16,   17,    0,   44,   45,   46,   47,   23,   49,   55,
+ /*   280 */    51,   52,   53,   54,   19,    1,    2,   15,   23,   55,
+ /*   290 */     6,    7,   20,   21,   55,   55,   55,   25,   14,   55,
+ /*   300 */    28,   17,   55,   31,   32,   33,   34,   23,   55,    8,
+ /*   310 */     9,   10,   11,   55,   55,   14,   15,   16,   17,   55,
+ /*   320 */    51,   52,   53,   54,   23,   12,   13,   14,   15,   16,
+ /*   330 */    17,   18,   19,    1,    2,   55,   23,   55,    6,    7,
+ /*   340 */    55,   16,   17,   18,   19,   55,   14,   14,   23,   17,
+ /*   350 */    16,   17,   18,   19,   15,   23,   23,   23,   26,   20,
+ /*   360 */    21,   28,   55,   55,   25,   49,   55,   28,   52,   53,
+ /*   370 */    54,   32,   33,   34,   14,   15,   16,   17,   18,   19,
+ /*   380 */    15,   55,   55,   23,   55,   20,   21,   55,    2,   55,
+ /*   390 */    25,   49,    6,    7,   52,   53,   54,   32,   33,   34,
+ /*   400 */    14,   55,   55,   17,    6,    7,   52,   53,   54,   23,
+ /*   410 */    55,   55,   14,   55,   55,   17,   55,   55,   55,   49,
+ /*   420 */    55,   23,   52,   53,   54,   49,   55,   55,   52,   53,
+ /*   430 */    54,   52,   53,   54,   55,   55,   52,   53,   54,   52,
+ /*   440 */    53,   54,   55,   52,   53,   54,   52,   53,   54,   52,
+ /*   450 */    53,   54,   52,   53,   54,   55,   52,   53,   54,   52,
+ /*   460 */    53,   54,   52,   53,   54,   52,   53,   54,   52,   53,
+ /*   470 */    54,   55,   52,   53,   54,   52,   53,   54,   52,   53,
+ /*   480 */    54,   52,   53,   54,   52,   53,   54,   55,   55,   52,
+ /*   490 */    53,   54,   52,   53,   54,   55,   52,   53,   54,   52,
+ /*   500 */    53,   54,   52,   53,   54,   52,   53,   54,   55,   52,
+ /*   510 */    53,   54,   52,   53,   54,   52,   53,   54,   52,   53,
+ /*   520 */    54,   52,   53,   54,   55,   52,   53,   54,   52,   53,
+ /*   530 */    54,   52,   53,   54,   52,   53,   54,   52,   53,   54,
+ /*   540 */    55,   55,   52,   53,   54,   52,   53,   54,   55,   52,
+ /*   550 */    53,   54,   52,   53,   54,
 };
-#define YY_SHIFT_USE_DFLT (-29)
-#define YY_SHIFT_COUNT (112)
-#define YY_SHIFT_MIN   (-28)
-#define YY_SHIFT_MAX   (360)
+#define YY_SHIFT_USE_DFLT (-30)
+#define YY_SHIFT_COUNT (120)
+#define YY_SHIFT_MIN   (-29)
+#define YY_SHIFT_MAX   (398)
 static const short yy_shift_ofst[] = {
- /*     0 */    31,  241,  295,  295,  295,  295,  295,  320,  320,  320,
- /*    10 */   320,  320,  320,  320,  320,  320,  320,  320,  320,  320,
- /*    20 */   320,  320,  320,  320,  320,  320,  320,  320,  320,  320,
- /*    30 */   320,  320,  320,  320,  320,  320,  320,  320,  320,  320,
- /*    40 */   320,  320,  320,  320,  320,  320,  320,  320,   -1,   25,
- /*    50 */    45,   25,   65,  105,   85,  124,  142,  158,  158,  192,
- /*    60 */   223,  223,  281,  281,  281,  281,  269,  269,  300,  252,
- /*    70 */   315,  315,  252,  341,  353,  353,  360,  353,  353,  345,
- /*    80 */   345,  345,  345,  253,  253,  103,  103,  103,  103,  187,
- /*    90 */   159,  159,  159,  159,  159,  159,  159,  159,  187,  234,
- /*   100 */     5,   17,    5,    5,    2,    2,    2,    0,    0,    0,
- /*   110 */     0,    0,  -28,
+ /*     0 */    21,  272,  339,  339,  339,  339,  339,  339,  365,  365,
+ /*    10 */   365,  365,  365,  365,  365,  365,  365,  365,  365,  365,
+ /*    20 */   365,  365,  365,  365,  365,  365,  365,  365,  365,  365,
+ /*    30 */   365,  365,  365,  365,  365,  365,  365,  365,  365,  365,
+ /*    40 */   365,  365,  365,  365,  365,  365,  365,  365,  365,  365,
+ /*    50 */   365,   26,   -1,   76,   76,   56,   56,   96,  136,  136,
+ /*    60 */   116,  155,  173,  189,  189,  222,  254,  254,  313,  313,
+ /*    70 */   313,  313,  301,  301,  332,  284,  360,  360,  284,  386,
+ /*    80 */   334,  325,  325,  398,  325,   36,   36,   36,   36,    6,
+ /*    90 */     6,   31,   31,   31,   31,  333,  218,  265,  265,  265,
+ /*   100 */   265,  265,  265,  265,  265,  218,    3,   17,    3,    3,
+ /*   110 */     3,    1,    1,    1,   -2,   -2,   -2,   -2,   -2,    5,
+ /*   120 */   -29,
 };
-#define YY_REDUCE_USE_DFLT (-33)
-#define YY_REDUCE_COUNT (47)
-#define YY_REDUCE_MIN   (-32)
-#define YY_REDUCE_MAX   (448)
+#define YY_REDUCE_USE_DFLT (-1)
+#define YY_REDUCE_COUNT (50)
+#define YY_REDUCE_MIN   (0)
+#define YY_REDUCE_MAX   (500)
 static const short yy_reduce_ofst[] = {
- /*     0 */   225,  143,  175,  199,  333,  327,  260,  448,  445,  442,
- /*    10 */   439,  436,  433,  430,  427,  423,  420,  417,  414,  411,
- /*    20 */   408,  404,  400,  396,  393,  390,  387,  384,  381,  378,
- /*    30 */   375,  371,  368,  365,  362,  359,  356,  352,  348,  342,
- /*    40 */   339,  336,  236,  161,  111,   93,   34,  -32,
+ /*     0 */   204,  172,  205,  229,  376,  370,  342,  316,  269,  500,
+ /*    10 */   497,  493,  490,  485,  482,  479,  476,  473,  469,  466,
+ /*    20 */   463,  460,  457,  453,  450,  447,  444,  440,  437,  432,
+ /*    30 */   429,  426,  423,  420,  416,  413,  410,  407,  404,  400,
+ /*    40 */   397,  394,  391,  387,  384,  379,  354,  141,  123,  104,
+ /*    50 */    64,
 };
 static const YYACTIONTYPE yy_default[] = {
- /*     0 */   135,  214,  149,  150,  214,  214,  214,  214,  214,  214,
- /*    10 */   214,  214,  214,  214,  214,  214,  214,  214,  214,  214,
- /*    20 */   214,  214,  214,  214,  214,  214,  214,  214,  214,  214,
- /*    30 */   214,  214,  214,  214,  214,  214,  214,  214,  214,  214,
- /*    40 */   214,  214,  214,  214,  214,  214,  214,  214,  214,  214,
- /*    50 */   214,  152,  198,  211,  197,  203,  202,  194,  193,  214,
- /*    60 */   153,  214,  196,  195,  192,  191,  183,  179,  214,  154,
- /*    70 */   201,  200,  214,  172,  188,  158,  171,  187,  188,  185,
- /*    80 */   184,  182,  181,  170,  169,  164,  175,  176,  160,  162,
- /*    90 */   159,  205,  204,  199,  207,  206,  190,  189,  167,  147,
- /*   100 */   208,  214,  209,  210,  163,  168,  173,  165,  161,  180,
- /*   110 */   178,  177,  214,  213,  212,  148,  166,  186,  174,  157,
- /*   120 */   156,  155,  151,  146,  145,  144,  143,  142,  141,  140,
- /*   130 */   139,  138,  137,  136,
+ /*     0 */   144,  227,  158,  159,  227,  227,  227,  227,  227,  227,
+ /*    10 */   227,  227,  227,  227,  227,  227,  227,  227,  227,  227,
+ /*    20 */   227,  227,  227,  227,  227,  227,  227,  227,  227,  227,
+ /*    30 */   227,  227,  227,  227,  227,  227,  227,  227,  227,  227,
+ /*    40 */   227,  227,  227,  227,  227,  227,  227,  227,  227,  227,
+ /*    50 */   227,  227,  227,  227,  161,  227,  161,  207,  222,  220,
+ /*    60 */   206,  212,  211,  203,  202,  227,  162,  227,  205,  204,
+ /*    70 */   201,  200,  192,  188,  227,  163,  210,  209,  227,  181,
+ /*    80 */   197,  197,  167,  180,  196,  194,  193,  191,  190,  179,
+ /*    90 */   178,  173,  184,  185,  169,  156,  171,  168,  214,  213,
+ /*   100 */   208,  216,  215,  199,  198,  176,  217,  227,  219,  218,
+ /*   110 */   221,  172,  177,  182,  174,  170,  189,  187,  186,  160,
+ /*   120 */   227,  226,  225,  223,  157,  224,  175,  195,  183,  166,
+ /*   130 */   165,  164,  155,  154,  153,  152,  151,  150,  149,  148,
+ /*   140 */   147,  146,  145,
 };
 
 /* The next table maps tokens into fallback tokens.  If a construct
@@ -422,14 +435,14 @@ static const char *const yyTokenName[] = {
   "SHIFTL",        "SHIFTR",        "PLUS",          "MINUS",       
   "DIVIDE",        "TIMES",         "MODULO",        "POW",         
   "NOT",           "BITNOT",        "UMINUS",        "PLUSPLUS",    
-  "LPAREN",        "RPAREN",        "COMMA",         "LBRAC",       
-  "RBRAC",         "ASSIGN",        "NEWLINE",       "NUM",         
-  "STRING",        "BOOLEAN",       "OPENQUOTEERROR",  "error",       
-  "expr",          "id",            "main",          "in",          
-  "start",         "spec",          "top_stmt",      "stmt",        
-  "retval",        "access",        "identifier",    "stmt_list",   
-  "array",         "maybe_empty_stmt_list",  "value",         "num",         
-  "string",        "bool",        
+  "INDEX",         "LPAREN",        "RPAREN",        "COMMA",       
+  "LBRAC",         "RBRAC",         "ASSIGN",        "NEWLINE",     
+  "NUM",           "STRING",        "BOOLEAN",       "OPENQUOTEERROR",
+  "error",         "expr",          "id",            "main",        
+  "in",            "start",         "spec",          "top_stmt",    
+  "stmt",          "retval",        "access",        "identifier",  
+  "stmt_list",     "array",         "maybe_empty_stmt_list",  "value",       
+  "num",           "string",        "bool",        
 };
 #endif /* NDEBUG */
 
@@ -515,8 +528,12 @@ static const char *const yyRuleName[] = {
  /*  75 */ "array ::= array PLUS array",
  /*  76 */ "array ::= num PLUS array",
  /*  77 */ "array ::= array PLUS num",
- /*  78 */ "in ::= error",
- /*  79 */ "error ::= OPENQUOTEERROR",
+ /*  78 */ "array ::= num PLUSPLUS array",
+ /*  79 */ "array ::= array PLUSPLUS num",
+ /*  80 */ "stmt ::= array LBRAC num RBRAC",
+ /*  81 */ "value ::= value PLUS value",
+ /*  82 */ "in ::= error",
+ /*  83 */ "error ::= OPENQUOTEERROR",
 };
 #endif /* NDEBUG */
 
@@ -619,21 +636,22 @@ static void yy_destructor(
     case 21: /* BITNOT */
     case 22: /* UMINUS */
     case 23: /* PLUSPLUS */
-    case 24: /* LPAREN */
-    case 25: /* RPAREN */
-    case 26: /* COMMA */
-    case 27: /* LBRAC */
-    case 28: /* RBRAC */
-    case 29: /* ASSIGN */
-    case 30: /* NEWLINE */
-    case 31: /* NUM */
-    case 32: /* STRING */
-    case 33: /* BOOLEAN */
-    case 34: /* OPENQUOTEERROR */
+    case 24: /* INDEX */
+    case 25: /* LPAREN */
+    case 26: /* RPAREN */
+    case 27: /* COMMA */
+    case 28: /* LBRAC */
+    case 29: /* RBRAC */
+    case 30: /* ASSIGN */
+    case 31: /* NEWLINE */
+    case 32: /* NUM */
+    case 33: /* STRING */
+    case 34: /* BOOLEAN */
+    case 35: /* OPENQUOTEERROR */
 {
 #line 38 "./src/Grammar/grammar.y"
  token_destructor((yypminor->yy0)); 
-#line 637 "./src/Grammar/grammar.c"
+#line 655 "./src/Grammar/grammar.c"
 }
       break;
     default:  break;   /* If no destructor action specified: do nothing */
@@ -871,86 +889,90 @@ static const struct {
   YYCODETYPE lhs;         /* Symbol on the left-hand side of the rule */
   unsigned char nrhs;     /* Number of right-hand side symbols in the rule */
 } yyRuleInfo[] = {
-  { 38, 1 },
-  { 39, 0 },
-  { 39, 2 },
-  { 39, 3 },
-  { 40, 1 },
+  { 39, 1 },
+  { 40, 0 },
+  { 40, 2 },
+  { 40, 3 },
   { 41, 1 },
   { 42, 1 },
   { 43, 1 },
-  { 36, 1 },
   { 44, 1 },
+  { 37, 1 },
   { 45, 1 },
-  { 47, 1 },
-  { 47, 2 },
-  { 45, 1 },
-  { 48, 3 },
-  { 49, 0 },
-  { 49, 1 },
   { 46, 1 },
+  { 48, 1 },
+  { 48, 2 },
+  { 46, 1 },
+  { 49, 3 },
+  { 50, 0 },
   { 50, 1 },
-  { 50, 1 },
-  { 50, 1 },
+  { 47, 1 },
+  { 51, 1 },
+  { 51, 1 },
   { 51, 1 },
   { 52, 1 },
   { 53, 1 },
+  { 54, 1 },
+  { 53, 3 },
+  { 53, 3 },
+  { 53, 3 },
+  { 53, 3 },
+  { 53, 3 },
+  { 53, 3 },
+  { 53, 3 },
+  { 53, 3 },
+  { 54, 3 },
+  { 54, 3 },
+  { 54, 3 },
+  { 54, 3 },
+  { 54, 3 },
+  { 54, 3 },
+  { 54, 3 },
+  { 54, 2 },
+  { 53, 3 },
+  { 53, 3 },
+  { 53, 3 },
+  { 53, 3 },
+  { 52, 3 },
+  { 54, 3 },
+  { 52, 3 },
+  { 54, 3 },
+  { 54, 3 },
+  { 54, 3 },
+  { 54, 3 },
+  { 54, 3 },
   { 52, 3 },
   { 52, 3 },
   { 52, 3 },
   { 52, 3 },
   { 52, 3 },
-  { 52, 3 },
-  { 52, 3 },
-  { 52, 3 },
-  { 53, 3 },
-  { 53, 3 },
-  { 53, 3 },
-  { 53, 3 },
-  { 53, 3 },
-  { 53, 3 },
-  { 53, 3 },
-  { 53, 2 },
+  { 54, 3 },
+  { 54, 3 },
+  { 54, 3 },
+  { 54, 3 },
+  { 54, 3 },
+  { 54, 3 },
+  { 54, 3 },
+  { 54, 3 },
+  { 54, 2 },
   { 52, 3 },
   { 52, 3 },
   { 52, 3 },
   { 52, 3 },
+  { 52, 2 },
+  { 52, 2 },
+  { 52, 3 },
+  { 52, 3 },
+  { 49, 3 },
+  { 49, 3 },
+  { 49, 3 },
+  { 49, 3 },
+  { 49, 3 },
+  { 49, 3 },
+  { 44, 4 },
   { 51, 3 },
-  { 53, 3 },
-  { 51, 3 },
-  { 53, 3 },
-  { 53, 3 },
-  { 53, 3 },
-  { 53, 3 },
-  { 53, 3 },
-  { 51, 3 },
-  { 51, 3 },
-  { 51, 3 },
-  { 51, 3 },
-  { 51, 3 },
-  { 53, 3 },
-  { 53, 3 },
-  { 53, 3 },
-  { 53, 3 },
-  { 53, 3 },
-  { 53, 3 },
-  { 53, 3 },
-  { 53, 3 },
-  { 53, 2 },
-  { 51, 3 },
-  { 51, 3 },
-  { 51, 3 },
-  { 51, 3 },
-  { 51, 2 },
-  { 51, 2 },
-  { 51, 3 },
-  { 51, 3 },
-  { 48, 3 },
-  { 48, 3 },
-  { 48, 3 },
-  { 48, 3 },
-  { 39, 1 },
-  { 35, 1 },
+  { 40, 1 },
+  { 36, 1 },
 };
 
 static void yy_accept(yyParser*);  /* Forward Declaration */
@@ -1007,14 +1029,14 @@ static void yy_reduce(
   */
       case 2: /* in ::= in NEWLINE */
       case 3: /* in ::= in start NEWLINE */ yytestcase(yyruleno==3);
-#line 73 "./src/Grammar/grammar.y"
+#line 74 "./src/Grammar/grammar.y"
 {
-  yy_destructor(yypParser,30,&yymsp[0].minor);
+  yy_destructor(yypParser,31,&yymsp[0].minor);
 }
-#line 1015 "./src/Grammar/grammar.c"
+#line 1037 "./src/Grammar/grammar.c"
         break;
       case 4: /* start ::= spec */
-#line 84 "./src/Grammar/grammar.y"
+#line 85 "./src/Grammar/grammar.y"
 {
 /*    std::cout << "Result.type="<< yymsp[0].minor.yy0.type << std::endl;*/
     switch(yymsp[0].minor.yy0.type)
@@ -1044,12 +1066,12 @@ static void yy_reduce(
     }
 
 }
-#line 1048 "./src/Grammar/grammar.c"
+#line 1070 "./src/Grammar/grammar.c"
         break;
       case 5: /* spec ::= top_stmt */
       case 6: /* top_stmt ::= stmt */ yytestcase(yyruleno==6);
       case 8: /* expr ::= retval */ yytestcase(yyruleno==8);
-#line 116 "./src/Grammar/grammar.y"
+#line 117 "./src/Grammar/grammar.y"
 {
     /*yygotominor.yy0.type = yymsp[0].minor.yy0.type;
     switch(yymsp[0].minor.yy0.type)
@@ -1071,10 +1093,10 @@ static void yy_reduce(
     yygotominor.yy0=yymsp[0].minor.yy0;
 
 }
-#line 1075 "./src/Grammar/grammar.c"
+#line 1097 "./src/Grammar/grammar.c"
         break;
       case 7: /* stmt ::= expr */
-#line 161 "./src/Grammar/grammar.y"
+#line 162 "./src/Grammar/grammar.y"
 {
     /*yygotominor.yy0.type = yymsp[0].minor.yy0.type;
     switch(yymsp[0].minor.yy0.type)
@@ -1096,11 +1118,11 @@ static void yy_reduce(
     yygotominor.yy0 = yymsp[0].minor.yy0;
 
 }
-#line 1100 "./src/Grammar/grammar.c"
+#line 1122 "./src/Grammar/grammar.c"
         break;
       case 9: /* retval ::= access */
       case 10: /* access ::= identifier */ yytestcase(yyruleno==10);
-#line 208 "./src/Grammar/grammar.y"
+#line 209 "./src/Grammar/grammar.y"
 {
     /*yygotominor.yy0.type = yymsp[0].minor.yy0.type;
     switch(yymsp[0].minor.yy0.type)
@@ -1123,10 +1145,10 @@ static void yy_reduce(
     yygotominor.yy0 = yymsp[0].minor.yy0;
 
 }
-#line 1127 "./src/Grammar/grammar.c"
+#line 1149 "./src/Grammar/grammar.c"
         break;
       case 11: /* stmt_list ::= stmt */
-#line 265 "./src/Grammar/grammar.y"
+#line 266 "./src/Grammar/grammar.y"
 {
 /*
     yygotominor.yy0.type = yymsp[0].minor.yy0.type;
@@ -1148,10 +1170,10 @@ static void yy_reduce(
     yygotominor.yy0 = yymsp[0].minor.yy0;
 
 }
-#line 1152 "./src/Grammar/grammar.c"
+#line 1174 "./src/Grammar/grammar.c"
         break;
       case 12: /* stmt_list ::= stmt_list stmt */
-#line 288 "./src/Grammar/grammar.y"
+#line 289 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = panopticon::STATEMENT_LIST;
     if(yymsp[-1].minor.yy0.type!=STATEMENT_LIST)
@@ -1168,41 +1190,41 @@ static void yy_reduce(
     }
     //yygotominor.yy0.n = yymsp[-1].minor.yy0.n+1;
 }
-#line 1172 "./src/Grammar/grammar.c"
+#line 1194 "./src/Grammar/grammar.c"
         break;
       case 13: /* access ::= array */
-#line 307 "./src/Grammar/grammar.y"
+#line 308 "./src/Grammar/grammar.y"
 {
 /*    yygotominor.yy0.type = panopticon::ARRAY;*/
 /*    yygotominor.yy0.data.array = yymsp[0].minor.yy0.data.array;*/
 /*    //yygotominor.yy0.n = yymsp[0].minor.yy0.n+1;*/
     yygotominor.yy0=yymsp[0].minor.yy0;
 }
-#line 1182 "./src/Grammar/grammar.c"
+#line 1204 "./src/Grammar/grammar.c"
         break;
       case 14: /* array ::= LBRAC maybe_empty_stmt_list RBRAC */
-#line 315 "./src/Grammar/grammar.y"
+#line 316 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = panopticon::ARRAY;
     yygotominor.yy0.data.array = yymsp[-1].minor.yy0.data.array;
     //yygotominor.yy0.n = yymsp[-1].minor.yy0.n+1;
-  yy_destructor(yypParser,27,&yymsp[-2].minor);
-  yy_destructor(yypParser,28,&yymsp[0].minor);
+  yy_destructor(yypParser,28,&yymsp[-2].minor);
+  yy_destructor(yypParser,29,&yymsp[0].minor);
 }
-#line 1193 "./src/Grammar/grammar.c"
+#line 1215 "./src/Grammar/grammar.c"
         break;
       case 15: /* maybe_empty_stmt_list ::= */
-#line 322 "./src/Grammar/grammar.y"
+#line 323 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = panopticon::STATEMENT_LIST;
 /*    yygotominor.yy0.data.array = new std::vector<panopticon::object>();*/
     panopticon::create_array(yygotominor.yy0);
 /*    yygotominor.yy0.n = 0;*/
 }
-#line 1203 "./src/Grammar/grammar.c"
+#line 1225 "./src/Grammar/grammar.c"
         break;
       case 16: /* maybe_empty_stmt_list ::= stmt_list */
-#line 330 "./src/Grammar/grammar.y"
+#line 331 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = panopticon::STATEMENT_LIST;
     if(yymsp[0].minor.yy0.type!=STATEMENT_LIST)
@@ -1216,10 +1238,10 @@ static void yy_reduce(
     }
     //yygotominor.yy0.n = yymsp[0].minor.yy0.n+1;
 }
-#line 1220 "./src/Grammar/grammar.c"
+#line 1242 "./src/Grammar/grammar.c"
         break;
       case 17: /* identifier ::= value */
-#line 345 "./src/Grammar/grammar.y"
+#line 346 "./src/Grammar/grammar.y"
 {
     /*
     yygotominor.yy0.type = panopticon::yymsp[0].minor.yy0.type;
@@ -1240,162 +1262,145 @@ static void yy_reduce(
     yygotominor.yy0=yymsp[0].minor.yy0;
 
 }
-#line 1244 "./src/Grammar/grammar.c"
+#line 1266 "./src/Grammar/grammar.c"
         break;
       case 18: /* value ::= num */
-#line 371 "./src/Grammar/grammar.y"
+      case 20: /* value ::= bool */ yytestcase(yyruleno==20);
+#line 372 "./src/Grammar/grammar.y"
 {
-/*    yygotominor.yy0.data.number = yymsp[0].minor.yy0.data.number;*/
-/*    yygotominor.yy0.type = panopticon::NUMBER;*/
-/*    //yygotominor.yy0.n = yymsp[0].minor.yy0.n+1;*/
     yygotominor.yy0=yymsp[0].minor.yy0;
 }
-#line 1254 "./src/Grammar/grammar.c"
+#line 1274 "./src/Grammar/grammar.c"
         break;
       case 19: /* value ::= string */
-#line 379 "./src/Grammar/grammar.y"
+#line 377 "./src/Grammar/grammar.y"
 {
-/*    std::cout << "copying" << std::endl;*/
-/*    yygotominor.yy0.data.string = new String(yymsp[0].minor.yy0.data.string->c_str());*/
-/*    yygotominor.yy0.data.string = yymsp[0].minor.yy0.data.string;*/
-/*    yygotominor.yy0.type = panopticon::STRING;*/
-/*    //yygotominor.yy0.n = yymsp[0].minor.yy0.n+1;*/
     yygotominor.yy0=yymsp[0].minor.yy0;
 
 }
-#line 1267 "./src/Grammar/grammar.c"
-        break;
-      case 20: /* value ::= bool */
-#line 390 "./src/Grammar/grammar.y"
-{
-/*    yygotominor.yy0.data.boolean = yymsp[0].minor.yy0.data.boolean;*/
-/*    yygotominor.yy0.type = panopticon::BOOL;*/
-/*    //yygotominor.yy0.n = yymsp[0].minor.yy0.n+1;*/
-    yygotominor.yy0=yymsp[0].minor.yy0;
-}
-#line 1277 "./src/Grammar/grammar.c"
+#line 1282 "./src/Grammar/grammar.c"
         break;
       case 21: /* num ::= NUM */
-#line 401 "./src/Grammar/grammar.y"
+#line 407 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = yymsp[0].minor.yy0.data.number;
     yygotominor.yy0.type = panopticon::NUMBER;
     //yygotominor.yy0.n = yymsp[0].minor.yy0.n+1;
 }
-#line 1286 "./src/Grammar/grammar.c"
+#line 1291 "./src/Grammar/grammar.c"
         break;
       case 22: /* string ::= STRING */
-#line 408 "./src/Grammar/grammar.y"
+#line 414 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.string = new String(yymsp[0].minor.yy0.data.string->c_str());
     delete yymsp[0].minor.yy0.data.string;
     yygotominor.yy0.type = panopticon::STRING;
     //yygotominor.yy0.n = yymsp[0].minor.yy0.n+1;
 }
-#line 1296 "./src/Grammar/grammar.c"
+#line 1301 "./src/Grammar/grammar.c"
         break;
       case 23: /* bool ::= BOOLEAN */
-#line 417 "./src/Grammar/grammar.y"
+#line 423 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.boolean = yymsp[0].minor.yy0.data.boolean;
     yygotominor.yy0.type = panopticon::BOOL;
     //yygotominor.yy0.n = yymsp[0].minor.yy0.n+1;
 }
-#line 1305 "./src/Grammar/grammar.c"
+#line 1310 "./src/Grammar/grammar.c"
         break;
       case 24: /* string ::= string PLUS num */
-#line 428 "./src/Grammar/grammar.y"
+#line 434 "./src/Grammar/grammar.y"
 {
         yygotominor.yy0.type = panopticon::STRING;
         panopticon::string_plus_num(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0);
         //yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1  + yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,14,&yymsp[-1].minor);
 }
-#line 1315 "./src/Grammar/grammar.c"
+#line 1320 "./src/Grammar/grammar.c"
         break;
       case 25: /* string ::= string PLUSPLUS num */
-#line 435 "./src/Grammar/grammar.y"
+#line 441 "./src/Grammar/grammar.y"
 {
         yygotominor.yy0.type = panopticon::STRING;
         panopticon::string_plusplus_num(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0);
         //yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1  + yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,23,&yymsp[-1].minor);
 }
-#line 1325 "./src/Grammar/grammar.c"
+#line 1330 "./src/Grammar/grammar.c"
         break;
       case 26: /* string ::= num PLUS string */
-#line 442 "./src/Grammar/grammar.y"
+#line 448 "./src/Grammar/grammar.y"
 {
         yygotominor.yy0.type = panopticon::STRING;
         panopticon::num_plus_string(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0);
         //yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1  + yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,14,&yymsp[-1].minor);
 }
-#line 1335 "./src/Grammar/grammar.c"
+#line 1340 "./src/Grammar/grammar.c"
         break;
       case 27: /* string ::= num PLUSPLUS string */
-#line 449 "./src/Grammar/grammar.y"
+#line 455 "./src/Grammar/grammar.y"
 {
         yygotominor.yy0.type = panopticon::STRING;
         panopticon::num_plusplus_string(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0);
         //yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1  + yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,23,&yymsp[-1].minor);
 }
-#line 1345 "./src/Grammar/grammar.c"
+#line 1350 "./src/Grammar/grammar.c"
         break;
       case 28: /* string ::= string PLUS bool */
-#line 456 "./src/Grammar/grammar.y"
+#line 462 "./src/Grammar/grammar.y"
 {
         yygotominor.yy0.type = panopticon::STRING;
         panopticon::string_plus_bool(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0);
         //yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1  + yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,14,&yymsp[-1].minor);
 }
-#line 1355 "./src/Grammar/grammar.c"
+#line 1360 "./src/Grammar/grammar.c"
         break;
       case 29: /* string ::= string PLUSPLUS bool */
-#line 463 "./src/Grammar/grammar.y"
+#line 469 "./src/Grammar/grammar.y"
 {
         yygotominor.yy0.type = panopticon::STRING;
         panopticon::string_plusplus_bool(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0);
         //yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1  + yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,23,&yymsp[-1].minor);
 }
-#line 1365 "./src/Grammar/grammar.c"
+#line 1370 "./src/Grammar/grammar.c"
         break;
       case 30: /* string ::= bool PLUS string */
-#line 470 "./src/Grammar/grammar.y"
+#line 476 "./src/Grammar/grammar.y"
 {
         yygotominor.yy0.type = panopticon::STRING;
         panopticon::bool_plus_string(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0);
         //yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1  + yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,14,&yymsp[-1].minor);
 }
-#line 1375 "./src/Grammar/grammar.c"
+#line 1380 "./src/Grammar/grammar.c"
         break;
       case 31: /* string ::= bool PLUSPLUS string */
-#line 477 "./src/Grammar/grammar.y"
+#line 483 "./src/Grammar/grammar.y"
 {
         yygotominor.yy0.type = panopticon::STRING;
         panopticon::bool_plusplus_string(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0);
         //yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1  + yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,23,&yymsp[-1].minor);
 }
-#line 1385 "./src/Grammar/grammar.c"
+#line 1390 "./src/Grammar/grammar.c"
         break;
       case 32: /* bool ::= LPAREN bool RPAREN */
-#line 487 "./src/Grammar/grammar.y"
+#line 493 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = panopticon::BOOL;
     yygotominor.yy0.data.boolean = yymsp[-1].minor.yy0.data.boolean;
     //yygotominor.yy0.n = yymsp[-1].minor.yy0.n+1;
-  yy_destructor(yypParser,24,&yymsp[-2].minor);
-  yy_destructor(yypParser,25,&yymsp[0].minor);
+  yy_destructor(yypParser,25,&yymsp[-2].minor);
+  yy_destructor(yypParser,26,&yymsp[0].minor);
 }
-#line 1396 "./src/Grammar/grammar.c"
+#line 1401 "./src/Grammar/grammar.c"
         break;
       case 33: /* bool ::= bool PLUS bool */
-#line 494 "./src/Grammar/grammar.y"
+#line 500 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = panopticon::BOOL;
     if(yymsp[-2].minor.yy0.data.boolean || yymsp[0].minor.yy0.data.boolean)
@@ -1409,10 +1414,10 @@ static void yy_reduce(
     //yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1  + yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,14,&yymsp[-1].minor);
 }
-#line 1413 "./src/Grammar/grammar.c"
+#line 1418 "./src/Grammar/grammar.c"
         break;
       case 34: /* bool ::= bool TIMES bool */
-#line 508 "./src/Grammar/grammar.y"
+#line 514 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = panopticon::BOOL;
     if(yymsp[-2].minor.yy0.data.boolean && yymsp[0].minor.yy0.data.boolean)
@@ -1426,102 +1431,102 @@ static void yy_reduce(
     //yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1  + yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,17,&yymsp[-1].minor);
 }
-#line 1430 "./src/Grammar/grammar.c"
+#line 1435 "./src/Grammar/grammar.c"
         break;
       case 35: /* bool ::= bool EQUALTO bool */
-#line 522 "./src/Grammar/grammar.y"
+#line 528 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = panopticon::BOOL;
     yygotominor.yy0.data.boolean = yymsp[-2].minor.yy0.data.boolean == yymsp[0].minor.yy0.data.boolean;
     //yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,6,&yymsp[-1].minor);
 }
-#line 1440 "./src/Grammar/grammar.c"
+#line 1445 "./src/Grammar/grammar.c"
         break;
       case 36: /* bool ::= bool NOTEQUALTO bool */
       case 60: /* bool ::= num NOTEQUALTO num */ yytestcase(yyruleno==60);
-#line 529 "./src/Grammar/grammar.y"
+#line 535 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = panopticon::BOOL;
     yygotominor.yy0.data.boolean = yymsp[-2].minor.yy0.data.number != yymsp[0].minor.yy0.data.number;
     //yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,7,&yymsp[-1].minor);
 }
-#line 1451 "./src/Grammar/grammar.c"
+#line 1456 "./src/Grammar/grammar.c"
         break;
       case 37: /* bool ::= bool AND bool */
-#line 536 "./src/Grammar/grammar.y"
+#line 542 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = panopticon::BOOL;
     yygotominor.yy0.data.boolean = (int)yymsp[-2].minor.yy0.data.boolean && (int)yymsp[0].minor.yy0.data.boolean;
     //yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,2,&yymsp[-1].minor);
 }
-#line 1461 "./src/Grammar/grammar.c"
+#line 1466 "./src/Grammar/grammar.c"
         break;
       case 38: /* bool ::= bool OR bool */
-#line 543 "./src/Grammar/grammar.y"
+#line 549 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = panopticon::BOOL;
     yygotominor.yy0.data.boolean = (int)yymsp[-2].minor.yy0.data.boolean || (int)yymsp[0].minor.yy0.data.boolean;
     //yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,1,&yymsp[-1].minor);
 }
-#line 1471 "./src/Grammar/grammar.c"
+#line 1476 "./src/Grammar/grammar.c"
         break;
       case 39: /* bool ::= NOT bool */
-#line 550 "./src/Grammar/grammar.y"
+#line 556 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = panopticon::BOOL;
     yygotominor.yy0.data.boolean = !((int)yymsp[0].minor.yy0.data.boolean);
     //yygotominor.yy0.n = yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,20,&yymsp[-1].minor);
 }
-#line 1481 "./src/Grammar/grammar.c"
+#line 1486 "./src/Grammar/grammar.c"
         break;
       case 40: /* string ::= LPAREN string RPAREN */
-#line 616 "./src/Grammar/grammar.y"
+#line 622 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.string = yymsp[-1].minor.yy0.data.string;
     yygotominor.yy0.type = panopticon::STRING;
     //yygotominor.yy0.n = yymsp[-1].minor.yy0.n+1;
-  yy_destructor(yypParser,24,&yymsp[-2].minor);
-  yy_destructor(yypParser,25,&yymsp[0].minor);
+  yy_destructor(yypParser,25,&yymsp[-2].minor);
+  yy_destructor(yypParser,26,&yymsp[0].minor);
 }
-#line 1492 "./src/Grammar/grammar.c"
+#line 1497 "./src/Grammar/grammar.c"
         break;
       case 41: /* string ::= string MINUS string */
-#line 623 "./src/Grammar/grammar.y"
+#line 629 "./src/Grammar/grammar.y"
 {
     panopticon::string_minus_string(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0);
     yygotominor.yy0.type = panopticon::STRING;
     //yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1  + yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,15,&yymsp[-1].minor);
 }
-#line 1502 "./src/Grammar/grammar.c"
+#line 1507 "./src/Grammar/grammar.c"
         break;
       case 42: /* string ::= string PLUS string */
-#line 630 "./src/Grammar/grammar.y"
+#line 636 "./src/Grammar/grammar.y"
 {
     panopticon::string_plus_string(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0);
     yygotominor.yy0.type = panopticon::STRING;
     //yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1  + yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,14,&yymsp[-1].minor);
 }
-#line 1512 "./src/Grammar/grammar.c"
+#line 1517 "./src/Grammar/grammar.c"
         break;
       case 43: /* string ::= string PLUSPLUS string */
-#line 637 "./src/Grammar/grammar.y"
+#line 643 "./src/Grammar/grammar.y"
 {
     panopticon::string_plusplus_string(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0);
     yygotominor.yy0.type = panopticon::STRING;
     //yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1  + yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,23,&yymsp[-1].minor);
 }
-#line 1522 "./src/Grammar/grammar.c"
+#line 1527 "./src/Grammar/grammar.c"
         break;
       case 44: /* num ::= string TIMES string */
-#line 644 "./src/Grammar/grammar.y"
+#line 650 "./src/Grammar/grammar.y"
 {
     if(is_number(*yymsp[-2].minor.yy0.data.string) && is_number(*yymsp[0].minor.yy0.data.string))
     {
@@ -1537,20 +1542,20 @@ static void yy_reduce(
     }
   yy_destructor(yypParser,17,&yymsp[-1].minor);
 }
-#line 1541 "./src/Grammar/grammar.c"
+#line 1546 "./src/Grammar/grammar.c"
         break;
       case 45: /* bool ::= string EQUALTO string */
-#line 660 "./src/Grammar/grammar.y"
+#line 666 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = panopticon::BOOL;
     yygotominor.yy0.data.boolean = yymsp[-2].minor.yy0.data.string->compare(*yymsp[0].minor.yy0.data.string)==0;
     //yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,6,&yymsp[-1].minor);
 }
-#line 1551 "./src/Grammar/grammar.c"
+#line 1556 "./src/Grammar/grammar.c"
         break;
       case 46: /* num ::= string DIVIDE string */
-#line 667 "./src/Grammar/grammar.y"
+#line 673 "./src/Grammar/grammar.y"
 {
     if(is_number(*yymsp[-2].minor.yy0.data.string) && is_number(*yymsp[0].minor.yy0.data.string))
     {
@@ -1568,10 +1573,10 @@ static void yy_reduce(
     }
   yy_destructor(yypParser,16,&yymsp[-1].minor);
 }
-#line 1572 "./src/Grammar/grammar.c"
+#line 1577 "./src/Grammar/grammar.c"
         break;
       case 47: /* bool ::= string LESSTHAN string */
-#line 685 "./src/Grammar/grammar.y"
+#line 691 "./src/Grammar/grammar.y"
 {
     if(is_number(*yymsp[-2].minor.yy0.data.string) && is_number(*yymsp[0].minor.yy0.data.string))
     {
@@ -1587,10 +1592,10 @@ static void yy_reduce(
     }
   yy_destructor(yypParser,10,&yymsp[-1].minor);
 }
-#line 1591 "./src/Grammar/grammar.c"
+#line 1596 "./src/Grammar/grammar.c"
         break;
       case 48: /* bool ::= string GREATERTHAN string */
-#line 701 "./src/Grammar/grammar.y"
+#line 707 "./src/Grammar/grammar.y"
 {
     if(is_number(*yymsp[-2].minor.yy0.data.string) && is_number(*yymsp[0].minor.yy0.data.string))
     {
@@ -1606,20 +1611,20 @@ static void yy_reduce(
     }
   yy_destructor(yypParser,8,&yymsp[-1].minor);
 }
-#line 1610 "./src/Grammar/grammar.c"
+#line 1615 "./src/Grammar/grammar.c"
         break;
       case 49: /* bool ::= string NOTEQUALTO string */
-#line 717 "./src/Grammar/grammar.y"
+#line 723 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = panopticon::BOOL;
     yygotominor.yy0.data.boolean = yymsp[-2].minor.yy0.data.string->compare(*yymsp[0].minor.yy0.data.string)!=0;
     //yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,7,&yymsp[-1].minor);
 }
-#line 1620 "./src/Grammar/grammar.c"
+#line 1625 "./src/Grammar/grammar.c"
         break;
       case 50: /* bool ::= string GORE string */
-#line 725 "./src/Grammar/grammar.y"
+#line 731 "./src/Grammar/grammar.y"
 {
     if(is_number(*yymsp[-2].minor.yy0.data.string) && is_number(*yymsp[0].minor.yy0.data.string))
     {
@@ -1635,10 +1640,10 @@ static void yy_reduce(
     }
   yy_destructor(yypParser,9,&yymsp[-1].minor);
 }
-#line 1639 "./src/Grammar/grammar.c"
+#line 1644 "./src/Grammar/grammar.c"
         break;
       case 51: /* bool ::= string LORE string */
-#line 741 "./src/Grammar/grammar.y"
+#line 747 "./src/Grammar/grammar.y"
 {
     if(is_number(*yymsp[-2].minor.yy0.data.string) && is_number(*yymsp[0].minor.yy0.data.string))
     {
@@ -1654,51 +1659,51 @@ static void yy_reduce(
     }
   yy_destructor(yypParser,11,&yymsp[-1].minor);
 }
-#line 1658 "./src/Grammar/grammar.c"
+#line 1663 "./src/Grammar/grammar.c"
         break;
       case 52: /* num ::= LPAREN num RPAREN */
-#line 760 "./src/Grammar/grammar.y"
+#line 766 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = panopticon::NUMBER;
     yygotominor.yy0.data.number = yymsp[-1].minor.yy0.data.number;
     //yygotominor.yy0.n = yymsp[-1].minor.yy0.n+1;
-  yy_destructor(yypParser,24,&yymsp[-2].minor);
-  yy_destructor(yypParser,25,&yymsp[0].minor);
+  yy_destructor(yypParser,25,&yymsp[-2].minor);
+  yy_destructor(yypParser,26,&yymsp[0].minor);
 }
-#line 1669 "./src/Grammar/grammar.c"
+#line 1674 "./src/Grammar/grammar.c"
         break;
       case 53: /* num ::= num MINUS num */
-#line 767 "./src/Grammar/grammar.y"
+#line 773 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = panopticon::NUMBER;
     yygotominor.yy0.data.number = yymsp[-2].minor.yy0.data.number - yymsp[0].minor.yy0.data.number;
     //yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1  + yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,15,&yymsp[-1].minor);
 }
-#line 1679 "./src/Grammar/grammar.c"
+#line 1684 "./src/Grammar/grammar.c"
         break;
       case 54: /* num ::= num PLUS num */
-#line 774 "./src/Grammar/grammar.y"
+#line 780 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = panopticon::NUMBER;
     yygotominor.yy0.data.number = yymsp[-2].minor.yy0.data.number + yymsp[0].minor.yy0.data.number;
     //yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1  + yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,14,&yymsp[-1].minor);
 }
-#line 1689 "./src/Grammar/grammar.c"
+#line 1694 "./src/Grammar/grammar.c"
         break;
       case 55: /* num ::= num TIMES num */
-#line 781 "./src/Grammar/grammar.y"
+#line 787 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = panopticon::NUMBER;
     yygotominor.yy0.data.number = yymsp[-2].minor.yy0.data.number * yymsp[0].minor.yy0.data.number;
     //yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1  + yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,17,&yymsp[-1].minor);
 }
-#line 1699 "./src/Grammar/grammar.c"
+#line 1704 "./src/Grammar/grammar.c"
         break;
       case 56: /* num ::= num DIVIDE num */
-#line 788 "./src/Grammar/grammar.y"
+#line 794 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = panopticon::NUMBER;
     if(yymsp[0].minor.yy0.data.number != 0)
@@ -1712,170 +1717,170 @@ static void yy_reduce(
     }
   yy_destructor(yypParser,16,&yymsp[-1].minor);
 }
-#line 1716 "./src/Grammar/grammar.c"
+#line 1721 "./src/Grammar/grammar.c"
         break;
       case 57: /* bool ::= num LESSTHAN num */
-#line 802 "./src/Grammar/grammar.y"
+#line 808 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = panopticon::BOOL;
     yygotominor.yy0.data.boolean = yymsp[-2].minor.yy0.data.number < yymsp[0].minor.yy0.data.number;
     //yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,10,&yymsp[-1].minor);
 }
-#line 1726 "./src/Grammar/grammar.c"
+#line 1731 "./src/Grammar/grammar.c"
         break;
       case 58: /* bool ::= num GREATERTHAN num */
-#line 809 "./src/Grammar/grammar.y"
+#line 815 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = panopticon::BOOL;
     yygotominor.yy0.data.boolean = yymsp[-2].minor.yy0.data.number > yymsp[0].minor.yy0.data.number;
     //yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,8,&yymsp[-1].minor);
 }
-#line 1736 "./src/Grammar/grammar.c"
+#line 1741 "./src/Grammar/grammar.c"
         break;
       case 59: /* bool ::= num EQUALTO num */
-#line 816 "./src/Grammar/grammar.y"
+#line 822 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = panopticon::BOOL;
     yygotominor.yy0.data.boolean = yymsp[-2].minor.yy0.data.number == yymsp[0].minor.yy0.data.number;
     //yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,6,&yymsp[-1].minor);
 }
-#line 1746 "./src/Grammar/grammar.c"
+#line 1751 "./src/Grammar/grammar.c"
         break;
       case 61: /* bool ::= num GORE num */
-#line 830 "./src/Grammar/grammar.y"
+#line 836 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = panopticon::BOOL;
     yygotominor.yy0.data.boolean = yymsp[-2].minor.yy0.data.number >= yymsp[0].minor.yy0.data.number;
     //yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,9,&yymsp[-1].minor);
 }
-#line 1756 "./src/Grammar/grammar.c"
+#line 1761 "./src/Grammar/grammar.c"
         break;
       case 62: /* bool ::= num LORE num */
-#line 837 "./src/Grammar/grammar.y"
+#line 843 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = panopticon::BOOL;
     yygotominor.yy0.data.boolean = yymsp[-2].minor.yy0.data.number <= yymsp[0].minor.yy0.data.number;
     //yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,11,&yymsp[-1].minor);
 }
-#line 1766 "./src/Grammar/grammar.c"
+#line 1771 "./src/Grammar/grammar.c"
         break;
       case 63: /* bool ::= num AND num */
-#line 844 "./src/Grammar/grammar.y"
+#line 850 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = panopticon::BOOL;
     yygotominor.yy0.data.boolean = (int)yymsp[-2].minor.yy0.data.number && (int)yymsp[0].minor.yy0.data.number;
     //yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,2,&yymsp[-1].minor);
 }
-#line 1776 "./src/Grammar/grammar.c"
+#line 1781 "./src/Grammar/grammar.c"
         break;
       case 64: /* bool ::= num OR num */
-#line 851 "./src/Grammar/grammar.y"
+#line 857 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = panopticon::BOOL;
     yygotominor.yy0.data.boolean = (int)yymsp[-2].minor.yy0.data.number || (int)yymsp[0].minor.yy0.data.number;
     //yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,1,&yymsp[-1].minor);
 }
-#line 1786 "./src/Grammar/grammar.c"
+#line 1791 "./src/Grammar/grammar.c"
         break;
       case 65: /* bool ::= NOT num */
-#line 858 "./src/Grammar/grammar.y"
+#line 864 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = panopticon::BOOL;
     yygotominor.yy0.data.boolean = !((int)yymsp[0].minor.yy0.data.number);
     //yygotominor.yy0.n = yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,20,&yymsp[-1].minor);
 }
-#line 1796 "./src/Grammar/grammar.c"
+#line 1801 "./src/Grammar/grammar.c"
         break;
       case 66: /* num ::= num SHIFTL num */
-#line 865 "./src/Grammar/grammar.y"
+#line 871 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = panopticon::NUMBER;
     yygotominor.yy0.data.number = (int)yymsp[-2].minor.yy0.data.number << (int)yymsp[0].minor.yy0.data.number;
     //yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,12,&yymsp[-1].minor);
 }
-#line 1806 "./src/Grammar/grammar.c"
+#line 1811 "./src/Grammar/grammar.c"
         break;
       case 67: /* num ::= num SHIFTR num */
-#line 872 "./src/Grammar/grammar.y"
+#line 878 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = panopticon::NUMBER;
     yygotominor.yy0.data.number = (int)yymsp[-2].minor.yy0.data.number >> (int)yymsp[0].minor.yy0.data.number;
     //yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,13,&yymsp[-1].minor);
 }
-#line 1816 "./src/Grammar/grammar.c"
+#line 1821 "./src/Grammar/grammar.c"
         break;
       case 68: /* num ::= num BITAND num */
-#line 879 "./src/Grammar/grammar.y"
+#line 885 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = panopticon::NUMBER;
     yygotominor.yy0.data.number = (int)yymsp[-2].minor.yy0.data.number & (int)yymsp[0].minor.yy0.data.number;
     //yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,5,&yymsp[-1].minor);
 }
-#line 1826 "./src/Grammar/grammar.c"
+#line 1831 "./src/Grammar/grammar.c"
         break;
       case 69: /* num ::= num BITOR num */
-#line 886 "./src/Grammar/grammar.y"
+#line 892 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = panopticon::NUMBER;
     yygotominor.yy0.data.number = (int)yymsp[-2].minor.yy0.data.number | (int)yymsp[0].minor.yy0.data.number;
     //yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,4,&yymsp[-1].minor);
 }
-#line 1836 "./src/Grammar/grammar.c"
+#line 1841 "./src/Grammar/grammar.c"
         break;
       case 70: /* num ::= BITNOT num */
-#line 893 "./src/Grammar/grammar.y"
+#line 899 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = panopticon::NUMBER;
     yygotominor.yy0.data.number = ~((int)yymsp[0].minor.yy0.data.number);
     //yygotominor.yy0.n = yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,21,&yymsp[-1].minor);
 }
-#line 1846 "./src/Grammar/grammar.c"
+#line 1851 "./src/Grammar/grammar.c"
         break;
       case 71: /* num ::= MINUS num */
-#line 900 "./src/Grammar/grammar.y"
+#line 906 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = panopticon::NUMBER;
     yygotominor.yy0.data.number = -1 * yymsp[0].minor.yy0.data.number;
     //yygotominor.yy0.n = yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,15,&yymsp[-1].minor);
 }
-#line 1856 "./src/Grammar/grammar.c"
+#line 1861 "./src/Grammar/grammar.c"
         break;
       case 72: /* num ::= num MODULO num */
-#line 907 "./src/Grammar/grammar.y"
+#line 913 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = panopticon::NUMBER;
     yygotominor.yy0.data.number = fmod(yymsp[-2].minor.yy0.data.number,yymsp[0].minor.yy0.data.number);
     //yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,18,&yymsp[-1].minor);
 }
-#line 1866 "./src/Grammar/grammar.c"
+#line 1871 "./src/Grammar/grammar.c"
         break;
       case 73: /* num ::= num POW num */
-#line 914 "./src/Grammar/grammar.y"
+#line 920 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = panopticon::NUMBER;
     yygotominor.yy0.data.number = pow(yymsp[-2].minor.yy0.data.number,yymsp[0].minor.yy0.data.number);
     //yygotominor.yy0.n = yymsp[-2].minor.yy0.n+1+yymsp[0].minor.yy0.n+1;
   yy_destructor(yypParser,19,&yymsp[-1].minor);
 }
-#line 1876 "./src/Grammar/grammar.c"
+#line 1881 "./src/Grammar/grammar.c"
         break;
       case 74: /* array ::= array PLUSPLUS array */
-#line 924 "./src/Grammar/grammar.y"
+#line 930 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = ARRAY;
     yygotominor.yy0.data.array = new std::vector<panopticon::object>();
@@ -1892,10 +1897,10 @@ static void yy_reduce(
     delete yymsp[0].minor.yy0.data.array;
   yy_destructor(yypParser,23,&yymsp[-1].minor);
 }
-#line 1896 "./src/Grammar/grammar.c"
+#line 1901 "./src/Grammar/grammar.c"
         break;
       case 75: /* array ::= array PLUS array */
-#line 941 "./src/Grammar/grammar.y"
+#line 947 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = ARRAY;
     if(panopticon::is_numerical(yymsp[-2].minor.yy0)&&is_numerical(yymsp[0].minor.yy0))
@@ -1920,10 +1925,10 @@ static void yy_reduce(
     delete yymsp[0].minor.yy0.data.array;
   yy_destructor(yypParser,14,&yymsp[-1].minor);
 }
-#line 1924 "./src/Grammar/grammar.c"
+#line 1929 "./src/Grammar/grammar.c"
         break;
       case 76: /* array ::= num PLUS array */
-#line 966 "./src/Grammar/grammar.y"
+#line 976 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = ARRAY;
     if(panopticon::is_numerical(yymsp[0].minor.yy0))
@@ -1944,13 +1949,12 @@ static void yy_reduce(
     delete yymsp[0].minor.yy0.data.array;
   yy_destructor(yypParser,14,&yymsp[-1].minor);
 }
-#line 1948 "./src/Grammar/grammar.c"
+#line 1953 "./src/Grammar/grammar.c"
         break;
       case 77: /* array ::= array PLUS num */
-#line 987 "./src/Grammar/grammar.y"
+#line 997 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = ARRAY;
-    std::cout <<"wtf" << std::endl;
     if(panopticon::is_numerical(yymsp[-2].minor.yy0))
     {
         panopticon::add_number_to_array(yygotominor.yy0,yymsp[0].minor.yy0,yymsp[-2].minor.yy0);
@@ -1969,12 +1973,68 @@ static void yy_reduce(
     delete yymsp[-2].minor.yy0.data.array;
   yy_destructor(yypParser,14,&yymsp[-1].minor);
 }
-#line 1973 "./src/Grammar/grammar.c"
+#line 1977 "./src/Grammar/grammar.c"
         break;
-      case 78: /* in ::= error */
-#line 1013 "./src/Grammar/grammar.y"
+      case 78: /* array ::= num PLUSPLUS array */
+#line 1018 "./src/Grammar/grammar.y"
 {
-    switch(yymsp[0].minor.yy109)
+    yygotominor.yy0.type = ARRAY;
+        yygotominor.yy0.data.array = new std::vector<panopticon::object>();
+        yygotominor.yy0.data.array->reserve(yymsp[0].minor.yy0.data.array->size() + 1);
+        yygotominor.yy0.data.array->push_back(yymsp[-2].minor.yy0);
+        for(int i=0;i<yymsp[0].minor.yy0.data.array->size();++i)
+        {
+            yygotominor.yy0.data.array->push_back(yymsp[0].minor.yy0.data.array->at(i));
+        }
+    delete yymsp[0].minor.yy0.data.array;
+  yy_destructor(yypParser,23,&yymsp[-1].minor);
+}
+#line 1993 "./src/Grammar/grammar.c"
+        break;
+      case 79: /* array ::= array PLUSPLUS num */
+#line 1031 "./src/Grammar/grammar.y"
+{
+    yygotominor.yy0.type = ARRAY;
+        yygotominor.yy0.data.array = new std::vector<panopticon::object>();
+        yygotominor.yy0.data.array->reserve(yymsp[-2].minor.yy0.data.array->size() + 1);
+        for(int i=0;i<yymsp[-2].minor.yy0.data.array->size();++i)
+        {
+            yygotominor.yy0.data.array->push_back(yymsp[-2].minor.yy0.data.array->at(i));
+        }
+        yygotominor.yy0.data.array->push_back(yymsp[0].minor.yy0);
+    delete yymsp[-2].minor.yy0.data.array;
+  yy_destructor(yypParser,23,&yymsp[-1].minor);
+}
+#line 2009 "./src/Grammar/grammar.c"
+        break;
+      case 80: /* stmt ::= array LBRAC num RBRAC */
+#line 1044 "./src/Grammar/grammar.y"
+{
+    if(yymsp[-1].minor.yy0.data.number<yymsp[-3].minor.yy0.data.array->size())
+    {
+        yygotominor.yy0 = yymsp[-3].minor.yy0.data.array->at(yymsp[-1].minor.yy0.data.number);
+    }
+    else
+    {
+        std::cerr << "Error p0008: Index out of bounds." << std::endl;
+        yygotominor.yy0 = yymsp[-3].minor.yy0;
+    }
+  yy_destructor(yypParser,28,&yymsp[-2].minor);
+  yy_destructor(yypParser,29,&yymsp[0].minor);
+}
+#line 2026 "./src/Grammar/grammar.c"
+        break;
+      case 81: /* value ::= value PLUS value */
+#line 1056 "./src/Grammar/grammar.y"
+{
+  yy_destructor(yypParser,14,&yymsp[-1].minor);
+}
+#line 2033 "./src/Grammar/grammar.c"
+        break;
+      case 82: /* in ::= error */
+#line 1065 "./src/Grammar/grammar.y"
+{
+    switch(yymsp[0].minor.yy111)
     {
     case OpenQuoteError:
 /*        std::cerr << "ERROR p0001: Dangling quotation mark." << std::endl;*/
@@ -1984,16 +2044,16 @@ static void yy_reduce(
         break;
     }
 }
-#line 1988 "./src/Grammar/grammar.c"
+#line 2048 "./src/Grammar/grammar.c"
         break;
-      case 79: /* error ::= OPENQUOTEERROR */
-#line 1026 "./src/Grammar/grammar.y"
+      case 83: /* error ::= OPENQUOTEERROR */
+#line 1078 "./src/Grammar/grammar.y"
 {
     yymsp[0].minor.yy0.type = panopticon::NUMBER;
-    yygotominor.yy109 = OpenQuoteError;
+    yygotominor.yy111 = OpenQuoteError;
     std::cerr << "ERROR p0001: Dangling quotation mark." << std::endl;
 }
-#line 1997 "./src/Grammar/grammar.c"
+#line 2057 "./src/Grammar/grammar.c"
         break;
       default:
       /* (0) main ::= in */ yytestcase(yyruleno==0);
@@ -2057,10 +2117,10 @@ static void yy_syntax_error(
 ){
   ParseARG_FETCH;
 #define TOKEN (yyminor.yy0)
-#line 67 "./src/Grammar/grammar.y"
+#line 68 "./src/Grammar/grammar.y"
 
 std::cout << "Syntax error!" << std::endl;
-#line 2064 "./src/Grammar/grammar.c"
+#line 2124 "./src/Grammar/grammar.c"
   ParseARG_STORE; /* Suppress warning about unused %extra_argument variable */
 }
 
@@ -2079,10 +2139,10 @@ static void yy_accept(
   while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
   /* Here code is inserted which will be executed whenever the
   ** parser accepts */
-#line 62 "./src/Grammar/grammar.y"
+#line 63 "./src/Grammar/grammar.y"
 
 printf("parsing complete!\n\n\n");
-#line 2086 "./src/Grammar/grammar.c"
+#line 2146 "./src/Grammar/grammar.c"
   ParseARG_STORE; /* Suppress warning about unused %extra_argument variable */
 }
 

@@ -55,6 +55,7 @@ using namespace panopticon;
 %left PLUS MINUS.
 %left DIVIDE TIMES MODULO.
 %right POW NOT BITNOT UMINUS PLUSPLUS.
+%left INDEX.
 %left LPAREN RPAREN COMMA LBRAC RBRAC.
 %left ASSIGN.
 
@@ -369,30 +370,35 @@ identifier(A) ::= value(B).
 
 value(A) ::= num(B).
 {
-/*    A.data.number = B.data.number;*/
-/*    A.type = panopticon::NUMBER;*/
-/*    //A.n = B.n+1;*/
     A=B;
 }
 
 value(A) ::= string(B).
 {
-/*    std::cout << "copying" << std::endl;*/
-/*    A.data.string = new String(B.data.string->c_str());*/
-/*    A.data.string = B.data.string;*/
-/*    A.type = panopticon::STRING;*/
-/*    //A.n = B.n+1;*/
     A=B;
 
 }
 
 value(A) ::= bool(B).
 {
-/*    A.data.boolean = B.data.boolean;*/
-/*    A.type = panopticon::BOOL;*/
-/*    //A.n = B.n+1;*/
     A=B;
 }
+
+/*num(A) ::= value(B).
+{
+    A=B;
+}
+
+string(A) ::= value(B).
+{
+    A=B;
+
+}
+
+bool(A) ::= value(B).
+{
+    A=B;
+}*/
 
 //======================
 //BASICS
@@ -962,6 +968,10 @@ array(A) ::= array(B) PLUS array(C).
     delete C.data.array;
 }
 
+//=====================================================================
+//OPERATORS, ARRAY_NUMBER
+//=====================================================================
+
 array(A) ::= num(B) PLUS array(C).
 {
     A.type = ARRAY;
@@ -986,7 +996,6 @@ array(A) ::= num(B) PLUS array(C).
 array(A) ::= array(B) PLUS num(C).
 {
     A.type = ARRAY;
-    std::cout <<"wtf" << std::endl;
     if(panopticon::is_numerical(B))
     {
         panopticon::add_number_to_array(A,C,B);
@@ -1004,6 +1013,49 @@ array(A) ::= array(B) PLUS num(C).
 
     delete B.data.array;
 }
+
+array(A) ::= num(B) PLUSPLUS array(C).
+{
+    A.type = ARRAY;
+        A.data.array = new std::vector<panopticon::object>();
+        A.data.array->reserve(C.data.array->size() + 1);
+        A.data.array->push_back(B);
+        for(int i=0;i<C.data.array->size();++i)
+        {
+            A.data.array->push_back(C.data.array->at(i));
+        }
+    delete C.data.array;
+}
+
+array(A) ::= array(B) PLUSPLUS num(C).
+{
+    A.type = ARRAY;
+        A.data.array = new std::vector<panopticon::object>();
+        A.data.array->reserve(B.data.array->size() + 1);
+        for(int i=0;i<B.data.array->size();++i)
+        {
+            A.data.array->push_back(B.data.array->at(i));
+        }
+        A.data.array->push_back(C);
+    delete B.data.array;
+}
+
+stmt(A) ::= array(B) LBRAC num(C) RBRAC. [INDEX]
+{
+    if(C.data.number<B.data.array->size())
+    {
+        A = B.data.array->at(C.data.number);
+    }
+    else
+    {
+        std::cerr << "Error p0008: Index out of bounds." << std::endl;
+        A = B;
+    }
+}
+
+value::= value PLUS value.
+
+/*value(A) ::= value(A).*/
 
 //======================
 //Syntax ERROR HANDLING
