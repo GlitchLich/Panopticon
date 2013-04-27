@@ -21,7 +21,11 @@ EditBuffer::EditBuffer(QWidget* parent) :
 
 void EditBuffer::keyPressEvent(QKeyEvent *e)
 {
-    if((e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return) && e->modifiers() == Qt::ShiftModifier)
+    if(
+            ((e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return) && e->modifiers() == Qt::ShiftModifier)
+            ||
+            ((e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return) && e->modifiers() == Qt::ControlModifier)
+        )
     {
         QString command;
         std::string returnString;
