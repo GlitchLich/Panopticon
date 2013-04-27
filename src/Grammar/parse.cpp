@@ -14,6 +14,7 @@
 #include "../include/Grammar/lexglobal.h"
 #include "../include/Grammar/grammar.h"
 
+
 /**
  * We have to declare these here - they're not  in any header files
  * we can inclde.  yyparse() is declared with an empty argument list
@@ -42,6 +43,16 @@ struct panopticon::object mToken;
 namespace panopticon
 {
 
+bool cli = true;
+std::stringstream stream_out;
+
+std::ostream& out() {
+    if (!cli)
+        return stream_out;
+    else
+        return std::cout;
+}
+
 void init()
 {
 
@@ -51,8 +62,11 @@ void init()
     std::cout << "  Terminate with ^D" << std::endl;
 }
 
-bool exec(std::string string)
+bool exec(std::string string, std::string& output)
 {
+    cli = false;
+    output.clear();
+    stream_out.str(std::string());
     try
     {
         if(string.c_str()[string.size()-1]!='\0'||string.c_str()[string.size()-1]!='\n'||string.c_str()[string.size()-1]!='\r')
@@ -80,11 +94,13 @@ bool exec(std::string string)
             }
             Parse(pParser, yv, t0);
         }
+        output.clear();
+        output.append(stream_out.str());
         return true;
     }
     catch(std::exception &e)
     {
-        std::cerr << "Error reading a string into parser" << e.what() << std::endl;
+        out() << "Error reading a string into parser" << e.what() << std::endl;
         return false;
     }
     catch(...)

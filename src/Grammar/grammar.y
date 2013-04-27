@@ -18,6 +18,8 @@
 #include "core/operators.h"
 #include "../../include/Grammar/parsingutilities.h"
 #include "../../include/core/types.h"
+#include "../../include/Grammar/parse.h"
+
 #undef STRING
 #undef NUM
 #undef BOOL
@@ -27,8 +29,8 @@ using namespace panopticon;
 
     void token_destructor(Token t)
     {
-/*    std::cout << "In token_destructor t.value= " << t.value << std::endl;*/
-/*    std::cout << "In token_destructor t.n= " << t.n << std::endl;*/
+/*    out() << "In token_destructor t.value= " << t.value << std::endl;*/
+/*    out() << "In token_destructor t.n= " << t.n << std::endl;*/
     }
 }
 
@@ -66,7 +68,7 @@ printf("parsing complete!\n\n\n");
 
 
 %syntax_error {
-std::cout << "Syntax error!" << std::endl;
+out() << "Syntax error!" << std::endl;
 }
 
 main ::= in.
@@ -74,109 +76,31 @@ in ::= .
 in ::= in NEWLINE.
 in ::= in start NEWLINE.
 
-/*error ::= OPENQUOTE.*/
-
 /*state ::= expr(A).   {*/
-/*    std::cout << "Result.value=" << A.value << std::endl;*/
-/*    std::cout << "Result.n=" << A.n << std::endl;*/
+/*    out() << "Result.value=" << A.value << std::endl;*/
+/*    out() << "Result.n=" << A.n << std::endl;*/
 /*}*/
 
 start ::= spec(A).
 {
-/*    std::cout << "Result.type="<< A.type << std::endl;*/
-    switch(A.type)
-    {
-    case panopticon::NUMBER:
-        std::cout << A.data.number << std::endl;
-        break;
-    case panopticon::STRING:
-        std::cout << *A.data.string << std::endl;
-        delete A.data.string;
-        break;
-    case panopticon::BOOL:
-        if(A.data.boolean)
-        {
-            std::cout << "true" << std::endl;
-        }
-        else
-        {
-            std::cout << "false" << std::endl;
-        }
-        break;
-    case panopticon::ARRAY:
-/*        std::cout << "printing array" << std::endl;*/
-        panopticon::print_array(A);
-        panopticon::delete_array(A);
-        break;
-    }
-
+    optic::print_object(A);
+    optic::delete_object(A);
 }
 
 /*spec ::= MOD STRING top_stmt.*/
 spec(A) ::= top_stmt(B).
 {
-    /*A.type = B.type;
-    switch(B.type)
-    {
-    case NUMBER:
-        A.data.number = B.data.number;
-        break;
-    case STRING:
-        std::cout << "copying" << std::endl;
-        A.data.string = new String(B.data.string->c_str());
-        break;
-    case BOOLEAN:
-        A.data.boolean = B.data.boolean;
-    case ARRAY:
-        A.data.array = B.data.array;
-        break;
-    }
-    //A.n = B.n+1;*/
     A=B;
 
 }
 top_stmt(A) ::= stmt(B).
 {
-    /*A.type = B.type;
-    switch(B.type)
-    {
-    case NUMBER:
-        A.data.number = B.data.number;
-        break;
-    case STRING:
-        std::cout << "copying" << std::endl;
-        A.data.string = new String(B.data.string->c_str());
-        break;
-    case BOOLEAN:
-        A.data.boolean = B.data.boolean;
-    case ARRAY:
-        A.data.array = B.data.array;
-        break;
-    }
-    //A.n = B.n+1;*/
     A=B;
 
 }
 /*top_stmt ::= conditional.*/
 stmt(A) ::= expr(B).
 {
-    /*A.type = B.type;
-    switch(B.type)
-    {
-    case NUMBER:
-        A.data.number = B.data.number;
-        break;
-    case STRING:
-        std::cout << "copying" << std::endl;
-        A.data.string = new String(B.data.string->c_str());
-        break;
-    case BOOLEAN:
-        A.data.boolean = B.data.boolean;
-    case ARRAY:
-        A.data.array = B.data.array;
-        break;
-    }
-    //A.n = B.n+1;*/
     A = B;
 
 }
@@ -184,47 +108,12 @@ stmt(A) ::= expr(B).
 /*conditional ::= IF stmt_list.*/
 expr(A) ::= retval(B).
 {
-    /*A.type = B.type;
-    switch(B.type)
-    {
-    case NUMBER:
-        A.data.number = B.data.number;
-        break;
-    case STRING:
-        std::cout << "copying" << std::endl;
-        A.data.string = new String(B.data.string->c_str());
-        break;
-    case BOOLEAN:
-        A.data.boolean = B.data.boolean;
-    case ARRAY:
-        A.data.array = B.data.array;
-        break;
-    }
-    //A.n = B.n+1;*/
     A=B;
 
 }
 /*expr ::= NOT retval.*/
 retval(A) ::= access(B).
 {
-    /*A.type = B.type;
-    switch(B.type)
-    {
-    case NUMBER:
-        A.data.number = B.data.number;
-        break;
-    case STRING:
-        std::cout << "copying" << std::endl;
-        A.data.string = new String(B.data.string->c_str());
-        break;
-    case BOOLEAN:
-        A.data.boolean = B.data.boolean;
-        break;
-    case ARRAY:
-        A.data.array = B.data.array;
-        break;
-    }
-    //A.n = B.n+1;*/
     A = B;
 
 }
@@ -232,24 +121,6 @@ retval(A) ::= access(B).
 /*access ::= identifier OBJECT_OPERATOR property_chain.*/
 access(A) ::= identifier(B).
 {
-    /*A.type = B.type;
-    switch(B.type)
-    {
-    case NUMBER:
-        A.data.number = B.data.number;
-        break;
-    case STRING:
-        std::cout << "copying" << std::endl;
-        A.data.string = new String(B.data.string->c_str());
-        break;
-    case BOOLEAN:
-        A.data.boolean = B.data.boolean;
-        break;
-    case ARRAY:
-        A.data.array = B.data.array;
-        break;
-    }
-    //A.n = B.n+1;*/
     A = B;
 
 }
@@ -264,23 +135,6 @@ access(A) ::= identifier(B).
 //=================================
 stmt_list(A) ::= stmt(B).
 {
-/*
-    A.type = B.type;
-    switch(B.type)
-    {
-    case NUMBER:
-        A.data.number = B.data.number;
-        break;
-    case STRING:
-        std::cout << "copying" << std::endl;
-        A.data.string = new String(B.data.string->c_str());
-        break;
-    case BOOLEAN:
-        A.data.boolean = B.data.boolean;
-    case ARRAY:
-        A = B;
-    }
-    //A.n = B.n+1;*/
     A = B;
 
 }
@@ -290,7 +144,6 @@ stmt_list(A) ::= stmt_list(B) stmt(C). [COMMA]
     A.type = panopticon::STATEMENT_LIST;
     if(B.type!=STATEMENT_LIST)
     {
-/*        A.data.array = new std::vector<panopticon::object>();*/
         panopticon::create_array(A);
         A.data.array->push_back(B);
         A.data.array->push_back(C);
@@ -306,9 +159,6 @@ stmt_list(A) ::= stmt_list(B) stmt(C). [COMMA]
 
 access(A) ::= array(B).
 {
-/*    A.type = panopticon::ARRAY;*/
-/*    A.data.array = B.data.array;*/
-/*    //A.n = B.n+1;*/
     A=B;
 }
 
@@ -316,15 +166,12 @@ array(A) ::= LBRAC maybe_empty_stmt_list(B) RBRAC.
 {
     A.type = panopticon::ARRAY;
     A.data.array = B.data.array;
-    //A.n = B.n+1;
 }
 
 maybe_empty_stmt_list(A) ::= .
 {
     A.type = panopticon::STATEMENT_LIST;
-/*    A.data.array = new std::vector<panopticon::object>();*/
     panopticon::create_array(A);
-/*    A.n = 0;*/
 }
 
 maybe_empty_stmt_list(A) ::= stmt_list(B).
@@ -339,27 +186,10 @@ maybe_empty_stmt_list(A) ::= stmt_list(B).
     {
         A.data.array = B.data.array;
     }
-    //A.n = B.n+1;
 }
 
 identifier(A) ::= value(B).
 {
-    /*
-    A.type = panopticon::B.type;
-    switch(B.type)
-    {
-    case NUMBER:
-        A.data.number = B.data.number;
-        break;
-    case STRING:
-        std::cout << "copying" << std::endl;
-        A.data.string = new String(B.data.string->c_str());
-        break;
-    case BOOLEAN:
-        A.data.boolean = B.data.boolean;
-    }
-    //A.n = B.n+1;
-    */
     A=B;
 
 }
@@ -578,7 +408,7 @@ error(A) ::= bool(B) LESSTHAN bool(C).
     B.type = panopticon::BOOL;
     C.type = panopticon::BOOL;
     A = IncorrectBooleanComparisonLesser;
-    std::cerr << "Error p0005: Cannot ask if one boolean is lesser than another." << std::endl;
+    out() << "Error p0005: Cannot ask if one boolean is lesser than another." << std::endl;
 }
 
 error(A) ::= bool(B) GREATERTHAN bool(C).
@@ -586,7 +416,7 @@ error(A) ::= bool(B) GREATERTHAN bool(C).
     B.type = panopticon::BOOL;
     C.type = panopticon::BOOL;
     A = IncorrectBooleanComparisonGreater;
-    std::cerr << "Error p0004: Cannot ask if one boolean is greater than another." << std::endl;
+    out() << "Error p0004: Cannot ask if one boolean is greater than another." << std::endl;
 }
 
 error(A) ::= bool(B) GORE bool(C).
@@ -594,7 +424,7 @@ error(A) ::= bool(B) GORE bool(C).
     B.type = panopticon::BOOL;
     C.type = panopticon::BOOL;
     A = IncorrectBooleanComparisonGORE;
-    std::cerr << "Error p0006: Cannot ask if one boolean is greater than or equal to another boolean. " << std::endl;
+    out() << "Error p0006: Cannot ask if one boolean is greater than or equal to another boolean. " << std::endl;
 }
 
 error(A) ::= bool(B) LORE bool(C).
@@ -602,7 +432,7 @@ error(A) ::= bool(B) LORE bool(C).
     B.type = panopticon::BOOL;
     C.type = panopticon::BOOL;
     A = IncorrectBooleanComparisonLORE;
-    std::cerr << "Error p0007: Cannot ask if one boolean is less than or greater to another boolean." << std::endl;
+    out() << "Error p0007: Cannot ask if one boolean is less than or greater to another boolean." << std::endl;
 }
 */
 
@@ -656,9 +486,9 @@ num(A) ::= string(B) TIMES string(C).
     else
     {
 /*        A = panopticon::MulStringError;*/
-        std::cerr << "Error p0002: Attempted to Multiply a string by a string, and at least one is non-numerical: " << std::endl;
-        std::cerr << "String 1: " << *B.data.string << std::endl;
-        std::cerr << "String 2: " << *C.data.string << std::endl;
+        out() << "Error p0002: Attempted to Multiply a string by a string, and at least one is non-numerical: " << std::endl;
+        out() << "String 1: " << *B.data.string << std::endl;
+        out() << "String 2: " << *C.data.string << std::endl;
     }
 }
 
@@ -681,9 +511,9 @@ num(A) ::= string(B) DIVIDE string(C).
         A.type = panopticon::ERROR;
         A.data.number = 0;
 /*        A = panopticon::MulStringError;*/
-        std::cerr << "Error p0002: Attempted to Multiply a string by a string, and at least one is non-numerical: " << std::endl;
-        std::cerr << "String 1: " << *B.data.string << std::endl;
-        std::cerr << "String 2: " << *C.data.string << std::endl;
+        out() << "Error p0002: Attempted to Multiply a string by a string, and at least one is non-numerical: " << std::endl;
+        out() << "String 1: " << *B.data.string << std::endl;
+        out() << "String 2: " << *C.data.string << std::endl;
     }
 }
 
@@ -800,7 +630,7 @@ num(A) ::= num(B) DIVIDE num(C).
     }
     else
     {
-         std::cout << "divide by zero" << std::endl;
+         out() << "divide by zero" << std::endl;
     }
 }
 
@@ -1040,20 +870,20 @@ array(A) ::= array(B) PLUSPLUS num(C).
     delete B.data.array;
 }
 
-/*
-index(A) ::= array(B) LBRAC num(C) RBRAC. [INDEX]
+value(A) ::= array(B) LBRAC num(C) RBRAC. [INDEX]
 {
-    A.type = NUMBER;
     if(C.data.number<B.data.array->size())
     {
-        A.data.number = C.data.number;
+        A = panopticon::copy_object(B.data.array->at(C.data.number));
+/*        A.data.number = C.data.number;*/
     }
     else
     {
-        std::cerr << "Error p0008: Index out of bounds." << std::endl;
+        out() << "Error p0008: Index out of bounds." << std::endl;
     }
 }
 
+/*
 multi_index(A) ::= index(B) LBRAC num(C) RBRAC. [INDEX]
 {
     A.type = ARRAY;
@@ -1072,6 +902,20 @@ multi_index(A) ::= multi_index(B) LBRAC num(C) RBRAC. [INDEX]
     A.data.array->push_back(C.data.number);
 }
 */
+/*
+value(A) ::= array(B) index(C). [INDEX]
+{
+
+    if(C.data.number<B.data.array->size())
+    {
+        A = optic::copy_object(B.data.array->at(C.data.number));
+    }
+    else
+    {
+        out() << "Error p0008: Index out of bounds." << std::endl;
+    }
+}
+*/
 /*value::= value PLUS value.*/
 
 /*value(A) ::= value(A).*/
@@ -1085,10 +929,10 @@ in ::= error(B).
     switch(B)
     {
     case OpenQuoteError:
-/*        std::cerr << "ERROR p0001: Dangling quotation mark." << std::endl;*/
+/*        out() << "ERROR p0001: Dangling quotation mark." << std::endl;*/
         break;
     default:
-/*        std::cerr << "ERROR p0000: UnknownError" << std::endl;*/
+/*        out() << "ERROR p0000: UnknownError" << std::endl;*/
         break;
     }
 }
@@ -1097,5 +941,5 @@ error(A) ::= OPENQUOTEERROR(B).
 {
     B.type = panopticon::NUMBER;
     A = OpenQuoteError;
-    std::cerr << "ERROR p0001: Dangling quotation mark." << std::endl;
+    out() << "ERROR p0001: Dangling quotation mark." << std::endl;
 }
