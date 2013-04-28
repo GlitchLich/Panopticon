@@ -99,7 +99,7 @@ GraphicsScene::GraphicsScene() :
 void GraphicsScene::drawBackground(QPainter *painter, const QRectF &rect)
 {
     painter->beginNativePainting();
-    glClearColor(0.2, 0, 0.15, 1);
+    glClearColor(0.17, 0, 0.14, 1);
     glClear(GL_COLOR_BUFFER_BIT);
     painter->endNativePainting();
 }
