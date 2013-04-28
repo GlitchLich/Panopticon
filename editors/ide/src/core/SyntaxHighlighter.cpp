@@ -13,6 +13,7 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument* parent) :
     keywordFormat.setFontWeight(QFont::Bold);
     QStringList keywordPatterns;
     keywordPatterns << "\\btrue\\b" << "\\bfalse\\b" << "\\blet\\b" << "\\bswitch\\b"
+                    << "\\bif\\b" << "\\bthen\\b" << "\\belse\\b"
                     << "\\[" << "\\]" << "\\(" << "\\)"
                     << "\\:" << "\\|" << "\\.";
 
