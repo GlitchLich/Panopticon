@@ -22,22 +22,28 @@
 
 #ifndef ERRORS_H
 #define ERRORS_H
+#include <string>
 
 namespace panopticon
 {
 
-enum Errors
+enum Error
 {
-    UnknownError,//p0000
+    UnknownError,
     OpenQuoteError,//p0001
     MulStringError,//p0002
-    DivideStringError,//p0003
-    IncorrectBooleanComparisonGreater,//p0004
-    IncorrectBooleanComparisonLesser,//p0005
-    IncorrectBooleanComparisonGORE,//p0006
-    IncorrectBooleanComparisonLORE,//p0007
-    IndexOutOfBounds//p0008
+    DivideStringError, //p0003
+    IncorrectBooleanComparisonGreater, //p0004
+    IncorrectBooleanComparisonLesser, //p0005
+    IndexOutOfBounds,//p0006
+    SubtractStringFromNum,//p0007
+    SubtractBoolFromNum,//p0008
+    DivideBooolError,//p0009
+    MultiplyBoolError,//p0010
+    MultiplyStringError//p0011
 };
+extern bool correct_parsing;
+extern std::string print_error(Error error_code);
 
 }
 #endif // ERRORS_H

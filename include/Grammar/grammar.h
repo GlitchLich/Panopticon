@@ -32,4 +32,6 @@
 #define NUM                            32
 #define STRING                         33
 #define BOOLEAN                        34
-#define OPENQUOTEERROR                 35
+#define OPENBRAC                       35
+#define NAME                           36
+#define OPENQUOTEERROR                 37

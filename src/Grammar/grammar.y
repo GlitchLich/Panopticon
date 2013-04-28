@@ -19,18 +19,19 @@
 #include "../../include/Grammar/parsingutilities.h"
 #include "../../include/core/types.h"
 #include "../../include/Grammar/parse.h"
+#include "../../include/core/errors.h"
 
 #undef STRING
 #undef NUM
 #undef BOOL
-#undef ARRAY
+#undef panopticon::ARRAY
 
-using namespace panopticon;
+/*using namespace panopticon;*/
 
     void token_destructor(Token t)
     {
-/*    out() << "In token_destructor t.value= " << t.value << std::endl;*/
-/*    out() << "In token_destructor t.n= " << t.n << std::endl;*/
+/*    panopticon::out() << "In token_destructor t.value= " << t.value << std::endl;*/
+/*    panopticon::out() << "In token_destructor t.n= " << t.n << std::endl;*/
     }
 }
 
@@ -68,7 +69,7 @@ printf("parsing complete!\n\n\n");
 
 
 %syntax_error {
-out() << "Syntax error!" << std::endl;
+panopticon::out() << "Syntax error!" << std::endl;
 }
 
 main ::= in.
@@ -77,8 +78,8 @@ in ::= in NEWLINE.
 in ::= in start NEWLINE.
 
 /*state ::= expr(A).   {*/
-/*    out() << "Result.value=" << A.value << std::endl;*/
-/*    out() << "Result.n=" << A.n << std::endl;*/
+/*    panopticon::out() << "Result.value=" << A.value << std::endl;*/
+/*    panopticon::out() << "Result.n=" << A.n << std::endl;*/
 /*}*/
 
 start ::= spec(A).
@@ -142,7 +143,7 @@ stmt_list(A) ::= stmt(B).
 stmt_list(A) ::= stmt_list(B) stmt(C). [COMMA]
 {
     A.type = panopticon::STATEMENT_LIST;
-    if(B.type!=STATEMENT_LIST)
+    if(B.type!=panopticon::STATEMENT_LIST)
     {
         panopticon::create_array(A);
         A.data.array->push_back(B);
@@ -157,12 +158,12 @@ stmt_list(A) ::= stmt_list(B) stmt(C). [COMMA]
 }
 /*invoke ::= access LBRAC maybe_empty_stmt_list RBRAC.*/
 
-access(A) ::= array(B).
-{
-    A=B;
-}
+/*access(A) ::= array(B).*/
+/*{*/
+/*    A=B;*/
+/*}*/
 
-array(A) ::= LBRAC maybe_empty_stmt_list(B) RBRAC.
+value(A) ::= LBRAC maybe_empty_stmt_list(B) RBRAC.
 {
     A.type = panopticon::ARRAY;
     A.data.array = B.data.array;
@@ -177,7 +178,7 @@ maybe_empty_stmt_list(A) ::= .
 maybe_empty_stmt_list(A) ::= stmt_list(B).
 {
     A.type = panopticon::STATEMENT_LIST;
-    if(B.type!=STATEMENT_LIST)
+    if(B.type!=panopticon::STATEMENT_LIST)
     {
         panopticon::create_array(A);
         A.data.array->push_back(B);
@@ -214,21 +215,6 @@ value(A) ::= bool(B).
     A=B;
 }
 
-/*num(A) ::= value(B).
-{
-    A=B;
-}
-
-string(A) ::= value(B).
-{
-    A=B;
-
-}
-
-bool(A) ::= value(B).
-{
-    A=B;
-}*/
 
 //======================
 //BASICS
@@ -242,7 +228,7 @@ num(A) ::= NUM(B).
 
 string(A) ::= STRING(B).
 {
-    A.data.string = new String(B.data.string->c_str());
+    A.data.string = new panopticon::String(B.data.string->c_str());
     delete B.data.string;
     A.type = panopticon::STRING;
     //A.n = B.n+1;
@@ -256,669 +242,232 @@ bool(A) ::= BOOLEAN(B).
     //A.n = B.n+1;
 }
 
-//=====================================================================
-//OPERATORS, STRING_NUMBER / NUMBER_STRING / STRING_BOOL / BOOL_STRING
-//=====================================================================
-
-string(A) ::= string(B) PLUS num(C).
+//=======================
+//operators
+//=======================
+value(A) ::= value(B) PLUS value(C).
 {
-        A.type = panopticon::STRING;
-        panopticon::string_plus_num(A,B,C);
-        //A.n = B.n+1  + C.n+1;
-}
-
-string(A) ::= string(B) PLUSPLUS num(C).
-{
-        A.type = panopticon::STRING;
-        panopticon::string_plusplus_num(A,B,C);
-        //A.n = B.n+1  + C.n+1;
-}
-
-string(A) ::= num(B) PLUS string(C).
-{
-        A.type = panopticon::STRING;
-        panopticon::num_plus_string(A,B,C);
-        //A.n = B.n+1  + C.n+1;
-}
-
-string(A) ::= num(B) PLUSPLUS string(C).
-{
-        A.type = panopticon::STRING;
-        panopticon::num_plusplus_string(A,B,C);
-        //A.n = B.n+1  + C.n+1;
-}
-
-string(A) ::= string(B) PLUS bool(C).
-{
-        A.type = panopticon::STRING;
-        panopticon::string_plus_bool(A,B,C);
-        //A.n = B.n+1  + C.n+1;
-}
-
-string(A) ::= string(B) PLUSPLUS bool(C).
-{
-        A.type = panopticon::STRING;
-        panopticon::string_plusplus_bool(A,B,C);
-        //A.n = B.n+1  + C.n+1;
-}
-
-string(A) ::= bool(B) PLUS string(C).
-{
-        A.type = panopticon::STRING;
-        panopticon::bool_plus_string(A,B,C);
-        //A.n = B.n+1  + C.n+1;
-}
-
-string(A) ::= bool(B) PLUSPLUS string(C).
-{
-        A.type = panopticon::STRING;
-        panopticon::bool_plusplus_string(A,B,C);
-        //A.n = B.n+1  + C.n+1;
-}
-
-//===========================
-//OPERATORS, BOOLEAN_BOOLEAN
-//===========================
-bool(A) ::= LPAREN bool(B) RPAREN.
-{
-    A.type = panopticon::BOOL;
-    A.data.boolean = B.data.boolean;
-    //A.n = B.n+1;
-}
-
-bool(A) ::= bool(B) PLUS bool(C).
-{
-    A.type = panopticon::BOOL;
-    if(B.data.boolean || C.data.boolean)
+    plus(A,B,C);
+    if(!panopticon::correct_parsing)
     {
-        A.data.boolean = true;
-    }
-    else
-    {
-        A.data.boolean = false;
-    }
-    //A.n = B.n+1  + C.n+1;
-}
-
-bool(A) ::= bool(B) TIMES bool(C).
-{
-    A.type = panopticon::BOOL;
-    if(B.data.boolean && C.data.boolean)
-    {
-        A.data.boolean = true;
-    }
-    else
-    {
-        A.data.boolean = false;
-    }
-    //A.n = B.n+1  + C.n+1;
-}
-
-bool(A) ::= bool(B) EQUALTO bool(C).
-{
-    A.type = panopticon::BOOL;
-    A.data.boolean = B.data.boolean == C.data.boolean;
-    //A.n = B.n+1+C.n+1;
-}
-
-bool(A) ::= bool(B) NOTEQUALTO bool(C).
-{
-    A.type = panopticon::BOOL;
-    A.data.boolean = B.data.number != C.data.number;
-    //A.n = B.n+1+C.n+1;
-}
-
-bool(A) ::= bool(B) AND bool(C).
-{
-    A.type = panopticon::BOOL;
-    A.data.boolean = (int)B.data.boolean && (int)C.data.boolean;
-    //A.n = B.n+1+C.n+1;
-}
-
-bool(A) ::= bool(B) OR bool(C).
-{
-    A.type = panopticon::BOOL;
-    A.data.boolean = (int)B.data.boolean || (int)C.data.boolean;
-    //A.n = B.n+1+C.n+1;
-}
-
-bool(A) ::= NOT bool(B).
-{
-    A.type = panopticon::BOOL;
-    A.data.boolean = !((int)B.data.boolean);
-    //A.n = B.n+1;
-}
-/*
-bool(A) ::= bool(B) MINUS bool(C).
-{
-    A.type = panopticon::BOOL;
-    if(B.data.boolean || C.data.boolean)
-    {
-        A.data.boolean = true;
-    }
-    else
-    {
-        A.data.boolean = false;
-    }
-    //A.n = B.n+1  + C.n+1;
-}
-
-error(A) ::= bool(B) LESSTHAN bool(C).
-{
-    B.type = panopticon::BOOL;
-    C.type = panopticon::BOOL;
-    A = IncorrectBooleanComparisonLesser;
-    out() << "Error p0005: Cannot ask if one boolean is lesser than another." << std::endl;
-}
-
-error(A) ::= bool(B) GREATERTHAN bool(C).
-{
-    B.type = panopticon::BOOL;
-    C.type = panopticon::BOOL;
-    A = IncorrectBooleanComparisonGreater;
-    out() << "Error p0004: Cannot ask if one boolean is greater than another." << std::endl;
-}
-
-error(A) ::= bool(B) GORE bool(C).
-{
-    B.type = panopticon::BOOL;
-    C.type = panopticon::BOOL;
-    A = IncorrectBooleanComparisonGORE;
-    out() << "Error p0006: Cannot ask if one boolean is greater than or equal to another boolean. " << std::endl;
-}
-
-error(A) ::= bool(B) LORE bool(C).
-{
-    B.type = panopticon::BOOL;
-    C.type = panopticon::BOOL;
-    A = IncorrectBooleanComparisonLORE;
-    out() << "Error p0007: Cannot ask if one boolean is less than or greater to another boolean." << std::endl;
-}
-*/
-
-//FIX POINTERS!
-
-/*expr(A) ::= LPAREN expr(B) RPAREN.*/
-/*{*/
-/*    A.type = panopticon::B.type;*/
-/*    A.data.number = B.data.number;*/
-/*    //A.n = B.n+1;*/
-/*}*/
-
-//=====================================
-//OPERATORS, STRING_STRING
-//=====================================
-string(A) ::= LPAREN string(B) RPAREN.
-{
-    A.data.string = B.data.string;
-    A.type = panopticon::STRING;
-    //A.n = B.n+1;
-}
-
-string(A) ::= string(B) MINUS string(C).
-{
-    panopticon::string_minus_string(A,B,C);
-    A.type = panopticon::STRING;
-    //A.n = B.n+1  + C.n+1;
-}
-
-string(A) ::= string(B) PLUS string(C).
-{
-    panopticon::string_plus_string(A,B,C);
-    A.type = panopticon::STRING;
-    //A.n = B.n+1  + C.n+1;
-}
-
-string(A) ::= string(B) PLUSPLUS string(C).
-{
-    panopticon::string_plusplus_string(A,B,C);
-    A.type = panopticon::STRING;
-    //A.n = B.n+1  + C.n+1;
-}
-
-num(A) ::= string(B) TIMES string(C).
-{
-    if(is_number(*B.data.string) && is_number(*C.data.string))
-    {
-        A.type = panopticon::NUMBER;
-        A.data.number = string_to_double(*B.data.string) * string_to_double(*C.data.string);
-    }
-    else
-    {
-/*        A = panopticon::MulStringError;*/
-        out() << "Error p0002: Attempted to Multiply a string by a string, and at least one is non-numerical: " << std::endl;
-        out() << "String 1: " << *B.data.string << std::endl;
-        out() << "String 2: " << *C.data.string << std::endl;
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
     }
 }
 
-bool(A) ::= string(B) EQUALTO string(C).
+value(A) ::= value(B) MINUS value(C).
 {
-    A.type = panopticon::BOOL;
-    A.data.boolean = B.data.string->compare(*C.data.string)==0;
-    //A.n = B.n+1+C.n+1;
-}
-
-num(A) ::= string(B) DIVIDE string(C).
-{
-    if(is_number(*B.data.string) && is_number(*C.data.string))
+    minus(A,B,C);
+    if(!panopticon::correct_parsing)
     {
-        A.type = panopticon::NUMBER;
-        A.data.number = string_to_double(*B.data.string) / string_to_double(*C.data.string);
-    }
-    else
-    {
-        A.type = panopticon::ERROR;
-        A.data.number = 0;
-/*        A = panopticon::MulStringError;*/
-        out() << "Error p0002: Attempted to Multiply a string by a string, and at least one is non-numerical: " << std::endl;
-        out() << "String 1: " << *B.data.string << std::endl;
-        out() << "String 2: " << *C.data.string << std::endl;
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
     }
 }
 
-bool(A) ::= string(B) LESSTHAN string(C).
+value(A) ::= value(B) DIVIDE value(C).
 {
-    if(is_number(*B.data.string) && is_number(*C.data.string))
+    divide(A,B,C);
+    if(!panopticon::correct_parsing)
     {
-        A.type = panopticon::BOOL;
-        A.data.boolean = string_to_double(*B.data.string) < string_to_double(*C.data.string);
-        //A.n = B.n+1+C.n+1;
-    }
-    else
-    {
-        A.type = panopticon::BOOL;
-        A.data.boolean = B.data.string->size() < C.data.string->size();
-        //A.n = B.n+1+C.n+1;
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
     }
 }
 
-bool(A) ::= string(B) GREATERTHAN string(C).
+value(A) ::= value(B) TIMES value(C).
 {
-    if(is_number(*B.data.string) && is_number(*C.data.string))
+    multiply(A,B,C);
+    if(!panopticon::correct_parsing)
     {
-        A.type = panopticon::BOOL;
-        A.data.boolean = string_to_double(*B.data.string) > string_to_double(*C.data.string);
-        //A.n = B.n+1+C.n+1;
-    }
-    else
-    {
-        A.type = panopticon::BOOL;
-        A.data.boolean = B.data.string->size() > C.data.string->size();
-        //A.n = B.n+1+C.n+1;
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
     }
 }
 
-bool(A) ::= string(B) NOTEQUALTO string(C).
+value(A) ::= value(B) MODULO value(C).
 {
-    A.type = panopticon::BOOL;
-    A.data.boolean = B.data.string->compare(*C.data.string)!=0;
-    //A.n = B.n+1+C.n+1;
-}
-
-
-bool(A) ::= string(B) GORE string(C).
-{
-    if(is_number(*B.data.string) && is_number(*C.data.string))
+    modulo(A,B,C);
+    if(!panopticon::correct_parsing)
     {
-        A.type = panopticon::BOOL;
-        A.data.boolean = string_to_double(*B.data.string) >= string_to_double(*C.data.string);
-        //A.n = B.n+1+C.n+1;
-    }
-    else
-    {
-        A.type = panopticon::BOOL;
-        A.data.boolean = B.data.string->size() > C.data.string->size();
-        //A.n = B.n+1+C.n+1;
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
     }
 }
 
-bool(A) ::= string(B) LORE string(C).
+value(A) ::= value(B) POW value(C).
 {
-    if(is_number(*B.data.string) && is_number(*C.data.string))
+    value_pow(A,B,C);
+    if(!panopticon::correct_parsing)
     {
-        A.type = panopticon::BOOL;
-        A.data.boolean = string_to_double(*B.data.string) <= string_to_double(*C.data.string);
-        //A.n = B.n+1+C.n+1;
-    }
-    else
-    {
-        A.type = panopticon::BOOL;
-        A.data.boolean = B.data.string->size() > C.data.string->size();
-        //A.n = B.n+1+C.n+1;
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
     }
 }
 
-//======================
-//OPERATORS, NUMBER_NUMBER
-//======================
-num(A) ::= LPAREN num(B) RPAREN.
+value(A) ::= value(B) EQUALTO value(C).
 {
-    A.type = panopticon::NUMBER;
-    A.data.number = B.data.number;
-    //A.n = B.n+1;
-}
-
-num(A) ::= num(B) MINUS num(C).
-{
-    A.type = panopticon::NUMBER;
-    A.data.number = B.data.number - C.data.number;
-    //A.n = B.n+1  + C.n+1;
-}
-
-num(A) ::= num(B) PLUS  num(C).
-{
-    A.type = panopticon::NUMBER;
-    A.data.number = B.data.number + C.data.number;
-    //A.n = B.n+1  + C.n+1;
-}
-
-num(A) ::= num(B) TIMES num(C).
-{
-    A.type = panopticon::NUMBER;
-    A.data.number = B.data.number * C.data.number;
-    //A.n = B.n+1  + C.n+1;
-}
-
-num(A) ::= num(B) DIVIDE num(C).
-{
-    A.type = panopticon::NUMBER;
-    if(C.data.number != 0)
+    equal_to(A,B,C);
+    if(!panopticon::correct_parsing)
     {
-         A.data.number = B.data.number / C.data.number;
-/*         A.n = B.n+1 + C.n+1;*/
-    }
-    else
-    {
-         out() << "divide by zero" << std::endl;
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
     }
 }
 
-bool(A) ::= num(B) LESSTHAN num(C).
+value(A) ::= value(B) NOTEQUALTO value(C).
 {
-    A.type = panopticon::BOOL;
-    A.data.boolean = B.data.number < C.data.number;
-    //A.n = B.n+1+C.n+1;
-}
-
-bool(A) ::= num(B) GREATERTHAN num(C).
-{
-    A.type = panopticon::BOOL;
-    A.data.boolean = B.data.number > C.data.number;
-    //A.n = B.n+1+C.n+1;
-}
-
-bool(A) ::= num(B) EQUALTO num(C).
-{
-    A.type = panopticon::BOOL;
-    A.data.boolean = B.data.number == C.data.number;
-    //A.n = B.n+1+C.n+1;
-}
-
-bool(A) ::= num(B) NOTEQUALTO num(C).
-{
-    A.type = panopticon::BOOL;
-    A.data.boolean = B.data.number != C.data.number;
-    //A.n = B.n+1+C.n+1;
-}
-
-bool(A) ::= num(B) GORE num(C).
-{
-    A.type = panopticon::BOOL;
-    A.data.boolean = B.data.number >= C.data.number;
-    //A.n = B.n+1+C.n+1;
-}
-
-bool(A) ::= num(B) LORE num(C).
-{
-    A.type = panopticon::BOOL;
-    A.data.boolean = B.data.number <= C.data.number;
-    //A.n = B.n+1+C.n+1;
-}
-
-bool(A) ::= num(B) AND num(C).
-{
-    A.type = panopticon::BOOL;
-    A.data.boolean = (int)B.data.number && (int)C.data.number;
-    //A.n = B.n+1+C.n+1;
-}
-
-bool(A) ::= num(B) OR num(C).
-{
-    A.type = panopticon::BOOL;
-    A.data.boolean = (int)B.data.number || (int)C.data.number;
-    //A.n = B.n+1+C.n+1;
-}
-
-bool(A) ::= NOT num(B).
-{
-    A.type = panopticon::BOOL;
-    A.data.boolean = !((int)B.data.number);
-    //A.n = B.n+1;
-}
-
-num(A) ::= num(B) SHIFTL num(C).
-{
-    A.type = panopticon::NUMBER;
-    A.data.number = (int)B.data.number << (int)C.data.number;
-    //A.n = B.n+1+C.n+1;
-}
-
-num(A) ::= num(B) SHIFTR num(C).
-{
-    A.type = panopticon::NUMBER;
-    A.data.number = (int)B.data.number >> (int)C.data.number;
-    //A.n = B.n+1+C.n+1;
-}
-
-num(A) ::= num(B) BITAND num(C).
-{
-    A.type = panopticon::NUMBER;
-    A.data.number = (int)B.data.number & (int)C.data.number;
-    //A.n = B.n+1+C.n+1;
-}
-
-num(A) ::= num(B) BITOR num(C).
-{
-    A.type = panopticon::NUMBER;
-    A.data.number = (int)B.data.number | (int)C.data.number;
-    //A.n = B.n+1+C.n+1;
-}
-
-num(A) ::= BITNOT num(B).
-{
-    A.type = panopticon::NUMBER;
-    A.data.number = ~((int)B.data.number);
-    //A.n = B.n+1;
-}
-
-num(A) ::= MINUS num(B). [UMINUS]
-{
-    A.type = panopticon::NUMBER;
-    A.data.number = -1 * B.data.number;
-    //A.n = B.n+1;
-}
-
-num(A) ::= num(B) MODULO num(C).
-{
-    A.type = panopticon::NUMBER;
-    A.data.number = fmod(B.data.number,C.data.number);
-    //A.n = B.n+1+C.n+1;
-}
-
-num(A) ::= num(B) POW num(C).
-{
-    A.type = panopticon::NUMBER;
-    A.data.number = pow(B.data.number,C.data.number);
-    //A.n = B.n+1+C.n+1;
-}
-
-//=====================================================================
-//OPERATORS, ARRAY_ARRAY
-//=====================================================================
-array(A) ::= array(B) PLUSPLUS array(C).
-{
-    A.type = ARRAY;
-    A.data.array = new std::vector<panopticon::object>();
-    A.data.array->reserve(B.data.array->size()+C.data.array->size());
-    for(int i=0;i<B.data.array->size();++i)
+    not_equal_to(A,B,C);
+    if(!panopticon::correct_parsing)
     {
-        A.data.array->push_back(B.data.array->at(i));
-    }
-    for(int i=0;i<C.data.array->size();++i)
-    {
-        A.data.array->push_back(C.data.array->at(i));
-    }
-    delete B.data.array;
-    delete C.data.array;
-}
-
-array(A) ::= array(B) PLUS array(C).
-{
-    A.type = ARRAY;
-    if(panopticon::is_numerical(B)&&is_numerical(C))
-    {
-        panopticon::add_numerical_arrays(A,B,C);
-
-    }
-    else
-    {
-        A.data.array = new std::vector<panopticon::object>();
-        A.data.array->reserve(B.data.array->size()+C.data.array->size());
-        for(int i=0;i<B.data.array->size();++i)
-        {
-            A.data.array->push_back(B.data.array->at(i));
-        }
-        for(int i=0;i<C.data.array->size();++i)
-        {
-            A.data.array->push_back(C.data.array->at(i));
-        }
-    }
-    delete B.data.array;
-    delete C.data.array;
-}
-
-//=====================================================================
-//OPERATORS, ARRAY_NUMBER
-//=====================================================================
-
-array(A) ::= num(B) PLUS array(C).
-{
-    A.type = ARRAY;
-    if(panopticon::is_numerical(C))
-    {
-        panopticon::add_number_to_array(A,C,B);
-    }
-    else
-    {
-        A.data.array = new std::vector<panopticon::object>();
-        A.data.array->reserve(C.data.array->size() + 1);
-        A.data.array->push_back(B);
-        for(int i=0;i<C.data.array->size();++i)
-        {
-            A.data.array->push_back(C.data.array->at(i));
-        }
-
-    }
-    delete C.data.array;
-}
-
-array(A) ::= array(B) PLUS num(C).
-{
-    A.type = ARRAY;
-    if(panopticon::is_numerical(B))
-    {
-        panopticon::add_number_to_array(A,C,B);
-    }
-    else
-    {
-        A.data.array = new std::vector<panopticon::object>();
-        A.data.array->reserve(B.data.array->size() + 1);
-        for(int i=0;i<B.data.array->size();++i)
-        {
-            A.data.array->push_back(B.data.array->at(i));
-        }
-        A.data.array->push_back(C);
-    }
-
-    delete B.data.array;
-}
-
-array(A) ::= num(B) PLUSPLUS array(C).
-{
-    A.type = ARRAY;
-        A.data.array = new std::vector<panopticon::object>();
-        A.data.array->reserve(C.data.array->size() + 1);
-        A.data.array->push_back(B);
-        for(int i=0;i<C.data.array->size();++i)
-        {
-            A.data.array->push_back(C.data.array->at(i));
-        }
-    delete C.data.array;
-}
-
-array(A) ::= array(B) PLUSPLUS num(C).
-{
-    A.type = ARRAY;
-        A.data.array = new std::vector<panopticon::object>();
-        A.data.array->reserve(B.data.array->size() + 1);
-        for(int i=0;i<B.data.array->size();++i)
-        {
-            A.data.array->push_back(B.data.array->at(i));
-        }
-        A.data.array->push_back(C);
-    delete B.data.array;
-}
-
-value(A) ::= array(B) LBRAC num(C) RBRAC. [INDEX]
-{
-    if(C.data.number<B.data.array->size())
-    {
-        A = panopticon::copy_object(B.data.array->at(C.data.number));
-    }
-    else
-    {
-        out() << "Error p0008: Index out of bounds." << std::endl;
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
     }
 }
 
-/*
-multi_index(A) ::= index(B) LBRAC num(C) RBRAC. [INDEX]
+value(A) ::= value(B) LESSTHAN value(C).
 {
-    A.type = ARRAY;
-    A.data.array = new std::vector<panopticon::object>();
-    A.data.array->reserve(2);
-    A.data.array->push_back(B.data.number);
-    A.data.array->push_back(C.data.number);
-}
-
-multi_index(A) ::= multi_index(B) LBRAC num(C) RBRAC. [INDEX]
-{
-    A.type = ARRAY;
-    A.data.array = new std::vector<panopticon::object>();
-    A.data.array->reserve(2);
-    A.data.array->push_back(B.data.number);
-    A.data.array->push_back(C.data.number);
-}
-*/
-
-/*
-value(A) ::= array(B) index(C). [INDEX]
-{
-
-    if(C.data.number<B.data.array->size())
+    less_than(A,B,C);
+    if(!panopticon::correct_parsing)
     {
-        A = optic::copy_object(B.data.array->at(C.data.number));
-    }
-    else
-    {
-        out() << "Error p0008: Index out of bounds." << std::endl;
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
     }
 }
-*/
-/*value::= value PLUS value.*/
 
-/*value(A) ::= value(A).*/
+value(A) ::= value(B) GREATERTHAN value(C).
+{
+    greater_than(A,B,C);
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
+
+value(A) ::= value(B) LORE value(C).
+{
+    lore(A,B,C);
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
+
+value(A) ::= value(B) GORE value(C).
+{
+    gore(A,B,C);
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
+
+value(A) ::= value(B) AND value(C).
+{
+    value_and(A,B,C);
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
+
+value(A) ::= value(B) OR value(C).
+{
+    value_or(A,B,C);
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
+
+value(A) ::= NOT value(B).
+{
+    not_value(A,B);
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
+
+value(A) ::= value(B) SHIFTL value(C).
+{
+    shift_left(A,B,C);
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
+
+value(A) ::= value(B) SHIFTR value(C).
+{
+    shift_right(A,B,C);
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
+
+value(A) ::= value(B) BITAND value(C).
+{
+    bit_and(A,B,C);
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
+
+value(A) ::= value(B) BITOR value(C).
+{
+    bit_or(A,B,C);
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
+
+/*%fallback OPENBRAC LBRAC.*/
+
+value(A) ::= variable(B) OPENBRAC num(C) RBRAC. [INDEX]
+{
+    index(A,B,C);
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
+
+stmt(A) ::= variable(B).
+{
+    A = B;
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
+
+variable(A) ::= NAME ASSIGN value(B).
+{
+    A = B;
+    A.type = panopticon::VARIABLE;
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
+
 
 //======================
 //Syntax ERROR HANDLING
@@ -928,11 +477,11 @@ in ::= error(B).
 {
     switch(B)
     {
-    case OpenQuoteError:
-/*        out() << "ERROR p0001: Dangling quotation mark." << std::endl;*/
+    case panopticon::OpenQuoteError:
+/*        panopticon::out() << "ERROR p0001: Dangling quotation mark." << std::endl;*/
         break;
     default:
-/*        out() << "ERROR p0000: UnknownError" << std::endl;*/
+/*        panopticon::out() << "ERROR p0000: UnknownError" << std::endl;*/
         break;
     }
 }
@@ -940,6 +489,6 @@ in ::= error(B).
 error(A) ::= OPENQUOTEERROR(B).
 {
     B.type = panopticon::NUMBER;
-    A = OpenQuoteError;
-    out() << "ERROR p0001: Dangling quotation mark." << std::endl;
+    A = panopticon::OpenQuoteError;
+    panopticon::out() << "ERROR p0001: Dangling quotation mark." << std::endl;
 }

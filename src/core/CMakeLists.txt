@@ -4,5 +4,7 @@ set(Panopticon_SRC
    ${Panopticon_SRC}
    ${CMAKE_CURRENT_SOURCE_DIR}/panopticon.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/types.cpp
-   PARENT_SCOPE
+   ${CMAKE_CURRENT_SOURCE_DIR}/operators.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/errors.cpp
+    PARENT_SCOPE
 )
