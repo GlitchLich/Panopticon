@@ -1,7 +1,24 @@
 #include <QApplication>
 #include "ide/include/core/ide.h"
+#include "ide/include/style/StyleGlobals.h"
 
-panopticon::ide::MainWindow* panopticon::ide::MAIN_WINDOW; // global pointer
+namespace panopticon
+{
+
+namespace ide
+{
+
+MainWindow* MAIN_WINDOW = 0; // global pointer
+
+void Post(const QString& string)
+{
+    MAIN_WINDOW->post(string);
+}
+
+} // ide namespace
+
+} // panopticon namespace
+
 
 int main(int argc, char* argv[])
 {
@@ -19,6 +36,8 @@ int main(int argc, char* argv[])
         app.setStyleSheet(styleSheet);
     }
 
+    panopticon::ide::Style style;
+    panopticon::ide::style = &style;
     panopticon::ide::MainWindow mainWindow;
     panopticon::ide::MAIN_WINDOW = &mainWindow;
 

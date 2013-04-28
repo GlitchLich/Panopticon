@@ -29,13 +29,6 @@ protected:
     };
 
     QVector<Rule> rules;
-
-    QTextCharFormat keywordFormat;
-    QTextCharFormat singleLineCommentFormat;
-    // QTextCharFormat multiLineCommentFormat;
-    QTextCharFormat stringFormat;
-    QTextCharFormat functionFormat;
-    QTextCharFormat numberFormat;
 };
 
 } // ide namespace

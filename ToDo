@@ -2,7 +2,6 @@
 extern bool plus(object&A, object& B, object& C);
 
 //Not Working
-string + string
 string + bool
 string + array
 array + bool

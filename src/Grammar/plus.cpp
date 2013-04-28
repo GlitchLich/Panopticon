@@ -1,5 +1,5 @@
 #include "../../include/Grammar/plus.h"
-
+#include "../../include/core/operators.h"
 namespace panopticon
 {
 
@@ -7,7 +7,7 @@ namespace panopticon
 //Switches
 //================================
 
-void number_plus(object&A,object& B, object& C)
+bool number_plus(object&A,object& B, object& C)
 {
     switch(C.type)
     {
@@ -22,12 +22,13 @@ void number_plus(object&A,object& B, object& C)
         number_plus_bool(A,B,C);
         break;
     case ARRAY:
-        array_plus_number(A,C,B);
+//        array_plus_number(A,C,B);
+        object_operator_array(A,B,C,&number_plus);
         break;
     }
 }
 
-void bool_plus(object&A, object& B, object& C)
+bool bool_plus(object&A, object& B, object& C)
 {
     switch(C.type)
     {
@@ -49,13 +50,14 @@ void bool_plus(object&A, object& B, object& C)
         }
         break;
     case ARRAY:
-        array_plus_bool(A,C,B);
+//        array_plus_bool(A,C,B);
+        object_operator_array(A,B,C,&bool_plus);
         break;
     }
 }
 
 
-void string_plus(object&A, object& B, object& C)
+bool string_plus(object&A, object& B, object& C)
 {
     switch(C.type)
     {
@@ -69,26 +71,29 @@ void string_plus(object&A, object& B, object& C)
         string_plus_bool(A,B,C);
         break;
     case ARRAY:
-        array_plus_string(A,C,B);
+        object_operator_array(A,B,C,&string_plus);
         break;
     }
 }
 
-void array_plus(object&A, object& B, object& C)
+bool array_plus(object&A, object& B, object& C)
 {
     switch(C.type)
     {
     case NUMBER:
-        array_plus_number(A,B,C);
+//        array_plus_number(A,B,C);
+        object_operator_array(A,C,B,&number_plus);
         break;
     case STRING:
-        array_plus_string(A,B,C);
+//        array_plus_string(A,B,C);
+        object_operator_array(A,C,B,&string_plus);
         break;
     case BOOL:
-        array_plus_bool(A,B,C);
+//        array_plus_bool(A,B,C);
+        object_operator_array(A,C,B,&bool_plus);
         break;
     case ARRAY:
-        array_plus_array(A,B,C);
+        array_operator_object(A,B,C,&array_plus);
         break;
     }
 }
@@ -98,7 +103,7 @@ void array_plus(object&A, object& B, object& C)
 //Combinations
 //================================
 
-void number_plus_bool(object&A,object& number, object& boolean)
+bool number_plus_bool(object&A,object& number, object& boolean)
 {
     A.type = BOOL;
     if(boolean.data.boolean&&number.data.number>1)
@@ -140,6 +145,7 @@ bool bool_plus_string(object &a,const object b, const object c)
 
 bool string_plus_bool(object &a,const object b, const object c)
 {
+    a.type = STRING;
     a.data.string = new String(*b.data.string);
     try
     {
@@ -207,6 +213,7 @@ bool string_plus_num(object &a,const object b, const object c)
 
 bool string_plus_string(object &a,const object b, const object c)
 {
+    a.type = STRING;
     a.data.string = new String(*b.data.string);
     try
     {
@@ -254,7 +261,7 @@ bool array_plus_number(object& a,object& array, object& number)
     delete array.data.array;
 }
 
-void array_plus_string(object&A,object& array, object& string)
+bool array_plus_string(object&A,object& array, object& string)
 {
     A.type = ARRAY;
     A.data.array = new std::vector<object>();

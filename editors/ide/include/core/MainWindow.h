@@ -15,6 +15,8 @@
 #include <QTimer>
 #include <QGraphicsView>
 #include <QPlainTextEdit>
+#include <QMenuBar>
+#include <QMenu>
 
 #include "EditBuffer.h"
 #include "SyntaxHighlighter.h"
@@ -65,14 +67,39 @@ public:
     void drawBackground(QPainter *painter, const QRectF &rect);
     void drawForeground(QPainter *painter, const QRectF &rect);
     void updateFrame();
+    void toggleTimer();
 
     QTimer updateTimer;
+};
+
+class MenuBar : public QMenuBar
+{
+    Q_OBJECT
+
+public:
+
+    MenuBar(QWidget* parent = 0);
+    ~MenuBar();
+
+public slots:
+
+    void newFile();
+    void openFile();
+    void saveFile();
+    void saveFileAs();
+    void closeFile();
+    void closeAllFiles();
+    void quit();
+
+protected:
+
+    QMenu *fileMenu, *sessionMenu, *editMenu, *languageMenu, *helpMenu;
 };
 
 
 class MainWindow : public QMainWindow
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     explicit MainWindow(QWidget* parent = 0);
@@ -80,11 +107,20 @@ public:
 
 public slots:
     void post(const QString& string);
+    void newFile();
+    void openFile();
+    void saveFile();
+    void saveFileAs();
+    void closeFile();
+    void closeAllFiles();
+    void quit();
 
 protected:
 
     void resizeEvent(QResizeEvent *e);
+    void keyPressEvent(QKeyEvent *e);
     void resizeComponents();
+    void newEditBuffer();
 
     GlWidget glBackground;
     QVBoxLayout vLayout;
@@ -95,6 +131,7 @@ protected:
     QGraphicsView graphicsView;
     QPlainTextEdit* postWindow;
     SyntaxHighlighter syntaxHighlighter;
+    MenuBar menuBar;
 };
 
 } // ide namespace
