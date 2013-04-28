@@ -875,7 +875,6 @@ value(A) ::= array(B) LBRAC num(C) RBRAC. [INDEX]
     if(C.data.number<B.data.array->size())
     {
         A = panopticon::copy_object(B.data.array->at(C.data.number));
-/*        A.data.number = C.data.number;*/
     }
     else
     {
@@ -902,6 +901,7 @@ multi_index(A) ::= multi_index(B) LBRAC num(C) RBRAC. [INDEX]
     A.data.array->push_back(C.data.number);
 }
 */
+
 /*
 value(A) ::= array(B) index(C). [INDEX]
 {

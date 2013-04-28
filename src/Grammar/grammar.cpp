@@ -1870,7 +1870,7 @@ static void yy_reduce(
 #line 1871 "./src/Grammar/grammar.c"
         break;
       case 81: /* in ::= error */
-#line 928 "./src/Grammar/grammar.y"
+#line 929 "./src/Grammar/grammar.y"
 {
     switch(yymsp[0].minor.yy111)
     {
@@ -1885,7 +1885,7 @@ static void yy_reduce(
 #line 1886 "./src/Grammar/grammar.c"
         break;
       case 82: /* error ::= OPENQUOTEERROR */
-#line 941 "./src/Grammar/grammar.y"
+#line 942 "./src/Grammar/grammar.y"
 {
     yymsp[0].minor.yy0.type = panopticon::NUMBER;
     yygotominor.yy111 = OpenQuoteError;

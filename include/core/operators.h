@@ -534,5 +534,110 @@ inline void print_object(const object& A)
     }
 }
 
+inline void plus(object&A,const object&B,const object& C)
+{
+
+}
+
+inline void minus(object&A,const object&B,const object& C)
+{
+
+}
+
+inline void divide(object&A,const object&B,const object& C)
+{
+
+}
+
+inline void multiply(object&A,const object&B,const object& C)
+{
+
+}
+
+inline void modulo(object&A,const object&B,const object& C)
+{
+
+}
+
+inline void pow(object&A,const object&B,const object& C)
+{
+
+}
+
+inline void equal_to(object&A,const object&B,const object& C)
+{
+
+}
+
+inline void not_equal_to(object&A,const object&B,const object& C)
+{
+
+}
+
+inline void less_than(object&A,const object&B,const object& C)
+{
+
+}
+
+inline void greater_than(object&A,const object&B,const object& C)
+{
+
+}
+
+inline void lore(object&A,const object&B,const object& C)
+{
+
+}
+
+inline void gore(object&A,const object&B,const object& C)
+{
+
+}
+
+inline void value_and(object&A,const object&B,const object& C)
+{
+
+}
+
+inline void value_or(object&A,const object&B,const object& C)
+{
+
+}
+
+inline void not_value(object&A,const object&B,const object& C)
+{
+
+}
+
+inline void shift_left(object&A,const object&B,const object& C)
+{
+
+}
+
+inline void shift_right(object&A,const object&B,const object& C)
+{
+
+}
+
+inline void bit_not(object&A,const object&B,const object& C)
+{
+
+}
+
+inline void bit_and(object&A,const object&B,const object& C)
+{
+
+}
+
+inline void bit_or(object&A,const object&B,const object& C)
+{
+
+}
+
+inline void bit_xor(object&A,const object&B,const object& C)
+{
+
+}
+
 }
 #endif // OPERATORS_H
