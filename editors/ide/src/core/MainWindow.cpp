@@ -5,10 +5,13 @@
 #include <QPalette>
 #include <QScrollBar>
 #include <QTextCursor>
-#include "ide/include/core/EditBuffer.h"
+#include <QDialog>
+#include <QKeySequence>
 
+#include "ide/include/core/EditBuffer.h"
 #include "ide/include/style/StyleGlobals.h"
 #include "ide/include/core/MainWindow.h"
+#include "ide/include/core/ide.h"
 
 namespace panopticon
 {
@@ -80,7 +83,7 @@ void GlWidget::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT);
     glColor3b(0, 0, 0);
-    this->renderText(50, 50, renderString, mainFont);
+    this->renderText(50, 50, renderString, ide::style->mainFont);
 }
 
 ////////////////////
@@ -92,14 +95,14 @@ GraphicsScene::GraphicsScene() :
 {
     // QObject::connect(&foregroundFpsTimer, SIGNAL(timeout()), this, SLOT(drawForegroundFrame()), Qt::QueuedConnection);
     QObject::connect(&updateTimer, SIGNAL(timeout()), this, SLOT(update()));
-    updateTimer.start(33);
 }
 
 
 void GraphicsScene::drawBackground(QPainter *painter, const QRectF &rect)
 {
     painter->beginNativePainting();
-    glClearColor(0.2, 0.06, 0.15, 1);
+    // glClearColor(0.2, 0.06, 0.15, 1);
+    glClearColor(ide::style->clearR(), ide::style->clearG(), ide::style->clearB(), ide::style->clearA());
     glClear(GL_COLOR_BUFFER_BIT);
     painter->endNativePainting();
 }
@@ -115,39 +118,120 @@ void GraphicsScene::updateFrame()
     // invalidate(sceneRect());
 }
 
+void GraphicsScene::toggleTimer()
+{
+    if(updateTimer.isActive())
+        updateTimer.stop();
+    else
+        updateTimer.start(33);
+}
+
+//////////////////
+// MenuBar
+//////////////////
+
+MenuBar::MenuBar(QWidget *parent) :
+    QMenuBar(parent)
+{
+    fileMenu = new QMenu("File");
+    fileMenu->addAction("New", this, SLOT(newFile()), QKeySequence(Qt::Key_Control, Qt::Key_N));
+    fileMenu->addAction("Open", this, SLOT(openFile()), QKeySequence(Qt::Key_Control, Qt::Key_O));
+    fileMenu->addAction("Open Recent");
+    fileMenu->addAction("Save", this, SLOT(saveFile()), QKeySequence(Qt::Key_Control, Qt::Key_S));
+    fileMenu->addAction("Save As...", this, SLOT(saveFileAs()), QKeySequence(Qt::Key_Shift, Qt::Key_Control, Qt::Key_S));
+    fileMenu->addSeparator();
+    fileMenu->addAction("Close", this, SLOT(closeFile()), QKeySequence(Qt::Key_Control, Qt::Key_W));
+    fileMenu->addAction("Close All", this, SLOT(closeAllFiles()), QKeySequence(Qt::Key_Shift, Qt::Key_Control, Qt::Key_W));
+    fileMenu->addSeparator();
+    fileMenu->addAction("Quit", this, SLOT(quit()), QKeySequence(Qt::Key_Control, Qt::Key_Q));
+
+    sessionMenu = new QMenu("Session");
+
+
+
+    editMenu = new QMenu("Edit");
+
+
+
+    languageMenu = new QMenu("Language");
+
+
+
+    helpMenu = new QMenu("Help");
+
+    addMenu(fileMenu);
+    addMenu(sessionMenu);
+    addMenu(editMenu);
+    addMenu(languageMenu);
+    addMenu(helpMenu);
+}
+
+MenuBar::~MenuBar()
+{
+
+}
+
+void MenuBar::newFile()
+{
+    MAIN_WINDOW->newFile();
+}
+
+void MenuBar::openFile()
+{
+    MAIN_WINDOW->openFile();
+}
+
+void MenuBar::saveFile()
+{
+    MAIN_WINDOW->saveFile();
+}
+
+void MenuBar::saveFileAs()
+{
+    MAIN_WINDOW->saveFileAs();
+}
+
+void MenuBar::closeFile()
+{
+    MAIN_WINDOW->closeFile();
+}
+
+void MenuBar::closeAllFiles()
+{
+    MAIN_WINDOW->closeAllFiles();
+}
+
+void MenuBar::quit()
+{
+    MAIN_WINDOW->quit();
+}
+
+
 //////////////////////////////////
 /// MainWindow
 //////////////////////////////////
 
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
+    menuBar(this),
     glBackground(0),
     graphicsView(this),
-    syntaxHighlighter(0)
+    syntaxHighlighter(0),
+    focusedBuffer(0)
 {
-    setGeometry(QApplication::desktop()->width() / 2 - 400, QApplication::desktop()->height() / 2 - 300, 800, 600);
+    setGeometry(QApplication::desktop()->width() / 2 - 450, QApplication::desktop()->height() / 2 - 250, 900, 500);
     glBackground.setGeometry(this->geometry());
     setWindowTitle("Panopticon");
-    setFont(mainFont);
-
+    setFont(ide::style->mainFont);
     graphicsView.setViewport(new GlWidget());
-    EditBuffer* buffer = new EditBuffer();
-
-    buffer->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    buffer->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    buffer->setFrameShape(QTextEdit::NoFrame);
-    buffer->setFrameShadow(QTextEdit::Plain);
-    buffer->setAcceptRichText(true);
-    focusedBuffer = buffer;
     graphicsView.setScene(new GraphicsScene());
-    graphicsView.scene()->addWidget(buffer);
+    newEditBuffer();
     graphicsView.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     graphicsView.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    editBuffers.push_back(buffer);
     postWindow = new QPlainTextEdit("__________\nPanopticon\n");
-    postWindow->setFont(monoFont);
+    postWindow->setFont(ide::style->monoFont);
     postWindow->setReadOnly(true);
-    postWindow->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    // postWindow->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     postWindow->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     postWindow->setFrameShape(QTextEdit::NoFrame);
     postWindow->setFrameShadow(QTextEdit::Plain);
@@ -157,19 +241,19 @@ MainWindow::MainWindow(QWidget* parent) :
     // vLayout.addWidget(buffer);
     // glBackground.setL1ayout(&vLayout);
 
+    menuBar.hide();
     resizeComponents();
     show();
-    buffer->setFocus();
-    buffer->grabKeyboard();
 }
 
 MainWindow::~MainWindow()
 {
+    /*
     for(int i = 0; i < editBuffers.size(); ++i)
     {
         if(editBuffers.at(i) != focusedBuffer)
             delete editBuffers.at(i);
-    }
+    }*/
 
     editBuffers.clear();
 }
@@ -180,10 +264,94 @@ void MainWindow::post(const QString &string)
     postWindow->moveCursor(QTextCursor::End);
 }
 
+void MainWindow::newFile()
+{
+    newEditBuffer();
+}
+
+void MainWindow::openFile()
+{
+    newEditBuffer();
+    focusedBuffer->open();
+}
+
+void MainWindow::saveFile()
+{
+    focusedBuffer->save();
+}
+
+void MainWindow::saveFileAs()
+{
+    focusedBuffer->saveAs();
+}
+
+void MainWindow::closeFile()
+{
+    /*
+    if(focusedBuffer)
+    {
+        if(focusedBuffer->getUnsavedEdits())
+        {
+            QDialog closeDialog;
+
+            closeDialog.
+
+            closeDialog.show();
+            closeDialog.raise();
+            closeDialog.setModal(true);
+        }
+    }
+
+    for(unsigned int i = 0; i < editBuffers.size(); ++i)
+    {
+        if(editBuffers.at(i) == focusedBuffer)
+        {
+            if()
+        }
+    }*/
+}
+
+void MainWindow::closeAllFiles()
+{
+
+}
+
+void MainWindow::quit()
+{
+    QApplication::quit();
+}
+
+void MainWindow::newEditBuffer()
+{
+    if(focusedBuffer)
+        focusedBuffer->hide();
+
+    EditBuffer* buffer = new EditBuffer();
+    buffer->setFocus();
+    buffer->grabKeyboard();
+    graphicsView.scene()->addWidget(buffer);
+    editBuffers.push_back(buffer);
+    focusedBuffer = buffer;
+}
+
 void MainWindow::resizeEvent(QResizeEvent *e)
 {
     QWidget::resizeEvent(e);
     resizeComponents();
+}
+
+void MainWindow::keyPressEvent(QKeyEvent* e)
+{
+    if((e->key() == Qt::Key_Return || e->key() == Qt::Key_Enter)
+            && (e->modifiers() == Qt::ShiftModifier || e->modifiers() == Qt::ControlModifier))
+    {
+        ((GraphicsScene*) graphicsView.scene())->toggleTimer();
+    }
+
+    else
+    {
+        QMainWindow::keyPressEvent(e);
+    }
 }
 
 void MainWindow::resizeComponents()

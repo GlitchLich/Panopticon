@@ -2,6 +2,7 @@
 #define STYLEGLOBALS_H
 
 #include <QFont>
+#include <QTextCharFormat>
 
 namespace panopticon
 {
@@ -9,8 +10,40 @@ namespace panopticon
 namespace ide
 {
 
-extern QFont mainFont;
-extern QFont monoFont;
+struct real_color
+{
+    qreal r, g, b, a;
+    real_color(const qreal& r = 0.0, const qreal& g = 0.0, const qreal& b = 0.0, const qreal& a = 1.0) : r(r), g(g), b(b), a(a) { }
+};
+
+class Style
+{
+public:
+    Style();
+
+    void setClearColor(const QColor& color);
+    void setClearColor(const real_color& color);
+    const QColor& clearColor();
+    const real_color& realClearColor();
+    const qreal& clearR();
+    const qreal& clearG();
+    const qreal& clearB();
+    const qreal& clearA();
+
+    QFont mainFont;
+    QFont monoFont;
+    QTextCharFormat keywordFormat;
+    QTextCharFormat singleLineCommentFormat;
+    QTextCharFormat stringFormat;
+    QTextCharFormat functionFormat;
+    QTextCharFormat numberFormat;
+
+private:
+    real_color prrealClearColor; // requires special handling, using the get/set interface.
+    QColor prclearColor; // requires special handling. Use the get/set interface
+};
+
+extern Style* style;
 
 } // ide namespace
 

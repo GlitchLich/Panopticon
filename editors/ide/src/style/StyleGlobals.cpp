@@ -6,13 +6,69 @@ namespace panopticon
 namespace ide
 {
 
+Style::Style()
+{
 #ifdef __LINUX__
-QFont mainFont("Ubuntu", 13);
-QFont monoFont("Ubuntu Mono", 15);
+    mainFont = QFont("Ubuntu", 12);
+    monoFont = QFont("Ubuntu Mono", 12);
 #else
-QFont mainFont("Myriad", 11);
-QFont monoFont("Menlo", 11);
+    mainFont = QFont("Myriad", 13);
+    monoFont = QFont("Menlo", 13);
 #endif
+
+    keywordFormat.setForeground(QColor(25, 125, 200));
+    keywordFormat.setFontWeight(QFont::Bold);
+    singleLineCommentFormat.setForeground(QColor(200, 80, 80));
+    stringFormat.setForeground(QColor(25, 180, 125));
+    numberFormat.setForeground(QColor(180, 50, 135));
+
+    prrealClearColor = { 0.2, 0.06, 0.15, 1 };
+    prclearColor.setRgbF(prrealClearColor.r, prrealClearColor.g, prrealClearColor.b, prrealClearColor.a);
+}
+
+void Style::setClearColor(const QColor& color)
+{
+    prclearColor = color;
+    prclearColor.getRgbF(&prrealClearColor.r, &prrealClearColor.g, &prrealClearColor.b, &prrealClearColor.a);
+}
+
+const QColor& Style::clearColor()
+{
+    return prclearColor;
+}
+
+void Style::setClearColor(const real_color& color)
+{
+    prrealClearColor = color;
+    prclearColor.setRgbF(prrealClearColor.r, prrealClearColor.g, prrealClearColor.b, prrealClearColor.a);
+}
+
+const real_color& Style::realClearColor()
+{
+    return prrealClearColor;
+}
+
+const qreal& Style::clearR()
+{
+    return prrealClearColor.r;
+}
+
+const qreal& Style::clearG()
+{
+    return prrealClearColor.g;
+}
+
+const qreal& Style::clearB()
+{
+    return prrealClearColor.b;
+}
+
+const qreal& Style::clearA()
+{
+    return prrealClearColor.a;
+}
+
+Style* style = 0; // global style
 
 } // ide namespace
 

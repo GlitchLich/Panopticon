@@ -1,4 +1,5 @@
 #include "ide/include/core/SyntaxHighlighter.h"
+#include "ide/include/style/StyleGlobals.h"
 
 namespace panopticon
 {
@@ -9,8 +10,7 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument* parent) :
     QSyntaxHighlighter(parent)
 {
     Rule rule;
-    keywordFormat.setForeground(QColor(25, 125, 200));
-    keywordFormat.setFontWeight(QFont::Bold);
+
     QStringList keywordPatterns;
     keywordPatterns << "\\btrue\\b" << "\\bfalse\\b" << "\\blet\\b" << "\\bswitch\\b"
                     << "\\bif\\b" << "\\bthen\\b" << "\\belse\\b"
@@ -20,27 +20,27 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument* parent) :
     foreach(const QString& pattern, keywordPatterns)
     {
         rule.pattern = QRegExp(pattern);
-        rule.format = keywordFormat;
+        rule.format = style->keywordFormat;
         rules.append(rule);
     }
 
-    singleLineCommentFormat.setForeground(QColor(200, 80, 80));
+
     rule.pattern = QRegExp("//[^\n]*");
-    rule.format = singleLineCommentFormat;
+    rule.format = style->singleLineCommentFormat;
     rules.append(rule);
 
-    stringFormat.setForeground(QColor(25, 180, 125));
+
     rule.pattern = QRegExp("\".*\"");
-    rule.format = stringFormat;
+    rule.format = style->stringFormat;
     rules.append(rule);
 
     rule.pattern = QRegExp("\'.*\'");
-    rule.format = stringFormat;
+    rule.format = style->stringFormat;
     rules.append(rule);
 
-    numberFormat.setForeground(QColor(180, 50, 135));
+
     rule.pattern = QRegExp("\\d");
-    rule.format = numberFormat;
+    rule.format = style->numberFormat;
     rules.append(rule);
 }
 
