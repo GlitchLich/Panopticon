@@ -12,7 +12,10 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument* parent) :
     keywordFormat.setForeground(QColor(25, 125, 200));
     keywordFormat.setFontWeight(QFont::Bold);
     QStringList keywordPatterns;
-    keywordPatterns << "\\btrue\\b" << "\\bfalse\\b";
+    keywordPatterns << "\\btrue\\b" << "\\bfalse\\b" << "\\blet\\b" << "\\bswitch\\b"
+                    << "\\bif\\b" << "\\bthen\\b" << "\\belse\\b"
+                    << "\\[" << "\\]" << "\\(" << "\\)"
+                    << "\\:" << "\\|" << "\\." << "\\\\";
 
     foreach(const QString& pattern, keywordPatterns)
     {
