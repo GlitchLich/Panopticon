@@ -991,7 +991,7 @@ static void yy_reduce(
 #line 992 "./src/Grammar/grammar.c"
         break;
       case 20: /* num ::= NUM */
-#line 223 "./src/Grammar/grammar.y"
+#line 228 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = yymsp[0].minor.yy0.data.number;
     yygotominor.yy0.type = panopticon::NUMBER;
@@ -1000,7 +1000,7 @@ static void yy_reduce(
 #line 1001 "./src/Grammar/grammar.c"
         break;
       case 21: /* string ::= STRING */
-#line 230 "./src/Grammar/grammar.y"
+#line 235 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.string = new panopticon::String(yymsp[0].minor.yy0.data.string->c_str());
     delete yymsp[0].minor.yy0.data.string;
@@ -1010,7 +1010,7 @@ static void yy_reduce(
 #line 1011 "./src/Grammar/grammar.c"
         break;
       case 22: /* bool ::= BOOLEAN */
-#line 239 "./src/Grammar/grammar.y"
+#line 244 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.boolean = yymsp[0].minor.yy0.data.boolean;
     yygotominor.yy0.type = panopticon::BOOL;
@@ -1019,9 +1019,9 @@ static void yy_reduce(
 #line 1020 "./src/Grammar/grammar.c"
         break;
       case 23: /* value ::= value PLUS value */
-#line 249 "./src/Grammar/grammar.y"
+#line 254 "./src/Grammar/grammar.y"
 {
-    plus(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0);
+    object_operator_object(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0,&panopticon::plus);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -1032,9 +1032,9 @@ static void yy_reduce(
 #line 1033 "./src/Grammar/grammar.c"
         break;
       case 24: /* value ::= value MINUS value */
-#line 259 "./src/Grammar/grammar.y"
+#line 264 "./src/Grammar/grammar.y"
 {
-    minus(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0);
+    object_operator_object(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0,&panopticon::minus);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -1045,9 +1045,9 @@ static void yy_reduce(
 #line 1046 "./src/Grammar/grammar.c"
         break;
       case 25: /* value ::= value DIVIDE value */
-#line 269 "./src/Grammar/grammar.y"
+#line 274 "./src/Grammar/grammar.y"
 {
-    divide(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0);
+    object_operator_object(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0,&panopticon::divide);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -1058,7 +1058,7 @@ static void yy_reduce(
 #line 1059 "./src/Grammar/grammar.c"
         break;
       case 26: /* value ::= value TIMES value */
-#line 279 "./src/Grammar/grammar.y"
+#line 284 "./src/Grammar/grammar.y"
 {
     multiply(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0);
     if(!panopticon::correct_parsing)
@@ -1071,7 +1071,7 @@ static void yy_reduce(
 #line 1072 "./src/Grammar/grammar.c"
         break;
       case 27: /* value ::= value MODULO value */
-#line 289 "./src/Grammar/grammar.y"
+#line 294 "./src/Grammar/grammar.y"
 {
     modulo(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0);
     if(!panopticon::correct_parsing)
@@ -1084,7 +1084,7 @@ static void yy_reduce(
 #line 1085 "./src/Grammar/grammar.c"
         break;
       case 28: /* value ::= value POW value */
-#line 299 "./src/Grammar/grammar.y"
+#line 304 "./src/Grammar/grammar.y"
 {
     value_pow(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0);
     if(!panopticon::correct_parsing)
@@ -1097,7 +1097,7 @@ static void yy_reduce(
 #line 1098 "./src/Grammar/grammar.c"
         break;
       case 29: /* value ::= value EQUALTO value */
-#line 309 "./src/Grammar/grammar.y"
+#line 314 "./src/Grammar/grammar.y"
 {
     equal_to(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0);
     if(!panopticon::correct_parsing)
@@ -1110,7 +1110,7 @@ static void yy_reduce(
 #line 1111 "./src/Grammar/grammar.c"
         break;
       case 30: /* value ::= value NOTEQUALTO value */
-#line 319 "./src/Grammar/grammar.y"
+#line 324 "./src/Grammar/grammar.y"
 {
     not_equal_to(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0);
     if(!panopticon::correct_parsing)
@@ -1123,7 +1123,7 @@ static void yy_reduce(
 #line 1124 "./src/Grammar/grammar.c"
         break;
       case 31: /* value ::= value LESSTHAN value */
-#line 329 "./src/Grammar/grammar.y"
+#line 334 "./src/Grammar/grammar.y"
 {
     less_than(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0);
     if(!panopticon::correct_parsing)
@@ -1136,7 +1136,7 @@ static void yy_reduce(
 #line 1137 "./src/Grammar/grammar.c"
         break;
       case 32: /* value ::= value GREATERTHAN value */
-#line 339 "./src/Grammar/grammar.y"
+#line 344 "./src/Grammar/grammar.y"
 {
     greater_than(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0);
     if(!panopticon::correct_parsing)
@@ -1149,7 +1149,7 @@ static void yy_reduce(
 #line 1150 "./src/Grammar/grammar.c"
         break;
       case 33: /* value ::= value LORE value */
-#line 349 "./src/Grammar/grammar.y"
+#line 354 "./src/Grammar/grammar.y"
 {
     lore(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0);
     if(!panopticon::correct_parsing)
@@ -1162,7 +1162,7 @@ static void yy_reduce(
 #line 1163 "./src/Grammar/grammar.c"
         break;
       case 34: /* value ::= value GORE value */
-#line 359 "./src/Grammar/grammar.y"
+#line 364 "./src/Grammar/grammar.y"
 {
     gore(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0);
     if(!panopticon::correct_parsing)
@@ -1175,7 +1175,7 @@ static void yy_reduce(
 #line 1176 "./src/Grammar/grammar.c"
         break;
       case 35: /* value ::= value AND value */
-#line 369 "./src/Grammar/grammar.y"
+#line 374 "./src/Grammar/grammar.y"
 {
     value_and(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0);
     if(!panopticon::correct_parsing)
@@ -1188,7 +1188,7 @@ static void yy_reduce(
 #line 1189 "./src/Grammar/grammar.c"
         break;
       case 36: /* value ::= value OR value */
-#line 379 "./src/Grammar/grammar.y"
+#line 384 "./src/Grammar/grammar.y"
 {
     value_or(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0);
     if(!panopticon::correct_parsing)
@@ -1201,7 +1201,7 @@ static void yy_reduce(
 #line 1202 "./src/Grammar/grammar.c"
         break;
       case 37: /* value ::= NOT value */
-#line 389 "./src/Grammar/grammar.y"
+#line 394 "./src/Grammar/grammar.y"
 {
     not_value(yygotominor.yy0,yymsp[0].minor.yy0);
     if(!panopticon::correct_parsing)
@@ -1214,7 +1214,7 @@ static void yy_reduce(
 #line 1215 "./src/Grammar/grammar.c"
         break;
       case 38: /* value ::= value SHIFTL value */
-#line 399 "./src/Grammar/grammar.y"
+#line 404 "./src/Grammar/grammar.y"
 {
     shift_left(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0);
     if(!panopticon::correct_parsing)
@@ -1227,7 +1227,7 @@ static void yy_reduce(
 #line 1228 "./src/Grammar/grammar.c"
         break;
       case 39: /* value ::= value SHIFTR value */
-#line 409 "./src/Grammar/grammar.y"
+#line 414 "./src/Grammar/grammar.y"
 {
     shift_right(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0);
     if(!panopticon::correct_parsing)
@@ -1240,7 +1240,7 @@ static void yy_reduce(
 #line 1241 "./src/Grammar/grammar.c"
         break;
       case 40: /* value ::= value BITAND value */
-#line 419 "./src/Grammar/grammar.y"
+#line 424 "./src/Grammar/grammar.y"
 {
     bit_and(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0);
     if(!panopticon::correct_parsing)
@@ -1253,7 +1253,7 @@ static void yy_reduce(
 #line 1254 "./src/Grammar/grammar.c"
         break;
       case 41: /* value ::= value BITOR value */
-#line 429 "./src/Grammar/grammar.y"
+#line 434 "./src/Grammar/grammar.y"
 {
     bit_or(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0);
     if(!panopticon::correct_parsing)
@@ -1266,7 +1266,7 @@ static void yy_reduce(
 #line 1267 "./src/Grammar/grammar.c"
         break;
       case 42: /* value ::= variable OPENBRAC num RBRAC */
-#line 441 "./src/Grammar/grammar.y"
+#line 446 "./src/Grammar/grammar.y"
 {
     index(yygotominor.yy0,yymsp[-3].minor.yy0,yymsp[-1].minor.yy0);
     if(!panopticon::correct_parsing)
@@ -1280,7 +1280,7 @@ static void yy_reduce(
 #line 1281 "./src/Grammar/grammar.c"
         break;
       case 43: /* stmt ::= variable */
-#line 451 "./src/Grammar/grammar.y"
+#line 456 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0 = yymsp[0].minor.yy0;
     if(!panopticon::correct_parsing)
@@ -1292,7 +1292,7 @@ static void yy_reduce(
 #line 1293 "./src/Grammar/grammar.c"
         break;
       case 44: /* variable ::= NAME ASSIGN value */
-#line 461 "./src/Grammar/grammar.y"
+#line 466 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0 = yymsp[0].minor.yy0;
     yygotominor.yy0.type = panopticon::VARIABLE;
@@ -1307,7 +1307,7 @@ static void yy_reduce(
 #line 1308 "./src/Grammar/grammar.c"
         break;
       case 45: /* in ::= error */
-#line 477 "./src/Grammar/grammar.y"
+#line 482 "./src/Grammar/grammar.y"
 {
     switch(yymsp[0].minor.yy115)
     {
@@ -1322,7 +1322,7 @@ static void yy_reduce(
 #line 1323 "./src/Grammar/grammar.c"
         break;
       case 46: /* error ::= OPENQUOTEERROR */
-#line 490 "./src/Grammar/grammar.y"
+#line 495 "./src/Grammar/grammar.y"
 {
     yymsp[0].minor.yy0.type = panopticon::NUMBER;
     yygotominor.yy115 = panopticon::OpenQuoteError;

@@ -33,7 +33,7 @@ bool bool_plus(object&A, object& B, object& C)
     switch(C.type)
     {
     case NUMBER:
-        number_plus_bool(A,B,C);
+        number_plus_bool(A,C,B);
         break;
     case STRING:
         bool_plus_string(A,B,C);
@@ -50,7 +50,6 @@ bool bool_plus(object&A, object& B, object& C)
         }
         break;
     case ARRAY:
-//        array_plus_bool(A,C,B);
         object_operator_array(A,B,C,&bool_plus);
         break;
     }
@@ -81,19 +80,16 @@ bool array_plus(object&A, object& B, object& C)
     switch(C.type)
     {
     case NUMBER:
-//        array_plus_number(A,B,C);
         object_operator_array(A,C,B,&number_plus);
         break;
     case STRING:
-//        array_plus_string(A,B,C);
-        object_operator_array(A,C,B,&string_plus);
+        object_operator_array(A,B,C,&plus);
         break;
     case BOOL:
-//        array_plus_bool(A,B,C);
         object_operator_array(A,C,B,&bool_plus);
         break;
     case ARRAY:
-        array_operator_object(A,B,C,&array_plus);
+        array_operator_array(A,B,C,&plus);
         break;
     }
 }
@@ -136,10 +132,10 @@ bool bool_plus_string(object &a,const object b, const object c)
     catch(std::exception &e)
     {
         out() << "Error Boolean + String: " << e.what() << std::endl;
-        delete c.data.string;
+//        delete c.data.string;
         return false;
     }
-    delete c.data.string;
+//    delete c.data.string;
     return true;
 }
 
@@ -162,10 +158,9 @@ bool string_plus_bool(object &a,const object b, const object c)
     catch(std::exception &e)
     {
         out() << "Error String + bool: " << e.what() << std::endl;
-        delete b.data.string;
+//        delete b.data.string;
         return false;
     }
-    delete b.data.string;
     return true;
 }
 
@@ -183,10 +178,10 @@ bool num_plus_string(object &a,const object b, const object c)
     catch(std::exception &e)
     {
         out() << "Error Number + String: " << e.what() << std::endl;
-        delete c.data.string;
+//        delete c.data.string;
         return false;
     }
-    delete c.data.string;
+//    delete c.data.string;
     return true;
 }
 
@@ -204,10 +199,9 @@ bool string_plus_num(object &a,const object b, const object c)
     catch(std::exception &e)
     {
         out() << "Error String + Number: " << e.what() << std::endl;
-        delete b.data.string;
+//        delete b.data.string;
         return false;
     }
-    delete b.data.string;
     return true;
 }
 
@@ -222,12 +216,11 @@ bool string_plus_string(object &a,const object b, const object c)
     }
     catch(std::exception &e)
     {
-        delete b.data.string;
-        delete c.data.string;
+//        delete b.data.string;
+//        delete c.data.string;
         return false;
     }
-    delete b.data.string;
-    delete c.data.string;
+//    delete c.data.string;
     return true;
 }
 
@@ -242,7 +235,7 @@ bool array_plus_bool(object& a,object& array, object& boolean)
     {
         bool_plus(a,boolean,array.data.array->at(i));
     }
-    delete array.data.array;
+//    delete array.data.array;
 }
 
 bool array_plus_number(object& a,object& array, object& number)
@@ -258,7 +251,7 @@ bool array_plus_number(object& a,object& array, object& number)
         a.data.array->push_back(newObject);
     }
 
-    delete array.data.array;
+//    delete array.data.array;
 }
 
 bool array_plus_string(object&A,object& array, object& string)
@@ -272,7 +265,7 @@ bool array_plus_string(object&A,object& array, object& string)
         string_plus(newObject,string,array.data.array->at(i));
         A.data.array->push_back(newObject);
     }
-    delete array.data.array;
+//    delete array.data.array;
 }
 
 bool array_plus_array(object& a,object& array1, object& array2)
@@ -318,8 +311,8 @@ bool array_plus_array(object& a,object& array1, object& array2)
         }
     }
 
-    delete array1.data.array;
-    delete array2.data.array;
+//    delete array1.data.array;
+//    delete array2.data.array;
 }
 
 }

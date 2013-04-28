@@ -341,9 +341,8 @@ bool object_operator_array(object& a, object& obj, object& array, bool (*func)(o
     {
         object newObject;
         func(newObject,obj,array.data.array->at(i));
+        a.data.array->push_back(newObject);
     }
-
-    delete array.data.array;
 }
 
 bool array_operator_object(object& a, object& array, object& obj, bool (*func)(object &, object &, object &))
@@ -355,11 +354,44 @@ bool array_operator_object(object& a, object& array, object& obj, bool (*func)(o
     for(int i=0;i<array.data.array->size();++i)
     {
         object newObject;
-        func(newObject,array,obj.data.array->at(i));
+        func(newObject,array.data.array->at(i),obj);
+        a.data.array->push_back(newObject);
     }
-
-    delete array.data.array;
 }
+
+bool array_operator_array(object& a, object& array1, object& array2, bool (*func)(object &, object &, object &))
+{
+    a.type = panopticon::ARRAY;
+    a.data.array = new std::vector<object>();
+    int size = 0;
+    if(array1.data.array->size()>array2.data.array->size())
+    {
+        size = array1.data.array->size();
+    }
+    else
+    {
+        size = array2.data.array->size();
+    }
+    a.data.array->reserve(size);
+
+    for(int i=0;i<size;++i)
+    {
+        object& array1Object = array1.data.array->at(i%array1.data.array->size());
+        object& array2Object = array2.data.array->at(i%array2.data.array->size());
+        object newObject;
+        func(newObject,array1Object,array2Object);
+        a.data.array->push_back(newObject);
+    }
+}
+
+bool object_operator_object(object& a, object& b, object& c, bool (*func)(object &, object &, object &))
+{
+    func(a,b,c);
+    delete_object(b);
+    delete_object(c);
+}
+
+
 
 bool recursive_apply(object& a, object& obj1, object& obj2, bool (*func)(object &, object &, object &))
 {
@@ -420,19 +452,55 @@ bool divide(object&A, object& B, object& C)
     switch(B.type)
     {
     case NUMBER:
-        number_divide(A,B,C);
+        switch(C.type)
+        {
+        case NUMBER:
+            A.type = NUMBER;
+            A.data.number = B.data.number/C.data.number;
+            break;
+        case STRING:
+            out() << print_error(DivideStringError) << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << print_error(DivideBooolError) << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            object_operator_array(A,B,C,&divide);
+            break;
+        }
         break;
     case STRING:
-        string_divide(A,B,C);
+        out() << print_error(DivideStringError) << std::endl;
+        correct_parsing = false;
         break;
     case BOOL:
-        bool_divide(A,B,C);
+        out() << print_error(DivideBooolError) << std::endl;
+        correct_parsing = false;
         break;
     case ARRAY:
-        array_divide(A,B,C);
+        switch(C.type)
+        {
+        case NUMBER:
+            array_operator_object(A,B,C,&divide);
+            break;
+        case STRING:
+            out() << print_error(DivideStringError) << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << print_error(DivideBooolError) << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            array_operator_array(A,B,C,&divide);
+            break;
+        }
         break;
     }
 }
+
 
 bool multiply(object&A, object& B, object& C)
 {
@@ -459,13 +527,31 @@ bool multiply(object&A, object& B, object& C)
         }
         break;
     case STRING:
-        out() << "Syntax Error: Cannot multiply a string by something." << std::endl;
+        out() << print_error(MultiplyStringError) << std::endl;
+        correct_parsing = false;
         break;
     case BOOL:
-        out() << "Syntax Error: Cannot multiply a bool by something." << std::endl;
+        out() << print_error(MultiplyBoolError) << std::endl;
+        correct_parsing = false;
         break;
     case ARRAY:
-        recursive_apply(A,B,C,&multiply);
+        switch(C.type)
+        {
+        case NUMBER:
+            array_operator_object(A,B,C,&multiply);
+            break;
+        case STRING:
+            out() << print_error(DivideStringError) << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << print_error(DivideBooolError) << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            array_operator_array(A,B,C,&multiply);
+            break;
+        }
         break;
     }
 }
@@ -482,24 +568,44 @@ bool modulo(object&A, object& B, object& C)
             A.data.number = fmod(B.data.number,C.data.number);
             break;
         case STRING:
-            out() << "Syntax Error: Cannot multiply a number by a string." << std::endl;
+            out() << print_error(ModStringError) << std::endl;
+            correct_parsing = false;
             break;
         case BOOL:
-            out() << "Syntax Error: Cannot multiply a number by a string." << std::endl;
+            out() << print_error(ModBoolError) << std::endl;
+            correct_parsing = false;
             break;
         case ARRAY:
-            recursive_apply(A,B,C,&modulo);
+            object_operator_array(A,B,C,&modulo);
             break;
         }
         break;
     case STRING:
-        out() << "Syntax Error: Cannot modulo a string by something." << std::endl;
+        out() << print_error(ModStringError) << std::endl;
+        correct_parsing = false;
         break;
     case BOOL:
-        out() << "Syntax Error: Cannot modulo a bool by something." << std::endl;
+        out() << print_error(ModBoolError) << std::endl;
+        correct_parsing = false;
         break;
     case ARRAY:
-        recursive_apply(A,B,C,&modulo);
+        switch(C.type)
+        {
+        case NUMBER:
+            array_operator_object(A,B,C,&modulo);
+            break;
+        case STRING:
+            out() << print_error(DivideStringError) << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << print_error(DivideBooolError) << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            array_operator_array(A,B,C,&modulo);
+            break;
+        }
         break;
     }
 }
@@ -533,7 +639,7 @@ bool value_pow(object&A, object& B, object& C)
         out() << "Syntax Error: Cannot exponentiate a boolean." << std::endl;
         break;
     case ARRAY:
-        recursive_apply(A,B,C,&value_pow);
+        array_operator_array(A,B,C,&value_pow);
         break;
     }
 }

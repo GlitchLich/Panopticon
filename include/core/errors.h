@@ -40,7 +40,11 @@ enum Error
     SubtractBoolFromNum,//p0008
     DivideBooolError,//p0009
     MultiplyBoolError,//p0010
-    MultiplyStringError//p0011
+    MultiplyStringError,//p0011
+    SubtractNumFromString,//p0012
+    SubtractBoolFromString,//p0013
+    ModBoolError,//p0014
+    ModStringError//p0015
 };
 extern bool correct_parsing;
 extern std::string print_error(Error error_code);

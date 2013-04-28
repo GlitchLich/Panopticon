@@ -24,7 +24,7 @@ bool number_minus(object&A,object& B, object& C)
         correct_parsing = false;
         break;
     case ARRAY:
-        number_minus_array(A,B,C);
+        object_operator_array(A,B,C,&number_minus);
         break;
     }
 }
@@ -41,16 +41,21 @@ bool string_minus(object&A, object& B, object& C)
     switch(C.type)
     {
     case NUMBER:
-        string_minus_string(A,B,convert_to_string(C));
+//        string_minus_string(A,B,convert_to_string(C));
+        out() << print_error(SubtractNumFromString) << std::endl;
+        correct_parsing = false;
         break;
     case STRING:
         string_minus_string(A,B,C);
         break;
     case BOOL:
-        string_minus_string(A,B,convert_to_string(C));
+        out() << print_error(SubtractBoolFromString) << std::endl;
+        correct_parsing = false;
+//        string_minus_string(A,B,convert_to_string(C));
         break;
     case ARRAY:
-        string_minus_array(A,C,B);
+        object_operator_array(A,B,C,&string_minus);
+//        string_minus_array(A,C,B);
         break;
     }
 }
@@ -60,17 +65,21 @@ bool array_minus(object&A, object& B, object& C)
     switch(C.type)
     {
     case NUMBER:
-        array_minus_number(A,B,C);
+        array_operator_object(A,B,C,&minus);
+//        array_minus_number(A,B,C);
         break;
     case STRING:
-        array_minus_string(A,B,C);
+         array_operator_object(A,B,C,&minus);
+//        array_minus_string(A,B,C);
         break;
     case BOOL:
         out() << print_error(SubtractBoolFromNum) << std::endl;
         correct_parsing = false;
         break;
     case ARRAY:
-        array_minus_array(A,B,C);
+//        array_minus_array(A,B,C);
+//        array_operator_object(A,B,C,&minus);
+        array_operator_array(A,B,C,&minus);
         break;
     }
 }
@@ -99,12 +108,12 @@ bool string_minus_string(object &a, const object &b, const object &c)
     }
     catch(std::exception &e)
     {
-        delete b.data.string;
-        delete c.data.string;
+//        delete b.data.string;
+//        delete c.data.string;
         return false;
     }
-    delete b.data.string;
-    delete c.data.string;
+//    delete b.data.string;
+//    delete c.data.string;
     return true;
 }
 
@@ -118,9 +127,10 @@ bool number_minus_array(object& a,object& number, object& array)
     {
         object newObject;
         number_minus(newObject,number,array.data.array->at(i));
+        a.data.array->push_back(newObject);
     }
 
-    delete array.data.array;
+//    delete array.data.array;
 }
 
 bool array_minus_number(object& a,object& array, object& number)
@@ -133,9 +143,10 @@ bool array_minus_number(object& a,object& array, object& number)
     {
         object newObject;
         minus(newObject,number,array.data.array->at(i));
+        a.data.array->push_back(newObject);
     }
 
-    delete array.data.array;
+//    delete array.data.array;
 }
 
 bool array_minus_string(object& a,object& array, object& string)
@@ -150,7 +161,7 @@ bool array_minus_string(object& a,object& array, object& string)
         string_minus(newObject,string,array.data.array->at(i));
     }
 
-    delete array.data.array;
+//    delete array.data.array;
 }
 
 bool string_minus_array(object& a,object& string, object& array)
@@ -166,7 +177,7 @@ bool string_minus_array(object& a,object& string, object& array)
         a.data.array->push_back(newObject);
     }
 
-    delete array.data.array;
+//    delete array.data.array;
 }
 
 bool array_minus_array(object& a,object& array1, object& array2)
@@ -194,8 +205,8 @@ bool array_minus_array(object& a,object& array1, object& array2)
         a.data.array->push_back(newObject);
     }
 
-    delete array1.data.array;
-    delete array2.data.array;
+//    delete array1.data.array;
+//    delete array2.data.array;
 }
 
 }

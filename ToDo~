@@ -1,19 +1,12 @@
 //Checked
 extern bool plus(object&A, object& B, object& C);
-
-//Not Working
-string + string
-string + bool
-string + array
-array + bool
-array + string
-array + array
+extern bool minus(object&A, object& B, object& C);
+extern bool multiply(object&A, object& B, object& C);
+extern bool divide(object&A, object& B, object& C);
+extern bool modulo(object&A, object& B, object& C);
 
 //Needs to be checked
-extern bool minus(object&A, object& B, object& C);
-extern bool divide(object&A, object& B, object& C);
-extern bool multiply(object&A, object& B, object& C);
-extern bool modulo(object&A, object& B, object& C);
+
 extern bool value_pow(object&A, object& B, object& C);
 extern bool equal_to(object&A, object& B, object& C);
 extern bool not_equal_to(object&A, object& B, object& C);

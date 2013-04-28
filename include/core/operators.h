@@ -50,6 +50,8 @@ extern bool delete_array(object& a);
 extern bool object_operator_array(object &a, object &obj, object& array, bool (*func)(object &, object &, object &));
 extern bool array_operator_object(object &a, object &array, object& obj, bool (*func)(object &, object &, object &));
 extern bool recursive_apply(object &a, object &obj1, object& obj2, bool (*func)(object &, object &, object &));
+extern bool object_operator_object(object& a, object& b, object& c, bool (*func)(object &, object &, object &));
+extern bool array_operator_array(object& a, object& array1, object& array2, bool (*func)(object &, object &, object &));
 
 //DONE
 extern bool plus(object&A, object& B, object& C);

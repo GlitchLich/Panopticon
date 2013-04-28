@@ -215,6 +215,11 @@ value(A) ::= bool(B).
     A=B;
 }
 
+/*value(A) ::= array(B).*/
+/*{*/
+/*    A=B;*/
+/*}*/
+
 
 //======================
 //BASICS
@@ -247,7 +252,7 @@ bool(A) ::= BOOLEAN(B).
 //=======================
 value(A) ::= value(B) PLUS value(C).
 {
-    plus(A,B,C);
+    object_operator_object(A,B,C,&panopticon::plus);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -257,7 +262,7 @@ value(A) ::= value(B) PLUS value(C).
 
 value(A) ::= value(B) MINUS value(C).
 {
-    minus(A,B,C);
+    object_operator_object(A,B,C,&panopticon::minus);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -267,7 +272,7 @@ value(A) ::= value(B) MINUS value(C).
 
 value(A) ::= value(B) DIVIDE value(C).
 {
-    divide(A,B,C);
+    object_operator_object(A,B,C,&panopticon::divide);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);

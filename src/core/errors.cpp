@@ -26,11 +26,19 @@ std::string print_error(Error error_code)
     case SubtractBoolFromNum://p0008
         return "Syntax Error p0008: Cannot use subtraction with a Boolean.";
     case DivideBooolError://p0009
-        return "Syntax Error p0009: Cannot use division with a String.";
+        return "Syntax Error p0009: Cannot use division with a Boolean.";
     case MultiplyBoolError://p0010
         return "Syntax Error p0010: Cannot Multiply a Boolean.";
     case MultiplyStringError://p0011
         return "Syntax Error p0011: Cannot Multiply a String.";
+    case SubtractNumFromString://p0012
+        return "Syntax Error p0012: Cannot subtract a Number from a String.";
+    case SubtractBoolFromString://p0013
+        return "Syntax Error p0013: Cannot subtract a Boolean from a String.";
+    case ModBoolError://p0014
+        return "Syntax Error p0014: Cannot Modulo a Boolean.";
+    case ModStringError://p0015
+        return "Syntax Error p0015: Cannot Modulo a String.";
     }
 }
 
