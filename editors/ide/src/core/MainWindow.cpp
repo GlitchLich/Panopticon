@@ -327,6 +327,8 @@ void MainWindow::newEditBuffer()
         focusedBuffer->hide();
 
     EditBuffer* buffer = new EditBuffer();
+    buffer->setGeometry(0, 0, width(), (double) height() * 0.8);
+    syntaxHighlighter.setDocument(buffer->document());
     buffer->setFocus();
     buffer->grabKeyboard();
     graphicsView.scene()->addWidget(buffer);
