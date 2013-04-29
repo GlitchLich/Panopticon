@@ -29,7 +29,8 @@
 #define RBRAC                          29
 #define ASSIGN                         30
 #define NEWLINE                        31
-#define NUM                            32
-#define STRING                         33
-#define BOOLEAN                        34
-#define OPENQUOTEERROR                 35
+#define NAME                           32
+#define NUM                            33
+#define STRING                         34
+#define BOOLEAN                        35
+#define OPENQUOTEERROR                 36

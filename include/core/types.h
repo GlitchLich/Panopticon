@@ -72,7 +72,8 @@ enum Type
     //THE FOLLOWING ARE FOR PARSING ONLY,
     //NOT TO BE USED AS LANGUAGE CONSTRUCTS
     ERROR,
-    STATEMENT_LIST
+    STATEMENT_LIST,
+    VARIABLE
 };
 
 // Forward declarations

@@ -20,8 +20,10 @@ int line = 1, col = 1;
 true       { yylval.bval = 1;return BOOLEAN;}
 false     { yylval.bval = 0;return BOOLEAN;}
 [ \t]   { col += (int) strlen(yytext); }               /* ignore but count white space */
-[A-Za-z][A-Za-z0-9]* { /* ignore but needed for variables */
-    return 0;
+[A-Za-z][A-Za-z0-9]* {
+    col += (int)strlen(yytext);
+    yylval.sval=strndup(yytext,(int)strlen(yytext));
+    return NAME;
 }
 [+]+[+]           {  return PLUSPLUS; }
 "+"           {  return PLUS; }

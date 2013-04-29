@@ -7,5 +7,8 @@ set(Panopticon_SRC
 	${CMAKE_CURRENT_SOURCE_DIR}/parse.h
 	${CMAKE_CURRENT_SOURCE_DIR}/tokens.h
         ${CMAKE_CURRENT_SOURCE_DIR}/parsingutilities.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/plus.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/minus.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/divide.h
 	PARENT_SCOPE
 )
