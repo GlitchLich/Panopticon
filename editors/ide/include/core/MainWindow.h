@@ -93,6 +93,9 @@ public slots:
     void closeAllFiles();
     void quit();
 
+    void incrementBuffer();
+    void decrementBuffer();
+
 protected:
 
     QMenu *fileMenu, *sessionMenu, *editMenu, *languageMenu, *helpMenu;
@@ -118,6 +121,8 @@ public slots:
     bool closeAllFiles(); // returns true if user agrees to close all files
     void quit();
     void showEditBuffer(unsigned int buffer);
+    void incrementBuffer();
+    void decrementBuffer();
 
 protected:
 

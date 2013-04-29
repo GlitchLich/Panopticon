@@ -154,8 +154,8 @@ MenuBar::MenuBar(QWidget *parent) :
 
 
     editMenu = new QMenu("Edit");
-
-
+    editMenu->addAction("Previous Buffer", this, SLOT(decrementBuffer()), QKeySequence(Qt::ShiftModifier, Qt::LeftArrow));
+    editMenu->addAction("Next Buffer", this, SLOT(incrementBuffer()), QKeySequence(Qt::ShiftModifier, Qt::RightArrow));
 
     languageMenu = new QMenu("Language");
 
@@ -208,6 +208,16 @@ void MenuBar::closeAllFiles()
 void MenuBar::quit()
 {
     MAIN_WINDOW->quit();
+}
+
+void MenuBar::incrementBuffer()
+{
+    MAIN_WINDOW->incrementBuffer();
+}
+
+void MenuBar::decrementBuffer()
+{
+    MAIN_WINDOW->decrementBuffer();
 }
 
 
@@ -391,6 +401,28 @@ void MainWindow::showEditBuffer(unsigned int buffer)
     }
 }
 
+void MainWindow::incrementBuffer()
+{
+    QMap<unsigned int, EditBuffer*>::iterator nextBuffer = editBuffers.lowerBound(focusedBuffer->id + 1);
+
+    if(nextBuffer != editBuffers.end())
+    {
+        showEditBuffer(nextBuffer.key());
+        filePanel.checkButton(nextBuffer.key());
+    }
+}
+
+void MainWindow::decrementBuffer()
+{
+    QMap<unsigned int, EditBuffer*>::iterator previousBuffer = editBuffers.find(focusedBuffer->id);
+    if(previousBuffer != editBuffers.begin())
+    {
+        --previousBuffer;
+        showEditBuffer(previousBuffer.key());
+        filePanel.checkButton(previousBuffer.key());
+    }
+}
+
 void MainWindow::newEditBuffer()
 {
     if(focusedBuffer)
@@ -457,7 +489,7 @@ void MainWindow::prCloseFile(bool autospawn)
 
     if(editBuffers.size() > 0)
     {
-        QMap<unsigned int, EditBuffer*>::iterator nextBuffer = editBuffers.upperBound(id);
+        QMap<unsigned int, EditBuffer*>::iterator nextBuffer = editBuffers.lowerBound(id);
 
         if(nextBuffer == editBuffers.end())
         {

@@ -77,8 +77,13 @@ void FilePanel::fileButtonPressed()
 
 void FilePanel::checkButton(unsigned int buffer)
 {
+    if(fileButtons.contains(lastPressed))
+        fileButtons[lastPressed]->setChecked(false);
+
     if(fileButtons.contains(buffer))
         fileButtons[buffer]->setChecked(true);
+
+    lastPressed = buffer;
 }
 
 } // ide namespace

@@ -98,10 +98,23 @@ void EditBuffer::keyPressEvent(QKeyEvent *e)
 
     else if(e->modifiers() == Qt::ShiftModifier)
     {
-        if(e->key() == Qt::Key_Return || e->key() == Qt::Key_Enter)
+        switch(e->key())
         {
+        case Qt::Key_Return:
+        case Qt::Key_Enter:
             executeCommand();
             return;
+
+        case Qt::Key_Left:
+            MAIN_WINDOW->decrementBuffer();
+            return;
+
+        case Qt::Key_Right:
+            MAIN_WINDOW->incrementBuffer();
+            return;
+
+        default:
+            break;
         }
     }
 
