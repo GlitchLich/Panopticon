@@ -28,11 +28,9 @@ metaArray[2][2]
 metaArray[2][3][0]
 
 //Functions
-doubleFunc x = x + x
+myFunc x y = x * y
+myFunc(10 11)
 
-doubleFunc(x y z)
-
-quadrupleFunc x = doubleFunc(x)
 
 "hey"[0]
 4[0]

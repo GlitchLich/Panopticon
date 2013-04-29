@@ -172,13 +172,11 @@ name_chain(A) ::= name_chain(B) NAME(C).
     }
     else
     {
-        std::cout << B.data.array->size() << std::endl;
         A.type = optic::ARRAY;
         A.data.array = new optic::Array();
         A.data.array->reserve(B.data.array->size()+1);
         for(int i=0;i<B.data.array->size();++i)
         {
-            std::cout << * B.data.array->at(i).data.string << std::endl;
             optic::object newObject;
             newObject.type = optic::STRING;
             newObject.data.string = new optic::String(*B.data.array->at(i).data.string);

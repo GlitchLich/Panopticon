@@ -488,9 +488,53 @@ bool object_operator_object(object& a, object& b, object& c, bool (*func)(object
     }
 }
 
-bool check_variables(object& B, object& C)
+bool check_variables(Map& variables, object& B, object& C)
 {
+    if(B.type==ARRAY)
+    {
+        for(int i=0;i<B.data.array->size();++i)
+        {
+            object newObject;
+            variables[*B.data.array->at(i).data.string] = newObject;
+        }
+    }
+    else
+    {
+        object newObject;
+        variables[*B.data.string] = newObject;
+    }
 
+    if(C.type==OPERATION_TREE)
+    {
+        for(int i=0;i<C.data.array->size();++i)
+        {
+            std::cout << C.data.array->at(i).type << std::endl;
+            if(C.data.array->at(i).type==OPERATION_TREE)
+            {
+                return false;
+            }
+            if(C.data.array->at(i).type!=OPERATION&&C.data.array->at(i).type!=NUMBER)
+            {
+                if(variables.find(*C.data.array->at(i).data.string)==variables.end())
+                {
+                    return false;
+                }
+            }
+        }
+    }
+    else
+    {
+        if(C.type==OPERATION)
+        {
+            return false;
+        }
+        if(variables.find(*C.data.string)==variables.end())
+        {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 bool create_function(object &A, object &B, object &C)
@@ -506,18 +550,25 @@ bool create_function(object &A, object &B, object &C)
         function_name = *B.data.string;
     }
 
-    out() << "Creating function "<< function_name << std::endl;
-
-    if(B.type == ARRAY)
+    Map variables;
+    if(!check_variables(variables,B,C))
     {
-        out() << "with arguments: ";
-        for(int i=1;i<B.data.array->size();++i)
-        {
-            out() << *B.data.array->at(i).data.string << " ";
-        }
-        out() << std::endl;
+        out() << "Error: Function contains variables that are not in the arguments field." << std::endl;
     }
+    else
+    {
+        out() << "Creating function "<< function_name << std::endl;
 
+        if(B.type == ARRAY)
+        {
+            out() << "with arguments: ";
+            for(int i=1;i<B.data.array->size();++i)
+            {
+                out() << *B.data.array->at(i).data.string << " ";
+            }
+            out() << std::endl;
+        }
+    }
 }
 
 
