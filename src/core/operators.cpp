@@ -1287,27 +1287,47 @@ bool shift_left(object&A, object& B, object& C)
         {
         case NUMBER:
             A.type = NUMBER;
-            A.data.number = (int)B.data.number << (int)C.data.number;
+            A.data.number = (((int)B.data.number) << ((int)C.data.number));
             break;
         case STRING:
             out() << "Syntax error: cannot call << on a string." << std::endl;
+            correct_parsing = false;
             break;
         case BOOL:
             out() << "Syntax error: cannot call << on a boolean." << std::endl;
+            correct_parsing = false;
             break;
         case ARRAY:
-            recursive_apply(A,B,C,&shift_left);
+            object_operator_array(A,B,C,&shift_left);
             break;
         }
         break;
     case STRING:
         out() << "Syntax error: cannot call << on a string." << std::endl;
+        correct_parsing = false;
         break;
     case BOOL:
         out() << "Syntax error: cannot call << on a boolean." << std::endl;
+        correct_parsing = false;
         break;
     case ARRAY:
-        recursive_apply(A,B,C,&shift_left);
+        switch(C.type)
+        {
+        case NUMBER:
+            array_operator_object(A,B,C,&shift_left);
+            break;
+        case STRING:
+            out() << "Syntax error: cannot call << on a string." << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << "Syntax error: cannot call << on a boolean." << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            array_operator_array(A,B,C,&shift_left);
+            break;
+        }
         break;
     }
 }
@@ -1321,34 +1341,72 @@ bool shift_right(object&A, object& B, object& C)
         {
         case NUMBER:
             A.type = NUMBER;
-            A.data.number = (int)B.data.number >> (int)C.data.number;
+            A.data.number = (((int)B.data.number) >> ((int)C.data.number));
             break;
         case STRING:
             out() << "Syntax error: cannot call >> on a string." << std::endl;
+            correct_parsing = false;
             break;
         case BOOL:
             out() << "Syntax error: cannot call >> on a boolean." << std::endl;
+            correct_parsing = false;
             break;
         case ARRAY:
-            recursive_apply(A,B,C,&shift_left);
+            object_operator_array(A,B,C,&shift_right);
             break;
         }
         break;
     case STRING:
         out() << "Syntax error: cannot call >> on a string." << std::endl;
+        correct_parsing = false;
         break;
     case BOOL:
         out() << "Syntax error: cannot call >> on a boolean." << std::endl;
+        correct_parsing = false;
         break;
     case ARRAY:
-        recursive_apply(A,B,C,&shift_right);
+        switch(C.type)
+        {
+        case NUMBER:
+            array_operator_object(A,B,C,&shift_right);
+            break;
+        case STRING:
+            out() << "Syntax error: cannot call >> on a string." << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << "Syntax error: cannot call >> on a boolean." << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            array_operator_array(A,B,C,&shift_right);
+            break;
+        }
         break;
     }
 }
 
-bool bit_not(object&A, object& B, object& C)
+bool bit_not(object&A, object& B)
 {
-
+    switch(B.type)
+    {
+    case NUMBER:
+        A.type = NUMBER;
+        A.data.number = ~(int)B.data.number;
+        break;
+    case STRING:
+        out() << "Syntax error: cannot call ~ on a string." << std::endl;
+        correct_parsing = false;
+        break;
+    case BOOL:
+        out() << "Syntax error: cannot call ~ on a string." << std::endl;
+        correct_parsing = false;
+        break;
+    case ARRAY:
+        out() << "Syntax error: cannot call ~ on an array." << std::endl;
+        correct_parsing = false;
+        break;
+    }
 }
 
 bool bit_and(object&A, object& B, object& C)
@@ -1356,7 +1414,7 @@ bool bit_and(object&A, object& B, object& C)
     switch(B.type)
     {
     case NUMBER:
-        switch(B.type)
+        switch(C.type)
         {
         case NUMBER:
             A.type = NUMBER;
@@ -1364,23 +1422,43 @@ bool bit_and(object&A, object& B, object& C)
             break;
         case STRING:
             out() << "Syntax error: cannot call & on a string." << std::endl;
+            correct_parsing = false;
             break;
         case BOOL:
             out() << "Syntax error: cannot call & on a boolean." << std::endl;
+            correct_parsing = false;
             break;
         case ARRAY:
-            recursive_apply(A,B,C,&shift_left);
+            object_operator_array(A,B,C,&bit_and);
             break;
         }
         break;
     case STRING:
         out() << "Syntax error: cannot call & on a string." << std::endl;
+        correct_parsing = false;
         break;
     case BOOL:
         out() << "Syntax error: cannot call & on a boolean." << std::endl;
+        correct_parsing = false;
         break;
     case ARRAY:
-        recursive_apply(A,B,C,&shift_right);
+        switch(C.type)
+        {
+        case NUMBER:
+            array_operator_object(A,B,C,&bit_and);
+            break;
+        case STRING:
+            out() << "Syntax error: cannot call & on a string." << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << "Syntax error: cannot call & on a boolean." << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            array_operator_array(A,B,C,&bit_and);
+            break;
+        }
         break;
     }
 }
@@ -1390,7 +1468,7 @@ bool bit_or(object&A, object& B, object& C)
     switch(B.type)
     {
     case NUMBER:
-        switch(B.type)
+        switch(C.type)
         {
         case NUMBER:
             A.type = NUMBER;
@@ -1398,26 +1476,101 @@ bool bit_or(object&A, object& B, object& C)
             break;
         case STRING:
             out() << "Syntax error: cannot call & on a string." << std::endl;
+            correct_parsing = false;
             break;
         case BOOL:
             out() << "Syntax error: cannot call & on a boolean." << std::endl;
+            correct_parsing = false;
             break;
         case ARRAY:
-            recursive_apply(A,B,C,&shift_left);
+            object_operator_array(A,B,C,&bit_or);
             break;
         }
         break;
     case STRING:
         out() << "Syntax error: cannot call & on a string." << std::endl;
+        correct_parsing = false;
         break;
     case BOOL:
         out() << "Syntax error: cannot call & on a boolean." << std::endl;
+        correct_parsing = false;
         break;
     case ARRAY:
-        recursive_apply(A,B,C,&shift_right);
+        switch(C.type)
+        {
+        case NUMBER:
+            array_operator_object(A,B,C,&bit_or);
+            break;
+        case STRING:
+            out() << "Syntax error: cannot call & on a string." << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << "Syntax error: cannot call & on a boolean." << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            array_operator_array(A,B,C,&bit_or);
+            break;
+        }
         break;
     }
 }
+
+bool bit_xor(object&A, object& B, object& C)
+{
+    switch(B.type)
+    {
+    case NUMBER:
+        switch(C.type)
+        {
+        case NUMBER:
+            A.type = NUMBER;
+            A.data.number = (int)B.data.number ^ (int)C.data.number;
+            break;
+        case STRING:
+            out() << "Syntax error: cannot call |^ on a string." << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << "Syntax error: cannot call |^ on a boolean." << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            object_operator_array(A,B,C,&bit_xor);
+            break;
+        }
+        break;
+    case STRING:
+        out() << "Syntax error: cannot call |^ on a string." << std::endl;
+        correct_parsing = false;
+        break;
+    case BOOL:
+        out() << "Syntax error: cannot call |^ on a boolean." << std::endl;
+        correct_parsing = false;
+        break;
+    case ARRAY:
+        switch(C.type)
+        {
+        case NUMBER:
+            array_operator_object(A,B,C,&bit_xor);
+            break;
+        case STRING:
+            out() << "Syntax error: cannot call |^ on a string." << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << "Syntax error: cannot call |^ on a boolean." << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            array_operator_array(A,B,C,&bit_xor);
+            break;
+        }
+        break;
+    }
+}
+
 
 bool index(object&A, object& B, object& C)
 {

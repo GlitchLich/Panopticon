@@ -462,7 +462,7 @@ value(A) ::= value(B) BITXOR value(C).
 
 /*%fallback OPENBRAC LBRAC.*/
 
-value(A) ::= variable(B) OPENBRAC value(C) RBRAC. [INDEX]
+value(A) ::= variable(B) OPENBRAC valuex(C) RBRAC. [INDEX]
 {
     index(A,B,C);
     if(!panopticon::correct_parsing)

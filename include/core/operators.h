@@ -77,9 +77,9 @@ extern bool bit_or(object&A, object& B, object& C);
 
 //NOT DONE
 //PLUSPLUS
-extern bool bit_not(object&A, object& B, object& C);
+extern bool bit_not(object&A, object& B);
 extern bool bit_xor(object&A, object& B, object& C);
-
+extern bool plusplus(object&A, object& B, object& C);
 extern bool index(object&A, object& B, object& C);
 }
 #endif // OPERATORS_H

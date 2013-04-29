@@ -6,8 +6,8 @@ State 0:
           in ::= * error
           error ::= * OPENQUOTEERROR
 
-                OPENQUOTEERROR shift  52
-                         error shift  53
+                OPENQUOTEERROR shift  56
+                         error shift  57
                           main accept
                             in shift  1
                      {default} reduce 1
@@ -45,36 +45,39 @@ State 1:
           value ::= * value GORE value
           value ::= * value AND value
           value ::= * value OR value
+          value ::= * BITNOT value
           value ::= * NOT value
           value ::= * value SHIFTL value
           value ::= * value SHIFTR value
           value ::= * value BITAND value
           value ::= * value BITOR value
-          value ::= * variable OPENBRAC num RBRAC
+          value ::= * value BITXOR value
+          value ::= * variable OPENBRAC variable RBRAC
           stmt ::= * variable
           variable ::= * NAME ASSIGN value
 
                              $ reduce 0
                            NOT shift  5
+                        BITNOT shift  6
                          LBRAC shift  2
-                       NEWLINE shift  72
-                           NUM shift  58
-                        STRING shift  57
-                       BOOLEAN shift  56
-                          NAME shift  43
-                          expr shift  67
-                         start shift  51
-                          spec shift  70
-                      top_stmt shift  69
-                          stmt shift  68
-                        retval shift  66
-                        access shift  65
-                    identifier shift  64
-                         value shift  26
-                           num shift  61
-                        string shift  60
-                          bool shift  59
-                      variable shift  42
+                       NEWLINE shift  76
+                           NUM shift  62
+                        STRING shift  61
+                       BOOLEAN shift  60
+                          NAME shift  46
+                          expr shift  71
+                         start shift  55
+                          spec shift  74
+                      top_stmt shift  73
+                          stmt shift  72
+                        retval shift  70
+                        access shift  69
+                    identifier shift  68
+                         value shift  28
+                           num shift  65
+                        string shift  64
+                          bool shift  63
+                      variable shift  45
 
 State 2:
           stmt ::= * expr
@@ -108,33 +111,36 @@ State 2:
           value ::= * value GORE value
           value ::= * value AND value
           value ::= * value OR value
+          value ::= * BITNOT value
           value ::= * NOT value
           value ::= * value SHIFTL value
           value ::= * value SHIFTR value
           value ::= * value BITAND value
           value ::= * value BITOR value
-          value ::= * variable OPENBRAC num RBRAC
+          value ::= * value BITXOR value
+          value ::= * variable OPENBRAC variable RBRAC
           stmt ::= * variable
           variable ::= * NAME ASSIGN value
 
                            NOT shift  5
+                        BITNOT shift  6
                          LBRAC shift  2
-                           NUM shift  58
-                        STRING shift  57
-                       BOOLEAN shift  56
-                          NAME shift  43
-                          expr shift  67
-                          stmt shift  63
-                        retval shift  66
-                        access shift  65
-                    identifier shift  64
+                           NUM shift  62
+                        STRING shift  61
+                       BOOLEAN shift  60
+                          NAME shift  46
+                          expr shift  71
+                          stmt shift  67
+                        retval shift  70
+                        access shift  69
+                    identifier shift  68
                      stmt_list shift  3
-                         value shift  26
-         maybe_empty_stmt_list shift  41
-                           num shift  61
-                        string shift  60
-                          bool shift  59
-                      variable shift  42
+                         value shift  28
+         maybe_empty_stmt_list shift  44
+                           num shift  65
+                        string shift  64
+                          bool shift  63
+                      variable shift  45
                      {default} reduce 14
 
 State 3:
@@ -166,31 +172,34 @@ State 3:
           value ::= * value GORE value
           value ::= * value AND value
           value ::= * value OR value
+          value ::= * BITNOT value
           value ::= * NOT value
           value ::= * value SHIFTL value
           value ::= * value SHIFTR value
           value ::= * value BITAND value
           value ::= * value BITOR value
-          value ::= * variable OPENBRAC num RBRAC
+          value ::= * value BITXOR value
+          value ::= * variable OPENBRAC variable RBRAC
           stmt ::= * variable
           variable ::= * NAME ASSIGN value
 
                            NOT shift  5
+                        BITNOT shift  6
                          LBRAC shift  2
-                           NUM shift  58
-                        STRING shift  57
-                       BOOLEAN shift  56
-                          NAME shift  43
-                          expr shift  67
-                          stmt shift  62
-                        retval shift  66
-                        access shift  65
-                    identifier shift  64
-                         value shift  26
-                           num shift  61
-                        string shift  60
-                          bool shift  59
-                      variable shift  42
+                           NUM shift  62
+                        STRING shift  61
+                       BOOLEAN shift  60
+                          NAME shift  46
+                          expr shift  71
+                          stmt shift  66
+                        retval shift  70
+                        access shift  69
+                    identifier shift  68
+                         value shift  28
+                           num shift  65
+                        string shift  64
+                          bool shift  63
+                      variable shift  45
                      {default} reduce 15
 
 State 4:
@@ -215,26 +224,29 @@ State 4:
           value ::= * value GORE value
           value ::= * value AND value
           value ::= * value OR value
+          value ::= * BITNOT value
           value ::= * NOT value
           value ::= * value SHIFTL value
           value ::= * value SHIFTR value
           value ::= * value BITAND value
           value ::= * value BITOR value
-          value ::= * variable OPENBRAC num RBRAC
+          value ::= * value BITXOR value
+          value ::= * variable OPENBRAC variable RBRAC
           variable ::= * NAME ASSIGN value
           variable ::= NAME ASSIGN * value
 
                            NOT shift  5
+                        BITNOT shift  6
                          LBRAC shift  2
-                           NUM shift  58
-                        STRING shift  57
-                       BOOLEAN shift  56
-                          NAME shift  43
-                         value shift  25
-                           num shift  61
-                        string shift  60
-                          bool shift  59
-                      variable shift  45
+                           NUM shift  62
+                        STRING shift  61
+                       BOOLEAN shift  60
+                          NAME shift  46
+                         value shift  27
+                           num shift  65
+                        string shift  64
+                          bool shift  63
+                      variable shift  48
 
 State 5:
           value ::= * LBRAC maybe_empty_stmt_list RBRAC
@@ -258,26 +270,29 @@ State 5:
           value ::= * value GORE value
           value ::= * value AND value
           value ::= * value OR value
+          value ::= * BITNOT value
           value ::= * NOT value
           value ::= NOT * value
           value ::= * value SHIFTL value
           value ::= * value SHIFTR value
           value ::= * value BITAND value
           value ::= * value BITOR value
-          value ::= * variable OPENBRAC num RBRAC
+          value ::= * value BITXOR value
+          value ::= * variable OPENBRAC variable RBRAC
           variable ::= * NAME ASSIGN value
 
                            NOT shift  5
+                        BITNOT shift  6
                          LBRAC shift  2
-                           NUM shift  58
-                        STRING shift  57
-                       BOOLEAN shift  56
-                          NAME shift  43
-                         value shift  46
-                           num shift  61
-                        string shift  60
-                          bool shift  59
-                      variable shift  45
+                           NUM shift  62
+                        STRING shift  61
+                       BOOLEAN shift  60
+                          NAME shift  46
+                         value shift  49
+                           num shift  65
+                        string shift  64
+                          bool shift  63
+                      variable shift  48
 
 State 6:
           value ::= * LBRAC maybe_empty_stmt_list RBRAC
@@ -301,26 +316,29 @@ State 6:
           value ::= * value GORE value
           value ::= * value AND value
           value ::= * value OR value
+          value ::= * BITNOT value
+          value ::= BITNOT * value
           value ::= * NOT value
           value ::= * value SHIFTL value
           value ::= * value SHIFTR value
           value ::= * value BITAND value
           value ::= * value BITOR value
-          value ::= value BITOR * value
-          value ::= * variable OPENBRAC num RBRAC
+          value ::= * value BITXOR value
+          value ::= * variable OPENBRAC variable RBRAC
           variable ::= * NAME ASSIGN value
 
                            NOT shift  5
+                        BITNOT shift  6
                          LBRAC shift  2
-                           NUM shift  58
-                        STRING shift  57
-                       BOOLEAN shift  56
-                          NAME shift  43
-                         value shift  29
-                           num shift  61
-                        string shift  60
-                          bool shift  59
-                      variable shift  45
+                           NUM shift  62
+                        STRING shift  61
+                       BOOLEAN shift  60
+                          NAME shift  46
+                         value shift  50
+                           num shift  65
+                        string shift  64
+                          bool shift  63
+                      variable shift  48
 
 State 7:
           value ::= * LBRAC maybe_empty_stmt_list RBRAC
@@ -344,26 +362,29 @@ State 7:
           value ::= * value GORE value
           value ::= * value AND value
           value ::= * value OR value
+          value ::= * BITNOT value
           value ::= * NOT value
           value ::= * value SHIFTL value
           value ::= * value SHIFTR value
           value ::= * value BITAND value
-          value ::= value BITAND * value
           value ::= * value BITOR value
-          value ::= * variable OPENBRAC num RBRAC
+          value ::= * value BITXOR value
+          value ::= value BITXOR * value
+          value ::= * variable OPENBRAC variable RBRAC
           variable ::= * NAME ASSIGN value
 
                            NOT shift  5
+                        BITNOT shift  6
                          LBRAC shift  2
-                           NUM shift  58
-                        STRING shift  57
-                       BOOLEAN shift  56
-                          NAME shift  43
-                         value shift  30
-                           num shift  61
-                        string shift  60
-                          bool shift  59
-                      variable shift  45
+                           NUM shift  62
+                        STRING shift  61
+                       BOOLEAN shift  60
+                          NAME shift  46
+                         value shift  31
+                           num shift  65
+                        string shift  64
+                          bool shift  63
+                      variable shift  48
 
 State 8:
           value ::= * LBRAC maybe_empty_stmt_list RBRAC
@@ -387,26 +408,29 @@ State 8:
           value ::= * value GORE value
           value ::= * value AND value
           value ::= * value OR value
+          value ::= * BITNOT value
           value ::= * NOT value
           value ::= * value SHIFTL value
           value ::= * value SHIFTR value
-          value ::= value SHIFTR * value
           value ::= * value BITAND value
           value ::= * value BITOR value
-          value ::= * variable OPENBRAC num RBRAC
+          value ::= value BITOR * value
+          value ::= * value BITXOR value
+          value ::= * variable OPENBRAC variable RBRAC
           variable ::= * NAME ASSIGN value
 
                            NOT shift  5
+                        BITNOT shift  6
                          LBRAC shift  2
-                           NUM shift  58
-                        STRING shift  57
-                       BOOLEAN shift  56
-                          NAME shift  43
-                         value shift  37
-                           num shift  61
-                        string shift  60
-                          bool shift  59
-                      variable shift  45
+                           NUM shift  62
+                        STRING shift  61
+                       BOOLEAN shift  60
+                          NAME shift  46
+                         value shift  32
+                           num shift  65
+                        string shift  64
+                          bool shift  63
+                      variable shift  48
 
 State 9:
           value ::= * LBRAC maybe_empty_stmt_list RBRAC
@@ -430,26 +454,29 @@ State 9:
           value ::= * value GORE value
           value ::= * value AND value
           value ::= * value OR value
+          value ::= * BITNOT value
           value ::= * NOT value
           value ::= * value SHIFTL value
-          value ::= value SHIFTL * value
           value ::= * value SHIFTR value
           value ::= * value BITAND value
+          value ::= value BITAND * value
           value ::= * value BITOR value
-          value ::= * variable OPENBRAC num RBRAC
+          value ::= * value BITXOR value
+          value ::= * variable OPENBRAC variable RBRAC
           variable ::= * NAME ASSIGN value
 
                            NOT shift  5
+                        BITNOT shift  6
                          LBRAC shift  2
-                           NUM shift  58
-                        STRING shift  57
-                       BOOLEAN shift  56
-                          NAME shift  43
-                         value shift  38
-                           num shift  61
-                        string shift  60
-                          bool shift  59
-                      variable shift  45
+                           NUM shift  62
+                        STRING shift  61
+                       BOOLEAN shift  60
+                          NAME shift  46
+                         value shift  33
+                           num shift  65
+                        string shift  64
+                          bool shift  63
+                      variable shift  48
 
 State 10:
           value ::= * LBRAC maybe_empty_stmt_list RBRAC
@@ -473,26 +500,29 @@ State 10:
           value ::= * value GORE value
           value ::= * value AND value
           value ::= * value OR value
-          value ::= value OR * value
+          value ::= * BITNOT value
           value ::= * NOT value
           value ::= * value SHIFTL value
           value ::= * value SHIFTR value
+          value ::= value SHIFTR * value
           value ::= * value BITAND value
           value ::= * value BITOR value
-          value ::= * variable OPENBRAC num RBRAC
+          value ::= * value BITXOR value
+          value ::= * variable OPENBRAC variable RBRAC
           variable ::= * NAME ASSIGN value
 
                            NOT shift  5
+                        BITNOT shift  6
                          LBRAC shift  2
-                           NUM shift  58
-                        STRING shift  57
-                       BOOLEAN shift  56
-                          NAME shift  43
-                         value shift  27
-                           num shift  61
-                        string shift  60
-                          bool shift  59
-                      variable shift  45
+                           NUM shift  62
+                        STRING shift  61
+                       BOOLEAN shift  60
+                          NAME shift  46
+                         value shift  40
+                           num shift  65
+                        string shift  64
+                          bool shift  63
+                      variable shift  48
 
 State 11:
           value ::= * LBRAC maybe_empty_stmt_list RBRAC
@@ -515,29 +545,124 @@ State 11:
           value ::= * value LORE value
           value ::= * value GORE value
           value ::= * value AND value
-          value ::= value AND * value
           value ::= * value OR value
+          value ::= * BITNOT value
+          value ::= * NOT value
+          value ::= * value SHIFTL value
+          value ::= value SHIFTL * value
+          value ::= * value SHIFTR value
+          value ::= * value BITAND value
+          value ::= * value BITOR value
+          value ::= * value BITXOR value
+          value ::= * variable OPENBRAC variable RBRAC
+          variable ::= * NAME ASSIGN value
+
+                           NOT shift  5
+                        BITNOT shift  6
+                         LBRAC shift  2
+                           NUM shift  62
+                        STRING shift  61
+                       BOOLEAN shift  60
+                          NAME shift  46
+                         value shift  41
+                           num shift  65
+                        string shift  64
+                          bool shift  63
+                      variable shift  48
+
+State 12:
+          value ::= * LBRAC maybe_empty_stmt_list RBRAC
+          value ::= * num
+          value ::= * string
+          value ::= * bool
+          num ::= * NUM
+          string ::= * STRING
+          bool ::= * BOOLEAN
+          value ::= * value PLUS value
+          value ::= * value MINUS value
+          value ::= * value DIVIDE value
+          value ::= * value TIMES value
+          value ::= * value MODULO value
+          value ::= * value POW value
+          value ::= * value EQUALTO value
+          value ::= * value NOTEQUALTO value
+          value ::= * value LESSTHAN value
+          value ::= * value GREATERTHAN value
+          value ::= * value LORE value
+          value ::= * value GORE value
+          value ::= * value AND value
+          value ::= * value OR value
+          value ::= value OR * value
+          value ::= * BITNOT value
           value ::= * NOT value
           value ::= * value SHIFTL value
           value ::= * value SHIFTR value
           value ::= * value BITAND value
           value ::= * value BITOR value
-          value ::= * variable OPENBRAC num RBRAC
+          value ::= * value BITXOR value
+          value ::= * variable OPENBRAC variable RBRAC
           variable ::= * NAME ASSIGN value
 
                            NOT shift  5
+                        BITNOT shift  6
                          LBRAC shift  2
-                           NUM shift  58
-                        STRING shift  57
-                       BOOLEAN shift  56
-                          NAME shift  43
-                         value shift  28
-                           num shift  61
-                        string shift  60
-                          bool shift  59
-                      variable shift  45
+                           NUM shift  62
+                        STRING shift  61
+                       BOOLEAN shift  60
+                          NAME shift  46
+                         value shift  29
+                           num shift  65
+                        string shift  64
+                          bool shift  63
+                      variable shift  48
 
-State 12:
+State 13:
+          value ::= * LBRAC maybe_empty_stmt_list RBRAC
+          value ::= * num
+          value ::= * string
+          value ::= * bool
+          num ::= * NUM
+          string ::= * STRING
+          bool ::= * BOOLEAN
+          value ::= * value PLUS value
+          value ::= * value MINUS value
+          value ::= * value DIVIDE value
+          value ::= * value TIMES value
+          value ::= * value MODULO value
+          value ::= * value POW value
+          value ::= * value EQUALTO value
+          value ::= * value NOTEQUALTO value
+          value ::= * value LESSTHAN value
+          value ::= * value GREATERTHAN value
+          value ::= * value LORE value
+          value ::= * value GORE value
+          value ::= * value AND value
+          value ::= value AND * value
+          value ::= * value OR value
+          value ::= * BITNOT value
+          value ::= * NOT value
+          value ::= * value SHIFTL value
+          value ::= * value SHIFTR value
+          value ::= * value BITAND value
+          value ::= * value BITOR value
+          value ::= * value BITXOR value
+          value ::= * variable OPENBRAC variable RBRAC
+          variable ::= * NAME ASSIGN value
+
+                           NOT shift  5
+                        BITNOT shift  6
+                         LBRAC shift  2
+                           NUM shift  62
+                        STRING shift  61
+                       BOOLEAN shift  60
+                          NAME shift  46
+                         value shift  30
+                           num shift  65
+                        string shift  64
+                          bool shift  63
+                      variable shift  48
+
+State 14:
           value ::= * LBRAC maybe_empty_stmt_list RBRAC
           value ::= * num
           value ::= * string
@@ -560,27 +685,30 @@ State 12:
           value ::= value GORE * value
           value ::= * value AND value
           value ::= * value OR value
+          value ::= * BITNOT value
           value ::= * NOT value
           value ::= * value SHIFTL value
           value ::= * value SHIFTR value
           value ::= * value BITAND value
           value ::= * value BITOR value
-          value ::= * variable OPENBRAC num RBRAC
+          value ::= * value BITXOR value
+          value ::= * variable OPENBRAC variable RBRAC
           variable ::= * NAME ASSIGN value
 
                            NOT shift  5
+                        BITNOT shift  6
                          LBRAC shift  2
-                           NUM shift  58
-                        STRING shift  57
-                       BOOLEAN shift  56
-                          NAME shift  43
-                         value shift  33
-                           num shift  61
-                        string shift  60
-                          bool shift  59
-                      variable shift  45
+                           NUM shift  62
+                        STRING shift  61
+                       BOOLEAN shift  60
+                          NAME shift  46
+                         value shift  36
+                           num shift  65
+                        string shift  64
+                          bool shift  63
+                      variable shift  48
 
-State 13:
+State 15:
           value ::= * LBRAC maybe_empty_stmt_list RBRAC
           value ::= * num
           value ::= * string
@@ -603,27 +731,30 @@ State 13:
           value ::= * value GORE value
           value ::= * value AND value
           value ::= * value OR value
+          value ::= * BITNOT value
           value ::= * NOT value
           value ::= * value SHIFTL value
           value ::= * value SHIFTR value
           value ::= * value BITAND value
           value ::= * value BITOR value
-          value ::= * variable OPENBRAC num RBRAC
+          value ::= * value BITXOR value
+          value ::= * variable OPENBRAC variable RBRAC
           variable ::= * NAME ASSIGN value
 
                            NOT shift  5
+                        BITNOT shift  6
                          LBRAC shift  2
-                           NUM shift  58
-                        STRING shift  57
-                       BOOLEAN shift  56
-                          NAME shift  43
-                         value shift  34
-                           num shift  61
-                        string shift  60
-                          bool shift  59
-                      variable shift  45
+                           NUM shift  62
+                        STRING shift  61
+                       BOOLEAN shift  60
+                          NAME shift  46
+                         value shift  37
+                           num shift  65
+                        string shift  64
+                          bool shift  63
+                      variable shift  48
 
-State 14:
+State 16:
           value ::= * LBRAC maybe_empty_stmt_list RBRAC
           value ::= * num
           value ::= * string
@@ -646,27 +777,30 @@ State 14:
           value ::= * value GORE value
           value ::= * value AND value
           value ::= * value OR value
+          value ::= * BITNOT value
           value ::= * NOT value
           value ::= * value SHIFTL value
           value ::= * value SHIFTR value
           value ::= * value BITAND value
           value ::= * value BITOR value
-          value ::= * variable OPENBRAC num RBRAC
+          value ::= * value BITXOR value
+          value ::= * variable OPENBRAC variable RBRAC
           variable ::= * NAME ASSIGN value
 
                            NOT shift  5
+                        BITNOT shift  6
                          LBRAC shift  2
-                           NUM shift  58
-                        STRING shift  57
-                       BOOLEAN shift  56
-                          NAME shift  43
-                         value shift  35
-                           num shift  61
-                        string shift  60
-                          bool shift  59
-                      variable shift  45
+                           NUM shift  62
+                        STRING shift  61
+                       BOOLEAN shift  60
+                          NAME shift  46
+                         value shift  38
+                           num shift  65
+                        string shift  64
+                          bool shift  63
+                      variable shift  48
 
-State 15:
+State 17:
           value ::= * LBRAC maybe_empty_stmt_list RBRAC
           value ::= * num
           value ::= * string
@@ -689,27 +823,30 @@ State 15:
           value ::= * value GORE value
           value ::= * value AND value
           value ::= * value OR value
+          value ::= * BITNOT value
           value ::= * NOT value
           value ::= * value SHIFTL value
           value ::= * value SHIFTR value
           value ::= * value BITAND value
           value ::= * value BITOR value
-          value ::= * variable OPENBRAC num RBRAC
+          value ::= * value BITXOR value
+          value ::= * variable OPENBRAC variable RBRAC
           variable ::= * NAME ASSIGN value
 
                            NOT shift  5
+                        BITNOT shift  6
                          LBRAC shift  2
-                           NUM shift  58
-                        STRING shift  57
-                       BOOLEAN shift  56
-                          NAME shift  43
-                         value shift  36
-                           num shift  61
-                        string shift  60
-                          bool shift  59
-                      variable shift  45
+                           NUM shift  62
+                        STRING shift  61
+                       BOOLEAN shift  60
+                          NAME shift  46
+                         value shift  39
+                           num shift  65
+                        string shift  64
+                          bool shift  63
+                      variable shift  48
 
-State 16:
+State 18:
           value ::= * LBRAC maybe_empty_stmt_list RBRAC
           value ::= * num
           value ::= * string
@@ -732,27 +869,30 @@ State 16:
           value ::= * value GORE value
           value ::= * value AND value
           value ::= * value OR value
+          value ::= * BITNOT value
           value ::= * NOT value
           value ::= * value SHIFTL value
           value ::= * value SHIFTR value
           value ::= * value BITAND value
           value ::= * value BITOR value
-          value ::= * variable OPENBRAC num RBRAC
+          value ::= * value BITXOR value
+          value ::= * variable OPENBRAC variable RBRAC
           variable ::= * NAME ASSIGN value
 
                            NOT shift  5
+                        BITNOT shift  6
                          LBRAC shift  2
-                           NUM shift  58
-                        STRING shift  57
-                       BOOLEAN shift  56
-                          NAME shift  43
-                         value shift  31
-                           num shift  61
-                        string shift  60
-                          bool shift  59
-                      variable shift  45
+                           NUM shift  62
+                        STRING shift  61
+                       BOOLEAN shift  60
+                          NAME shift  46
+                         value shift  34
+                           num shift  65
+                        string shift  64
+                          bool shift  63
+                      variable shift  48
 
-State 17:
+State 19:
           value ::= * LBRAC maybe_empty_stmt_list RBRAC
           value ::= * num
           value ::= * string
@@ -775,27 +915,30 @@ State 17:
           value ::= * value GORE value
           value ::= * value AND value
           value ::= * value OR value
+          value ::= * BITNOT value
           value ::= * NOT value
           value ::= * value SHIFTL value
           value ::= * value SHIFTR value
           value ::= * value BITAND value
           value ::= * value BITOR value
-          value ::= * variable OPENBRAC num RBRAC
+          value ::= * value BITXOR value
+          value ::= * variable OPENBRAC variable RBRAC
           variable ::= * NAME ASSIGN value
 
                            NOT shift  5
+                        BITNOT shift  6
                          LBRAC shift  2
-                           NUM shift  58
-                        STRING shift  57
-                       BOOLEAN shift  56
-                          NAME shift  43
-                         value shift  32
-                           num shift  61
-                        string shift  60
-                          bool shift  59
-                      variable shift  45
+                           NUM shift  62
+                        STRING shift  61
+                       BOOLEAN shift  60
+                          NAME shift  46
+                         value shift  35
+                           num shift  65
+                        string shift  64
+                          bool shift  63
+                      variable shift  48
 
-State 18:
+State 20:
           value ::= * LBRAC maybe_empty_stmt_list RBRAC
           value ::= * num
           value ::= * string
@@ -818,27 +961,30 @@ State 18:
           value ::= * value GORE value
           value ::= * value AND value
           value ::= * value OR value
+          value ::= * BITNOT value
           value ::= * NOT value
           value ::= * value SHIFTL value
           value ::= * value SHIFTR value
           value ::= * value BITAND value
           value ::= * value BITOR value
-          value ::= * variable OPENBRAC num RBRAC
+          value ::= * value BITXOR value
+          value ::= * variable OPENBRAC variable RBRAC
           variable ::= * NAME ASSIGN value
 
                            NOT shift  5
+                        BITNOT shift  6
                          LBRAC shift  2
-                           NUM shift  58
-                        STRING shift  57
-                       BOOLEAN shift  56
-                          NAME shift  43
-                         value shift  47
-                           num shift  61
-                        string shift  60
-                          bool shift  59
-                      variable shift  45
+                           NUM shift  62
+                        STRING shift  61
+                       BOOLEAN shift  60
+                          NAME shift  46
+                         value shift  51
+                           num shift  65
+                        string shift  64
+                          bool shift  63
+                      variable shift  48
 
-State 19:
+State 21:
           value ::= * LBRAC maybe_empty_stmt_list RBRAC
           value ::= * num
           value ::= * string
@@ -861,27 +1007,30 @@ State 19:
           value ::= * value GORE value
           value ::= * value AND value
           value ::= * value OR value
+          value ::= * BITNOT value
           value ::= * NOT value
           value ::= * value SHIFTL value
           value ::= * value SHIFTR value
           value ::= * value BITAND value
           value ::= * value BITOR value
-          value ::= * variable OPENBRAC num RBRAC
+          value ::= * value BITXOR value
+          value ::= * variable OPENBRAC variable RBRAC
           variable ::= * NAME ASSIGN value
 
                            NOT shift  5
+                        BITNOT shift  6
                          LBRAC shift  2
-                           NUM shift  58
-                        STRING shift  57
-                       BOOLEAN shift  56
-                          NAME shift  43
-                         value shift  48
-                           num shift  61
-                        string shift  60
-                          bool shift  59
-                      variable shift  45
+                           NUM shift  62
+                        STRING shift  61
+                       BOOLEAN shift  60
+                          NAME shift  46
+                         value shift  52
+                           num shift  65
+                        string shift  64
+                          bool shift  63
+                      variable shift  48
 
-State 20:
+State 22:
           value ::= * LBRAC maybe_empty_stmt_list RBRAC
           value ::= * num
           value ::= * string
@@ -904,27 +1053,30 @@ State 20:
           value ::= * value GORE value
           value ::= * value AND value
           value ::= * value OR value
+          value ::= * BITNOT value
           value ::= * NOT value
           value ::= * value SHIFTL value
           value ::= * value SHIFTR value
           value ::= * value BITAND value
           value ::= * value BITOR value
-          value ::= * variable OPENBRAC num RBRAC
+          value ::= * value BITXOR value
+          value ::= * variable OPENBRAC variable RBRAC
           variable ::= * NAME ASSIGN value
 
                            NOT shift  5
+                        BITNOT shift  6
                          LBRAC shift  2
-                           NUM shift  58
-                        STRING shift  57
-                       BOOLEAN shift  56
-                          NAME shift  43
-                         value shift  49
-                           num shift  61
-                        string shift  60
-                          bool shift  59
-                      variable shift  45
+                           NUM shift  62
+                        STRING shift  61
+                       BOOLEAN shift  60
+                          NAME shift  46
+                         value shift  53
+                           num shift  65
+                        string shift  64
+                          bool shift  63
+                      variable shift  48
 
-State 21:
+State 23:
           value ::= * LBRAC maybe_empty_stmt_list RBRAC
           value ::= * num
           value ::= * string
@@ -947,27 +1099,30 @@ State 21:
           value ::= * value GORE value
           value ::= * value AND value
           value ::= * value OR value
+          value ::= * BITNOT value
           value ::= * NOT value
           value ::= * value SHIFTL value
           value ::= * value SHIFTR value
           value ::= * value BITAND value
           value ::= * value BITOR value
-          value ::= * variable OPENBRAC num RBRAC
+          value ::= * value BITXOR value
+          value ::= * variable OPENBRAC variable RBRAC
           variable ::= * NAME ASSIGN value
 
                            NOT shift  5
+                        BITNOT shift  6
                          LBRAC shift  2
-                           NUM shift  58
-                        STRING shift  57
-                       BOOLEAN shift  56
-                          NAME shift  43
-                         value shift  50
-                           num shift  61
-                        string shift  60
-                          bool shift  59
-                      variable shift  45
+                           NUM shift  62
+                        STRING shift  61
+                       BOOLEAN shift  60
+                          NAME shift  46
+                         value shift  54
+                           num shift  65
+                        string shift  64
+                          bool shift  63
+                      variable shift  48
 
-State 22:
+State 24:
           value ::= * LBRAC maybe_empty_stmt_list RBRAC
           value ::= * num
           value ::= * string
@@ -990,27 +1145,30 @@ State 22:
           value ::= * value GORE value
           value ::= * value AND value
           value ::= * value OR value
+          value ::= * BITNOT value
           value ::= * NOT value
           value ::= * value SHIFTL value
           value ::= * value SHIFTR value
           value ::= * value BITAND value
           value ::= * value BITOR value
-          value ::= * variable OPENBRAC num RBRAC
+          value ::= * value BITXOR value
+          value ::= * variable OPENBRAC variable RBRAC
           variable ::= * NAME ASSIGN value
 
                            NOT shift  5
+                        BITNOT shift  6
                          LBRAC shift  2
-                           NUM shift  58
-                        STRING shift  57
-                       BOOLEAN shift  56
-                          NAME shift  43
-                         value shift  39
-                           num shift  61
-                        string shift  60
-                          bool shift  59
-                      variable shift  45
+                           NUM shift  62
+                        STRING shift  61
+                       BOOLEAN shift  60
+                          NAME shift  46
+                         value shift  42
+                           num shift  65
+                        string shift  64
+                          bool shift  63
+                      variable shift  48
 
-State 23:
+State 25:
           value ::= * LBRAC maybe_empty_stmt_list RBRAC
           value ::= * num
           value ::= * string
@@ -1033,34 +1191,37 @@ State 23:
           value ::= * value GORE value
           value ::= * value AND value
           value ::= * value OR value
+          value ::= * BITNOT value
           value ::= * NOT value
           value ::= * value SHIFTL value
           value ::= * value SHIFTR value
           value ::= * value BITAND value
           value ::= * value BITOR value
-          value ::= * variable OPENBRAC num RBRAC
+          value ::= * value BITXOR value
+          value ::= * variable OPENBRAC variable RBRAC
           variable ::= * NAME ASSIGN value
 
                            NOT shift  5
+                        BITNOT shift  6
                          LBRAC shift  2
-                           NUM shift  58
-                        STRING shift  57
-                       BOOLEAN shift  56
-                          NAME shift  43
-                         value shift  40
-                           num shift  61
-                        string shift  60
-                          bool shift  59
-                      variable shift  45
+                           NUM shift  62
+                        STRING shift  61
+                       BOOLEAN shift  60
+                          NAME shift  46
+                         value shift  43
+                           num shift  65
+                        string shift  64
+                          bool shift  63
+                      variable shift  48
 
-State 24:
-          num ::= * NUM
-          value ::= variable OPENBRAC * num RBRAC
+State 26:
+          value ::= variable OPENBRAC * variable RBRAC
+          variable ::= * NAME ASSIGN value
 
-                           NUM shift  58
-                           num shift  44
+                          NAME shift  46
+                      variable shift  47
 
-State 25:
+State 27:
           value ::= value * PLUS value
           value ::= value * MINUS value
           value ::= value * DIVIDE value
@@ -1079,29 +1240,31 @@ State 25:
           value ::= value * SHIFTR value
           value ::= value * BITAND value
           value ::= value * BITOR value
-     (44) variable ::= NAME ASSIGN value *
+          value ::= value * BITXOR value
+     (46) variable ::= NAME ASSIGN value *
 
-                            OR shift  10
-                           AND shift  11
-                         BITOR shift  6
-                        BITAND shift  7
-                       EQUALTO shift  17
-                    NOTEQUALTO shift  16
-                   GREATERTHAN shift  14
-                          GORE shift  12
-                      LESSTHAN shift  15
-                          LORE shift  13
-                        SHIFTL shift  9
-                        SHIFTR shift  8
-                          PLUS shift  23
-                         MINUS shift  22
-                        DIVIDE shift  21
-                         TIMES shift  20
-                        MODULO shift  19
-                           POW shift  18
-                     {default} reduce 44
+                            OR shift  12
+                           AND shift  13
+                        BITXOR shift  7
+                         BITOR shift  8
+                        BITAND shift  9
+                       EQUALTO shift  19
+                    NOTEQUALTO shift  18
+                   GREATERTHAN shift  16
+                          GORE shift  14
+                      LESSTHAN shift  17
+                          LORE shift  15
+                        SHIFTL shift  11
+                        SHIFTR shift  10
+                          PLUS shift  25
+                         MINUS shift  24
+                        DIVIDE shift  23
+                         TIMES shift  22
+                        MODULO shift  21
+                           POW shift  20
+                     {default} reduce 46
 
-State 26:
+State 28:
      (16) identifier ::= value *
           value ::= value * PLUS value
           value ::= value * MINUS value
@@ -1121,28 +1284,30 @@ State 26:
           value ::= value * SHIFTR value
           value ::= value * BITAND value
           value ::= value * BITOR value
+          value ::= value * BITXOR value
 
-                            OR shift  10
-                           AND shift  11
-                         BITOR shift  6
-                        BITAND shift  7
-                       EQUALTO shift  17
-                    NOTEQUALTO shift  16
-                   GREATERTHAN shift  14
-                          GORE shift  12
-                      LESSTHAN shift  15
-                          LORE shift  13
-                        SHIFTL shift  9
-                        SHIFTR shift  8
-                          PLUS shift  23
-                         MINUS shift  22
-                        DIVIDE shift  21
-                         TIMES shift  20
-                        MODULO shift  19
-                           POW shift  18
+                            OR shift  12
+                           AND shift  13
+                        BITXOR shift  7
+                         BITOR shift  8
+                        BITAND shift  9
+                       EQUALTO shift  19
+                    NOTEQUALTO shift  18
+                   GREATERTHAN shift  16
+                          GORE shift  14
+                      LESSTHAN shift  17
+                          LORE shift  15
+                        SHIFTL shift  11
+                        SHIFTR shift  10
+                          PLUS shift  25
+                         MINUS shift  24
+                        DIVIDE shift  23
+                         TIMES shift  22
+                        MODULO shift  21
+                           POW shift  20
                      {default} reduce 16
 
-State 27:
+State 29:
           value ::= value * PLUS value
           value ::= value * MINUS value
           value ::= value * DIVIDE value
@@ -1162,27 +1327,29 @@ State 27:
           value ::= value * SHIFTR value
           value ::= value * BITAND value
           value ::= value * BITOR value
+          value ::= value * BITXOR value
 
-                           AND shift  11
-                         BITOR shift  6
-                        BITAND shift  7
-                       EQUALTO shift  17
-                    NOTEQUALTO shift  16
-                   GREATERTHAN shift  14
-                          GORE shift  12
-                      LESSTHAN shift  15
-                          LORE shift  13
-                        SHIFTL shift  9
-                        SHIFTR shift  8
-                          PLUS shift  23
-                         MINUS shift  22
-                        DIVIDE shift  21
-                         TIMES shift  20
-                        MODULO shift  19
-                           POW shift  18
+                           AND shift  13
+                        BITXOR shift  7
+                         BITOR shift  8
+                        BITAND shift  9
+                       EQUALTO shift  19
+                    NOTEQUALTO shift  18
+                   GREATERTHAN shift  16
+                          GORE shift  14
+                      LESSTHAN shift  17
+                          LORE shift  15
+                        SHIFTL shift  11
+                        SHIFTR shift  10
+                          PLUS shift  25
+                         MINUS shift  24
+                        DIVIDE shift  23
+                         TIMES shift  22
+                        MODULO shift  21
+                           POW shift  20
                      {default} reduce 36
 
-State 28:
+State 30:
           value ::= value * PLUS value
           value ::= value * MINUS value
           value ::= value * DIVIDE value
@@ -1202,26 +1369,28 @@ State 28:
           value ::= value * SHIFTR value
           value ::= value * BITAND value
           value ::= value * BITOR value
+          value ::= value * BITXOR value
 
-                         BITOR shift  6
-                        BITAND shift  7
-                       EQUALTO shift  17
-                    NOTEQUALTO shift  16
-                   GREATERTHAN shift  14
-                          GORE shift  12
-                      LESSTHAN shift  15
-                          LORE shift  13
-                        SHIFTL shift  9
-                        SHIFTR shift  8
-                          PLUS shift  23
-                         MINUS shift  22
-                        DIVIDE shift  21
-                         TIMES shift  20
-                        MODULO shift  19
-                           POW shift  18
+                        BITXOR shift  7
+                         BITOR shift  8
+                        BITAND shift  9
+                       EQUALTO shift  19
+                    NOTEQUALTO shift  18
+                   GREATERTHAN shift  16
+                          GORE shift  14
+                      LESSTHAN shift  17
+                          LORE shift  15
+                        SHIFTL shift  11
+                        SHIFTR shift  10
+                          PLUS shift  25
+                         MINUS shift  24
+                        DIVIDE shift  23
+                         TIMES shift  22
+                        MODULO shift  21
+                           POW shift  20
                      {default} reduce 35
 
-State 29:
+State 31:
           value ::= value * PLUS value
           value ::= value * MINUS value
           value ::= value * DIVIDE value
@@ -1240,63 +1409,105 @@ State 29:
           value ::= value * SHIFTR value
           value ::= value * BITAND value
           value ::= value * BITOR value
-     (41) value ::= value BITOR value *
+          value ::= value * BITXOR value
+     (43) value ::= value BITXOR value *
 
-                        BITAND shift  7
-                       EQUALTO shift  17
-                    NOTEQUALTO shift  16
-                   GREATERTHAN shift  14
-                          GORE shift  12
-                      LESSTHAN shift  15
-                          LORE shift  13
-                        SHIFTL shift  9
-                        SHIFTR shift  8
-                          PLUS shift  23
-                         MINUS shift  22
-                        DIVIDE shift  21
-                         TIMES shift  20
-                        MODULO shift  19
-                           POW shift  18
+                         BITOR shift  8
+                        BITAND shift  9
+                       EQUALTO shift  19
+                    NOTEQUALTO shift  18
+                   GREATERTHAN shift  16
+                          GORE shift  14
+                      LESSTHAN shift  17
+                          LORE shift  15
+                        SHIFTL shift  11
+                        SHIFTR shift  10
+                          PLUS shift  25
+                         MINUS shift  24
+                        DIVIDE shift  23
+                         TIMES shift  22
+                        MODULO shift  21
+                           POW shift  20
+                     {default} reduce 43
+
+State 32:
+          value ::= value * PLUS value
+          value ::= value * MINUS value
+          value ::= value * DIVIDE value
+          value ::= value * TIMES value
+          value ::= value * MODULO value
+          value ::= value * POW value
+          value ::= value * EQUALTO value
+          value ::= value * NOTEQUALTO value
+          value ::= value * LESSTHAN value
+          value ::= value * GREATERTHAN value
+          value ::= value * LORE value
+          value ::= value * GORE value
+          value ::= value * AND value
+          value ::= value * OR value
+          value ::= value * SHIFTL value
+          value ::= value * SHIFTR value
+          value ::= value * BITAND value
+          value ::= value * BITOR value
+     (42) value ::= value BITOR value *
+          value ::= value * BITXOR value
+
+                        BITAND shift  9
+                       EQUALTO shift  19
+                    NOTEQUALTO shift  18
+                   GREATERTHAN shift  16
+                          GORE shift  14
+                      LESSTHAN shift  17
+                          LORE shift  15
+                        SHIFTL shift  11
+                        SHIFTR shift  10
+                          PLUS shift  25
+                         MINUS shift  24
+                        DIVIDE shift  23
+                         TIMES shift  22
+                        MODULO shift  21
+                           POW shift  20
+                     {default} reduce 42
+
+State 33:
+          value ::= value * PLUS value
+          value ::= value * MINUS value
+          value ::= value * DIVIDE value
+          value ::= value * TIMES value
+          value ::= value * MODULO value
+          value ::= value * POW value
+          value ::= value * EQUALTO value
+          value ::= value * NOTEQUALTO value
+          value ::= value * LESSTHAN value
+          value ::= value * GREATERTHAN value
+          value ::= value * LORE value
+          value ::= value * GORE value
+          value ::= value * AND value
+          value ::= value * OR value
+          value ::= value * SHIFTL value
+          value ::= value * SHIFTR value
+          value ::= value * BITAND value
+     (41) value ::= value BITAND value *
+          value ::= value * BITOR value
+          value ::= value * BITXOR value
+
+                       EQUALTO shift  19
+                    NOTEQUALTO shift  18
+                   GREATERTHAN shift  16
+                          GORE shift  14
+                      LESSTHAN shift  17
+                          LORE shift  15
+                        SHIFTL shift  11
+                        SHIFTR shift  10
+                          PLUS shift  25
+                         MINUS shift  24
+                        DIVIDE shift  23
+                         TIMES shift  22
+                        MODULO shift  21
+                           POW shift  20
                      {default} reduce 41
 
-State 30:
-          value ::= value * PLUS value
-          value ::= value * MINUS value
-          value ::= value * DIVIDE value
-          value ::= value * TIMES value
-          value ::= value * MODULO value
-          value ::= value * POW value
-          value ::= value * EQUALTO value
-          value ::= value * NOTEQUALTO value
-          value ::= value * LESSTHAN value
-          value ::= value * GREATERTHAN value
-          value ::= value * LORE value
-          value ::= value * GORE value
-          value ::= value * AND value
-          value ::= value * OR value
-          value ::= value * SHIFTL value
-          value ::= value * SHIFTR value
-          value ::= value * BITAND value
-     (40) value ::= value BITAND value *
-          value ::= value * BITOR value
-
-                       EQUALTO shift  17
-                    NOTEQUALTO shift  16
-                   GREATERTHAN shift  14
-                          GORE shift  12
-                      LESSTHAN shift  15
-                          LORE shift  13
-                        SHIFTL shift  9
-                        SHIFTR shift  8
-                          PLUS shift  23
-                         MINUS shift  22
-                        DIVIDE shift  21
-                         TIMES shift  20
-                        MODULO shift  19
-                           POW shift  18
-                     {default} reduce 40
-
-State 31:
+State 34:
           value ::= value * PLUS value
           value ::= value * MINUS value
           value ::= value * DIVIDE value
@@ -1316,22 +1527,23 @@ State 31:
           value ::= value * SHIFTR value
           value ::= value * BITAND value
           value ::= value * BITOR value
+          value ::= value * BITXOR value
 
-                   GREATERTHAN shift  14
-                          GORE shift  12
-                      LESSTHAN shift  15
-                          LORE shift  13
-                        SHIFTL shift  9
-                        SHIFTR shift  8
-                          PLUS shift  23
-                         MINUS shift  22
-                        DIVIDE shift  21
-                         TIMES shift  20
-                        MODULO shift  19
-                           POW shift  18
+                   GREATERTHAN shift  16
+                          GORE shift  14
+                      LESSTHAN shift  17
+                          LORE shift  15
+                        SHIFTL shift  11
+                        SHIFTR shift  10
+                          PLUS shift  25
+                         MINUS shift  24
+                        DIVIDE shift  23
+                         TIMES shift  22
+                        MODULO shift  21
+                           POW shift  20
                      {default} reduce 30
 
-State 32:
+State 35:
           value ::= value * PLUS value
           value ::= value * MINUS value
           value ::= value * DIVIDE value
@@ -1351,22 +1563,23 @@ State 32:
           value ::= value * SHIFTR value
           value ::= value * BITAND value
           value ::= value * BITOR value
+          value ::= value * BITXOR value
 
-                   GREATERTHAN shift  14
-                          GORE shift  12
-                      LESSTHAN shift  15
-                          LORE shift  13
-                        SHIFTL shift  9
-                        SHIFTR shift  8
-                          PLUS shift  23
-                         MINUS shift  22
-                        DIVIDE shift  21
-                         TIMES shift  20
-                        MODULO shift  19
-                           POW shift  18
+                   GREATERTHAN shift  16
+                          GORE shift  14
+                      LESSTHAN shift  17
+                          LORE shift  15
+                        SHIFTL shift  11
+                        SHIFTR shift  10
+                          PLUS shift  25
+                         MINUS shift  24
+                        DIVIDE shift  23
+                         TIMES shift  22
+                        MODULO shift  21
+                           POW shift  20
                      {default} reduce 29
 
-State 33:
+State 36:
           value ::= value * PLUS value
           value ::= value * MINUS value
           value ::= value * DIVIDE value
@@ -1386,18 +1599,19 @@ State 33:
           value ::= value * SHIFTR value
           value ::= value * BITAND value
           value ::= value * BITOR value
+          value ::= value * BITXOR value
 
-                        SHIFTL shift  9
-                        SHIFTR shift  8
-                          PLUS shift  23
-                         MINUS shift  22
-                        DIVIDE shift  21
-                         TIMES shift  20
-                        MODULO shift  19
-                           POW shift  18
+                        SHIFTL shift  11
+                        SHIFTR shift  10
+                          PLUS shift  25
+                         MINUS shift  24
+                        DIVIDE shift  23
+                         TIMES shift  22
+                        MODULO shift  21
+                           POW shift  20
                      {default} reduce 34
 
-State 34:
+State 37:
           value ::= value * PLUS value
           value ::= value * MINUS value
           value ::= value * DIVIDE value
@@ -1417,18 +1631,19 @@ State 34:
           value ::= value * SHIFTR value
           value ::= value * BITAND value
           value ::= value * BITOR value
+          value ::= value * BITXOR value
 
-                        SHIFTL shift  9
-                        SHIFTR shift  8
-                          PLUS shift  23
-                         MINUS shift  22
-                        DIVIDE shift  21
-                         TIMES shift  20
-                        MODULO shift  19
-                           POW shift  18
+                        SHIFTL shift  11
+                        SHIFTR shift  10
+                          PLUS shift  25
+                         MINUS shift  24
+                        DIVIDE shift  23
+                         TIMES shift  22
+                        MODULO shift  21
+                           POW shift  20
                      {default} reduce 33
 
-State 35:
+State 38:
           value ::= value * PLUS value
           value ::= value * MINUS value
           value ::= value * DIVIDE value
@@ -1448,18 +1663,19 @@ State 35:
           value ::= value * SHIFTR value
           value ::= value * BITAND value
           value ::= value * BITOR value
+          value ::= value * BITXOR value
 
-                        SHIFTL shift  9
-                        SHIFTR shift  8
-                          PLUS shift  23
-                         MINUS shift  22
-                        DIVIDE shift  21
-                         TIMES shift  20
-                        MODULO shift  19
-                           POW shift  18
+                        SHIFTL shift  11
+                        SHIFTR shift  10
+                          PLUS shift  25
+                         MINUS shift  24
+                        DIVIDE shift  23
+                         TIMES shift  22
+                        MODULO shift  21
+                           POW shift  20
                      {default} reduce 32
 
-State 36:
+State 39:
           value ::= value * PLUS value
           value ::= value * MINUS value
           value ::= value * DIVIDE value
@@ -1479,18 +1695,19 @@ State 36:
           value ::= value * SHIFTR value
           value ::= value * BITAND value
           value ::= value * BITOR value
+          value ::= value * BITXOR value
 
-                        SHIFTL shift  9
-                        SHIFTR shift  8
-                          PLUS shift  23
-                         MINUS shift  22
-                        DIVIDE shift  21
-                         TIMES shift  20
-                        MODULO shift  19
-                           POW shift  18
+                        SHIFTL shift  11
+                        SHIFTR shift  10
+                          PLUS shift  25
+                         MINUS shift  24
+                        DIVIDE shift  23
+                         TIMES shift  22
+                        MODULO shift  21
+                           POW shift  20
                      {default} reduce 31
 
-State 37:
+State 40:
           value ::= value * PLUS value
           value ::= value * MINUS value
           value ::= value * DIVIDE value
@@ -1507,48 +1724,50 @@ State 37:
           value ::= value * OR value
           value ::= value * SHIFTL value
           value ::= value * SHIFTR value
-     (39) value ::= value SHIFTR value *
+     (40) value ::= value SHIFTR value *
           value ::= value * BITAND value
           value ::= value * BITOR value
+          value ::= value * BITXOR value
 
-                          PLUS shift  23
-                         MINUS shift  22
-                        DIVIDE shift  21
-                         TIMES shift  20
-                        MODULO shift  19
-                           POW shift  18
+                          PLUS shift  25
+                         MINUS shift  24
+                        DIVIDE shift  23
+                         TIMES shift  22
+                        MODULO shift  21
+                           POW shift  20
+                     {default} reduce 40
+
+State 41:
+          value ::= value * PLUS value
+          value ::= value * MINUS value
+          value ::= value * DIVIDE value
+          value ::= value * TIMES value
+          value ::= value * MODULO value
+          value ::= value * POW value
+          value ::= value * EQUALTO value
+          value ::= value * NOTEQUALTO value
+          value ::= value * LESSTHAN value
+          value ::= value * GREATERTHAN value
+          value ::= value * LORE value
+          value ::= value * GORE value
+          value ::= value * AND value
+          value ::= value * OR value
+          value ::= value * SHIFTL value
+     (39) value ::= value SHIFTL value *
+          value ::= value * SHIFTR value
+          value ::= value * BITAND value
+          value ::= value * BITOR value
+          value ::= value * BITXOR value
+
+                          PLUS shift  25
+                         MINUS shift  24
+                        DIVIDE shift  23
+                         TIMES shift  22
+                        MODULO shift  21
+                           POW shift  20
                      {default} reduce 39
 
-State 38:
-          value ::= value * PLUS value
-          value ::= value * MINUS value
-          value ::= value * DIVIDE value
-          value ::= value * TIMES value
-          value ::= value * MODULO value
-          value ::= value * POW value
-          value ::= value * EQUALTO value
-          value ::= value * NOTEQUALTO value
-          value ::= value * LESSTHAN value
-          value ::= value * GREATERTHAN value
-          value ::= value * LORE value
-          value ::= value * GORE value
-          value ::= value * AND value
-          value ::= value * OR value
-          value ::= value * SHIFTL value
-     (38) value ::= value SHIFTL value *
-          value ::= value * SHIFTR value
-          value ::= value * BITAND value
-          value ::= value * BITOR value
-
-                          PLUS shift  23
-                         MINUS shift  22
-                        DIVIDE shift  21
-                         TIMES shift  20
-                        MODULO shift  19
-                           POW shift  18
-                     {default} reduce 38
-
-State 39:
+State 42:
           value ::= value * PLUS value
           value ::= value * MINUS value
      (24) value ::= value MINUS value *
@@ -1568,14 +1787,15 @@ State 39:
           value ::= value * SHIFTR value
           value ::= value * BITAND value
           value ::= value * BITOR value
+          value ::= value * BITXOR value
 
-                        DIVIDE shift  21
-                         TIMES shift  20
-                        MODULO shift  19
-                           POW shift  18
+                        DIVIDE shift  23
+                         TIMES shift  22
+                        MODULO shift  21
+                           POW shift  20
                      {default} reduce 24
 
-State 40:
+State 43:
           value ::= value * PLUS value
      (23) value ::= value PLUS value *
           value ::= value * MINUS value
@@ -1595,41 +1815,42 @@ State 40:
           value ::= value * SHIFTR value
           value ::= value * BITAND value
           value ::= value * BITOR value
+          value ::= value * BITXOR value
 
-                        DIVIDE shift  21
-                         TIMES shift  20
-                        MODULO shift  19
-                           POW shift  18
+                        DIVIDE shift  23
+                         TIMES shift  22
+                        MODULO shift  21
+                           POW shift  20
                      {default} reduce 23
 
-State 41:
+State 44:
           value ::= LBRAC maybe_empty_stmt_list * RBRAC
 
-                         RBRAC shift  54
+                         RBRAC shift  58
 
-State 42:
-          value ::= variable * OPENBRAC num RBRAC
-     (43) stmt ::= variable *
+State 45:
+          value ::= variable * OPENBRAC variable RBRAC
+     (45) stmt ::= variable *
 
-                      OPENBRAC shift  24
-                     {default} reduce 43
+                      OPENBRAC shift  26
+                     {default} reduce 45
 
-State 43:
+State 46:
           variable ::= NAME * ASSIGN value
 
                         ASSIGN shift  4
 
-State 44:
-          value ::= variable OPENBRAC num * RBRAC
+State 47:
+          value ::= variable OPENBRAC variable * RBRAC
 
-                         RBRAC shift  55
+                         RBRAC shift  59
 
-State 45:
-          value ::= variable * OPENBRAC num RBRAC
+State 48:
+          value ::= variable * OPENBRAC variable RBRAC
 
-                      OPENBRAC shift  24
+                      OPENBRAC shift  26
 
-State 46:
+State 49:
           value ::= value * PLUS value
           value ::= value * MINUS value
           value ::= value * DIVIDE value
@@ -1644,16 +1865,42 @@ State 46:
           value ::= value * GORE value
           value ::= value * AND value
           value ::= value * OR value
-     (37) value ::= NOT value *
+     (38) value ::= NOT value *
           value ::= value * SHIFTL value
           value ::= value * SHIFTR value
           value ::= value * BITAND value
           value ::= value * BITOR value
+          value ::= value * BITXOR value
 
-                           POW shift  18
+                           POW shift  20
+                     {default} reduce 38
+
+State 50:
+          value ::= value * PLUS value
+          value ::= value * MINUS value
+          value ::= value * DIVIDE value
+          value ::= value * TIMES value
+          value ::= value * MODULO value
+          value ::= value * POW value
+          value ::= value * EQUALTO value
+          value ::= value * NOTEQUALTO value
+          value ::= value * LESSTHAN value
+          value ::= value * GREATERTHAN value
+          value ::= value * LORE value
+          value ::= value * GORE value
+          value ::= value * AND value
+          value ::= value * OR value
+     (37) value ::= BITNOT value *
+          value ::= value * SHIFTL value
+          value ::= value * SHIFTR value
+          value ::= value * BITAND value
+          value ::= value * BITOR value
+          value ::= value * BITXOR value
+
+                           POW shift  20
                      {default} reduce 37
 
-State 47:
+State 51:
           value ::= value * PLUS value
           value ::= value * MINUS value
           value ::= value * DIVIDE value
@@ -1673,11 +1920,12 @@ State 47:
           value ::= value * SHIFTR value
           value ::= value * BITAND value
           value ::= value * BITOR value
+          value ::= value * BITXOR value
 
-                           POW shift  18
+                           POW shift  20
                      {default} reduce 28
 
-State 48:
+State 52:
           value ::= value * PLUS value
           value ::= value * MINUS value
           value ::= value * DIVIDE value
@@ -1697,11 +1945,12 @@ State 48:
           value ::= value * SHIFTR value
           value ::= value * BITAND value
           value ::= value * BITOR value
+          value ::= value * BITXOR value
 
-                           POW shift  18
+                           POW shift  20
                      {default} reduce 27
 
-State 49:
+State 53:
           value ::= value * PLUS value
           value ::= value * MINUS value
           value ::= value * DIVIDE value
@@ -1721,11 +1970,12 @@ State 49:
           value ::= value * SHIFTR value
           value ::= value * BITAND value
           value ::= value * BITOR value
+          value ::= value * BITXOR value
 
-                           POW shift  18
+                           POW shift  20
                      {default} reduce 26
 
-State 50:
+State 54:
           value ::= value * PLUS value
           value ::= value * MINUS value
           value ::= value * DIVIDE value
@@ -1745,116 +1995,117 @@ State 50:
           value ::= value * SHIFTR value
           value ::= value * BITAND value
           value ::= value * BITOR value
+          value ::= value * BITXOR value
 
-                           POW shift  18
+                           POW shift  20
                      {default} reduce 25
 
-State 51:
+State 55:
           in ::= in start * NEWLINE
 
-                       NEWLINE shift  71
+                       NEWLINE shift  75
 
-State 52:
-     (46) error ::= OPENQUOTEERROR *
+State 56:
+     (48) error ::= OPENQUOTEERROR *
 
-                     {default} reduce 46
+                     {default} reduce 48
 
-State 53:
-     (45) in ::= error *
+State 57:
+     (47) in ::= error *
 
-                     {default} reduce 45
+                     {default} reduce 47
 
-State 54:
+State 58:
      (13) value ::= LBRAC maybe_empty_stmt_list RBRAC *
 
                      {default} reduce 13
 
-State 55:
-     (42) value ::= variable OPENBRAC num RBRAC *
+State 59:
+     (44) value ::= variable OPENBRAC variable RBRAC *
 
-                     {default} reduce 42
+                     {default} reduce 44
 
-State 56:
+State 60:
      (22) bool ::= BOOLEAN *
 
                      {default} reduce 22
 
-State 57:
+State 61:
      (21) string ::= STRING *
 
                      {default} reduce 21
 
-State 58:
+State 62:
      (20) num ::= NUM *
 
                      {default} reduce 20
 
-State 59:
+State 63:
      (19) value ::= bool *
 
                      {default} reduce 19
 
-State 60:
+State 64:
      (18) value ::= string *
 
                      {default} reduce 18
 
-State 61:
+State 65:
      (17) value ::= num *
 
                      {default} reduce 17
 
-State 62:
+State 66:
      (12) stmt_list ::= stmt_list stmt *
 
                      {default} reduce 12
 
-State 63:
+State 67:
      (11) stmt_list ::= stmt *
 
                      {default} reduce 11
 
-State 64:
+State 68:
      (10) access ::= identifier *
 
                      {default} reduce 10
 
-State 65:
+State 69:
       (9) retval ::= access *
 
                      {default} reduce 9
 
-State 66:
+State 70:
       (8) expr ::= retval *
 
                      {default} reduce 8
 
-State 67:
+State 71:
       (7) stmt ::= expr *
 
                      {default} reduce 7
 
-State 68:
+State 72:
       (6) top_stmt ::= stmt *
 
                      {default} reduce 6
 
-State 69:
+State 73:
       (5) spec ::= top_stmt *
 
                      {default} reduce 5
 
-State 70:
+State 74:
       (4) start ::= spec *
 
                      {default} reduce 4
 
-State 71:
+State 75:
       (3) in ::= in start NEWLINE *
 
                      {default} reduce 3
 
-State 72:
+State 76:
       (2) in ::= in NEWLINE *
 
                      {default} reduce 2
@@ -1900,20 +2151,20 @@ Symbols:
    36: NAME
    37: OPENQUOTEERROR
    38: error: OPENQUOTEERROR
-   39: expr: NOT LBRAC NUM STRING BOOLEAN NAME
+   39: expr: NOT BITNOT LBRAC NUM STRING BOOLEAN NAME
    40: id:
-   41: main: <lambda> NOT LBRAC NEWLINE NUM STRING BOOLEAN NAME OPENQUOTEERROR
-   42: in: <lambda> NOT LBRAC NEWLINE NUM STRING BOOLEAN NAME OPENQUOTEERROR
-   43: start: NOT LBRAC NUM STRING BOOLEAN NAME
-   44: spec: NOT LBRAC NUM STRING BOOLEAN NAME
-   45: top_stmt: NOT LBRAC NUM STRING BOOLEAN NAME
-   46: stmt: NOT LBRAC NUM STRING BOOLEAN NAME
-   47: retval: NOT LBRAC NUM STRING BOOLEAN NAME
-   48: access: NOT LBRAC NUM STRING BOOLEAN NAME
-   49: identifier: NOT LBRAC NUM STRING BOOLEAN NAME
-   50: stmt_list: NOT LBRAC NUM STRING BOOLEAN NAME
-   51: value: NOT LBRAC NUM STRING BOOLEAN NAME
-   52: maybe_empty_stmt_list: <lambda> NOT LBRAC NUM STRING BOOLEAN NAME
+   41: main: <lambda> NOT BITNOT LBRAC NEWLINE NUM STRING BOOLEAN NAME OPENQUOTEERROR
+   42: in: <lambda> NOT BITNOT LBRAC NEWLINE NUM STRING BOOLEAN NAME OPENQUOTEERROR
+   43: start: NOT BITNOT LBRAC NUM STRING BOOLEAN NAME
+   44: spec: NOT BITNOT LBRAC NUM STRING BOOLEAN NAME
+   45: top_stmt: NOT BITNOT LBRAC NUM STRING BOOLEAN NAME
+   46: stmt: NOT BITNOT LBRAC NUM STRING BOOLEAN NAME
+   47: retval: NOT BITNOT LBRAC NUM STRING BOOLEAN NAME
+   48: access: NOT BITNOT LBRAC NUM STRING BOOLEAN NAME
+   49: identifier: NOT BITNOT LBRAC NUM STRING BOOLEAN NAME
+   50: stmt_list: NOT BITNOT LBRAC NUM STRING BOOLEAN NAME
+   51: value: NOT BITNOT LBRAC NUM STRING BOOLEAN NAME
+   52: maybe_empty_stmt_list: <lambda> NOT BITNOT LBRAC NUM STRING BOOLEAN NAME
    53: num: NUM
    54: string: STRING
    55: bool: BOOLEAN

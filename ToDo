@@ -14,10 +14,6 @@ extern bool gore(object&A, object& B, object& C);
 extern bool value_and(object&A, object& B, object& C);
 extern bool value_or(object&A, object& B, object& C);
 extern bool not_value(object&A, object& B);
-
-//NOT WORKING
-
-//Needs to be checked
 extern bool shift_left(object&A, object& B, object& C);
 extern bool shift_right(object&A, object& B, object& C);
 extern bool bit_and(object&A, object& B, object& C);
