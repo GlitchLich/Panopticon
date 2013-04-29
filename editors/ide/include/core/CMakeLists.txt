@@ -6,6 +6,7 @@ set(Panopticon_SRC
    ${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.h
    ${CMAKE_CURRENT_SOURCE_DIR}/SyntaxHighlighter.h
    ${CMAKE_CURRENT_SOURCE_DIR}/EditBuffer.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/Session.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/Session.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/FilePanel.h
    PARENT_SCOPE
 )

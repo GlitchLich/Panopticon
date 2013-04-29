@@ -28,16 +28,20 @@ BufferCloseDialog::BufferCloseDialog()
 /// EditBuffer
 ////////////////////
 
-EditBuffer::EditBuffer(QWidget* parent) :
-    QTextEdit(parent)
+EditBuffer::EditBuffer(unsigned int id, QWidget *parent) :
+    QTextEdit(parent),
+    id(id),
+    proxy(0),
+    unsavedEdits(false)
 {
     init();
 }
 
-EditBuffer::EditBuffer(QWidget *parent, const QString &fileName) :
+EditBuffer::EditBuffer(unsigned int id, QWidget *parent, const QString &fileName) :
     QTextEdit(parent),
     fileName(fileName),
-    unsavedEdits(false)
+    unsavedEdits(false),
+    id(id)
 {
     init();
     loadFile();
@@ -53,6 +57,7 @@ void EditBuffer::init()
     setAcceptRichText(false);
     fileName = "";
     connect(this, SIGNAL(textChanged()), this, SLOT(edited()), Qt::QueuedConnection);
+    unsavedEdits = false;
 }
 
 void EditBuffer::keyPressEvent(QKeyEvent *e)
@@ -66,16 +71,24 @@ void EditBuffer::keyPressEvent(QKeyEvent *e)
             executeCommand();
             return;
 
+        case Qt::Key_N:
+            MAIN_WINDOW->newFile();
+            return;
+
         case Qt::Key_S:
-            save();
+            MAIN_WINDOW->saveFile();
             return;
 
         case Qt::Key_O:
-            open();
+            MAIN_WINDOW->openFile();
             return;
 
         case Qt::Key_Q:
-            QApplication::quit();
+            MAIN_WINDOW->quit();
+            return;
+
+        case Qt::Key_W:
+            MAIN_WINDOW->closeFile();
             return;
 
         default:
@@ -97,7 +110,8 @@ void EditBuffer::keyPressEvent(QKeyEvent *e)
 
 void EditBuffer::open()
 {
-    fileName = QFileDialog::getOpenFileName(this, tr("Open File"), QApplication::applicationDirPath(), tr("*.optic"));
+    filePath = QFileDialog::getOpenFileName(this, tr("Open File"), QApplication::applicationDirPath(), tr("*.optic"));
+    fileName = filePath.mid(filePath.lastIndexOf("/") + 1);
     loadFile();
 }
 
@@ -105,8 +119,9 @@ void EditBuffer::save()
 {
     if(fileName.length() == 0)
     {
-        fileName = QFileDialog::getSaveFileName(this, tr("Save File"), QApplication::applicationDirPath(), tr("*.optic"));
-        file.setFileName(fileName);
+        filePath = QFileDialog::getSaveFileName(this, tr("Save File"), QApplication::applicationDirPath(), tr("*.optic"));
+        fileName = filePath.mid(filePath.lastIndexOf("/") + 1);
+        file.setFileName(filePath);
     }
 
     if(file.open(QIODevice::WriteOnly))
@@ -123,6 +138,7 @@ void EditBuffer::save()
 
         file.close();
         unsavedEdits = false;
+        emit fileChanged(id, fileName);
     }
 
     else
@@ -191,7 +207,7 @@ void EditBuffer::executeCommand()
 
 void EditBuffer::loadFile()
 {
-    file.setFileName(fileName);
+    file.setFileName(filePath);
 
     if(file.open(QIODevice::ReadOnly))
     {
@@ -199,12 +215,24 @@ void EditBuffer::loadFile()
         QString text = file.readAll();
         setText(text);
         file.close();
+        unsavedEdits = false;
+        emit fileChanged(id, fileName);
     }
 
     else
     {
         Post("No file opened.\n");
     }
+}
+
+const QString& EditBuffer::getFileName()
+{
+    return fileName;
+}
+
+const QString& EditBuffer::getFilePath()
+{
+    return filePath;
 }
 
 } // ide namespace

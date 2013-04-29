@@ -4,6 +4,7 @@
 #include <QTextEdit>
 #include <QFile>
 #include <QDialog>
+#include <QGraphicsProxyWidget>
 
 namespace panopticon
 {
@@ -25,8 +26,8 @@ class EditBuffer : public QTextEdit
     Q_OBJECT
 
 public:
-    EditBuffer(QWidget* parent = 0);
-    EditBuffer(QWidget *parent, const QString& fileName);
+    EditBuffer(unsigned int id, QWidget* parent = 0);
+    EditBuffer(unsigned int id, QWidget *parent, const QString& fileName);
 
     void keyPressEvent(QKeyEvent *e);
     void open();
@@ -35,6 +36,12 @@ public:
     bool getUnsavedEdits();
 
     const QString& getFileName();
+    const QString& getFilePath();
+    unsigned int id;
+    QGraphicsProxyWidget* proxy;
+
+signals:
+    void fileChanged(unsigned int id, const QString& fileName);
 
 public slots:
 
@@ -45,6 +52,7 @@ protected:
     void executeCommand();
 
     QString fileName;
+    QString filePath;
     QFile file;
 
 private:
