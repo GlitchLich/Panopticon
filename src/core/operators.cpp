@@ -595,11 +595,11 @@ bool modulo(object&A, object& B, object& C)
             array_operator_object(A,B,C,&modulo);
             break;
         case STRING:
-            out() << print_error(DivideStringError) << std::endl;
+            out() << print_error(ModStringError) << std::endl;
             correct_parsing = false;
             break;
         case BOOL:
-            out() << print_error(DivideBooolError) << std::endl;
+            out() << print_error(ModBoolError) << std::endl;
             correct_parsing = false;
             break;
         case ARRAY:
@@ -619,27 +619,47 @@ bool value_pow(object&A, object& B, object& C)
         {
         case NUMBER:
             A.type = NUMBER;
-            A.data.number = pow(B.data.number,(int)C.data.number);
+            A.data.number = pow(B.data.number,C.data.number);
             break;
         case STRING:
-            out() << "Syntax Error: Cannot exponentiate a string." << std::endl;
+            out() << print_error(PowStringError) << std::endl;
+            correct_parsing = false;
             break;
         case BOOL:
-            out() << "Syntax Error: Cannot exponentiate a boolean." << std::endl;
+            out() << print_error(PowBoolError) << std::endl;
+            correct_parsing = false;
             break;
         case ARRAY:
-            recursive_apply(A,B,C,&value_pow);
+            object_operator_array(A,B,C,&value_pow);
             break;
         }
         break;
     case STRING:
-        out() << "Syntax Error: Cannot exponentiate a string." << std::endl;
+        out() << print_error(PowStringError) << std::endl;
+        correct_parsing = false;
         break;
     case BOOL:
-        out() << "Syntax Error: Cannot exponentiate a boolean." << std::endl;
+        out() << print_error(PowBoolError) << std::endl;
+        correct_parsing = false;
         break;
     case ARRAY:
-        array_operator_array(A,B,C,&value_pow);
+        switch(C.type)
+        {
+        case NUMBER:
+            array_operator_object(A,B,C,&value_pow);
+            break;
+        case STRING:
+            out() << print_error(PowStringError) << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << print_error(PowBoolError) << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            array_operator_array(A,B,C,&value_pow);
+            break;
+        }
         break;
     }
 }
@@ -664,7 +684,7 @@ bool equal_to(object&A, object& B, object& C)
             A.data.boolean = false;
             break;
         case ARRAY:
-            recursive_apply(A,B,C,&equal_to);
+            object_operator_array(A,B,C,&equal_to);
             break;
         }
         break;
@@ -684,7 +704,7 @@ bool equal_to(object&A, object& B, object& C)
             A.data.boolean = false;
             break;
         case ARRAY:
-            recursive_apply(A,B,C,&equal_to);
+            object_operator_array(A,B,C,&equal_to);
             break;
         }
         break;
@@ -697,27 +717,125 @@ bool equal_to(object&A, object& B, object& C)
             break;
         case STRING:
             A.type = BOOL;
-            A.data.boolean = (B.data.string->compare(*C.data.string)==0);
+            A.data.boolean = false;
             break;
         case BOOL:
             A.type = BOOL;
             A.data.boolean = B.data.boolean==C.data.boolean;
             break;
         case ARRAY:
-            recursive_apply(A,B,C,&equal_to);
+            object_operator_array(A,B,C,&equal_to);
             break;
         }
         break;
     case ARRAY:
-        recursive_apply(A,B,C,&equal_to);
+        switch(C.type)
+        {
+        case NUMBER:
+            A.type = BOOL;
+            A.data.boolean = false;
+            break;
+        case STRING:
+            A.type = BOOL;
+            A.data.boolean = false;
+            break;
+        case BOOL:
+            A.type = BOOL;
+            A.data.boolean = false;
+            break;
+        case ARRAY:
+            array_operator_array(A,B,C,&equal_to);
+            break;
+        }
         break;
     }
 }
 
 bool not_equal_to(object&A, object& B, object& C)
 {
-    equal_to(A,B,C);
-    A.data.boolean = !A.data.boolean;
+    switch(B.type)
+    {
+    case NUMBER:
+        switch(C.type)
+        {
+        case NUMBER:
+            A.type = BOOL;
+            A.data.boolean = B.data.number != C.data.number;
+            break;
+        case STRING:
+            A.type = BOOL;
+            A.data.boolean = true;
+            break;
+        case BOOL:
+            A.type = BOOL;
+            A.data.boolean = true;
+            break;
+        case ARRAY:
+            object_operator_array(A,B,C,&not_equal_to);
+            break;
+        }
+        break;
+    case STRING:
+        switch(C.type)
+        {
+        case NUMBER:
+            A.type = BOOL;
+            A.data.boolean = true;
+            break;
+        case STRING:
+            A.type = BOOL;
+            A.data.boolean = (B.data.string->compare(*C.data.string)!=0);
+            break;
+        case BOOL:
+            A.type = BOOL;
+            A.data.boolean = true;
+            break;
+        case ARRAY:
+            object_operator_array(A,B,C,&not_equal_to);
+            break;
+        }
+        break;
+    case BOOL:
+        switch(C.type)
+        {
+        case NUMBER:
+            A.type = BOOL;
+            A.data.boolean = true;
+            break;
+        case STRING:
+            A.type = BOOL;
+            A.data.boolean = true;
+            break;
+        case BOOL:
+            A.type = BOOL;
+            A.data.boolean = B.data.boolean!=C.data.boolean;
+            break;
+        case ARRAY:
+            object_operator_array(A,B,C,&not_equal_to);
+            break;
+        }
+        break;
+    case ARRAY:
+        switch(C.type)
+        {
+        case NUMBER:
+            A.type = BOOL;
+            A.data.boolean = true;
+            break;
+        case STRING:
+            A.type = BOOL;
+            A.data.boolean = true;
+            break;
+        case BOOL:
+            A.type = BOOL;
+            A.data.boolean = true;
+            break;
+        case ARRAY:
+            array_operator_array(A,B,C,&not_equal_to);
+            break;
+        }
+        break;
+    }
 }
 
 bool less_than(object&A, object& B, object& C)
@@ -733,23 +851,43 @@ bool less_than(object&A, object& B, object& C)
             break;
         case STRING:
             out() << "Syntax error: A string cannot be greater than or less than a number." << std::endl;
+            correct_parsing = false;
             break;
         case BOOL:
             out() << "Syntax error: A bool cannot be greater than or less than a number." << std::endl;
+            correct_parsing = false;
             break;
         case ARRAY:
-            recursive_apply(A,B,C,&less_than);
+            object_operator_array(A,B,C,&less_than);
             break;
         }
         break;
     case STRING:
         out() << "Syntax error: A string cannot be greater than or less than a number." << std::endl;
+        correct_parsing = false;
         break;
     case BOOL:
         out() << "Syntax error: A bool cannot be greater than or less than a number." << std::endl;
+        correct_parsing = false;
         break;
     case ARRAY:
-        recursive_apply(A,B,C,&less_than);
+        switch(C.type)
+        {
+        case NUMBER:
+            array_operator_object(A,B,C,&less_than);
+            break;
+        case STRING:
+            out() << "Syntax error: A string cannot be greater than or less than a number." << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << "Syntax error: A bool cannot be greater than or less than a number." << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            array_operator_array(A,B,C,&less_than);
+            break;
+        }
         break;
     }
 }
@@ -767,23 +905,43 @@ bool greater_than(object&A, object& B, object& C)
             break;
         case STRING:
             out() << "Syntax error: A string cannot be greater than or less than a number." << std::endl;
+            correct_parsing = false;
             break;
         case BOOL:
             out() << "Syntax error: A bool cannot be greater than or less than a number." << std::endl;
+            correct_parsing = false;
             break;
         case ARRAY:
-            recursive_apply(A,B,C,&greater_than);
+            object_operator_array(A,B,C,&greater_than);
             break;
         }
         break;
     case STRING:
         out() << "Syntax error: A string cannot be greater than or less than a number." << std::endl;
+        correct_parsing = false;
         break;
     case BOOL:
         out() << "Syntax error: A bool cannot be greater than or less than a number." << std::endl;
+        correct_parsing = false;
         break;
     case ARRAY:
-        recursive_apply(A,B,C,&greater_than);
+        switch(C.type)
+        {
+        case NUMBER:
+            array_operator_object(A,B,C,&greater_than);
+            break;
+        case STRING:
+            out() << "Syntax error: A string cannot be greater than or less than a number." << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << "Syntax error: A bool cannot be greater than or less than a number." << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            array_operator_array(A,B,C,&greater_than);
+            break;
+        }
         break;
     }
 }
@@ -801,23 +959,43 @@ bool lore(object&A, object& B, object& C)
             break;
         case STRING:
             out() << "Syntax error: A string cannot be greater than or less than a number." << std::endl;
+            correct_parsing = false;
             break;
         case BOOL:
             out() << "Syntax error: A bool cannot be greater than or less than a number." << std::endl;
+            correct_parsing = false;
             break;
         case ARRAY:
-            recursive_apply(A,B,C,&lore);
+            object_operator_array(A,B,C,&lore);
             break;
         }
         break;
     case STRING:
         out() << "Syntax error: A string cannot be greater than or less than a number." << std::endl;
+        correct_parsing = false;
         break;
     case BOOL:
         out() << "Syntax error: A bool cannot be greater than or less than a number." << std::endl;
+        correct_parsing = false;
         break;
     case ARRAY:
-        recursive_apply(A,B,C,&lore);
+        switch(C.type)
+        {
+        case NUMBER:
+            array_operator_object(A,B,C,&lore);
+            break;
+        case STRING:
+            out() << "Syntax error: A string cannot be greater than or less than a number." << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << "Syntax error: A bool cannot be greater than or less than a number." << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            array_operator_array(A,B,C,&lore);
+            break;
+        }
         break;
     }
 }
@@ -835,23 +1013,43 @@ bool gore(object&A, object& B, object& C)
             break;
         case STRING:
             out() << "Syntax error: A string cannot be greater than or less than a number." << std::endl;
+            correct_parsing = false;
             break;
         case BOOL:
             out() << "Syntax error: A bool cannot be greater than or less than a number." << std::endl;
+            correct_parsing = false;
             break;
         case ARRAY:
-            recursive_apply(A,B,C,&gore);
+            object_operator_array(A,B,C,&gore);
             break;
         }
         break;
     case STRING:
         out() << "Syntax error: A string cannot be greater than or less than a number." << std::endl;
+        correct_parsing = false;
         break;
     case BOOL:
         out() << "Syntax error: A bool cannot be greater than or less than a number." << std::endl;
+        correct_parsing = false;
         break;
     case ARRAY:
-        recursive_apply(A,B,C,&gore);
+        switch(C.type)
+        {
+        case NUMBER:
+            array_operator_object(A,B,C,&gore);
+            break;
+        case STRING:
+            out() << "Syntax error: A string cannot be greater than or less than a number." << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << "Syntax error: A bool cannot be greater than or less than a number." << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            array_operator_array(A,B,C,&gore);
+            break;
+        }
         break;
     }
 }
@@ -876,6 +1074,7 @@ bool value_and(object&A, object& B, object& C)
             break;
         case STRING:
             out() << "Syntax error: A string is not a bool." << std::endl;
+            correct_parsing = false;
             break;
         case BOOL:
             A.type = BOOL;
@@ -889,12 +1088,13 @@ bool value_and(object&A, object& B, object& C)
             }
             break;
         case ARRAY:
-            recursive_apply(A,B,C,&value_and);
+            object_operator_array(A,B,C,&value_and);
             break;
         }
         break;
     case STRING:
-        out() << "Syntax error: A string cannot be greater than or less than a number." << std::endl;
+        out() << "Syntax error: A string is not a bool." << std::endl;
+        correct_parsing = false;
         break;
     case BOOL:
         switch(C.type)
@@ -912,6 +1112,7 @@ bool value_and(object&A, object& B, object& C)
             break;
         case STRING:
             out() << "Syntax error: A string is not a bool." << std::endl;
+            correct_parsing = false;
             break;
         case BOOL:
             A.type = BOOL;
@@ -925,12 +1126,27 @@ bool value_and(object&A, object& B, object& C)
             }
             break;
         case ARRAY:
-            recursive_apply(A,B,C,&value_and);
+            object_operator_array(A,B,C,&value_and);
             break;
         }
         break;
     case ARRAY:
-        recursive_apply(A,B,C,&value_and);
+        switch(C.type)
+        {
+        case NUMBER:
+            array_operator_object(A,B,C,&value_and);
+            break;
+        case STRING:
+            out() << "Syntax error: A string is not a bool." << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            array_operator_object(A,B,C,&value_and);
+            break;
+        case ARRAY:
+            array_operator_array(A,B,C,&value_and);
+            break;
+        }
         break;
     }
 }
@@ -955,6 +1171,7 @@ bool value_or(object&A, object& B, object& C)
             break;
         case STRING:
             out() << "Syntax error: A string is not a bool." << std::endl;
+            correct_parsing = false;
             break;
         case BOOL:
             A.type = BOOL;
@@ -968,12 +1185,13 @@ bool value_or(object&A, object& B, object& C)
             }
             break;
         case ARRAY:
-            recursive_apply(A,B,C,&value_and);
+            object_operator_array(A,B,C,&value_or);
             break;
         }
         break;
     case STRING:
-        out() << "Syntax error: A string cannot be greater than or less than a number." << std::endl;
+        out() << "Syntax error: A string is not a bool." << std::endl;
+        correct_parsing = false;
         break;
     case BOOL:
         switch(C.type)
@@ -991,6 +1209,7 @@ bool value_or(object&A, object& B, object& C)
             break;
         case STRING:
             out() << "Syntax error: A string is not a bool." << std::endl;
+            correct_parsing = false;
             break;
         case BOOL:
             A.type = BOOL;
@@ -1004,12 +1223,27 @@ bool value_or(object&A, object& B, object& C)
             }
             break;
         case ARRAY:
-            recursive_apply(A,B,C,&value_and);
+            object_operator_array(A,B,C,&value_or);
             break;
         }
         break;
     case ARRAY:
-        recursive_apply(A,B,C,&value_and);
+        switch(C.type)
+        {
+        case NUMBER:
+            array_operator_object(A,B,C,&value_or);
+            break;
+        case STRING:
+            out() << "Syntax error: A string is not a bool." << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            array_operator_object(A,B,C,&value_or);
+            break;
+        case ARRAY:
+            array_operator_array(A,B,C,&value_or);
+            break;
+        }
         break;
     }
 }
@@ -1031,6 +1265,7 @@ bool not_value(object&A, object& B)
         break;
     case STRING:
         out() << "Syntax error: cannot call ! on a string." << std::endl;
+        correct_parsing = false;
         break;
     case BOOL:
         A = B;
@@ -1038,6 +1273,7 @@ bool not_value(object&A, object& B)
         break;
     case ARRAY:
         out() << "Syntax error: cannot call ! on an array." << std::endl;
+        correct_parsing = false;
         break;
     }
 }

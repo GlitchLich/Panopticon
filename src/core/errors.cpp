@@ -39,6 +39,10 @@ std::string print_error(Error error_code)
         return "Syntax Error p0014: Cannot Modulo a Boolean.";
     case ModStringError://p0015
         return "Syntax Error p0015: Cannot Modulo a String.";
+    case PowBoolError://p0016
+        return "Syntax Error p0016: Cannot Exponentiate a Boolean.";
+    case PowStringError://p0016
+        return "Syntax Error p0015: Cannot Exponentiate a String.";
     }
 }
 

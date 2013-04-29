@@ -44,7 +44,9 @@ enum Error
     SubtractNumFromString,//p0012
     SubtractBoolFromString,//p0013
     ModBoolError,//p0014
-    ModStringError//p0015
+    ModStringError,//p0015
+    PowBoolError,//p0016
+    PowStringError//p0016
 };
 extern bool correct_parsing;
 extern std::string print_error(Error error_code);
