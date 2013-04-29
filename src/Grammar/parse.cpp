@@ -13,7 +13,7 @@
 #include "../include/Grammar/tokens.h"
 #include "../include/Grammar/lexglobal.h"
 #include "../include/Grammar/grammar.h"
-
+#include "../include/core/heap.h"
 
 /**
  * We have to declare these here - they're not  in any header files
@@ -121,6 +121,7 @@ void init()
     std::cout << "Size of token: " << sizeof(t0) << std::endl;
     std::cout << "Enter an expression like 3+5 <return>" << std::endl;
     std::cout << "  Terminate with ^D" << std::endl;
+    init_heap();
 }
 
 bool exec(std::string string, std::string& output)

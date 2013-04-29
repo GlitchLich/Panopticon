@@ -20,6 +20,7 @@
 #include "../../include/core/types.h"
 #include "../../include/Grammar/parse.h"
 #include "../../include/core/errors.h"
+#include "../../include/core/heap.h"
 
 #undef STRING
 #undef NUM
@@ -45,8 +46,9 @@
 
 //Precedence: Top is lowest, bottom is highest
 
-
-
+%left ASSIGN.
+%left FUNCTION_DEC.
+%left INDEX.
 %left OR.
 %left AND.
 %left BITXOR.
@@ -58,9 +60,12 @@
 %left PLUS MINUS.
 %left DIVIDE TIMES MODULO.
 %right POW NOT BITNOT UMINUS PLUSPLUS.
-%left INDEX.
 %left LPAREN RPAREN COMMA LBRAC RBRAC.
-%left ASSIGN.
+%left COLLECTARRAY.
+
+
+
+/*%left ASSIGN.*/
 
 
 %parse_accept {
@@ -77,6 +82,7 @@ in ::= .
 in ::= in NEWLINE.
 in ::= in start NEWLINE.
 
+
 /*state ::= expr(A).   {*/
 /*    panopticon::out() << "Result.expr=" << A.expr << std::endl;*/
 /*    panopticon::out() << "Result.n=" << A.n << std::endl;*/
@@ -84,9 +90,24 @@ in ::= in start NEWLINE.
 
 start ::= spec(A).
 {
-    optic::print_object(A);
+    if(panopticon::correct_parsing)
+    {
+        optic::print_object(A);
+    }
     optic::delete_object(A);
 }
+
+
+spec(A) ::= assignment(B).
+{
+    A=B;
+}
+/*spec(A) ::= function_declaration(B).
+{
+    A=B;
+}*/
+
+/*start ::= function_declaration.*/
 
 /*spec ::= MOD STRING top_stmt.*/
 spec(A) ::= top_stmt(B).
@@ -94,6 +115,7 @@ spec(A) ::= top_stmt(B).
     A=B;
 
 }
+
 top_stmt(A) ::= stmt(B).
 {
     A=B;
@@ -105,7 +127,12 @@ stmt(A) ::= expr(B).
     A = B;
 
 }
-stmt ::= assignment.
+
+/*stmt(A) ::= assignment(B).*/
+/*{*/
+/*    A=B;*/
+/*}*/
+
 /*conditional ::= IF stmt_list.*/
 /*expr(A) ::= retval(B).*/
 /*{*/
@@ -125,16 +152,76 @@ stmt ::= assignment.
 /*    A = B;*/
 
 /*}*/
-/*property_chain ::= property_chain OBJECT_OPERATOR identifier.*/
-/*property_chain ::= identifier.*/
+
 /*identifier ::= expr.*/
-identifier(A) ::= NAME(B).
+
+name_chain(A) ::= name_chain(B) NAME(C).
 {
-    A.type = panopticon::STRING;
-    A.data.string = new panopticon::String(*B.data.string);
-    delete B.data.string;
+    if(B.type!=optic::ARRAY)
+    {
+        A.type = optic::ARRAY;
+        A.data.array = new optic::Array();
+
+        optic::object newObject1,newObject2;
+        newObject1.type = optic::STRING;
+        newObject2.type = optic::STRING;
+        newObject1.data.string = new panopticon::String(B.data.string->c_str());
+        newObject2.data.string = new panopticon::String(C.data.string->c_str());
+        A.data.array->push_back(newObject1);
+        A.data.array->push_back(newObject2);
+    }
+    else
+    {
+        std::cout << B.data.array->size() << std::endl;
+        A.type = optic::ARRAY;
+        A.data.array = new optic::Array();
+        A.data.array->reserve(B.data.array->size()+1);
+        for(int i=0;i<B.data.array->size();++i)
+        {
+            std::cout << * B.data.array->at(i).data.string << std::endl;
+            optic::object newObject;
+            newObject.type = optic::STRING;
+            newObject.data.string = new optic::String(*B.data.array->at(i).data.string);
+            A.data.array->push_back(newObject);
+        }
+        optic::object newObject2;
+        newObject2.type = optic::STRING;
+        newObject2.data.string = new panopticon::String(C.data.string->c_str());
+        A.data.array->push_back(newObject2);
+    }
+    delete_object(B);
+    delete_object(C);
 }
-assignment ::= identifier ASSIGN expr. [ASSIGN]
+name_chain(A) ::= NAME(B).
+{
+    A.data.string = new panopticon::String(B.data.string->c_str());
+    delete B.data.string;
+    A.type = panopticon::STRING;
+}
+
+expr(A) ::= NAME(B).
+{
+    panopticon::retrieve_variable(A,B);
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
+
+expr ::= function_call.
+function_call ::= NAME LPAREN stmt_list RPAREN.
+
+assignment(A) ::= name_chain(B) ASSIGN expr(C). [ASSIGN]
+{
+    A.type = optic::ASSIGNMENT;
+    object_operator_object(A,B,C,&panopticon::assign_variable);
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
 
 //=================================
 //Statement lists /  Arrays
@@ -145,7 +232,7 @@ stmt_list(A) ::= stmt(B).
 
 }
 
-stmt_list(A) ::= stmt_list(B) stmt(C). [COMMA]
+stmt_list(A) ::= stmt_list(B) stmt(C). [COLLECTARRAY]
 {
     A.type = panopticon::STATEMENT_LIST;
     if(B.type!=panopticon::STATEMENT_LIST)
@@ -168,7 +255,14 @@ stmt_list(A) ::= stmt_list(B) stmt(C). [COMMA]
 /*    A=B;*/
 /*}*/
 
-expr(A) ::= LBRAC maybe_empty_stmt_list(B) RBRAC.
+%fallback OPENBRAC LBRAC.
+
+expr(A) ::= array(B).
+{
+    A = B;
+}
+
+array(A) ::= OPENBRAC maybe_empty_stmt_list(B) RBRAC. [COLLECTARRAY]
 {
     A.type = panopticon::ARRAY;
     A.data.array = B.data.array;
@@ -229,6 +323,9 @@ expr(A) ::= bool(B).
 //======================
 //BASICS
 //======================
+
+
+
 num(A) ::= NUM(B).
 {
     A.data.number = B.data.number;
@@ -255,6 +352,28 @@ bool(A) ::= BOOLEAN(B).
 //=======================
 //operators
 //=======================
+/*operator ::= PLUS.
+operator ::= MINUS.
+operator ::= DIVIDE.
+operator ::= TIMES.
+operator ::= MODULO.
+operator ::= POW.
+operator ::= EQUALTO.
+operator ::= NOTEQUALTO.
+operator ::= LESSTHAN.
+operator ::= GREATERTHAN.
+operator ::= LORE.
+operator ::= GORE.
+operator ::= AND.
+operator ::= OR.
+operator ::= NOT.
+operator ::= BITNOT.
+operator ::= BITAND.
+operator ::= BITOR.
+operator ::= SHIFTL.
+operator ::= SHIFTR.
+operator ::= BITXOR.*/
+
 expr(A) ::= expr(B) PLUS expr(C).
 {
     object_operator_object(A,B,C,&panopticon::plus);
@@ -465,9 +584,8 @@ expr(A) ::= expr(B) BITXOR expr(C).
     }
 }
 
-/*%fallback OPENBRAC LBRAC.*/
 /*
-expr(A) ::= variable(B) OPENBRAC expr(C) RBRAC. [INDEX]
+expr(A) ::= expr(B) array(C). [INDEX]
 {
     index(A,B,C);
     if(!panopticon::correct_parsing)
@@ -476,7 +594,9 @@ expr(A) ::= variable(B) OPENBRAC expr(C) RBRAC. [INDEX]
         ParseARG_STORE;
     }
 }
+*/
 
+/*
 stmt(A) ::= variable(B).
 {
     A = B;

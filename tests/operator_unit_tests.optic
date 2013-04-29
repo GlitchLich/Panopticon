@@ -1,5 +1,46 @@
 //Unit Tests
 
+//variables
+num = 5
+otherNum = num*33.3
+num * otherNum
+
+mybool = true
+myfalsebool = !mybool
+myfalsebool != mybool
+
+//Undeclare Variables throw errors:
+n*m+z
+
+
+//INDEXING ARRAYS
+myarray = [23 22 0 20]
+myarray[0]
+myarray[1]
+myarray[2]
+myarray[3]
+myarray[myarray[myarray[2]+2]+1]
+nestedarray = [23 [22 21] 20]
+
+metaArray = [0 1 myarray 3]
+metaArray[2]
+metaArray[2][2]
+metaArray[2][3][0]
+
+//Functions
+doubleFunc x = x + x
+
+doubleFunc(x y z)
+
+quadrupleFunc x = doubleFunc(x)
+
+"hey"[0]
+4[0]
+true[0]
+myarray["hey"]
+myarray[true]
+myarray[4]
+
 //PLUS
 4 + 4
 4 + true
@@ -492,6 +533,3 @@ true ^|  [0 [true 2 [3 "hey"] 5 [6 7] ] 8]
 ~"hey"
 ~true
 ~[0 1 2 3]
-
-//INDEX
-test = 3
