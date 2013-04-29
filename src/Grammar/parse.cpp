@@ -172,7 +172,7 @@ bool exec(std::string string, std::string& output)
             out() << "at line: " << bufferstate->yy_bs_lineno << ", column: " << bufferstate->yy_bs_lineno << std::endl;
             output.clear();
             output.append(stream_out.str());
-            return true;
+            return false;
         }
     }
     catch(std::exception &e)

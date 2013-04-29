@@ -30,7 +30,7 @@
 
     void token_destructor(Token t)
     {
-/*    panopticon::out() << "In token_destructor t.value= " << t.value << std::endl;*/
+/*    panopticon::out() << "In token_destructor t.expr= " << t.expr << std::endl;*/
 /*    panopticon::out() << "In token_destructor t.n= " << t.n << std::endl;*/
     }
 }
@@ -78,7 +78,7 @@ in ::= in NEWLINE.
 in ::= in start NEWLINE.
 
 /*state ::= expr(A).   {*/
-/*    panopticon::out() << "Result.value=" << A.value << std::endl;*/
+/*    panopticon::out() << "Result.expr=" << A.expr << std::endl;*/
 /*    panopticon::out() << "Result.n=" << A.n << std::endl;*/
 /*}*/
 
@@ -105,31 +105,36 @@ stmt(A) ::= expr(B).
     A = B;
 
 }
-/*stmt ::= assignment.*/
+stmt ::= assignment.
 /*conditional ::= IF stmt_list.*/
-expr(A) ::= retval(B).
-{
-    A=B;
+/*expr(A) ::= retval(B).*/
+/*{*/
+/*    A=B;*/
 
-}
+/*}*/
 /*expr ::= NOT retval.*/
-retval(A) ::= access(B).
-{
-    A = B;
+/*retval(A) ::= access(B).*/
+/*{*/
+/*    A = B;*/
 
-}
+/*}*/
 
 /*access ::= identifier OBJECT_OPERATOR property_chain.*/
-access(A) ::= identifier(B).
-{
-    A = B;
+/*access(A) ::= identifier(B).*/
+/*{*/
+/*    A = B;*/
 
-}
+/*}*/
 /*property_chain ::= property_chain OBJECT_OPERATOR identifier.*/
 /*property_chain ::= identifier.*/
-/*identifier ::= value.*/
-/*identifier ::= STRING.*/
-/*assignment ::= access ASSIGN expr. [ASSIGN]*/
+/*identifier ::= expr.*/
+identifier(A) ::= NAME(B).
+{
+    A.type = panopticon::STRING;
+    A.data.string = new panopticon::String(*B.data.string);
+    delete B.data.string;
+}
+assignment ::= identifier ASSIGN expr. [ASSIGN]
 
 //=================================
 //Statement lists /  Arrays
@@ -163,7 +168,7 @@ stmt_list(A) ::= stmt_list(B) stmt(C). [COMMA]
 /*    A=B;*/
 /*}*/
 
-value(A) ::= LBRAC maybe_empty_stmt_list(B) RBRAC.
+expr(A) ::= LBRAC maybe_empty_stmt_list(B) RBRAC.
 {
     A.type = panopticon::ARRAY;
     A.data.array = B.data.array;
@@ -189,33 +194,33 @@ maybe_empty_stmt_list(A) ::= stmt_list(B).
     }
 }
 
-identifier(A) ::= value(B).
-{
-    A=B;
+/*identifier(A) ::= expr(B).*/
+/*{*/
+/*    A=B;*/
 
-}
+/*}*/
 
 //=================================
-//Convert to Dynamic Values
+//Convert to Dynamic exprs
 //=================================
 
-value(A) ::= num(B).
+expr(A) ::= num(B).
 {
     A=B;
 }
 
-value(A) ::= string(B).
+expr(A) ::= string(B).
 {
     A=B;
 
 }
 
-value(A) ::= bool(B).
+expr(A) ::= bool(B).
 {
     A=B;
 }
 
-/*value(A) ::= array(B).*/
+/*expr(A) ::= array(B).*/
 /*{*/
 /*    A=B;*/
 /*}*/
@@ -250,7 +255,7 @@ bool(A) ::= BOOLEAN(B).
 //=======================
 //operators
 //=======================
-value(A) ::= value(B) PLUS value(C).
+expr(A) ::= expr(B) PLUS expr(C).
 {
     object_operator_object(A,B,C,&panopticon::plus);
     if(!panopticon::correct_parsing)
@@ -260,7 +265,7 @@ value(A) ::= value(B) PLUS value(C).
     }
 }
 
-value(A) ::= value(B) MINUS value(C).
+expr(A) ::= expr(B) MINUS expr(C).
 {
     object_operator_object(A,B,C,&panopticon::minus);
     if(!panopticon::correct_parsing)
@@ -270,7 +275,7 @@ value(A) ::= value(B) MINUS value(C).
     }
 }
 
-value(A) ::= value(B) DIVIDE value(C).
+expr(A) ::= expr(B) DIVIDE expr(C).
 {
     object_operator_object(A,B,C,&panopticon::divide);
     if(!panopticon::correct_parsing)
@@ -280,7 +285,7 @@ value(A) ::= value(B) DIVIDE value(C).
     }
 }
 
-value(A) ::= value(B) TIMES value(C).
+expr(A) ::= expr(B) TIMES expr(C).
 {
     object_operator_object(A,B,C,&panopticon::multiply);
     if(!panopticon::correct_parsing)
@@ -290,7 +295,7 @@ value(A) ::= value(B) TIMES value(C).
     }
 }
 
-value(A) ::= value(B) MODULO value(C).
+expr(A) ::= expr(B) MODULO expr(C).
 {
     object_operator_object(A,B,C,&panopticon::modulo);
     if(!panopticon::correct_parsing)
@@ -300,7 +305,7 @@ value(A) ::= value(B) MODULO value(C).
     }
 }
 
-value(A) ::= value(B) POW value(C).
+expr(A) ::= expr(B) POW expr(C).
 {
     object_operator_object(A,B,C,&panopticon::value_pow);
     if(!panopticon::correct_parsing)
@@ -310,7 +315,7 @@ value(A) ::= value(B) POW value(C).
     }
 }
 
-value(A) ::= value(B) EQUALTO value(C).
+expr(A) ::= expr(B) EQUALTO expr(C).
 {
     object_operator_object(A,B,C,&panopticon::equal_to);
     if(!panopticon::correct_parsing)
@@ -320,7 +325,7 @@ value(A) ::= value(B) EQUALTO value(C).
     }
 }
 
-value(A) ::= value(B) NOTEQUALTO value(C).
+expr(A) ::= expr(B) NOTEQUALTO expr(C).
 {
     object_operator_object(A,B,C,&panopticon::not_equal_to);
     if(!panopticon::correct_parsing)
@@ -330,7 +335,7 @@ value(A) ::= value(B) NOTEQUALTO value(C).
     }
 }
 
-value(A) ::= value(B) LESSTHAN value(C).
+expr(A) ::= expr(B) LESSTHAN expr(C).
 {
     object_operator_object(A,B,C,&panopticon::less_than);
     if(!panopticon::correct_parsing)
@@ -340,7 +345,7 @@ value(A) ::= value(B) LESSTHAN value(C).
     }
 }
 
-value(A) ::= value(B) GREATERTHAN value(C).
+expr(A) ::= expr(B) GREATERTHAN expr(C).
 {
     object_operator_object(A,B,C,&panopticon::greater_than);
     if(!panopticon::correct_parsing)
@@ -350,7 +355,7 @@ value(A) ::= value(B) GREATERTHAN value(C).
     }
 }
 
-value(A) ::= value(B) LORE value(C).
+expr(A) ::= expr(B) LORE expr(C).
 {
     object_operator_object(A,B,C,&panopticon::lore);
     if(!panopticon::correct_parsing)
@@ -360,7 +365,7 @@ value(A) ::= value(B) LORE value(C).
     }
 }
 
-value(A) ::= value(B) GORE value(C).
+expr(A) ::= expr(B) GORE expr(C).
 {
     object_operator_object(A,B,C,&panopticon::gore);
     if(!panopticon::correct_parsing)
@@ -370,7 +375,7 @@ value(A) ::= value(B) GORE value(C).
     }
 }
 
-value(A) ::= value(B) AND value(C).
+expr(A) ::= expr(B) AND expr(C).
 {
     object_operator_object(A,B,C,&panopticon::value_and);
     if(!panopticon::correct_parsing)
@@ -380,7 +385,7 @@ value(A) ::= value(B) AND value(C).
     }
 }
 
-value(A) ::= value(B) OR value(C).
+expr(A) ::= expr(B) OR expr(C).
 {
     object_operator_object(A,B,C,&panopticon::value_or);
     if(!panopticon::correct_parsing)
@@ -390,7 +395,7 @@ value(A) ::= value(B) OR value(C).
     }
 }
 
-value(A) ::= BITNOT value(B).
+expr(A) ::= BITNOT expr(B).
 {
     bit_not(A,B);
     if(!panopticon::correct_parsing)
@@ -400,7 +405,7 @@ value(A) ::= BITNOT value(B).
     }
 }
 
-value(A) ::= NOT value(B).
+expr(A) ::= NOT expr(B).
 {
     not_value(A,B);
     if(!panopticon::correct_parsing)
@@ -410,7 +415,7 @@ value(A) ::= NOT value(B).
     }
 }
 
-value(A) ::= value(B) SHIFTL value(C).
+expr(A) ::= expr(B) SHIFTL expr(C).
 {
     object_operator_object(A,B,C,&panopticon::shift_left);
     if(!panopticon::correct_parsing)
@@ -420,7 +425,7 @@ value(A) ::= value(B) SHIFTL value(C).
     }
 }
 
-value(A) ::= value(B) SHIFTR value(C).
+expr(A) ::= expr(B) SHIFTR expr(C).
 {
     object_operator_object(A,B,C,&panopticon::shift_right);
     if(!panopticon::correct_parsing)
@@ -430,7 +435,7 @@ value(A) ::= value(B) SHIFTR value(C).
     }
 }
 
-value(A) ::= value(B) BITAND value(C).
+expr(A) ::= expr(B) BITAND expr(C).
 {
     object_operator_object(A,B,C,&panopticon::bit_and);
     if(!panopticon::correct_parsing)
@@ -440,7 +445,7 @@ value(A) ::= value(B) BITAND value(C).
     }
 }
 
-value(A) ::= value(B) BITOR value(C).
+expr(A) ::= expr(B) BITOR expr(C).
 {
     object_operator_object(A,B,C,&panopticon::bit_or);
     if(!panopticon::correct_parsing)
@@ -450,7 +455,7 @@ value(A) ::= value(B) BITOR value(C).
     }
 }
 
-value(A) ::= value(B) BITXOR value(C).
+expr(A) ::= expr(B) BITXOR expr(C).
 {
     object_operator_object(A,B,C,&panopticon::bit_xor);
     if(!panopticon::correct_parsing)
@@ -461,8 +466,8 @@ value(A) ::= value(B) BITXOR value(C).
 }
 
 /*%fallback OPENBRAC LBRAC.*/
-
-value(A) ::= variable(B) OPENBRAC value(C) RBRAC. [INDEX]
+/*
+expr(A) ::= variable(B) OPENBRAC expr(C) RBRAC. [INDEX]
 {
     index(A,B,C);
     if(!panopticon::correct_parsing)
@@ -480,9 +485,10 @@ stmt(A) ::= variable(B).
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
         ParseARG_STORE;
     }
-}
+}*/
 
-variable(A) ::= NAME ASSIGN value(B).
+/*
+variable(A) ::= NAME ASSIGN expr(B).
 {
     A = B;
     A.type = panopticon::VARIABLE;
@@ -492,6 +498,7 @@ variable(A) ::= NAME ASSIGN value(B).
         ParseARG_STORE;
     }
 }
+*/
 
 
 //======================
