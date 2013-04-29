@@ -334,6 +334,7 @@ bool MainWindow::closeFile(bool autospawn)
             msgBox.setInformativeText("Save changes to \"" + focusedBuffer->getFileName() + "\" before closing?");
             msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
             msgBox.setDefaultButton(QMessageBox::Save);
+            msgBox.setFocus();
             msgBox.grabKeyboard();
             int ret = msgBox.exec();
 
@@ -352,6 +353,11 @@ bool MainWindow::closeFile(bool autospawn)
                 fileClosed = false;
                 break;
             }
+        }
+
+        else
+        {
+            prCloseFile(autospawn);
         }
     }
 
