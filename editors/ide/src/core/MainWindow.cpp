@@ -6,8 +6,11 @@
 #include <QScrollBar>
 #include <QTextCursor>
 #include <QDialog>
+#include<QMessageBox>
+#include <QLabel>
 #include <QKeySequence>
 #include <QGraphicsProxyWidget>
+#include <QPushButton>
 
 #include "ide/include/core/EditBuffer.h"
 #include "ide/include/style/StyleGlobals.h"
@@ -151,8 +154,8 @@ MenuBar::MenuBar(QWidget *parent) :
 
 
     editMenu = new QMenu("Edit");
-
-
+    editMenu->addAction("Previous Buffer", this, SLOT(decrementBuffer()), QKeySequence(Qt::ShiftModifier, Qt::LeftArrow));
+    editMenu->addAction("Next Buffer", this, SLOT(incrementBuffer()), QKeySequence(Qt::ShiftModifier, Qt::RightArrow));
 
     languageMenu = new QMenu("Language");
 
@@ -207,6 +210,16 @@ void MenuBar::quit()
     MAIN_WINDOW->quit();
 }
 
+void MenuBar::incrementBuffer()
+{
+    MAIN_WINDOW->incrementBuffer();
+}
+
+void MenuBar::decrementBuffer()
+{
+    MAIN_WINDOW->decrementBuffer();
+}
+
 
 //////////////////////////////////
 /// MainWindow
@@ -215,8 +228,8 @@ void MenuBar::quit()
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
     menuBar(this),
+    filePanel(0),
     glBackground(0),
-    graphicsView(this),
     syntaxHighlighter(0),
     focusedBuffer(0)
 {
@@ -243,12 +256,16 @@ MainWindow::MainWindow(QWidget* parent) :
     graphicsView.scene()->addWidget(postWindow);
     graphicsView.setOptimizationFlag(QGraphicsView::DontAdjustForAntialiasing);
     syntaxHighlighter.setDocument(focusedBuffer->document());
+    QObject::connect(&filePanel, SIGNAL(showEditBuffer(uint)), this, SLOT(showEditBuffer(uint)));
     // vLayout.addWidget(buffer);
     // glBackground.setL1ayout(&vLayout);
     menuBar.hide();
     resizeComponents();
-    show();
     focusedBuffer->setFocus();
+    addToolBar(Qt::BottomToolBarArea, &filePanel);
+    setCentralWidget(&graphicsView);
+    // setLayout(&vLayout);
+    show();
 }
 
 MainWindow::~MainWindow()
@@ -280,58 +297,130 @@ void MainWindow::postError(const QString& string)
 void MainWindow::newFile()
 {
     newEditBuffer();
+    focusedBuffer->grabKeyboard();
 }
 
 void MainWindow::openFile()
 {
-    newEditBuffer();
+    if(focusedBuffer->getFileName().length() > 0)
+        newEditBuffer();
+
     focusedBuffer->open();
+    focusedBuffer->grabKeyboard();
 }
 
 void MainWindow::saveFile()
 {
     focusedBuffer->save();
+    focusedBuffer->grabKeyboard();
 }
 
 void MainWindow::saveFileAs()
 {
     focusedBuffer->saveAs();
+    focusedBuffer->grabKeyboard();
 }
 
-void MainWindow::closeFile()
+bool MainWindow::closeFile(bool autospawn)
 {
-    /*
+    bool fileClosed = true;
+
     if(focusedBuffer)
     {
         if(focusedBuffer->getUnsavedEdits())
         {
-            QDialog closeDialog;
+            QMessageBox msgBox;
+            msgBox.setText("The document has been modified.");
+            msgBox.setInformativeText("Save changes to \"" + focusedBuffer->getFileName() + "\" before closing?");
+            msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+            msgBox.setDefaultButton(QMessageBox::Save);
+            msgBox.grabKeyboard();
+            int ret = msgBox.exec();
 
-            closeDialog.
+            switch(ret)
+            {
+            case QMessageBox::Save:
+                saveFile();
+                prCloseFile(autospawn);
+                break;
 
-            closeDialog.show();
-            closeDialog.raise();
-            closeDialog.setModal(true);
+            case QMessageBox::Discard:
+                prCloseFile(autospawn);
+                break;
+
+            case QMessageBox::Cancel:
+                fileClosed = false;
+                break;
+            }
         }
     }
 
-    for(unsigned int i = 0; i < editBuffers.size(); ++i)
-    {
-        if(editBuffers.at(i) == focusedBuffer)
-        {
-            if()
-        }
-    }*/
+    return fileClosed;
 }
 
-void MainWindow::closeAllFiles()
+bool MainWindow::closeAllFiles()
 {
+    while(editBuffers.size())
+    {
+        if(!closeFile(false))
+        {
+            return false;
+        }
+    }
 
+    focusedBuffer = 0;
+    return true;
 }
 
 void MainWindow::quit()
 {
-    QApplication::quit();
+    bool doQuit = true;
+
+    doQuit = closeAllFiles();
+
+    if(doQuit)
+        QApplication::quit();
+}
+
+void MainWindow::showEditBuffer(unsigned int buffer)
+{
+    if(editBuffers.contains(buffer))
+    {
+        if(focusedBuffer)
+            focusedBuffer->hide();
+
+        focusedBuffer = editBuffers[buffer];
+        syntaxHighlighter.setDocument(focusedBuffer->document());
+        focusedBuffer->show();
+        focusedBuffer->grabKeyboard();
+    }
+
+    else
+    {
+        PostError("Unable to find edit buffer.");
+    }
+}
+
+void MainWindow::incrementBuffer()
+{
+    QMap<unsigned int, EditBuffer*>::iterator nextBuffer = editBuffers.lowerBound(focusedBuffer->id + 1);
+
+    if(nextBuffer != editBuffers.end())
+    {
+        showEditBuffer(nextBuffer.key());
+        filePanel.checkButton(nextBuffer.key());
+    }
+}
+
+void MainWindow::decrementBuffer()
+{
+    QMap<unsigned int, EditBuffer*>::iterator previousBuffer = editBuffers.find(focusedBuffer->id);
+    if(previousBuffer != editBuffers.begin())
+    {
+        --previousBuffer;
+        showEditBuffer(previousBuffer.key());
+        filePanel.checkButton(previousBuffer.key());
+    }
 }
 
 void MainWindow::newEditBuffer()
@@ -339,14 +428,18 @@ void MainWindow::newEditBuffer()
     if(focusedBuffer)
         focusedBuffer->hide();
 
-    EditBuffer* buffer = new EditBuffer();
+    EditBuffer* buffer = new EditBuffer(bufferCount);
     buffer->setGeometry(0, 0, width(), (double) height() * 0.8);
     syntaxHighlighter.setDocument(buffer->document());
     buffer->setFocus();
     buffer->setTabChangesFocus(false);
     buffer->setFont(ide::style->monoFont);
-    graphicsView.scene()->addWidget(buffer);
-    editBuffers.push_back(buffer);
+    buffer->grabKeyboard();
+    buffer->proxy = graphicsView.scene()->addWidget(buffer);
+    editBuffers[bufferCount] = buffer;
+    buffer->connect(buffer, SIGNAL(fileChanged(uint,QString)), &filePanel, SLOT(setFileName(uint,QString)));
+    filePanel.addEditBuffer(bufferCount);
+    ++bufferCount;
     focusedBuffer = buffer;
 }
 
@@ -372,14 +465,56 @@ void MainWindow::keyPressEvent(QKeyEvent* e)
 
 void MainWindow::resizeComponents()
 {
-    graphicsView.setGeometry(0, 0, width(), height());
+    // graphicsView.setGeometry(0, 0, width(), height());
 
-    for(int i = 0; i < editBuffers.size(); ++i)
+    foreach(EditBuffer* buffer, editBuffers)
     {
-       editBuffers.at(i)->setGeometry(0, 0, width(), (double) height() * 0.8);
+        buffer->setGeometry(0, 0, width(), (double) height() * 0.8);
     }
 
-    postWindow->setGeometry(0, (double) height() * 0.8, width(), (double) height() * 0.2);
+    postWindow->setGeometry(0, (double) height() * 0.8, width(), (double) height() * 0.19);
+}
+
+void MainWindow::prCloseFile(bool autospawn)
+{
+    unsigned int id = focusedBuffer->id;
+    filePanel.removeEditBuffer(id);
+    editBuffers.remove(id);
+    graphicsView.scene()->removeItem(focusedBuffer->proxy);
+    EditBuffer* buffer = focusedBuffer;
+    buffer->releaseKeyboard();
+    buffer->releaseMouse();
+    buffer->hide();
+    buffer->disconnect();
+
+    if(editBuffers.size() > 0)
+    {
+        QMap<unsigned int, EditBuffer*>::iterator nextBuffer = editBuffers.lowerBound(id);
+
+        if(nextBuffer == editBuffers.end())
+        {
+            nextBuffer = --editBuffers.end();
+        }
+
+        if(nextBuffer != editBuffers.end())
+        {
+            focusedBuffer = nextBuffer.value();
+            syntaxHighlighter.setDocument(focusedBuffer->document());
+            focusedBuffer->setFocus();
+            focusedBuffer->grabKeyboard();
+            graphicsView.scene()->setFocusItem(focusedBuffer->proxy);
+            filePanel.checkButton(focusedBuffer->id);
+            showEditBuffer(focusedBuffer->id);
+        }
+    }
+
+    else if(autospawn)
+    {
+        newFile();
+        showEditBuffer(focusedBuffer->id);
+    }
+
+    delete buffer;
 }
 
 } // ide namespace

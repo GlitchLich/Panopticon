@@ -32,6 +32,7 @@ public:
 
     QFont mainFont;
     QFont monoFont;
+    QFont toolFont;
     QTextCharFormat printFormat;
     QTextCharFormat printErrorFormat;
     QTextCharFormat keywordFormat;

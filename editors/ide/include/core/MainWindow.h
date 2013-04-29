@@ -12,6 +12,7 @@
 #include <QMainWindow>
 #include <QVBoxLayout>
 #include <QVector>
+#include <QMap>
 #include <QTimer>
 #include <QGraphicsView>
 #include <QPlainTextEdit>
@@ -20,6 +21,7 @@
 
 #include "EditBuffer.h"
 #include "SyntaxHighlighter.h"
+#include "ide/include/core/FilePanel.h"
 
 namespace panopticon
 {
@@ -91,6 +93,9 @@ public slots:
     void closeAllFiles();
     void quit();
 
+    void incrementBuffer();
+    void decrementBuffer();
+
 protected:
 
     QMenu *fileMenu, *sessionMenu, *editMenu, *languageMenu, *helpMenu;
@@ -112,9 +117,12 @@ public slots:
     void openFile();
     void saveFile();
     void saveFileAs();
-    void closeFile();
-    void closeAllFiles();
+    bool closeFile(bool autospawn = true); // returns true if user agrees to close file
+    bool closeAllFiles(); // returns true if user agrees to close all files
     void quit();
+    void showEditBuffer(unsigned int buffer);
+    void incrementBuffer();
+    void decrementBuffer();
 
 protected:
 
@@ -122,10 +130,11 @@ protected:
     void keyPressEvent(QKeyEvent *e);
     void resizeComponents();
     void newEditBuffer();
+    void prCloseFile(bool autospawn = true);
 
     GlWidget glBackground;
     QVBoxLayout vLayout;
-    QVector<EditBuffer*> editBuffers;
+    QMap<unsigned int, EditBuffer*> editBuffers;
     EditBuffer* focusedBuffer;
     QMainWindow* window;
     QWidget* widget;
@@ -133,6 +142,8 @@ protected:
     QTextEdit* postWindow;
     SyntaxHighlighter syntaxHighlighter;
     MenuBar menuBar;
+    unsigned int bufferCount;
+    FilePanel filePanel;
 };
 
 } // ide namespace

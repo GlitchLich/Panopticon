@@ -7,7 +7,15 @@ QGraphicsView {
     border: none;
 }
 
+QToolBar {
+    background: #330F26;
+}
+
 QToolButton {
+    background: #330F26;
+    color: white;
+    border: 1px solid white;
+    /*
     background: qlineargradient(
        x1:0, y1:0, x2:0, y2:1,
        stop:0 #ddd,
@@ -16,9 +24,22 @@ QToolButton {
        stop:1 #777
      );
     color: black;
-    border: 1px solid #000;
+    border: 1px solid #000;*/
 }
 
+QToolButton::hover {
+    background: white;
+    color: #330F26;
+    border: 1px solid white;
+}
+
+QToolButton::checked {
+    background: white;
+    color: #330F26;
+    border: 1px solid white;
+}
+
+/*
 QToolButton::checked {
     background: qlineargradient(
         x1:0, y1:0, x2:0, y2:1,
@@ -31,15 +52,15 @@ QToolButton::checked {
 }
 
 QToolButton:pressed {
-background: qlineargradient(
-    x1:0, y1:0, x2:0, y2:1,
-    stop:0 #333,
-    stop: 0.4 #888,
-    stop: 0.5 #999,
-    stop:0.9 #666
-    stop:1 #555
- );
-}
+    background: qlineargradient(
+        x1:0, y1:0, x2:0, y2:1,
+        stop:0 #333,
+        stop: 0.4 #888,
+        stop: 0.5 #999,
+        stop:0.9 #666
+        stop:1 #555
+     );
+}*/
 
 QTextEdit {
     background: transparent;
@@ -89,7 +110,7 @@ QListWidget::item:selected {
 }
 
 QLabel {
-    color: rgb(230, 230, 230);
+    color: black;
 }
 
 QScrollBar:horizontal {

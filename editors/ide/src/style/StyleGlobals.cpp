@@ -9,9 +9,11 @@ namespace ide
 Style::Style()
 {
 #ifdef __LINUX__
+    toolFont = QFont("Ubuntu", 8);
     mainFont = QFont("DejaVu Sans", 12);
     monoFont = QFont("DejaVu Sans Mono", 12);
 #else
+    toolFont = QFont("Myriad", 8);
     mainFont = QFont("Myriad", 13);
     monoFont = QFont("Menlo", 13);
 #endif
