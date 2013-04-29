@@ -185,7 +185,7 @@ void EditBuffer::executeCommand()
 
     else
     {
-        Post("Parse failed.\n");
+        PostError(returnString.c_str());
     }
 }
 
