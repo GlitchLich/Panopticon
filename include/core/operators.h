@@ -52,6 +52,7 @@ extern bool array_operator_object(object &a, object &array, object& obj, bool (*
 extern bool recursive_apply(object &a, object &obj1, object& obj2, bool (*func)(object &, object &, object &));
 extern bool object_operator_object(object& a, object& b, object& c, bool (*func)(object &, object &, object &));
 extern bool array_operator_array(object& a, object& array1, object& array2, bool (*func)(object &, object &, object &));
+extern bool create_function(object&A, object& B, object& C);
 
 //DONE
 extern bool plus(object&A, object& B, object& C);
@@ -73,12 +74,12 @@ extern bool shift_left(object&A, object& B, object& C);
 extern bool shift_right(object&A, object& B, object& C);
 extern bool bit_and(object&A, object& B, object& C);
 extern bool bit_or(object&A, object& B, object& C);
-
-
-//NOT DONE
-//PLUSPLUS
 extern bool bit_not(object&A, object& B);
 extern bool bit_xor(object&A, object& B, object& C);
+extern bool assign_variable(object&A, object& B, object& C);
+extern bool retrieve_variable(object&A, object& B);
+
+//NOT DONE
 extern bool plusplus(object&A, object& B, object& C);
 extern bool index(object&A, object& B, object& C);
 }

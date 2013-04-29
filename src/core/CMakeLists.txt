@@ -6,5 +6,6 @@ set(Panopticon_SRC
    ${CMAKE_CURRENT_SOURCE_DIR}/types.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/operators.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/errors.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/heap.cpp
     PARENT_SCOPE
 )

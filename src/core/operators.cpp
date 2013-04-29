@@ -21,10 +21,12 @@
 */
 
 #include "../../include/core/operators.h"
+#include "../../include/core/heap.h"
 #include "../../include/Grammar/plus.h"
 #include "../../include/Grammar/minus.h"
 #include "../../include/Grammar/divide.h"
 #include <math.h>
+#include <iostream>
 
 namespace panopticon
 {
@@ -58,7 +60,6 @@ object copy_object(object& original)
         }
         break;
     }
-    delete_object(original);
     return copy;
 }
 
@@ -109,7 +110,7 @@ bool print_array(object &A, int arrayNum)
     out() << "[";
     for(int i=0;i<A.data.array->size();++i)
     {
-         panopticon::object& B = A.data.array->at(i);
+        panopticon::object& B = A.data.array->at(i);
         switch(B.type)
         {
         case NUMBER:
@@ -164,7 +165,26 @@ bool print_object( object& A)
         panopticon::print_array(A);
         break;
     case panopticon::VARIABLE:
-        out() << "variable: " << A.data.number << std::endl;
+        out() << *A.data.string << " = ";
+        print_object(A.scope->data.map->at(*A.data.string));
+        break;
+    case panopticon::UNDECLARED_VARIABLE:
+        out() << "Error: Undeclared Variable: " << *A.data.string << std::endl;
+        correct_parsing = false;
+        break;
+    case panopticon::OPERATION_TREE:
+        for(int i=0;i<A.data.array->size();++i)
+        {
+            if(A.data.array->at(i).type==UNDECLARED_VARIABLE||A.data.array->at(i).type==OPERATION_TREE)
+            {
+                print_object(A.data.array->at(i));
+            }
+        }
+        correct_parsing = false;
+        break;
+    case panopticon::OPERATION:
+        out() << "WTF, this shouldn't happen, ended up with an operator..." << std::endl;
+        correct_parsing = false;
         break;
     }
 }
@@ -174,7 +194,7 @@ bool concatenate_arrays(object &a,object b, object c)
     a.data.array->reserve(b.data.array->size() + c.data.array->size());
     for(int i=0;i<b.data.array->size();++i)
     {
-         panopticon::object& d = b.data.array->at(i);
+        panopticon::object& d = b.data.array->at(i);
         switch(d.type)
         {
         case NUMBER:
@@ -194,7 +214,7 @@ bool concatenate_arrays(object &a,object b, object c)
 
     for(int i=0;i<c.data.array->size();++i)
     {
-         panopticon::object& d = b.data.array->at(i);
+        panopticon::object& d = b.data.array->at(i);
         switch(d.type)
         {
         case NUMBER:
@@ -384,11 +404,120 @@ bool array_operator_array(object& a, object& array1, object& array2, bool (*func
     }
 }
 
+bool store_operations(object& a, object& obj1, object& obj2, bool (*func)(object &, object &, object &))
+{
+    a.type = OPERATION_TREE;
+    a.data.array = new Array();
+
+    int size = 1;
+
+    if(obj1.type==OPERATION_TREE)
+    {
+        size+=obj1.data.array->size();
+    }
+    else
+    {
+        size++;
+    }
+
+    if(obj2.type==OPERATION_TREE)
+    {
+        size+=obj2.data.array->size();
+    }
+    else
+    {
+        size++;
+    }
+
+    a.data.array->reserve(size);
+
+    if(obj1.type==OPERATION_TREE)
+    {
+        for(int i=0;i<obj1.data.array->size();++i)
+        {
+            a.data.array->push_back(obj1.data.array->at(i));
+        }
+    }
+    else
+    {
+        a.data.array->push_back(obj1);
+    }
+
+    object op_func;
+    op_func.type = OPERATION;
+    op_func.data.operator_func = func;
+    a.data.array->push_back(op_func);
+
+    if(obj2.type==OPERATION_TREE)
+    {
+        for(int i=0;i<obj2.data.array->size();++i)
+        {
+            a.data.array->push_back(obj2.data.array->at(i));
+        }
+    }
+    else
+    {
+        a.data.array->push_back(obj2);
+    }
+}
+
 bool object_operator_object(object& a, object& b, object& c, bool (*func)(object &, object &, object &))
 {
-    func(a,b,c);
-    delete_object(b);
-    delete_object(c);
+    if(
+            b.type==UNDECLARED_VARIABLE||
+            c.type==UNDECLARED_VARIABLE||
+            b.type==OPERATION_TREE||
+            c.type==OPERATION_TREE
+            )
+    {
+        if(a.type!=ASSIGNMENT)
+        {
+            store_operations(a,b,c,func);
+        }
+        else
+        {
+
+            create_function(a,b,c);
+        }
+    }
+    else
+    {
+        func(a,b,c);
+        delete_object(b);
+        delete_object(c);
+    }
+}
+
+bool check_variables(object& B, object& C)
+{
+
+}
+
+bool create_function(object &A, object &B, object &C)
+{
+    A.type = FUNCTION;
+    std::string function_name;
+    if(B.type == ARRAY)
+    {
+        function_name = *B.data.array->at(0).data.string;
+    }
+    else
+    {
+        function_name = *B.data.string;
+    }
+
+    out() << "Creating function "<< function_name << std::endl;
+
+    if(B.type == ARRAY)
+    {
+        out() << "with arguments: ";
+        for(int i=1;i<B.data.array->size();++i)
+        {
+            out() << *B.data.array->at(i).data.string << " ";
+        }
+        out() << std::endl;
+    }
+
 }
 
 
@@ -1580,28 +1709,39 @@ bool index(object&A, object& B, object& C)
     case STRING:
     case BOOL:
         out() << "Syntax error: cannot retrieve an index from a non-array data type." << std::endl;
+        correct_parsing = false;
         break;
     case ARRAY:
         switch(C.type)
         {
         case NUMBER:
-            if(C.data.number<B.data.array->size())
+        case STRING:
+            out() << "Syntax error: A string cannot be an array index." << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << "Syntax error: A bool cannot be an array index." << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            if(C.data.array->at(0).type==NUMBER)
             {
-                A = copy_object(B.data.array->at(C.data.number));
+                if(C.data.array->at(0).data.number<B.data.array->size())
+                {
+                    A = copy_object(B.data.array->at(C.data.array->at(0).data.number));
+                }
+                else
+                {
+                    out() << "Error: Index out of range." << std::endl;
+                    correct_parsing = false;
+                }
+                break;
             }
             else
             {
-                out() << "Error: Index out of range." << std::endl;
+                out() << "Error Indexing Array." << std::endl;
+                correct_parsing = false;
             }
-            break;
-        case STRING:
-            out() << "Syntax error: A string cannot be an array index." << std::endl;
-            break;
-        case BOOL:
-            out() << "Syntax error: A bool cannot be am array index." << std::endl;
-            break;
-        case ARRAY:
-            out() << "Syntax error: A bool cannot be am array index." << std::endl;
             break;
         }
         break;
@@ -1617,5 +1757,34 @@ object convert_to_string( object& original)
     newObject.data.string = new String(ss.str());
     return newObject;
 }
+
+bool assign_variable(object&A, object& B, object& C)
+{
+    if(B.type == ARRAY)
+    {
+        create_function(A,B,C);
+        return true;
+    }
+    A.type = panopticon::VARIABLE;
+    A.data.string = new String(*B.data.string);
+    A.scope = get_scope();
+    std::pair<std::string,object> value(*B.data.string,copy_object(C));
+    A.scope->data.map->insert(value);
+}
+
+bool retrieve_variable(object &A, object &B)
+{
+    B.scope = get_scope();
+    if(B.scope->data.map->find(*B.data.string)!=B.scope->data.map->end())
+    {
+        A = B.scope->data.map->at(*B.data.string);
+    }
+    else
+    {
+        A = B;
+        A.type = UNDECLARED_VARIABLE;
+    }
+}
+
 
 }

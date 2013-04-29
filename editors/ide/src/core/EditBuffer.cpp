@@ -53,6 +53,7 @@ void EditBuffer::init()
     setAcceptRichText(false);
     fileName = "";
     connect(this, SIGNAL(textChanged()), this, SLOT(edited()), Qt::QueuedConnection);
+    panopticon::init();
 }
 
 void EditBuffer::keyPressEvent(QKeyEvent *e)

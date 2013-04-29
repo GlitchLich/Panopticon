@@ -73,7 +73,11 @@ enum Type
     //NOT TO BE USED AS LANGUAGE CONSTRUCTS
     ERROR,
     STATEMENT_LIST,
-    VARIABLE
+    VARIABLE,
+    UNDECLARED_VARIABLE,
+    OPERATION_TREE,
+    OPERATION,
+    ASSIGNMENT
 };
 
 // Forward declarations
@@ -97,14 +101,14 @@ union Data
     Function* function;
     Array* array;
     Map* map;
+    bool (*operator_func)(object &, object &, object &);
 };
 
 struct object
 {
     int type;
     Data data;
-//    unsigned n;
-//    unsigned n;
+    object* scope;
 };
 
 struct Function
