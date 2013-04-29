@@ -107,6 +107,7 @@ public:
 
 public slots:
     void post(const QString& string);
+    void postError(const QString& string);
     void newFile();
     void openFile();
     void saveFile();
@@ -129,7 +130,7 @@ protected:
     QMainWindow* window;
     QWidget* widget;
     QGraphicsView graphicsView;
-    QPlainTextEdit* postWindow;
+    QTextEdit* postWindow;
     SyntaxHighlighter syntaxHighlighter;
     MenuBar menuBar;
 };

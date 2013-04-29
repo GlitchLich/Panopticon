@@ -9,13 +9,21 @@ namespace ide
 Style::Style()
 {
 #ifdef __LINUX__
-    mainFont = QFont("Ubuntu", 12);
-    monoFont = QFont("Ubuntu Mono", 12);
+    mainFont = QFont("DejaVu Sans", 12);
+    monoFont = QFont("DejaVu Sans Mono", 12);
 #else
     mainFont = QFont("Myriad", 13);
     monoFont = QFont("Menlo", 13);
 #endif
 
+    // monoFont.setFixedPitch(true);
+    monoFont.setStyleHint(QFont::Monospace);
+    monoFont.setStyleStrategy(QFont::ForceIntegerMetrics);
+    printFormat.setForeground(QColor(180, 180, 180));
+    printFormat.setFont(monoFont);
+    printErrorFormat.setForeground(QColor(255, 0, 50));
+    printErrorFormat.setFont(monoFont);
+    printErrorFormat.setFontWeight(QFont::Bold);
     keywordFormat.setForeground(QColor(25, 125, 200));
     keywordFormat.setFontWeight(QFont::Bold);
     singleLineCommentFormat.setForeground(QColor(200, 80, 80));

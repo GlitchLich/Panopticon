@@ -22,6 +22,7 @@ namespace ide
 
 extern MainWindow* MAIN_WINDOW;
 void Post(const QString& string);
+void PostError(const QString& string);
 
 }
 

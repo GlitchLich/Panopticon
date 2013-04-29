@@ -7,6 +7,7 @@
 #include <QTextCursor>
 #include <QDialog>
 #include <QKeySequence>
+#include <QGraphicsProxyWidget>
 
 #include "ide/include/core/EditBuffer.h"
 #include "ide/include/style/StyleGlobals.h"
@@ -225,25 +226,29 @@ MainWindow::MainWindow(QWidget* parent) :
     setFont(ide::style->mainFont);
     graphicsView.setViewport(new GlWidget());
     graphicsView.setScene(new GraphicsScene());
+    graphicsView.setFont(ide::style->monoFont);
     newEditBuffer();
     graphicsView.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     graphicsView.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    postWindow = new QPlainTextEdit("__________\nPanopticon\n");
+    postWindow = new QTextEdit();
     postWindow->setFont(ide::style->monoFont);
-    postWindow->setReadOnly(true);
+    postWindow->setReadOnly(false);
+    postWindow->setCursorWidth(0);
     // postWindow->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     postWindow->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     postWindow->setFrameShape(QTextEdit::NoFrame);
     postWindow->setFrameShadow(QTextEdit::Plain);
     postWindow->moveCursor(QTextCursor::End);
+    post("__________\nPanopticon\n");
     graphicsView.scene()->addWidget(postWindow);
+    graphicsView.setOptimizationFlag(QGraphicsView::DontAdjustForAntialiasing);
     syntaxHighlighter.setDocument(focusedBuffer->document());
     // vLayout.addWidget(buffer);
     // glBackground.setL1ayout(&vLayout);
-
     menuBar.hide();
     resizeComponents();
     show();
+    focusedBuffer->setFocus();
 }
 
 MainWindow::~MainWindow()
@@ -258,8 +263,16 @@ MainWindow::~MainWindow()
     editBuffers.clear();
 }
 
-void MainWindow::post(const QString &string)
+void MainWindow::post(const QString& string)
 {
+    postWindow->setCurrentCharFormat(ide::style->printFormat);
+    postWindow->insertPlainText(string);
+    postWindow->moveCursor(QTextCursor::End);
+}
+
+void MainWindow::postError(const QString& string)
+{
+    postWindow->setCurrentCharFormat(ide::style->printErrorFormat);
     postWindow->insertPlainText(string);
     postWindow->moveCursor(QTextCursor::End);
 }
@@ -330,7 +343,8 @@ void MainWindow::newEditBuffer()
     buffer->setGeometry(0, 0, width(), (double) height() * 0.8);
     syntaxHighlighter.setDocument(buffer->document());
     buffer->setFocus();
-    buffer->grabKeyboard();
+    buffer->setTabChangesFocus(false);
+    buffer->setFont(ide::style->monoFont);
     graphicsView.scene()->addWidget(buffer);
     editBuffers.push_back(buffer);
     focusedBuffer = buffer;

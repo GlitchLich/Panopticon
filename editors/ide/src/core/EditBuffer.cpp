@@ -145,7 +145,7 @@ void EditBuffer::saveAs()
 
         else
         {
-            Post("File saved.");
+            Post("File saved.\n");
         }
 
         newFile.close();

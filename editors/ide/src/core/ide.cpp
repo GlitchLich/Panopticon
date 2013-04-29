@@ -15,6 +15,11 @@ void Post(const QString& string)
     MAIN_WINDOW->post(string);
 }
 
+void PostError(const QString& string)
+{
+    MAIN_WINDOW->postError(string);
+}
+
 } // ide namespace
 
 } // panopticon namespace
