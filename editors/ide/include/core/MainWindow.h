@@ -110,6 +110,9 @@ public slots:
     void incrementBuffer();
     void decrementBuffer();
 
+    void evaluateCode();
+    void toggleOpenGL();
+
 protected:
 
     QMenu *fileMenu, *sessionMenu, *editMenu, *languageMenu, *helpMenu;
@@ -138,6 +141,7 @@ public slots:
     void incrementBuffer();
     void decrementBuffer();
     void toggleOpenGL();
+    void evaluateCode();
 
 protected:
 

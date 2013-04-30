@@ -171,28 +171,27 @@ MenuBar::MenuBar(QWidget *parent) :
     QMenuBar(parent)
 {
     fileMenu = new QMenu("File");
-    fileMenu->addAction("New", this, SLOT(newFile()), QKeySequence(Qt::Key_Control, Qt::Key_N));
-    fileMenu->addAction("Open", this, SLOT(openFile()), QKeySequence(Qt::Key_Control, Qt::Key_O));
+    fileMenu->addAction("New", this, SLOT(newFile()), QKeySequence("CTRL+N"));
+    fileMenu->addAction("Open", this, SLOT(openFile()), QKeySequence("CTRL+O"));
     fileMenu->addAction("Open Recent");
-    fileMenu->addAction("Save", this, SLOT(saveFile()), QKeySequence(Qt::Key_Control, Qt::Key_S));
-    fileMenu->addAction("Save As...", this, SLOT(saveFileAs()), QKeySequence(Qt::Key_Shift, Qt::Key_Control, Qt::Key_S));
+    fileMenu->addAction("Save", this, SLOT(saveFile()), QKeySequence("CTRL+S"));
+    fileMenu->addAction("Save As...", this, SLOT(saveFileAs()), QKeySequence("SHIFT+CTRL+S"));
     fileMenu->addSeparator();
-    fileMenu->addAction("Close", this, SLOT(closeFile()), QKeySequence(Qt::Key_Control, Qt::Key_W));
-    fileMenu->addAction("Close All", this, SLOT(closeAllFiles()), QKeySequence(Qt::Key_Shift, Qt::Key_Control, Qt::Key_W));
+    fileMenu->addAction("Close", this, SLOT(closeFile()), QKeySequence("CTRL+W"));
+    fileMenu->addAction("Close All", this, SLOT(closeAllFiles()), QKeySequence("SHIFT+CTRL+W"));
     fileMenu->addSeparator();
-    fileMenu->addAction("Quit", this, SLOT(quit()), QKeySequence(Qt::Key_Control, Qt::Key_Q));
+    fileMenu->addAction("Quit", this, SLOT(quit()), QKeySequence("CTRL+Q"));
 
     sessionMenu = new QMenu("Session");
 
 
-
     editMenu = new QMenu("Edit");
-    editMenu->addAction("Previous Buffer", this, SLOT(decrementBuffer()), QKeySequence(Qt::ShiftModifier, Qt::LeftArrow));
-    editMenu->addAction("Next Buffer", this, SLOT(incrementBuffer()), QKeySequence(Qt::ShiftModifier, Qt::RightArrow));
+    editMenu->addAction("Previous Buffer", this, SLOT(decrementBuffer()), QKeySequence("SHIFT+LEFT"));
+    editMenu->addAction("Next Buffer", this, SLOT(incrementBuffer()), QKeySequence("SHIFT+RIGHT"));
 
     languageMenu = new QMenu("Language");
-
-
+    languageMenu->addAction("Evaluate code", this, SLOT(evaluateCode()), QKeySequence("SHIFT+RETURN"));
+    languageMenu->addAction("Toggle OpenGL", this, SLOT(toggleOpenGL()), QKeySequence("F1"));
 
     helpMenu = new QMenu("Help");
 
@@ -253,6 +252,15 @@ void MenuBar::decrementBuffer()
     MAIN_WINDOW->decrementBuffer();
 }
 
+void MenuBar::evaluateCode()
+{
+    MAIN_WINDOW->evaluateCode();
+}
+
+void MenuBar::toggleOpenGL()
+{
+    MAIN_WINDOW->toggleOpenGL();
+}
 
 //////////////////////////////////
 /// MainWindow
@@ -460,6 +468,11 @@ void MainWindow::decrementBuffer()
         showEditBuffer(previousBuffer.key());
         filePanel.checkButton(previousBuffer.key());
     }
+}
+
+void MainWindow::evaluateCode()
+{
+    focusedBuffer->executeCommand();
 }
 
 void MainWindow::toggleOpenGL()
