@@ -79,9 +79,9 @@ enum Type
     OPERATION_TREE,
     OPERATION,
     ASSIGNMENT,
-    FUNCTION_DEC,
     COMPUTE,
-    LOCAL_VARIABLE_INDEX
+    LOCAL_VARIABLE_INDEX,
+    FUNCTION_DEC
 };
 
 // Forward declarations

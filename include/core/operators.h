@@ -53,9 +53,10 @@ extern bool array_operator_object(object &a,const object &array,const object& ob
 extern bool recursive_apply(object &a,const object &obj1,const object& obj2, bool (*func)(object &,const object &,const object &));
 extern bool object_operator_object(object& a, object& b, object& c, bool (*func)(object &,const object &,const object &));
 extern bool array_operator_array(object& a,const object& array1,const object& array2, bool (*func)(object &,const object &,const object &));
+extern bool parse_operations(object& a,const object& b,const object& c, bool (*func)(object &,const object &,const object &));
+
 extern bool create_function(object&A, const object& B, const object& C);
 extern bool call_function(object&A, const object& B, const object& C);
-
 extern bool handle_stack(object &A, Function* function);
 
 //DONE

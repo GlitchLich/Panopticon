@@ -216,7 +216,8 @@ expr(A) ::= function_call(B).
 function_call(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN.
 {
     A.scope = optic::get_scope();
-    optic::object_operator_object(A,B,C,optic::call_function);
+    A.type = FUNCTION_DEC;
+    optic::parse_operations(A,B,C,optic::call_function);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -227,7 +228,7 @@ function_call(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN.
 assignment(A) ::= name_chain(B) ASSIGN expr(C). [ASSIGN]
 {
     A.type = optic::ASSIGNMENT;
-    object_operator_object(A,B,C,&panopticon::assign_variable);
+    parse_operations(A,B,C,&panopticon::assign_variable);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -388,7 +389,7 @@ operator ::= BITXOR.*/
 
 expr(A) ::= expr(B) PLUS expr(C).
 {
-    object_operator_object(A,B,C,&panopticon::plus);
+    parse_operations(A,B,C,&panopticon::plus);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -398,7 +399,7 @@ expr(A) ::= expr(B) PLUS expr(C).
 
 expr(A) ::= expr(B) MINUS expr(C).
 {
-    object_operator_object(A,B,C,&panopticon::minus);
+    parse_operations(A,B,C,&panopticon::minus);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -408,7 +409,7 @@ expr(A) ::= expr(B) MINUS expr(C).
 
 expr(A) ::= expr(B) DIVIDE expr(C).
 {
-    object_operator_object(A,B,C,&panopticon::divide);
+    parse_operations(A,B,C,&panopticon::divide);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -418,7 +419,7 @@ expr(A) ::= expr(B) DIVIDE expr(C).
 
 expr(A) ::= expr(B) TIMES expr(C).
 {
-    object_operator_object(A,B,C,&panopticon::multiply);
+    parse_operations(A,B,C,&panopticon::multiply);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -428,7 +429,7 @@ expr(A) ::= expr(B) TIMES expr(C).
 
 expr(A) ::= expr(B) MODULO expr(C).
 {
-    object_operator_object(A,B,C,&panopticon::modulo);
+    parse_operations(A,B,C,&panopticon::modulo);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -438,7 +439,7 @@ expr(A) ::= expr(B) MODULO expr(C).
 
 expr(A) ::= expr(B) POW expr(C).
 {
-    object_operator_object(A,B,C,&panopticon::value_pow);
+    parse_operations(A,B,C,&panopticon::value_pow);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -448,7 +449,7 @@ expr(A) ::= expr(B) POW expr(C).
 
 expr(A) ::= expr(B) EQUALTO expr(C).
 {
-    object_operator_object(A,B,C,&panopticon::equal_to);
+    parse_operations(A,B,C,&panopticon::equal_to);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -458,7 +459,7 @@ expr(A) ::= expr(B) EQUALTO expr(C).
 
 expr(A) ::= expr(B) NOTEQUALTO expr(C).
 {
-    object_operator_object(A,B,C,&panopticon::not_equal_to);
+    parse_operations(A,B,C,&panopticon::not_equal_to);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -468,7 +469,7 @@ expr(A) ::= expr(B) NOTEQUALTO expr(C).
 
 expr(A) ::= expr(B) LESSTHAN expr(C).
 {
-    object_operator_object(A,B,C,&panopticon::less_than);
+    parse_operations(A,B,C,&panopticon::less_than);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -478,7 +479,7 @@ expr(A) ::= expr(B) LESSTHAN expr(C).
 
 expr(A) ::= expr(B) GREATERTHAN expr(C).
 {
-    object_operator_object(A,B,C,&panopticon::greater_than);
+    parse_operations(A,B,C,&panopticon::greater_than);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -488,7 +489,7 @@ expr(A) ::= expr(B) GREATERTHAN expr(C).
 
 expr(A) ::= expr(B) LORE expr(C).
 {
-    object_operator_object(A,B,C,&panopticon::lore);
+    parse_operations(A,B,C,&panopticon::lore);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -498,7 +499,7 @@ expr(A) ::= expr(B) LORE expr(C).
 
 expr(A) ::= expr(B) GORE expr(C).
 {
-    object_operator_object(A,B,C,&panopticon::gore);
+    parse_operations(A,B,C,&panopticon::gore);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -508,7 +509,7 @@ expr(A) ::= expr(B) GORE expr(C).
 
 expr(A) ::= expr(B) AND expr(C).
 {
-    object_operator_object(A,B,C,&panopticon::value_and);
+    parse_operations(A,B,C,&panopticon::value_and);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -518,7 +519,7 @@ expr(A) ::= expr(B) AND expr(C).
 
 expr(A) ::= expr(B) OR expr(C).
 {
-    object_operator_object(A,B,C,&panopticon::value_or);
+    parse_operations(A,B,C,&panopticon::value_or);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -548,7 +549,7 @@ expr(A) ::= NOT expr(B).
 
 expr(A) ::= expr(B) SHIFTL expr(C).
 {
-    object_operator_object(A,B,C,&panopticon::shift_left);
+    parse_operations(A,B,C,&panopticon::shift_left);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -558,7 +559,7 @@ expr(A) ::= expr(B) SHIFTL expr(C).
 
 expr(A) ::= expr(B) SHIFTR expr(C).
 {
-    object_operator_object(A,B,C,&panopticon::shift_right);
+    parse_operations(A,B,C,&panopticon::shift_right);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -568,7 +569,7 @@ expr(A) ::= expr(B) SHIFTR expr(C).
 
 expr(A) ::= expr(B) BITAND expr(C).
 {
-    object_operator_object(A,B,C,&panopticon::bit_and);
+    parse_operations(A,B,C,&panopticon::bit_and);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -578,7 +579,7 @@ expr(A) ::= expr(B) BITAND expr(C).
 
 expr(A) ::= expr(B) BITOR expr(C).
 {
-    object_operator_object(A,B,C,&panopticon::bit_or);
+    parse_operations(A,B,C,&panopticon::bit_or);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -588,7 +589,7 @@ expr(A) ::= expr(B) BITOR expr(C).
 
 expr(A) ::= expr(B) BITXOR expr(C).
 {
-    object_operator_object(A,B,C,&panopticon::bit_xor);
+    parse_operations(A,B,C,&panopticon::bit_xor);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);

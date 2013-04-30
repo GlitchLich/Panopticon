@@ -502,7 +502,7 @@ bool object_operator_object2(object& a, object& b, object& c, bool (*func)(objec
     }
 }
 
-bool parse_operations(object& a, object& b, object& c, bool (*func)(object &,const object &,const object &))
+bool parse_operations(object& a,const object& b,const object& c, bool (*func)(object &,const object &,const object &))
 {
 
     if(a.type==FUNCTION_DEC)
