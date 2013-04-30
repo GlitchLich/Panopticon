@@ -13,12 +13,12 @@ myfalsebool != mybool
 n*m+z
 
 //INDEXING ARRAYS
-myarray = [23 22 0 20]
-myarray[0]
-myarray[1]
-myarray[2]
-myarray[3]
-myarray[myarray[myarray[2]+2]+1]
+myArray = [23 22 0 20]
+myArray[0]
+myArray[1]
+myArray[2]
+myArray[3]
+myArray[myArray[myArray[2]+2]+1]
 nestedarray = [23 [22 21] 20]
 
 metaArray = [0 1 myarray 3]
@@ -29,7 +29,8 @@ metaArray[2][3][0]
 //Functions
 myFunc x y z = x + y * z << x
 myFunc(2 2 3)
-myFunc(2 [9 10] myarray)
+myArray = [23 22 0 20]
+myFunc(2 [9 10] myArray)
 myFunc(1 2 myFunc(1 2 myFunc(1 2 myFunc(1 2 myFunc(1 2 1)))))
 
 myFunc x y z = x + y * z << x

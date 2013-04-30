@@ -357,6 +357,7 @@ bool bool_plusplus_string(object &a, object b,  object c)
     return true;
 }
 
+
 bool object_operator_array(object& a,const object& obj,const object& array, bool (*func)(object &,const object &,const object &))
 {
     a.type = panopticon::ARRAY;
@@ -469,6 +470,13 @@ bool store_operations(object& a,const object& obj1,const object& obj2, bool (*fu
 
 bool object_operator_object(object& a, object& b, object& c, bool (*func)(object &,const object &,const object &))
 {
+    func(a,b,c);
+    delete_object(b);
+    delete_object(c);
+}
+
+bool object_operator_object2(object& a, object& b, object& c, bool (*func)(object &,const object &,const object &))
+{
     if(
             b.type==UNDECLARED_VARIABLE||
             c.type==UNDECLARED_VARIABLE||
@@ -493,6 +501,30 @@ bool object_operator_object(object& a, object& b, object& c, bool (*func)(object
         delete_object(c);
     }
 }
+
+bool parse_operations(object& a, object& b, object& c, bool (*func)(object &,const object &,const object &))
+{
+
+    if(a.type==FUNCTION_DEC)
+    {
+        create_function(a,b,c);
+    }
+    else if(a.type==ASSIGNMENT)
+    {
+        assign_variable(a,b,c);
+    }
+    else if(a.type==COMPUTE)
+    {
+        //TO DO:
+        //Create system to compute shit outside
+//        object_operator_object(a,b,c,func);
+    }
+    else
+    {
+        store_operations(a,b,c,func);
+    }
+}
+
 
 
 /**
