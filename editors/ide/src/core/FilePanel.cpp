@@ -14,14 +14,17 @@ FilePanel::FilePanel(QWidget *parent) :
     QToolBar("File Pane", parent),
     lastPressed(9999) // arbitrarily large number to prevent initial uncheck
 {
-    setFixedHeight(20);
+    //setFixedHeight(20);
     QPalette palette = this->palette();
     palette.setColor(QPalette::Normal, QPalette::Base, ide::style->clearColor());
     palette.setColor(QPalette::Normal, QPalette::Window, ide::style->clearColor());
     palette.setColor(QPalette::Normal, QPalette::Background, ide::style->clearColor());
     palette.setColor(QPalette::Normal, QPalette::Button, ide::style->clearColor());
     setPalette(palette);
-    setAllowedAreas(Qt::BottomToolBarArea | Qt::TopToolBarArea);
+    setAllowedAreas(Qt::LeftToolBarArea | Qt::BottomToolBarArea | Qt::TopToolBarArea);
+    setFloatable(false);
+    setMovable(false);
+    setLayout(new QVBoxLayout());
 }
 
 void FilePanel::addEditBuffer(unsigned int buffer)
@@ -32,6 +35,7 @@ void FilePanel::addEditBuffer(unsigned int buffer)
     panelEntry->setProperty("id", buffer);
     panelEntry->setCheckable(true);
     panelEntry->setChecked(true);
+    panelEntry->setMaximumWidth(100);
     panelEntry->connect(panelEntry, SIGNAL(clicked()), this, SLOT(fileButtonPressed()));
     fileButtons[buffer] = panelEntry;
 
