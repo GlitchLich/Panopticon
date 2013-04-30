@@ -260,6 +260,7 @@ void MenuBar::decrementBuffer()
 
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
+    openGL(false),
     menuBar(this),
     filePanel(0),
     glBackground(0),
@@ -270,8 +271,9 @@ MainWindow::MainWindow(QWidget* parent) :
     glBackground.setGeometry(this->geometry());
     setWindowTitle("Panopticon");
     setFont(ide::style->mainFont);
-    graphicsView.setViewport(new GlWidget());
+    //graphicsView.setViewport(new GlWidget());
     graphicsView.setScene(new GraphicsScene());
+    graphicsView.setBackgroundBrush(ide::style->clearColor());
     graphicsView.setFont(ide::style->monoFont);
     newEditBuffer();
     graphicsView.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -460,6 +462,19 @@ void MainWindow::decrementBuffer()
     }
 }
 
+void MainWindow::toggleOpenGL()
+{
+    openGL = !openGL;
+
+    if(openGL)
+        graphicsView.setViewport(new GlWidget());
+
+    else
+        graphicsView.setViewport(new QWidget());
+
+    ((GraphicsScene*) graphicsView.scene())->toggleTimer();
+}
+
 void MainWindow::newEditBuffer()
 {
     if(focusedBuffer)
@@ -488,9 +503,10 @@ void MainWindow::resizeEvent(QResizeEvent *e)
 
 void MainWindow::keyPressEvent(QKeyEvent* e)
 {
-    if((e->key() == Qt::Key_Return || e->key() == Qt::Key_Enter)
+    if((e->key() == Qt::Key_F1)
             && (e->modifiers() == Qt::ShiftModifier || e->modifiers() == Qt::ControlModifier))
     {
+        graphicsView.setViewport(new GlWidget());
         ((GraphicsScene*) graphicsView.scene())->toggleTimer();
     }
 

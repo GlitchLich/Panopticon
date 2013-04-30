@@ -137,6 +137,7 @@ public slots:
     void showEditBuffer(unsigned int buffer);
     void incrementBuffer();
     void decrementBuffer();
+    void toggleOpenGL();
 
 protected:
 
@@ -158,6 +159,7 @@ protected:
     MenuBar menuBar;
     unsigned int bufferCount;
     FilePanel filePanel;
+    bool openGL;
 };
 
 } // ide namespace
