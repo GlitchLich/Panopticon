@@ -60,7 +60,7 @@ false     { yylval.bval = 0;return BOOLEAN;}
 "\""+[__+-={}|:;?/>.<,~`!@#$%^&*()A-Za-z0-9 \t\n\r]* {yyerror(yytext,1);return OPENQUOTEERROR;}
 
 \n      { col = 0; ++line; return NEWLINE; }
-\r      { col = 0; ++line; return NEWLINE; }
+\r      { col = 0; ++line; printf("return!\n"); return NEWLINE; }
 
 .       { col += (int) strlen(yytext); return yytext[0]; }
 %%

@@ -475,7 +475,7 @@ bool object_operator_object(object& a, object& b, object& c, bool (*func)(object
     delete_object(c);
 }
 
-bool object_operator_object2(object& a, object& b, object& c, bool (*func)(object &,const object &,const object &))
+bool object_operator_object_old(object& a, object& b, object& c, bool (*func)(object &,const object &,const object &))
 {
     if(
             b.type==UNDECLARED_VARIABLE||
