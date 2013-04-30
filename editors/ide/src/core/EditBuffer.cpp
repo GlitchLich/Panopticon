@@ -56,9 +56,10 @@ void EditBuffer::init()
     setFrameShadow(QTextEdit::Plain);
     setAcceptRichText(false);
     fileName = "";
-    connect(this, SIGNAL(textChanged()), this, SLOT(edited()), Qt::QueuedConnection);
+    connect(document(), SIGNAL(contentsChanged()), this, SLOT(edited()), Qt::QueuedConnection);
     panopticon::init();
     unsavedEdits = false;
+    document()->setModified(false);
 }
 
 void EditBuffer::keyPressEvent(QKeyEvent *e)
@@ -119,6 +120,12 @@ void EditBuffer::keyPressEvent(QKeyEvent *e)
         }
     }
 
+    else if(e->key() == Qt::Key_F1)
+    {
+        MAIN_WINDOW->toggleOpenGL();
+        return;
+    }
+
     QTextEdit::keyPressEvent(e);
 }
 
@@ -152,6 +159,7 @@ void EditBuffer::save()
 
         file.close();
         unsavedEdits = false;
+        document()->setModified(false);
         emit fileChanged(id, fileName);
     }
 
@@ -189,7 +197,7 @@ void EditBuffer::saveAs()
 
 bool EditBuffer::getUnsavedEdits()
 {
-    return unsavedEdits;
+    return unsavedEdits && document()->isModified();
 }
 
 void EditBuffer::edited()
@@ -230,6 +238,7 @@ void EditBuffer::loadFile()
         setText(text);
         file.close();
         unsavedEdits = false;
+        document()->setModified(false);
         emit fileChanged(id, fileName);
     }
 

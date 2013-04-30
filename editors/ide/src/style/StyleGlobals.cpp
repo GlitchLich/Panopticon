@@ -10,8 +10,8 @@ Style::Style()
 {
 #ifdef __LINUX__
     toolFont = QFont("Ubuntu", 8);
-    mainFont = QFont("DejaVu Sans", 12);
-    monoFont = QFont("DejaVu Sans Mono", 12);
+    mainFont = QFont("Ubuntu", 13);
+    monoFont = QFont("Ubuntu Mono", 13);
 #else
     toolFont = QFont("Myriad", 8);
     mainFont = QFont("Myriad", 13);

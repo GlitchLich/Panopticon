@@ -24,6 +24,39 @@ namespace ide
 {
 
 /////////////////////
+// CloseFileDialog
+/////////////////////
+CloseFileDialog::CloseFileDialog(const QString &fileName, QWidget *parent) :
+    QMessageBox(parent)
+{
+    setText("The document has been modified.");
+    setInformativeText("Save changes to \"" + fileName + "\" before closing?");
+    setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+    setWindowFlags(Qt::Window);
+    grabKeyboard();
+    setDefaultButton(QMessageBox::Save);
+}
+
+void CloseFileDialog::keyPressEvent(QKeyEvent *event)
+{
+    switch(event->key())
+    {
+    case Qt::Key_Left:
+        focusPreviousChild();
+        return;
+
+    case Qt::Key_Right:
+        focusNextChild();
+        return;
+
+    default:
+        break;
+    }
+
+    QMessageBox::keyPressEvent(event);
+}
+
+/////////////////////
 /// GlContext
 /////////////////////
 
@@ -138,28 +171,27 @@ MenuBar::MenuBar(QWidget *parent) :
     QMenuBar(parent)
 {
     fileMenu = new QMenu("File");
-    fileMenu->addAction("New", this, SLOT(newFile()), QKeySequence(Qt::Key_Control, Qt::Key_N));
-    fileMenu->addAction("Open", this, SLOT(openFile()), QKeySequence(Qt::Key_Control, Qt::Key_O));
+    fileMenu->addAction("New", this, SLOT(newFile()), QKeySequence("CTRL+N"));
+    fileMenu->addAction("Open", this, SLOT(openFile()), QKeySequence("CTRL+O"));
     fileMenu->addAction("Open Recent");
-    fileMenu->addAction("Save", this, SLOT(saveFile()), QKeySequence(Qt::Key_Control, Qt::Key_S));
-    fileMenu->addAction("Save As...", this, SLOT(saveFileAs()), QKeySequence(Qt::Key_Shift, Qt::Key_Control, Qt::Key_S));
+    fileMenu->addAction("Save", this, SLOT(saveFile()), QKeySequence("CTRL+S"));
+    fileMenu->addAction("Save As...", this, SLOT(saveFileAs()), QKeySequence("SHIFT+CTRL+S"));
     fileMenu->addSeparator();
-    fileMenu->addAction("Close", this, SLOT(closeFile()), QKeySequence(Qt::Key_Control, Qt::Key_W));
-    fileMenu->addAction("Close All", this, SLOT(closeAllFiles()), QKeySequence(Qt::Key_Shift, Qt::Key_Control, Qt::Key_W));
+    fileMenu->addAction("Close", this, SLOT(closeFile()), QKeySequence("CTRL+W"));
+    fileMenu->addAction("Close All", this, SLOT(closeAllFiles()), QKeySequence("SHIFT+CTRL+W"));
     fileMenu->addSeparator();
-    fileMenu->addAction("Quit", this, SLOT(quit()), QKeySequence(Qt::Key_Control, Qt::Key_Q));
+    fileMenu->addAction("Quit", this, SLOT(quit()), QKeySequence("CTRL+Q"));
 
     sessionMenu = new QMenu("Session");
 
 
-
     editMenu = new QMenu("Edit");
-    editMenu->addAction("Previous Buffer", this, SLOT(decrementBuffer()), QKeySequence(Qt::ShiftModifier, Qt::LeftArrow));
-    editMenu->addAction("Next Buffer", this, SLOT(incrementBuffer()), QKeySequence(Qt::ShiftModifier, Qt::RightArrow));
+    editMenu->addAction("Previous Buffer", this, SLOT(decrementBuffer()), QKeySequence("SHIFT+LEFT"));
+    editMenu->addAction("Next Buffer", this, SLOT(incrementBuffer()), QKeySequence("SHIFT+RIGHT"));
 
     languageMenu = new QMenu("Language");
-
-
+    languageMenu->addAction("Evaluate code", this, SLOT(evaluateCode()), QKeySequence("SHIFT+RETURN"));
+    languageMenu->addAction("Toggle OpenGL", this, SLOT(toggleOpenGL()), QKeySequence("F1"));
 
     helpMenu = new QMenu("Help");
 
@@ -220,6 +252,15 @@ void MenuBar::decrementBuffer()
     MAIN_WINDOW->decrementBuffer();
 }
 
+void MenuBar::evaluateCode()
+{
+    MAIN_WINDOW->evaluateCode();
+}
+
+void MenuBar::toggleOpenGL()
+{
+    MAIN_WINDOW->toggleOpenGL();
+}
 
 //////////////////////////////////
 /// MainWindow
@@ -227,6 +268,7 @@ void MenuBar::decrementBuffer()
 
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
+    openGL(false),
     menuBar(this),
     filePanel(0),
     glBackground(0),
@@ -237,8 +279,9 @@ MainWindow::MainWindow(QWidget* parent) :
     glBackground.setGeometry(this->geometry());
     setWindowTitle("Panopticon");
     setFont(ide::style->mainFont);
-    graphicsView.setViewport(new GlWidget());
+    //graphicsView.setViewport(new GlWidget());
     graphicsView.setScene(new GraphicsScene());
+    graphicsView.setBackgroundBrush(ide::style->clearColor());
     graphicsView.setFont(ide::style->monoFont);
     newEditBuffer();
     graphicsView.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -329,12 +372,7 @@ bool MainWindow::closeFile(bool autospawn)
     {
         if(focusedBuffer->getUnsavedEdits())
         {
-            QMessageBox msgBox;
-            msgBox.setText("The document has been modified.");
-            msgBox.setInformativeText("Save changes to \"" + focusedBuffer->getFileName() + "\" before closing?");
-            msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
-            msgBox.setDefaultButton(QMessageBox::Save);
-            msgBox.grabKeyboard();
+            CloseFileDialog msgBox(focusedBuffer->getFileName());
             int ret = msgBox.exec();
 
             switch(ret)
@@ -350,8 +388,16 @@ bool MainWindow::closeFile(bool autospawn)
 
             case QMessageBox::Cancel:
                 fileClosed = false;
+                focusedBuffer->setFocus();
+                focusedBuffer->show();
+                focusedBuffer->grabKeyboard();
                 break;
             }
+        }
+
+        else
+        {
+            prCloseFile(autospawn);
         }
     }
 
@@ -391,6 +437,7 @@ void MainWindow::showEditBuffer(unsigned int buffer)
 
         focusedBuffer = editBuffers[buffer];
         syntaxHighlighter.setDocument(focusedBuffer->document());
+        focusedBuffer->setFocus();
         focusedBuffer->show();
         focusedBuffer->grabKeyboard();
     }
@@ -423,6 +470,24 @@ void MainWindow::decrementBuffer()
     }
 }
 
+void MainWindow::evaluateCode()
+{
+    focusedBuffer->executeCommand();
+}
+
+void MainWindow::toggleOpenGL()
+{
+    openGL = !openGL;
+
+    if(openGL)
+        graphicsView.setViewport(new GlWidget());
+
+    else
+        graphicsView.setViewport(new QWidget());
+
+    ((GraphicsScene*) graphicsView.scene())->toggleTimer();
+}
+
 void MainWindow::newEditBuffer()
 {
     if(focusedBuffer)
@@ -451,9 +516,10 @@ void MainWindow::resizeEvent(QResizeEvent *e)
 
 void MainWindow::keyPressEvent(QKeyEvent* e)
 {
-    if((e->key() == Qt::Key_Return || e->key() == Qt::Key_Enter)
+    if((e->key() == Qt::Key_F1)
             && (e->modifiers() == Qt::ShiftModifier || e->modifiers() == Qt::ControlModifier))
     {
+        graphicsView.setViewport(new GlWidget());
         ((GraphicsScene*) graphicsView.scene())->toggleTimer();
     }
 

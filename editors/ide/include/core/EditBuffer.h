@@ -46,10 +46,9 @@ signals:
 public slots:
 
     void edited();
+    void executeCommand();
 
 protected:
-
-    void executeCommand();
 
     QString fileName;
     QString filePath;
