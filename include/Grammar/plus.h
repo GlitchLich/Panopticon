@@ -7,12 +7,12 @@
 
 namespace panopticon
 {
-extern bool number_plus(object&A,object& B, object& C);
-extern bool bool_plus(object&A, object& B, object& C);
-extern bool string_plus(object&A, object& B, object& C);
-extern bool array_plus(object&A, object& B, object& C);
+extern bool number_plus(object&A,const object& B,const object& C);
+extern bool bool_plus(object&A, const object& B, const object& C);
+extern bool string_plus(object&A, const object& B, const object& C);
+extern bool array_plus(object&A, const object& B, const object& C);
 
-extern bool number_plus_bool(object&A,object& number, object& boolean);
+extern bool number_plus_bool(object&A, const object &number, const object &boolean);
 
 //Strings
 extern bool bool_plus_string(object &a,const object b, const object c);

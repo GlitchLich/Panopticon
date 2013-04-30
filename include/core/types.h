@@ -57,6 +57,7 @@ typedef struct State State;
 
 typedef int (*CFunction) (State* P);
 
+
 // basic types
 enum Type
 {
@@ -77,7 +78,8 @@ enum Type
     UNDECLARED_VARIABLE,
     OPERATION_TREE,
     OPERATION,
-    ASSIGNMENT
+    ASSIGNMENT,
+    LOCAL_VARIABLE_INDEX
 };
 
 // Forward declarations
@@ -101,7 +103,7 @@ union Data
     Function* function;
     Array* array;
     Map* map;
-    bool (*operator_func)(object &, object &, object &);
+    bool (*operator_func)(object &,const object &,const object &);
 };
 
 struct object
@@ -114,6 +116,10 @@ struct object
 struct Function
 {
     std::stack<object> stack;
+    std::unordered_map<std::string,object> heap;
+    int num_arguments;
+    std::vector<object> arguments;
+    object body;
 };
 
 } // panopticon namespace

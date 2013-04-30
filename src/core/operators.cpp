@@ -38,12 +38,14 @@ namespace panopticon
 //==================
 //GENERAL
 //==================
-object copy_object(object& original)
+object copy_object(const object& original)
 {
     object copy;
     copy.type = original.type;
     switch(original.type)
     {
+    case panopticon::LOCAL_VARIABLE_INDEX:
+    case panopticon::OPERATION:
     case panopticon::NUMBER:
     case panopticon::BOOL:
         copy = original;
@@ -51,6 +53,7 @@ object copy_object(object& original)
     case panopticon::STRING:
         copy.data.string = new String(*copy.data.string);
         break;
+    case panopticon::OPERATION_TREE:
     case panopticon::ARRAY:
         copy.data.array = new Array();
         copy.data.array->reserve(original.data.array->size());
@@ -101,7 +104,7 @@ bool delete_object(object& obj)
     }
 }
 
-bool print_array(object &A, int arrayNum)
+bool print_array(const object &A, int arrayNum)
 {
     if(arrayNum!=0)
     {
@@ -141,7 +144,7 @@ bool print_array(object &A, int arrayNum)
     }
 }
 
-bool print_object( object& A)
+bool print_object(const object &A)
 {
     switch(A.type)
     {
@@ -169,8 +172,11 @@ bool print_object( object& A)
         print_object(A.scope->data.map->at(*A.data.string));
         break;
     case panopticon::UNDECLARED_VARIABLE:
-        out() << "Error: Undeclared Variable: " << *A.data.string << std::endl;
+        out() << "Undeclared Variable: " << *A.data.string << std::endl;
         correct_parsing = false;
+        break;
+    case panopticon::LOCAL_VARIABLE_INDEX:
+        out() << "Local Variable Index: " << A.data.number << std::endl;
         break;
     case panopticon::OPERATION_TREE:
         for(int i=0;i<A.data.array->size();++i)
@@ -183,8 +189,8 @@ bool print_object( object& A)
         correct_parsing = false;
         break;
     case panopticon::OPERATION:
-        out() << "WTF, this shouldn't happen, ended up with an operator..." << std::endl;
-        correct_parsing = false;
+        out() << "Operator" << std::endl;
+        //        correct_parsing = false;
         break;
     }
 }
@@ -351,7 +357,7 @@ bool bool_plusplus_string(object &a, object b,  object c)
     return true;
 }
 
-bool object_operator_array(object& a, object& obj, object& array, bool (*func)(object &, object &, object &))
+bool object_operator_array(object& a,const object& obj,const object& array, bool (*func)(object &,const object &,const object &))
 {
     a.type = panopticon::ARRAY;
     a.data.array = new std::vector<object>();
@@ -365,7 +371,7 @@ bool object_operator_array(object& a, object& obj, object& array, bool (*func)(o
     }
 }
 
-bool array_operator_object(object& a, object& array, object& obj, bool (*func)(object &, object &, object &))
+bool array_operator_object(object& a,const object& array,const object& obj, bool (*func)(object &,const object &,const object &))
 {
     a.type = panopticon::ARRAY;
     a.data.array = new std::vector<object>();
@@ -379,7 +385,7 @@ bool array_operator_object(object& a, object& array, object& obj, bool (*func)(o
     }
 }
 
-bool array_operator_array(object& a, object& array1, object& array2, bool (*func)(object &, object &, object &))
+bool array_operator_array(object& a,const object& array1,const object& array2, bool (*func)(object &,const object &,const object &))
 {
     a.type = panopticon::ARRAY;
     a.data.array = new std::vector<object>();
@@ -404,7 +410,7 @@ bool array_operator_array(object& a, object& array1, object& array2, bool (*func
     }
 }
 
-bool store_operations(object& a, object& obj1, object& obj2, bool (*func)(object &, object &, object &))
+bool store_operations(object& a,const object& obj1,const object& obj2, bool (*func)(object &,const object &,const object &))
 {
     a.type = OPERATION_TREE;
     a.data.array = new Array();
@@ -461,7 +467,7 @@ bool store_operations(object& a, object& obj1, object& obj2, bool (*func)(object
     }
 }
 
-bool object_operator_object(object& a, object& b, object& c, bool (*func)(object &, object &, object &))
+bool object_operator_object(object& a, object& b, object& c, bool (*func)(object &,const object &,const object &))
 {
     if(
             b.type==UNDECLARED_VARIABLE||
@@ -488,36 +494,52 @@ bool object_operator_object(object& a, object& b, object& c, bool (*func)(object
     }
 }
 
-bool check_variables(Map& variables, object& B, object& C)
+
+/**
+ * @brief check_variables
+ * Check for errors/inconsistencies in the function declaration, assign arguments to indecies.
+ * @param arguments Temporary storage for arguments,
+ * mainly used to suss out argument order apply that index to all instances of that argument.
+ * @param B Arguments for the Function.
+ * @param C Body of the function, stored as an operation_tree.
+ * @return
+ */
+bool check_variables(Map& arguments,const object& B,const object& C)
 {
     if(B.type==ARRAY)
     {
-        for(int i=0;i<B.data.array->size();++i)
+        for(int i=1;i<B.data.array->size();++i)
         {
-            object newObject;
-            variables[*B.data.array->at(i).data.string] = newObject;
+            object variableObject;
+            variableObject.type = LOCAL_VARIABLE_INDEX;
+            variableObject.data.number = i-1;
+            arguments[*B.data.array->at(i).data.string] = variableObject;
         }
     }
     else
     {
         object newObject;
-        variables[*B.data.string] = newObject;
+        arguments[*B.data.string] = newObject;
     }
 
     if(C.type==OPERATION_TREE)
     {
         for(int i=0;i<C.data.array->size();++i)
         {
-            std::cout << C.data.array->at(i).type << std::endl;
             if(C.data.array->at(i).type==OPERATION_TREE)
             {
                 return false;
             }
             if(C.data.array->at(i).type!=OPERATION&&C.data.array->at(i).type!=NUMBER)
             {
-                if(variables.find(*C.data.array->at(i).data.string)==variables.end())
+                if(arguments.find(*C.data.array->at(i).data.string)==arguments.end())
                 {
                     return false;
+                }
+                else
+                {
+                    C.data.array->at(i).data.number = arguments[*C.data.array->at(i).data.string].data.number;
+                    C.data.array->at(i).type = LOCAL_VARIABLE_INDEX;
                 }
             }
         }
@@ -528,16 +550,29 @@ bool check_variables(Map& variables, object& B, object& C)
         {
             return false;
         }
-        if(variables.find(*C.data.string)==variables.end())
+        if(arguments.find(*C.data.string)==arguments.end())
         {
             return false;
+        }
+        else
+        {
+            //TO DO FIX THIS
+            //            C.data.number = arguments[*C.data.string].data.number;
+            //            C.type = LOCAL_VARIABLE_INDEX;
         }
     }
 
     return true;
 }
 
-bool create_function(object &A, object &B, object &C)
+/**
+ * @brief create_function
+ * @param A
+ * @param B Arguments for the Function. First argument is the function name (unless anonymous)
+ * @param C Body of the function, stored as an operation_tree.
+ * @return
+ */
+bool create_function(object &A,const object &B,const object &C)
 {
     A.type = FUNCTION;
     std::string function_name;
@@ -549,14 +584,20 @@ bool create_function(object &A, object &B, object &C)
     {
         function_name = *B.data.string;
     }
-
-    Map variables;
-    if(!check_variables(variables,B,C))
+    Map arguments;
+    if(!check_variables(arguments,B,C))
     {
         out() << "Error: Function contains variables that are not in the arguments field." << std::endl;
+        correct_parsing = false;
     }
     else
     {
+        if(B.scope->data.map->find(function_name)!=B.scope->data.map->end())
+        {
+            //TO DO, SHOULD THIS DELETE THE FUNCTION?
+            //HOW CAN WE KEEP THINGS IMMUTABLE AND THREAD SAFE?
+            B.scope->data.map->erase(function_name);
+        }
         out() << "Creating function "<< function_name << std::endl;
 
         if(B.type == ARRAY)
@@ -568,12 +609,127 @@ bool create_function(object &A, object &B, object &C)
             }
             out() << std::endl;
         }
+        Function* function = new Function;
+        function->num_arguments = arguments.size();
+        function->body = copy_object(C);
+
+        A.data.function = function;
+        A.scope = B.scope;
+        std::pair<std::string,object> func(function_name,A);
+        B.scope->data.map->insert(func);
+    }
+}
+
+bool handle_stack(object &A, Function *function)
+{
+    for(int i=function->body.data.array->size()-1;i>=0;i-=1)
+    {
+        //        out() << function->body.data.array->at(i).type << std::endl;
+        print_object(function->body.data.array->at(i));
+        function->stack.push(function->body.data.array->at(i));
+    }
+    while(function->stack.size()>1)
+    {
+        out() << "Stack size: " << function->stack.size() << std::endl;
+        const object& object1 = function->stack.top();
+        int arg1 = -1;
+        int arg2 = -1;
+        object result;
+        function->stack.pop();
+        switch(object1.type)
+        {
+        case LOCAL_VARIABLE_INDEX:
+            arg1 = object1.data.number;
+            //            out() << "ARG1: " << arg1 << std::endl;
+        case NUMBER:
+        case STRING:
+        case BOOL:
+        case ARRAY:
+            const object& object2 = function->stack.top();
+            function->stack.pop();
+            switch(object2.type)
+            {
+            case NUMBER:
+            case STRING:
+            case BOOL:
+            case ARRAY:
+                out() << "Error: two concurrent expressions without an infix operator." << std::endl;
+                break;
+            case OPERATION:
+                const object& object3 = function->stack.top();
+                function->stack.pop();
+                switch(object3.type)
+                {
+                case LOCAL_VARIABLE_INDEX:
+                    arg2 = object3.data.number;
+                case NUMBER:
+                case STRING:
+                case BOOL:
+                case ARRAY:
+                    if(arg1>-1&&arg2>-1)
+                    {
+                        object2.data.operator_func(result,function->arguments.at(arg1),function->arguments.at(arg2));
+                    }
+                    else if(arg1>-1)
+                    {
+                        object2.data.operator_func(result,function->arguments.at(arg1),object3);
+                    }
+                    else if(arg2>-1)
+                    {
+                        object2.data.operator_func(result,object1,function->arguments.at(arg2));
+                    }
+                    else
+                    {
+                        object2.data.operator_func(result,object1,object3);
+                    }
+                    break;
+                case OPERATION:
+                    out() << "Error: two concurrent operators on the stack." << std::endl;
+                    break;
+                }
+            }
+            break;
+        }
+        function->stack.push(result);
+    }
+    A = copy_object(function->stack.top());
+    function->stack.pop();
+}
+
+bool call_function(object &A,const object &B,const object &C)
+{
+    if(A.scope->data.map->find(*B.data.string)!=A.scope->data.map->end())
+    {
+        if(C.data.array->size()==(*A.scope->data.map)[*B.data.string].data.function->num_arguments)
+        {
+            out() << "Calling function: " << *B.data.string << std::endl;
+            out() << "with arguments: " << std::endl;
+            for(int i=0;i<C.data.array->size();++i)
+            {
+                print_object(C.data.array->at(i));
+            }
+            //        A = (*A.scope->data.map)[*B.data.string];
+            (*A.scope->data.map)[*B.data.string].data.function->arguments.swap(*C.data.array);
+            handle_stack(A,(*A.scope->data.map)[*B.data.string].data.function);
+            //        out() << "Function Result: " << std::endl;
+            //        out() << A.type << std::endl;
+        }
+        else
+        {
+            out() << "Error: Incorrect number of supplied arguments for this function: " << *B.data.string << std::endl;
+            correct_parsing = false;
+        }
+    }
+    else
+    {
+        out() << "Error: This function has not been declared: " << *B.data.string << std::endl;
+        correct_parsing = false;
     }
 }
 
 
 
-bool recursive_apply(object& a, object& obj1, object& obj2, bool (*func)(object &, object &, object &))
+bool recursive_apply(object& a,const object& obj1,const object& obj2, bool (*func)(object &,const object &,const object &))
 {
     if(obj1.type==ARRAY)
     {
@@ -589,7 +745,7 @@ bool recursive_apply(object& a, object& obj1, object& obj2, bool (*func)(object 
 //======================================================================================
 //======================================================================================
 
-bool plus(object&A, object& B, object& C)
+bool plus(object&A, const object& B, const object& C)
 {
     switch(B.type)
     {
@@ -608,7 +764,7 @@ bool plus(object&A, object& B, object& C)
     }
 }
 
-bool minus(object&A, object& B, object& C)
+bool minus(object&A, const object& B, const object& C)
 {
     switch(B.type)
     {
@@ -627,7 +783,7 @@ bool minus(object&A, object& B, object& C)
     }
 }
 
-bool divide(object&A, object& B, object& C)
+bool divide(object&A, const object& B, const object& C)
 {
     switch(B.type)
     {
@@ -682,7 +838,7 @@ bool divide(object&A, object& B, object& C)
 }
 
 
-bool multiply(object&A, object& B, object& C)
+bool multiply(object&A, const object& B, const object& C)
 {
     switch(B.type)
     {
@@ -736,7 +892,7 @@ bool multiply(object&A, object& B, object& C)
     }
 }
 
-bool modulo(object&A, object& B, object& C)
+bool modulo(object&A, const object& B, const object& C)
 {
     switch(B.type)
     {
@@ -790,7 +946,7 @@ bool modulo(object&A, object& B, object& C)
     }
 }
 
-bool value_pow(object&A, object& B, object& C)
+bool value_pow(object&A, const object& B, const object& C)
 {
     switch(B.type)
     {
@@ -844,7 +1000,7 @@ bool value_pow(object&A, object& B, object& C)
     }
 }
 
-bool equal_to(object&A, object& B, object& C)
+bool equal_to(object&A, const object& B, const object& C)
 {
     switch(B.type)
     {
@@ -931,7 +1087,7 @@ bool equal_to(object&A, object& B, object& C)
     }
 }
 
-bool not_equal_to(object&A, object& B, object& C)
+bool not_equal_to(object&A, const object& B, const object& C)
 {
     switch(B.type)
     {
@@ -1018,7 +1174,7 @@ bool not_equal_to(object&A, object& B, object& C)
     }
 }
 
-bool less_than(object&A, object& B, object& C)
+bool less_than(object&A, const object& B, const object& C)
 {
     switch(B.type)
     {
@@ -1072,7 +1228,7 @@ bool less_than(object&A, object& B, object& C)
     }
 }
 
-bool greater_than(object&A, object& B, object& C)
+bool greater_than(object&A, const object& B, const object& C)
 {
     switch(B.type)
     {
@@ -1126,7 +1282,7 @@ bool greater_than(object&A, object& B, object& C)
     }
 }
 
-bool lore(object&A, object& B, object& C)
+bool lore(object&A, const object& B, const object& C)
 {
     switch(B.type)
     {
@@ -1180,7 +1336,7 @@ bool lore(object&A, object& B, object& C)
     }
 }
 
-bool gore(object&A, object& B, object& C)
+bool gore(object&A, const object& B, const object& C)
 {
     switch(B.type)
     {
@@ -1234,7 +1390,7 @@ bool gore(object&A, object& B, object& C)
     }
 }
 
-bool value_and(object&A, object& B, object& C)
+bool value_and(object&A, const object& B, const object& C)
 {
     switch(B.type)
     {
@@ -1331,7 +1487,7 @@ bool value_and(object&A, object& B, object& C)
     }
 }
 
-bool value_or(object&A, object& B, object& C)
+bool value_or(object&A, const object& B, const object& C)
 {
     switch(B.type)
     {
@@ -1458,7 +1614,7 @@ bool not_value(object&A, object& B)
     }
 }
 
-bool shift_left(object&A, object& B, object& C)
+bool shift_left(object&A, const object& B, const object& C)
 {
     switch(B.type)
     {
@@ -1512,7 +1668,7 @@ bool shift_left(object&A, object& B, object& C)
     }
 }
 
-bool shift_right(object&A, object& B, object& C)
+bool shift_right(object&A, const object& B, const object& C)
 {
     switch(B.type)
     {
@@ -1589,7 +1745,7 @@ bool bit_not(object&A, object& B)
     }
 }
 
-bool bit_and(object&A, object& B, object& C)
+bool bit_and(object&A, const object& B, const object& C)
 {
     switch(B.type)
     {
@@ -1643,7 +1799,7 @@ bool bit_and(object&A, object& B, object& C)
     }
 }
 
-bool bit_or(object&A, object& B, object& C)
+bool bit_or(object&A, const object& B, const object& C)
 {
     switch(B.type)
     {
@@ -1697,7 +1853,7 @@ bool bit_or(object&A, object& B, object& C)
     }
 }
 
-bool bit_xor(object&A, object& B, object& C)
+bool bit_xor(object&A, const object& B, const object& C)
 {
     switch(B.type)
     {
@@ -1752,7 +1908,7 @@ bool bit_xor(object&A, object& B, object& C)
 }
 
 
-bool index(object&A, object& B, object& C)
+bool index(object&A, const object& B, const object& C)
 {
     switch(B.type)
     {
@@ -1809,7 +1965,7 @@ object convert_to_string( object& original)
     return newObject;
 }
 
-bool assign_variable(object&A, object& B, object& C)
+bool assign_variable(object&A, const object& B, const object& C)
 {
     if(B.type == ARRAY)
     {

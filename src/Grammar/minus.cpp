@@ -7,7 +7,7 @@ namespace panopticon
 //Switches
 //================================
 
-bool number_minus(object&A,object& B, object& C)
+bool number_minus(object&A,const object& B,const object& C)
 {
     switch(C.type)
     {
@@ -29,14 +29,14 @@ bool number_minus(object&A,object& B, object& C)
     }
 }
 
-bool bool_minus(object&A, object& B, object& C)
+bool bool_minus(object&A, const object& B, const object& C)
 {
     out() << print_error(SubtractBoolFromNum) << std::endl;
     correct_parsing = false;
 }
 
 
-bool string_minus(object&A, object& B, object& C)
+bool string_minus(object&A, const object& B, const object& C)
 {
     switch(C.type)
     {
@@ -60,7 +60,7 @@ bool string_minus(object&A, object& B, object& C)
     }
 }
 
-bool array_minus(object&A, object& B, object& C)
+bool array_minus(object&A, const object& B, const object& C)
 {
     switch(C.type)
     {
@@ -117,7 +117,7 @@ bool string_minus_string(object &a, const object &b, const object &c)
     return true;
 }
 
-bool number_minus_array(object& a,object& number, object& array)
+bool number_minus_array(object& a, const object &number, const object &array)
 {
     a.type = ARRAY;
     a.data.array = new std::vector<object>();
@@ -164,7 +164,7 @@ bool array_minus_string(object& a,object& array, object& string)
 //    delete array.data.array;
 }
 
-bool string_minus_array(object& a,object& string, object& array)
+bool string_minus_array(object& a, const object &string, const object &array)
 {
     a.type = ARRAY;
     a.data.array = new std::vector<object>();

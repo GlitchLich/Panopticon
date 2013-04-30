@@ -8,17 +8,17 @@
 namespace panopticon
 {
 
-extern bool number_minus(object&A,object& B, object& C);
-extern bool bool_minus(object&A, object& B, object& C);
-extern bool string_minus(object&A, object& B, object& C);
-extern bool array_minus(object&A, object& B, object& C);
+extern bool number_minus(object&A,const object& B,const object& C);
+extern bool bool_minus(object&A, const object& B, const object& C);
+extern bool string_minus(object&A, const object& B, const object& C);
+extern bool array_minus(object&A, const object& B, const object& C);
 
 extern bool string_minus_string(object &a,const object& b, const object& c);
-extern bool number_minus_array(object& a,object& number, object& array);
-extern bool string_minus_array(object& a,object& string, object& array);
-extern bool array_minus_number(object&A, object& B, object& C);
-extern bool array_minus_string(object&A, object& B, object& C);
-extern bool array_minus_array(object&A, object& B, object& C);
+extern bool number_minus_array(object& a,const object& number,const object& array);
+extern bool string_minus_array(object& a,const object& string,const object& array);
+extern bool array_minus_number(object&A, const object& B, const object& C);
+extern bool array_minus_string(object&A, const object& B, const object& C);
+extern bool array_minus_array(object&A, const object& B, const object& C);
 
 }
 

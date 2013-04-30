@@ -12,7 +12,6 @@ myfalsebool != mybool
 //Undeclare Variables throw errors:
 n*m+z
 
-
 //INDEXING ARRAYS
 myarray = [23 22 0 20]
 myarray[0]
@@ -28,9 +27,21 @@ metaArray[2][2]
 metaArray[2][3][0]
 
 //Functions
-myFunc x y = x * y
-myFunc(10 11)
+myFunc x y z = x + y * z << x
+myFunc(2 2 3)
+myFunc(2 [9 10] myarray)
+myFunc(1 2 myFunc(1 2 myFunc(1 2 myFunc(1 2 myFunc(1 2 1)))))
 
+myFunc x y z = x + y * z << x
+myFunc 2 2 3
+myFunc 2 [9 10] myarray
+myFunc 1 2 myFunc 1 2 myFunc 1 2 myFunc 1 2 myFunc 1 2 1
+
+//Incorrect number of arguments throws an error.
+myFunc(1 2)
+
+//Non-existent Functions throw errors.
+myFuncz(10 11)
 
 "hey"[0]
 4[0]

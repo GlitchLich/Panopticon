@@ -186,6 +186,7 @@ name_chain(A) ::= name_chain(B) NAME(C).
         newObject2.type = optic::STRING;
         newObject2.data.string = new panopticon::String(C.data.string->c_str());
         A.data.array->push_back(newObject2);
+        A.scope = optic::get_scope();
     }
     delete_object(B);
     delete_object(C);
@@ -207,8 +208,21 @@ expr(A) ::= NAME(B).
     }
 }
 
-expr ::= function_call.
-function_call ::= NAME LPAREN stmt_list RPAREN.
+expr(A) ::= function_call(B).
+{
+    A = B;
+}
+
+function_call(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN.
+{
+    A.scope = optic::get_scope();
+    optic::object_operator_object(A,B,C,optic::call_function);
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
 
 assignment(A) ::= name_chain(B) ASSIGN expr(C). [ASSIGN]
 {

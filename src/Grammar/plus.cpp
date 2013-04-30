@@ -7,7 +7,7 @@ namespace panopticon
 //Switches
 //================================
 
-bool number_plus(object&A,object& B, object& C)
+bool number_plus(object&A,const object& B,const object& C)
 {
     switch(C.type)
     {
@@ -28,7 +28,7 @@ bool number_plus(object&A,object& B, object& C)
     }
 }
 
-bool bool_plus(object&A, object& B, object& C)
+bool bool_plus(object&A,const object& B,const object& C)
 {
     switch(C.type)
     {
@@ -56,7 +56,7 @@ bool bool_plus(object&A, object& B, object& C)
 }
 
 
-bool string_plus(object&A, object& B, object& C)
+bool string_plus(object&A,const object& B,const object& C)
 {
     switch(C.type)
     {
@@ -75,7 +75,7 @@ bool string_plus(object&A, object& B, object& C)
     }
 }
 
-bool array_plus(object&A, object& B, object& C)
+bool array_plus(object&A,const object& B,const object& C)
 {
     switch(C.type)
     {
@@ -99,7 +99,7 @@ bool array_plus(object&A, object& B, object& C)
 //Combinations
 //================================
 
-bool number_plus_bool(object&A,object& number, object& boolean)
+bool number_plus_bool(object&A,const object& number,const object& boolean)
 {
     A.type = BOOL;
     if(boolean.data.boolean&&number.data.number>1)
