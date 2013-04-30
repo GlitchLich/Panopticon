@@ -24,6 +24,39 @@ namespace ide
 {
 
 /////////////////////
+// CloseFileDialog
+/////////////////////
+CloseFileDialog::CloseFileDialog(const QString &fileName, QWidget *parent) :
+    QMessageBox(parent)
+{
+    setText("The document has been modified.");
+    setInformativeText("Save changes to \"" + fileName + "\" before closing?");
+    setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+    setWindowFlags(Qt::Window);
+    grabKeyboard();
+    setDefaultButton(QMessageBox::Save);
+}
+
+void CloseFileDialog::keyPressEvent(QKeyEvent *event)
+{
+    switch(event->key())
+    {
+    case Qt::Key_Left:
+        focusPreviousChild();
+        return;
+
+    case Qt::Key_Right:
+        focusNextChild();
+        return;
+
+    default:
+        break;
+    }
+
+    QMessageBox::keyPressEvent(event);
+}
+
+/////////////////////
 /// GlContext
 /////////////////////
 
@@ -329,14 +362,7 @@ bool MainWindow::closeFile(bool autospawn)
     {
         if(focusedBuffer->getUnsavedEdits())
         {
-            QMessageBox msgBox;
-            msgBox.setText("The document has been modified.");
-            msgBox.setInformativeText("Save changes to \"" + focusedBuffer->getFileName() + "\" before closing?");
-            msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
-            msgBox.setDefaultButton(QMessageBox::Save);
-            msgBox.setWindowFlags(Qt::Window);
-            msgBox.setFocus();
-            msgBox.grabKeyboard();
+            CloseFileDialog msgBox(focusedBuffer->getFileName());
             int ret = msgBox.exec();
 
             switch(ret)
@@ -352,6 +378,9 @@ bool MainWindow::closeFile(bool autospawn)
 
             case QMessageBox::Cancel:
                 fileClosed = false;
+                focusedBuffer->setFocus();
+                focusedBuffer->show();
+                focusedBuffer->grabKeyboard();
                 break;
             }
         }
@@ -398,6 +427,7 @@ void MainWindow::showEditBuffer(unsigned int buffer)
 
         focusedBuffer = editBuffers[buffer];
         syntaxHighlighter.setDocument(focusedBuffer->document());
+        focusedBuffer->setFocus();
         focusedBuffer->show();
         focusedBuffer->grabKeyboard();
     }

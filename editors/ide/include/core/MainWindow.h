@@ -8,6 +8,7 @@
 #include <QWindow>
 #include <QTextDocument>
 #include <QObject>
+#include <QMessageBox>
 #include <QGLWidget>
 #include <QMainWindow>
 #include <QVBoxLayout>
@@ -28,6 +29,19 @@ namespace panopticon
 
 namespace ide
 {
+
+class CloseFileDialog : public QMessageBox
+{
+    Q_OBJECT
+
+public:
+
+    CloseFileDialog(const QString& fileName, QWidget* parent = 0);
+
+protected:
+
+    void keyPressEvent(QKeyEvent *event);
+};
 
 class GlContext : public QGLContext
 {
