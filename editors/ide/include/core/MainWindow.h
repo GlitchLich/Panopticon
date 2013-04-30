@@ -113,6 +113,8 @@ public slots:
     void evaluateCode();
     void toggleOpenGL();
 
+    void about();
+
 protected:
 
     QMenu *fileMenu, *sessionMenu, *editMenu, *languageMenu, *helpMenu;

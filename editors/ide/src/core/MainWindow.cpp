@@ -194,6 +194,7 @@ MenuBar::MenuBar(QWidget *parent) :
     languageMenu->addAction("Toggle OpenGL", this, SLOT(toggleOpenGL()), QKeySequence("F1"));
 
     helpMenu = new QMenu("Help");
+    helpMenu->addAction("About", this, SLOT(about()));
 
     addMenu(fileMenu);
     addMenu(sessionMenu);
@@ -262,6 +263,17 @@ void MenuBar::toggleOpenGL()
     MAIN_WINDOW->toggleOpenGL();
 }
 
+void MenuBar::about()
+{
+    QString details(
+        "Panopticon " + QString::number(PANOPTICON_VERSION_MAJOR) + "." +
+        QString::number(PANOPTICON_VERSION_MINOR) + "." + QString::number(PANOPTICON_VERSION_PATCH) +
+        "\n© Chad McKinney and Curtis McKinney"
+    );
+
+    QMessageBox::about(MAIN_WINDOW, "About Panopticon", details);
+}
+
 //////////////////////////////////
 /// MainWindow
 //////////////////////////////////
@@ -308,6 +320,7 @@ MainWindow::MainWindow(QWidget* parent) :
     addToolBar(Qt::BottomToolBarArea, &filePanel);
     setCentralWidget(&graphicsView);
     // setLayout(&vLayout);
+    // setLayout(new QHBoxLayout());
     show();
 }
 
