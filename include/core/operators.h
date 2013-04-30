@@ -23,9 +23,11 @@
 #ifndef OPERATORS_H
 #define OPERATORS_H
 
-#include "types.h"
 #include <sstream>
-#include "../Grammar/parse.h"
+
+#include "types.h"
+#include "include/Grammar/parse.h"
+#include "include/core/function.h"
 
 #undef STRING
 #undef NUM
@@ -48,19 +50,19 @@ extern bool concatenate_arrays(object &a, object b, object c);
 extern bool create_array(object &a);
 extern bool print_array(const object &A, int arrayNum=0);
 extern bool delete_array(object& a);
-extern bool object_operator_array(object &a,const object &obj, const object& array, bool (*func)(object &,const object &,const object &));
-extern bool array_operator_object(object &a,const object &array,const object& obj, bool (*func)(object &,const object &,const object &));
-extern bool recursive_apply(object &a,const object &obj1,const object& obj2, bool (*func)(object &,const object &,const object &));
-extern bool object_operator_object(object& a, object& b, object& c, bool (*func)(object &,const object &,const object &));
-extern bool array_operator_array(object& a,const object& array1,const object& array2, bool (*func)(object &,const object &,const object &));
-extern bool parse_operations(object& a,const object& b,const object& c, bool (*func)(object &,const object &,const object &));
+extern bool object_operator_array(object &a,const object &obj, const object& array, operator_function);
+extern bool array_operator_object(object &a,const object &array,const object& obj, operator_function);
+extern bool recursive_apply(object &a,const object &obj1,const object& obj2, operator_function);
+extern bool object_operator_object(object& a, object& b, object& c, operator_function);
+extern bool array_operator_array(object& a,const object& array1,const object& array2, operator_function);
+extern bool parse_operations(object& a, const object& b, const object& c, operator_function func);
 
 extern bool create_function(object&A, const object& B, const object& C);
 extern bool call_function(object&A, const object& B, const object& C);
 extern bool handle_stack(object &A, Function* function);
 
-//DONE
-extern bool plus(object&A, const object &B, const object &C);
+// Called by parser
+extern bool plus(object&A, const object& B, const object& C);
 extern bool minus(object&A, const object& B, const object& C);
 extern bool divide(object&A, const object& B, const object& C);
 extern bool multiply(object&A, const object& B, const object& C);

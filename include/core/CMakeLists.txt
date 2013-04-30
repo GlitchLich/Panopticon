@@ -7,5 +7,7 @@ set(Panopticon_SRC
         ${CMAKE_CURRENT_SOURCE_DIR}/operators.h
         ${CMAKE_CURRENT_SOURCE_DIR}/errors.h
         ${CMAKE_CURRENT_SOURCE_DIR}/heap.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/stack.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/function.h
 	PARENT_SCOPE
 )

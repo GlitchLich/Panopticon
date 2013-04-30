@@ -20,13 +20,16 @@
     along with Panopticon.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "../../include/core/operators.h"
-#include "../../include/core/heap.h"
-#include "../../include/Grammar/plus.h"
-#include "../../include/Grammar/minus.h"
-#include "../../include/Grammar/divide.h"
 #include <math.h>
 #include <iostream>
+
+#include "include/core/operators.h"
+#include "include/core/heap.h"
+#include "include/Grammar/plus.h"
+#include "include/Grammar/minus.h"
+#include "include/Grammar/divide.h"
+#include "include/core/function.h"
+#include "include/core/stack.h"
 
 namespace panopticon
 {
@@ -358,7 +361,7 @@ bool bool_plusplus_string(object &a, object b,  object c)
 }
 
 
-bool object_operator_array(object& a,const object& obj,const object& array, bool (*func)(object &,const object &,const object &))
+bool object_operator_array(object& a,const object& obj,const object& array, operator_function func)
 {
     a.type = panopticon::ARRAY;
     a.data.array = new std::vector<object>();
@@ -372,7 +375,7 @@ bool object_operator_array(object& a,const object& obj,const object& array, bool
     }
 }
 
-bool array_operator_object(object& a,const object& array,const object& obj, bool (*func)(object &,const object &,const object &))
+bool array_operator_object(object& a,const object& array,const object& obj, operator_function func)
 {
     a.type = panopticon::ARRAY;
     a.data.array = new std::vector<object>();
@@ -386,7 +389,7 @@ bool array_operator_object(object& a,const object& array,const object& obj, bool
     }
 }
 
-bool array_operator_array(object& a,const object& array1,const object& array2, bool (*func)(object &,const object &,const object &))
+bool array_operator_array(object& a,const object& array1,const object& array2, operator_function func)
 {
     a.type = panopticon::ARRAY;
     a.data.array = new std::vector<object>();
@@ -411,7 +414,7 @@ bool array_operator_array(object& a,const object& array1,const object& array2, b
     }
 }
 
-bool store_operations(object& a,const object& obj1,const object& obj2, bool (*func)(object &,const object &,const object &))
+bool store_operations(object& a,const object& obj1,const object& obj2, operator_function func)
 {
     a.type = OPERATION_TREE;
     a.data.array = new Array();
@@ -468,14 +471,14 @@ bool store_operations(object& a,const object& obj1,const object& obj2, bool (*fu
     }
 }
 
-bool object_operator_object(object& a, object& b, object& c, bool (*func)(object &,const object &,const object &))
+bool object_operator_object(object& a, object& b, object& c, operator_function func)
 {
     func(a,b,c);
     delete_object(b);
     delete_object(c);
 }
 
-bool object_operator_object2(object& a, object& b, object& c, bool (*func)(object &,const object &,const object &))
+bool object_operator_object2(object& a, object& b, object& c, operator_function func)
 {
     if(
             b.type==UNDECLARED_VARIABLE||
@@ -502,26 +505,29 @@ bool object_operator_object2(object& a, object& b, object& c, bool (*func)(objec
     }
 }
 
-bool parse_operations(object& a,const object& b,const object& c, bool (*func)(object &,const object &,const object &))
+bool parse_operations(object& a, const object& b, const object& c, operator_function func)
 {
-
     if(a.type==FUNCTION_DEC)
     {
         create_function(a,b,c);
     }
+
     else if(a.type==ASSIGNMENT)
     {
         assign_variable(a,b,c);
     }
+
     else if(a.type==COMPUTE)
     {
         //TO DO:
         //Create system to compute shit outside
 //        object_operator_object(a,b,c,func);
     }
+
     else
     {
-        store_operations(a,b,c,func);
+        func(a, b, c);
+        // store_operations(a,b,c,func);
     }
 }
 
@@ -654,6 +660,7 @@ bool create_function(object &A,const object &B,const object &C)
 
 bool handle_stack(object &A, Function *function)
 {
+    /*
     for(int i=function->body.data.array->size()-1;i>=0;i-=1)
     {
         //        out() << function->body.data.array->at(i).type << std::endl;
@@ -725,11 +732,12 @@ bool handle_stack(object &A, Function *function)
         function->stack.push(result);
     }
     A = copy_object(function->stack.top());
-    function->stack.pop();
+    function->stack.pop();*/
 }
 
 bool call_function(object &A,const object &B,const object &C)
 {
+    /*
     if(A.scope->data.map->find(*B.data.string)!=A.scope->data.map->end())
     {
         if(C.data.array->size()==(*A.scope->data.map)[*B.data.string].data.function->num_arguments)
@@ -756,12 +764,12 @@ bool call_function(object &A,const object &B,const object &C)
     {
         out() << "Error: This function has not been declared: " << *B.data.string << std::endl;
         correct_parsing = false;
-    }
+    }*/
 }
 
 
 
-bool recursive_apply(object& a,const object& obj1,const object& obj2, bool (*func)(object &,const object &,const object &))
+bool recursive_apply(object& a,const object& obj1,const object& obj2, operator_function func)
 {
     if(obj1.type==ARRAY)
     {
@@ -776,8 +784,8 @@ bool recursive_apply(object& a,const object& obj1,const object& obj2, bool (*fun
 //======================================================================================
 //======================================================================================
 //======================================================================================
-
-bool plus(object&A, const object& B, const object& C)
+/*
+bool plus(object& A, const object& B, const object& C)
 {
     switch(B.type)
     {
@@ -796,7 +804,7 @@ bool plus(object&A, const object& B, const object& C)
     }
 }
 
-bool minus(object&A, const object& B, const object& C)
+bool minus(object& A, const object& B, const object& C)
 {
     switch(B.type)
     {
@@ -815,7 +823,7 @@ bool minus(object&A, const object& B, const object& C)
     }
 }
 
-bool divide(object&A, const object& B, const object& C)
+bool divide(object& A, const object& B, const object& C)
 {
     switch(B.type)
     {
@@ -870,7 +878,7 @@ bool divide(object&A, const object& B, const object& C)
 }
 
 
-bool multiply(object&A, const object& B, const object& C)
+bool multiply(object& A, const object& B, const object& C)
 {
     switch(B.type)
     {
@@ -924,7 +932,7 @@ bool multiply(object&A, const object& B, const object& C)
     }
 }
 
-bool modulo(object&A, const object& B, const object& C)
+bool modulo(object& A, const object& B, const object& C)
 {
     switch(B.type)
     {
@@ -978,7 +986,7 @@ bool modulo(object&A, const object& B, const object& C)
     }
 }
 
-bool value_pow(object&A, const object& B, const object& C)
+bool value_pow(object& A, const object& B, const object& C)
 {
     switch(B.type)
     {
@@ -1032,7 +1040,7 @@ bool value_pow(object&A, const object& B, const object& C)
     }
 }
 
-bool equal_to(object&A, const object& B, const object& C)
+bool equal_to(object& A, const object& B, const object& C)
 {
     switch(B.type)
     {
@@ -1119,7 +1127,7 @@ bool equal_to(object&A, const object& B, const object& C)
     }
 }
 
-bool not_equal_to(object&A, const object& B, const object& C)
+bool not_equal_to(object& A, const object& B, const object& C)
 {
     switch(B.type)
     {
@@ -1206,7 +1214,7 @@ bool not_equal_to(object&A, const object& B, const object& C)
     }
 }
 
-bool less_than(object&A, const object& B, const object& C)
+bool less_than(object& A, const object& B, const object& C)
 {
     switch(B.type)
     {
@@ -1260,7 +1268,7 @@ bool less_than(object&A, const object& B, const object& C)
     }
 }
 
-bool greater_than(object&A, const object& B, const object& C)
+bool greater_than(object& A, const object& B, const object& C)
 {
     switch(B.type)
     {
@@ -1314,7 +1322,7 @@ bool greater_than(object&A, const object& B, const object& C)
     }
 }
 
-bool lore(object&A, const object& B, const object& C)
+bool lore(object& A, const object& B, const object& C)
 {
     switch(B.type)
     {
@@ -1368,7 +1376,7 @@ bool lore(object&A, const object& B, const object& C)
     }
 }
 
-bool gore(object&A, const object& B, const object& C)
+bool gore(object& A, const object& B, const object& C)
 {
     switch(B.type)
     {
@@ -1422,7 +1430,7 @@ bool gore(object&A, const object& B, const object& C)
     }
 }
 
-bool value_and(object&A, const object& B, const object& C)
+bool value_and(object& A, const object& B, const object& C)
 {
     switch(B.type)
     {
@@ -1519,7 +1527,7 @@ bool value_and(object&A, const object& B, const object& C)
     }
 }
 
-bool value_or(object&A, const object& B, const object& C)
+bool value_or(object& A, const object& B, const object& C)
 {
     switch(B.type)
     {
@@ -1616,7 +1624,7 @@ bool value_or(object&A, const object& B, const object& C)
     }
 }
 
-bool not_value(object&A, object& B)
+bool not_value(object& A, object& B)
 {
     switch(B.type)
     {
@@ -1646,7 +1654,7 @@ bool not_value(object&A, object& B)
     }
 }
 
-bool shift_left(object&A, const object& B, const object& C)
+bool shift_left(object& A, const object& B, const object& C)
 {
     switch(B.type)
     {
@@ -1700,7 +1708,7 @@ bool shift_left(object&A, const object& B, const object& C)
     }
 }
 
-bool shift_right(object&A, const object& B, const object& C)
+bool shift_right(object& A, const object& B, const object& C)
 {
     switch(B.type)
     {
@@ -1754,7 +1762,7 @@ bool shift_right(object&A, const object& B, const object& C)
     }
 }
 
-bool bit_not(object&A, object& B)
+bool bit_not(object& A, object& B)
 {
     switch(B.type)
     {
@@ -1777,7 +1785,7 @@ bool bit_not(object&A, object& B)
     }
 }
 
-bool bit_and(object&A, const object& B, const object& C)
+bool bit_and(object& A, const object& B, const object& C)
 {
     switch(B.type)
     {
@@ -1831,7 +1839,7 @@ bool bit_and(object&A, const object& B, const object& C)
     }
 }
 
-bool bit_or(object&A, const object& B, const object& C)
+bool bit_or(object& A, const object& B, const object& C)
 {
     switch(B.type)
     {
@@ -1885,7 +1893,7 @@ bool bit_or(object&A, const object& B, const object& C)
     }
 }
 
-bool bit_xor(object&A, const object& B, const object& C)
+bool bit_xor(object& A, const object& B, const object& C)
 {
     switch(B.type)
     {
@@ -1940,7 +1948,7 @@ bool bit_xor(object&A, const object& B, const object& C)
 }
 
 
-bool index(object&A, const object& B, const object& C)
+bool index(object& A, const object& B, const object& C)
 {
     switch(B.type)
     {
@@ -1987,17 +1995,7 @@ bool index(object&A, const object& B, const object& C)
     }
 }
 
-object convert_to_string( object& original)
-{
-    object newObject;
-    newObject.type = STRING;
-    std::stringstream ss;
-    ss << original.data.number;
-    newObject.data.string = new String(ss.str());
-    return newObject;
-}
-
-bool assign_variable(object&A, const object& B, const object& C)
+bool assign_variable(object& A, const object& B, const object& C)
 {
     if(B.type == ARRAY)
     {
@@ -2023,6 +2021,1655 @@ bool retrieve_variable(object &A, object &B)
         A = B;
         A.type = UNDECLARED_VARIABLE;
     }
+}
+
+*/
+
+void _plus()
+{
+    std::cout << "_plus" << std::endl;
+    object A;
+    const object& B = stack.back();
+    std::cout << "B.data.number " << B.data.number << std::endl;
+    const object& C = stack.at(stack.size() - 2);
+    std::cout << "C.data.number " << C.data.number << std::endl;
+
+    switch(B.type)
+    {
+    case panopticon::NUMBER:
+        number_plus(A,B,C);
+        std::cout << "number_plus result: " << A.data.number << std::endl;
+        break;
+    case panopticon::STRING:
+        string_plus(A,B,C);
+        break;
+    case panopticon::BOOL:
+        bool_plus(A,B,C);
+        break;
+    case panopticon::ARRAY:
+        array_plus(A,B,C);
+        break;
+    }
+
+    stack.pop_back();
+    stack.pop_back();
+    stack.push_back(A);
+}
+
+void _minus()
+{
+    object A;
+    const object& B = stack.back();
+    const object& C = stack.at(stack.size() - 2);
+
+    switch(B.type)
+    {
+    case NUMBER:
+        number_minus(A,B,C);
+        break;
+    case STRING:
+        string_minus(A,B,C);
+        break;
+    case BOOL:
+        bool_minus(A,B,C);
+        break;
+    case ARRAY:
+        array_minus(A,B,C);
+        break;
+    }
+
+    stack.pop_back();
+    stack.pop_back();
+    stack.push_back(A);
+}
+
+void _divide()
+{
+    object A;
+    const object& B = stack.back();
+    const object& C = stack.at(stack.size() - 2);
+
+    switch(B.type)
+    {
+    case NUMBER:
+        switch(C.type)
+        {
+        case NUMBER:
+            A.type = NUMBER;
+            A.data.number = B.data.number/C.data.number;
+            break;
+        case STRING:
+            out() << print_error(DivideStringError) << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << print_error(DivideBooolError) << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            object_operator_array(A,B,C,&divide);
+            break;
+        }
+        break;
+    case STRING:
+        out() << print_error(DivideStringError) << std::endl;
+        correct_parsing = false;
+        break;
+    case BOOL:
+        out() << print_error(DivideBooolError) << std::endl;
+        correct_parsing = false;
+        break;
+    case ARRAY:
+        switch(C.type)
+        {
+        case NUMBER:
+            array_operator_object(A,B,C,&divide);
+            break;
+        case STRING:
+            out() << print_error(DivideStringError) << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << print_error(DivideBooolError) << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            array_operator_array(A,B,C,&divide);
+            break;
+        }
+        break;
+    }
+
+    stack.pop_back();
+    stack.pop_back();
+    stack.push_back(A);
+}
+
+
+void _multiply()
+{
+    object A;
+    const object& B = stack.back();
+    const object& C = stack.at(stack.size() - 2);
+
+    switch(B.type)
+    {
+    case NUMBER:
+        switch(C.type)
+        {
+        case NUMBER:
+            A.type = NUMBER;
+            A.data.number = B.data.number * C.data.number;
+            break;
+        case STRING:
+            out() << print_error(MultiplyStringError) << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << print_error(MultiplyBoolError) << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            recursive_apply(A,B,C,&multiply);
+            break;
+        }
+        break;
+    case STRING:
+        out() << print_error(MultiplyStringError) << std::endl;
+        correct_parsing = false;
+        break;
+    case BOOL:
+        out() << print_error(MultiplyBoolError) << std::endl;
+        correct_parsing = false;
+        break;
+    case ARRAY:
+        switch(C.type)
+        {
+        case NUMBER:
+            array_operator_object(A,B,C,&multiply);
+            break;
+        case STRING:
+            out() << print_error(DivideStringError) << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << print_error(DivideBooolError) << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            array_operator_array(A,B,C,&multiply);
+            break;
+        }
+        break;
+    }
+
+    stack.pop_back();
+    stack.pop_back();
+    stack.push_back(A);
+}
+
+void _modulo()
+{
+    object A;
+    const object& B = stack.back();
+    const object& C = stack.at(stack.size() - 2);
+
+    switch(B.type)
+    {
+    case NUMBER:
+        switch(C.type)
+        {
+        case NUMBER:
+            A.type = NUMBER;
+            A.data.number = fmod(B.data.number,C.data.number);
+            break;
+        case STRING:
+            out() << print_error(ModStringError) << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << print_error(ModBoolError) << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            object_operator_array(A,B,C,&modulo);
+            break;
+        }
+        break;
+    case STRING:
+        out() << print_error(ModStringError) << std::endl;
+        correct_parsing = false;
+        break;
+    case BOOL:
+        out() << print_error(ModBoolError) << std::endl;
+        correct_parsing = false;
+        break;
+    case ARRAY:
+        switch(C.type)
+        {
+        case NUMBER:
+            array_operator_object(A,B,C,&modulo);
+            break;
+        case STRING:
+            out() << print_error(ModStringError) << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << print_error(ModBoolError) << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            array_operator_array(A,B,C,&modulo);
+            break;
+        }
+        break;
+    }
+
+    stack.pop_back();
+    stack.pop_back();
+    stack.push_back(A);
+}
+
+void _value_pow()
+{
+    object A;
+    const object& B = stack.back();
+    const object& C = stack.at(stack.size() - 2);
+
+    switch(B.type)
+    {
+    case NUMBER:
+        switch(C.type)
+        {
+        case NUMBER:
+            A.type = NUMBER;
+            A.data.number = pow(B.data.number,C.data.number);
+            break;
+        case STRING:
+            out() << print_error(PowStringError) << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << print_error(PowBoolError) << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            object_operator_array(A,B,C,&value_pow);
+            break;
+        }
+        break;
+    case STRING:
+        out() << print_error(PowStringError) << std::endl;
+        correct_parsing = false;
+        break;
+    case BOOL:
+        out() << print_error(PowBoolError) << std::endl;
+        correct_parsing = false;
+        break;
+    case ARRAY:
+        switch(C.type)
+        {
+        case NUMBER:
+            array_operator_object(A,B,C,&value_pow);
+            break;
+        case STRING:
+            out() << print_error(PowStringError) << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << print_error(PowBoolError) << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            array_operator_array(A,B,C,&value_pow);
+            break;
+        }
+        break;
+    }
+
+    stack.pop_back();
+    stack.pop_back();
+    stack.push_back(A);
+}
+
+void _equal_to()
+{
+    object A;
+    const object& B = stack.back();
+    const object& C = stack.at(stack.size() - 2);
+
+    switch(B.type)
+    {
+    case NUMBER:
+        switch(C.type)
+        {
+        case NUMBER:
+            A.type = BOOL;
+            A.data.boolean = B.data.number == C.data.number;
+            break;
+        case STRING:
+            A.type = BOOL;
+            A.data.boolean = false;
+            break;
+        case BOOL:
+            A.type = BOOL;
+            A.data.boolean = false;
+            break;
+        case ARRAY:
+            object_operator_array(A,B,C,&equal_to);
+            break;
+        }
+        break;
+    case STRING:
+        switch(C.type)
+        {
+        case NUMBER:
+            A.type = BOOL;
+            A.data.boolean = false;
+            break;
+        case STRING:
+            A.type = BOOL;
+            A.data.boolean = (B.data.string->compare(*C.data.string)==0);
+            break;
+        case BOOL:
+            A.type = BOOL;
+            A.data.boolean = false;
+            break;
+        case ARRAY:
+            object_operator_array(A,B,C,&equal_to);
+            break;
+        }
+        break;
+    case BOOL:
+        switch(C.type)
+        {
+        case NUMBER:
+            A.type = BOOL;
+            A.data.boolean = false;
+            break;
+        case STRING:
+            A.type = BOOL;
+            A.data.boolean = false;
+            break;
+        case BOOL:
+            A.type = BOOL;
+            A.data.boolean = B.data.boolean==C.data.boolean;
+            break;
+        case ARRAY:
+            object_operator_array(A,B,C,&equal_to);
+            break;
+        }
+        break;
+    case ARRAY:
+        switch(C.type)
+        {
+        case NUMBER:
+            A.type = BOOL;
+            A.data.boolean = false;
+            break;
+        case STRING:
+            A.type = BOOL;
+            A.data.boolean = false;
+            break;
+        case BOOL:
+            A.type = BOOL;
+            A.data.boolean = false;
+            break;
+        case ARRAY:
+            array_operator_array(A,B,C,&equal_to);
+            break;
+        }
+        break;
+    }
+
+    stack.pop_back();
+    stack.pop_back();
+    stack.push_back(A);
+}
+
+void _not_equal_to()
+{
+    object A;
+    const object& B = stack.back();
+    const object& C = stack.at(stack.size() - 2);
+
+    switch(B.type)
+    {
+    case NUMBER:
+        switch(C.type)
+        {
+        case NUMBER:
+            A.type = BOOL;
+            A.data.boolean = B.data.number != C.data.number;
+            break;
+        case STRING:
+            A.type = BOOL;
+            A.data.boolean = true;
+            break;
+        case BOOL:
+            A.type = BOOL;
+            A.data.boolean = true;
+            break;
+        case ARRAY:
+            object_operator_array(A,B,C,&not_equal_to);
+            break;
+        }
+        break;
+    case STRING:
+        switch(C.type)
+        {
+        case NUMBER:
+            A.type = BOOL;
+            A.data.boolean = true;
+            break;
+        case STRING:
+            A.type = BOOL;
+            A.data.boolean = (B.data.string->compare(*C.data.string)!=0);
+            break;
+        case BOOL:
+            A.type = BOOL;
+            A.data.boolean = true;
+            break;
+        case ARRAY:
+            object_operator_array(A,B,C,&not_equal_to);
+            break;
+        }
+        break;
+    case BOOL:
+        switch(C.type)
+        {
+        case NUMBER:
+            A.type = BOOL;
+            A.data.boolean = true;
+            break;
+        case STRING:
+            A.type = BOOL;
+            A.data.boolean = true;
+            break;
+        case BOOL:
+            A.type = BOOL;
+            A.data.boolean = B.data.boolean!=C.data.boolean;
+            break;
+        case ARRAY:
+            object_operator_array(A,B,C,&not_equal_to);
+            break;
+        }
+        break;
+    case ARRAY:
+        switch(C.type)
+        {
+        case NUMBER:
+            A.type = BOOL;
+            A.data.boolean = true;
+            break;
+        case STRING:
+            A.type = BOOL;
+            A.data.boolean = true;
+            break;
+        case BOOL:
+            A.type = BOOL;
+            A.data.boolean = true;
+            break;
+        case ARRAY:
+            array_operator_array(A,B,C,&not_equal_to);
+            break;
+        }
+        break;
+    }
+
+    stack.pop_back();
+    stack.pop_back();
+    stack.push_back(A);
+}
+
+void _less_than()
+{
+    object A;
+    const object& B = stack.back();
+    const object& C = stack.at(stack.size() - 2);
+
+    switch(B.type)
+    {
+    case NUMBER:
+        switch(C.type)
+        {
+        case NUMBER:
+            A.type = BOOL;
+            A.data.boolean = B.data.number < C.data.number;
+            break;
+        case STRING:
+            out() << "Syntax error: A string cannot be greater than or less than a number." << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << "Syntax error: A void _cannot be greater than or less than a number." << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            object_operator_array(A,B,C,&less_than);
+            break;
+        }
+        break;
+    case STRING:
+        out() << "Syntax error: A string cannot be greater than or less than a number." << std::endl;
+        correct_parsing = false;
+        break;
+    case BOOL:
+        out() << "Syntax error: A void _cannot be greater than or less than a number." << std::endl;
+        correct_parsing = false;
+        break;
+    case ARRAY:
+        switch(C.type)
+        {
+        case NUMBER:
+            array_operator_object(A,B,C,&less_than);
+            break;
+        case STRING:
+            out() << "Syntax error: A string cannot be greater than or less than a number." << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << "Syntax error: A void _cannot be greater than or less than a number." << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            array_operator_array(A,B,C,&less_than);
+            break;
+        }
+        break;
+    }
+
+    stack.pop_back();
+    stack.pop_back();
+    stack.push_back(A);
+}
+
+void _greater_than()
+{
+    object A;
+    const object& B = stack.back();
+    const object& C = stack.at(stack.size() - 2);
+
+    switch(B.type)
+    {
+    case NUMBER:
+        switch(C.type)
+        {
+        case NUMBER:
+            A.type = BOOL;
+            A.data.boolean = B.data.number > C.data.number;
+            break;
+        case STRING:
+            out() << "Syntax error: A string cannot be greater than or less than a number." << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << "Syntax error: A void _cannot be greater than or less than a number." << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            object_operator_array(A,B,C,&greater_than);
+            break;
+        }
+        break;
+    case STRING:
+        out() << "Syntax error: A string cannot be greater than or less than a number." << std::endl;
+        correct_parsing = false;
+        break;
+    case BOOL:
+        out() << "Syntax error: A void _cannot be greater than or less than a number." << std::endl;
+        correct_parsing = false;
+        break;
+    case ARRAY:
+        switch(C.type)
+        {
+        case NUMBER:
+            array_operator_object(A,B,C,&greater_than);
+            break;
+        case STRING:
+            out() << "Syntax error: A string cannot be greater than or less than a number." << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << "Syntax error: A void _cannot be greater than or less than a number." << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            array_operator_array(A,B,C,&greater_than);
+            break;
+        }
+        break;
+    }
+
+    stack.pop_back();
+    stack.pop_back();
+    stack.push_back(A);
+}
+
+void _lore()
+{
+    object A;
+    const object& B = stack.back();
+    const object& C = stack.at(stack.size() - 2);
+
+    switch(B.type)
+    {
+    case NUMBER:
+        switch(C.type)
+        {
+        case NUMBER:
+            A.type = BOOL;
+            A.data.boolean = B.data.number <= C.data.number;
+            break;
+        case STRING:
+            out() << "Syntax error: A string cannot be greater than or less than a number." << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << "Syntax error: A bool _cannot be greater than or less than a number." << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            object_operator_array(A,B,C,&lore);
+            break;
+        }
+        break;
+    case STRING:
+        out() << "Syntax error: A string cannot be greater than or less than a number." << std::endl;
+        correct_parsing = false;
+        break;
+    case BOOL:
+        out() << "Syntax error: A bool _cannot be greater than or less than a number." << std::endl;
+        correct_parsing = false;
+        break;
+    case ARRAY:
+        switch(C.type)
+        {
+        case NUMBER:
+            array_operator_object(A,B,C,&lore);
+            break;
+        case STRING:
+            out() << "Syntax error: A string cannot be greater than or less than a number." << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << "Syntax error: A bool _cannot be greater than or less than a number." << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            array_operator_array(A,B,C,&lore);
+            break;
+        }
+        break;
+    }
+
+    stack.pop_back();
+    stack.pop_back();
+    stack.push_back(A);
+}
+
+void _gore()
+{
+    object A;
+    const object& B = stack.back();
+    const object& C = stack.at(stack.size() - 2);
+
+    switch(B.type)
+    {
+    case NUMBER:
+        switch(C.type)
+        {
+        case NUMBER:
+            A.type = BOOL;
+            A.data.boolean = B.data.number >= C.data.number;
+            break;
+        case STRING:
+            out() << "Syntax error: A string cannot be greater than or less than a number." << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << "Syntax error: A bool _cannot be greater than or less than a number." << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            object_operator_array(A,B,C,&gore);
+            break;
+        }
+        break;
+    case STRING:
+        out() << "Syntax error: A string cannot be greater than or less than a number." << std::endl;
+        correct_parsing = false;
+        break;
+    case BOOL:
+        out() << "Syntax error: A bool _cannot be greater than or less than a number." << std::endl;
+        correct_parsing = false;
+        break;
+    case ARRAY:
+        switch(C.type)
+        {
+        case NUMBER:
+            array_operator_object(A,B,C,&gore);
+            break;
+        case STRING:
+            out() << "Syntax error: A string cannot be greater than or less than a number." << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << "Syntax error: A bool _cannot be greater than or less than a number." << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            array_operator_array(A,B,C,&gore);
+            break;
+        }
+        break;
+    }
+
+    stack.pop_back();
+    stack.pop_back();
+    stack.push_back(A);
+}
+
+void _value_and()
+{
+    object A;
+    const object& B = stack.back();
+    const object& C = stack.at(stack.size() - 2);
+
+    switch(B.type)
+    {
+    case NUMBER:
+        switch(C.type)
+        {
+        case NUMBER:
+            A.type = BOOL;
+            if(B.data.number>0&&C.data.number>0)
+            {
+                A.data.boolean = true;
+            }
+            else
+            {
+                A.data.boolean = false;
+            }
+            break;
+        case STRING:
+            out() << "Syntax error: A string is not a bool." << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            A.type = BOOL;
+            if(B.data.number>0&&C.data.boolean)
+            {
+                A.data.boolean = true;
+            }
+            else
+            {
+                A.data.boolean = false;
+            }
+            break;
+        case ARRAY:
+            object_operator_array(A,B,C,&value_and);
+            break;
+        }
+        break;
+    case STRING:
+        out() << "Syntax error: A string is not a bool." << std::endl;
+        correct_parsing = false;
+        break;
+    case BOOL:
+        switch(C.type)
+        {
+        case NUMBER:
+            A.type = BOOL;
+            if(B.data.boolean&&C.data.number>0)
+            {
+                A.data.boolean = true;
+            }
+            else
+            {
+                A.data.boolean = false;
+            }
+            break;
+        case STRING:
+            out() << "Syntax error: A string is not a bool." << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            A.type = BOOL;
+            if(B.data.boolean&&C.data.boolean)
+            {
+                A.data.boolean = true;
+            }
+            else
+            {
+                A.data.boolean = false;
+            }
+            break;
+        case ARRAY:
+            object_operator_array(A,B,C,&value_and);
+            break;
+        }
+        break;
+    case ARRAY:
+        switch(C.type)
+        {
+        case NUMBER:
+            array_operator_object(A,B,C,&value_and);
+            break;
+        case STRING:
+            out() << "Syntax error: A string is not a bool." << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            array_operator_object(A,B,C,&value_and);
+            break;
+        case ARRAY:
+            array_operator_array(A,B,C,&value_and);
+            break;
+        }
+        break;
+    }
+
+    stack.pop_back();
+    stack.pop_back();
+    stack.push_back(A);
+}
+
+void _value_or()
+{
+    object A;
+    const object& B = stack.back();
+    const object& C = stack.at(stack.size() - 2);
+
+    switch(B.type)
+    {
+    case NUMBER:
+        switch(C.type)
+        {
+        case NUMBER:
+            A.type = BOOL;
+            if(B.data.number>0||C.data.number>0)
+            {
+                A.data.boolean = true;
+            }
+            else
+            {
+                A.data.boolean = false;
+            }
+            break;
+        case STRING:
+            out() << "Syntax error: A string is not a bool." << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            A.type = BOOL;
+            if(B.data.number>0||C.data.boolean)
+            {
+                A.data.boolean = true;
+            }
+            else
+            {
+                A.data.boolean = false;
+            }
+            break;
+        case ARRAY:
+            object_operator_array(A,B,C,&value_or);
+            break;
+        }
+        break;
+    case STRING:
+        out() << "Syntax error: A string is not a bool." << std::endl;
+        correct_parsing = false;
+        break;
+    case BOOL:
+        switch(C.type)
+        {
+        case NUMBER:
+            A.type = BOOL;
+            if(B.data.boolean||C.data.number>0)
+            {
+                A.data.boolean = true;
+            }
+            else
+            {
+                A.data.boolean = false;
+            }
+            break;
+        case STRING:
+            out() << "Syntax error: A string is not a bool." << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            A.type = BOOL;
+            if(B.data.boolean||C.data.boolean)
+            {
+                A.data.boolean = true;
+            }
+            else
+            {
+                A.data.boolean = false;
+            }
+            break;
+        case ARRAY:
+            object_operator_array(A,B,C,&value_or);
+            break;
+        }
+        break;
+    case ARRAY:
+        switch(C.type)
+        {
+        case NUMBER:
+            array_operator_object(A,B,C,&value_or);
+            break;
+        case STRING:
+            out() << "Syntax error: A string is not a bool." << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            array_operator_object(A,B,C,&value_or);
+            break;
+        case ARRAY:
+            array_operator_array(A,B,C,&value_or);
+            break;
+        }
+        break;
+    }
+
+    stack.pop_back();
+    stack.pop_back();
+    stack.push_back(A);
+}
+
+void _not_value()
+{
+    object A;
+    const object& B = stack.back();
+
+    switch(B.type)
+    {
+    case NUMBER:
+        A.type = BOOL;
+        if(B.data.number>0)
+        {
+            A.data.boolean = false;
+        }
+        else
+        {
+            A.data.boolean = true;
+        }
+        break;
+    case STRING:
+        out() << "Syntax error: cannot call ! on a string." << std::endl;
+        correct_parsing = false;
+        break;
+    case BOOL:
+        A = B;
+        A.data.boolean = !A.data.boolean;
+        break;
+    case ARRAY:
+        out() << "Syntax error: cannot call ! on an array." << std::endl;
+        correct_parsing = false;
+        break;
+    }
+
+    stack.pop_back();
+    stack.push_back(A);
+}
+
+void _shift_left()
+{
+    object A;
+    const object& B = stack.back();
+    const object& C = stack.at(stack.size() - 2);
+
+    switch(B.type)
+    {
+    case NUMBER:
+        switch(B.type)
+        {
+        case NUMBER:
+            A.type = NUMBER;
+            A.data.number = (((int)B.data.number) << ((int)C.data.number));
+            break;
+        case STRING:
+            out() << "Syntax error: cannot call << on a string." << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << "Syntax error: cannot call << on a boolean." << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            object_operator_array(A,B,C,&shift_left);
+            break;
+        }
+        break;
+    case STRING:
+        out() << "Syntax error: cannot call << on a string." << std::endl;
+        correct_parsing = false;
+        break;
+    case BOOL:
+        out() << "Syntax error: cannot call << on a boolean." << std::endl;
+        correct_parsing = false;
+        break;
+    case ARRAY:
+        switch(C.type)
+        {
+        case NUMBER:
+            array_operator_object(A,B,C,&shift_left);
+            break;
+        case STRING:
+            out() << "Syntax error: cannot call << on a string." << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << "Syntax error: cannot call << on a boolean." << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            array_operator_array(A,B,C,&shift_left);
+            break;
+        }
+        break;
+    }
+
+    stack.pop_back();
+    stack.pop_back();
+    stack.push_back(A);
+}
+
+void _shift_right()
+{
+    object A;
+    const object& B = stack.back();
+    const object& C = stack.at(stack.size() - 2);
+
+    switch(B.type)
+    {
+    case NUMBER:
+        switch(B.type)
+        {
+        case NUMBER:
+            A.type = NUMBER;
+            A.data.number = (((int)B.data.number) >> ((int)C.data.number));
+            break;
+        case STRING:
+            out() << "Syntax error: cannot call >> on a string." << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << "Syntax error: cannot call >> on a boolean." << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            object_operator_array(A,B,C,&shift_right);
+            break;
+        }
+        break;
+    case STRING:
+        out() << "Syntax error: cannot call >> on a string." << std::endl;
+        correct_parsing = false;
+        break;
+    case BOOL:
+        out() << "Syntax error: cannot call >> on a boolean." << std::endl;
+        correct_parsing = false;
+        break;
+    case ARRAY:
+        switch(C.type)
+        {
+        case NUMBER:
+            array_operator_object(A,B,C,&shift_right);
+            break;
+        case STRING:
+            out() << "Syntax error: cannot call >> on a string." << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << "Syntax error: cannot call >> on a boolean." << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            array_operator_array(A,B,C,&shift_right);
+            break;
+        }
+        break;
+    }
+
+    stack.pop_back();
+    stack.pop_back();
+    stack.push_back(A);
+}
+
+void _bit_not()
+{
+    object A;
+    const object& B = stack.back();
+
+    switch(B.type)
+    {
+    case NUMBER:
+        A.type = NUMBER;
+        A.data.number = ~(int)B.data.number;
+        break;
+    case STRING:
+        out() << "Syntax error: cannot call ~ on a string." << std::endl;
+        correct_parsing = false;
+        break;
+    case BOOL:
+        out() << "Syntax error: cannot call ~ on a string." << std::endl;
+        correct_parsing = false;
+        break;
+    case ARRAY:
+        out() << "Syntax error: cannot call ~ on an array." << std::endl;
+        correct_parsing = false;
+        break;
+    }
+
+    stack.pop_back();
+    stack.push_back(A);
+}
+
+void _bit_and()
+{
+    object A;
+    const object& B = stack.back();
+    const object& C = stack.at(stack.size() - 2);
+
+    switch(B.type)
+    {
+    case NUMBER:
+        switch(C.type)
+        {
+        case NUMBER:
+            A.type = NUMBER;
+            A.data.number = (int)B.data.number & (int)C.data.number;
+            break;
+        case STRING:
+            out() << "Syntax error: cannot call & on a string." << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << "Syntax error: cannot call & on a boolean." << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            object_operator_array(A,B,C,&bit_and);
+            break;
+        }
+        break;
+    case STRING:
+        out() << "Syntax error: cannot call & on a string." << std::endl;
+        correct_parsing = false;
+        break;
+    case BOOL:
+        out() << "Syntax error: cannot call & on a boolean." << std::endl;
+        correct_parsing = false;
+        break;
+    case ARRAY:
+        switch(C.type)
+        {
+        case NUMBER:
+            array_operator_object(A,B,C,&bit_and);
+            break;
+        case STRING:
+            out() << "Syntax error: cannot call & on a string." << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << "Syntax error: cannot call & on a boolean." << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            array_operator_array(A,B,C,&bit_and);
+            break;
+        }
+        break;
+    }
+
+    stack.pop_back();
+    stack.pop_back();
+    stack.push_back(A);
+}
+
+void _bit_or()
+{
+    object A;
+    const object& B = stack.back();
+    const object& C = stack.at(stack.size() - 2);
+
+    switch(B.type)
+    {
+    case NUMBER:
+        switch(C.type)
+        {
+        case NUMBER:
+            A.type = NUMBER;
+            A.data.number = (int)B.data.number | (int)C.data.number;
+            break;
+        case STRING:
+            out() << "Syntax error: cannot call & on a string." << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << "Syntax error: cannot call & on a boolean." << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            object_operator_array(A,B,C,&bit_or);
+            break;
+        }
+        break;
+    case STRING:
+        out() << "Syntax error: cannot call & on a string." << std::endl;
+        correct_parsing = false;
+        break;
+    case BOOL:
+        out() << "Syntax error: cannot call & on a boolean." << std::endl;
+        correct_parsing = false;
+        break;
+    case ARRAY:
+        switch(C.type)
+        {
+        case NUMBER:
+            array_operator_object(A,B,C,&bit_or);
+            break;
+        case STRING:
+            out() << "Syntax error: cannot call & on a string." << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << "Syntax error: cannot call & on a boolean." << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            array_operator_array(A,B,C,&bit_or);
+            break;
+        }
+        break;
+    }
+
+    stack.pop_back();
+    stack.pop_back();
+    stack.push_back(A);
+}
+
+void _bit_xor()
+{
+    object A;
+    const object& B = stack.back();
+    const object& C = stack.at(stack.size() - 2);
+
+    switch(B.type)
+    {
+    case NUMBER:
+        switch(C.type)
+        {
+        case NUMBER:
+            A.type = NUMBER;
+            A.data.number = (int)B.data.number ^ (int)C.data.number;
+            break;
+        case STRING:
+            out() << "Syntax error: cannot call |^ on a string." << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << "Syntax error: cannot call |^ on a boolean." << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            object_operator_array(A,B,C,&bit_xor);
+            break;
+        }
+        break;
+    case STRING:
+        out() << "Syntax error: cannot call |^ on a string." << std::endl;
+        correct_parsing = false;
+        break;
+    case BOOL:
+        out() << "Syntax error: cannot call |^ on a boolean." << std::endl;
+        correct_parsing = false;
+        break;
+    case ARRAY:
+        switch(C.type)
+        {
+        case NUMBER:
+            array_operator_object(A,B,C,&bit_xor);
+            break;
+        case STRING:
+            out() << "Syntax error: cannot call |^ on a string." << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << "Syntax error: cannot call |^ on a boolean." << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            array_operator_array(A,B,C,&bit_xor);
+            break;
+        }
+        break;
+    }
+
+    stack.pop_back();
+    stack.pop_back();
+    stack.push_back(A);
+}
+
+
+void _index()
+{
+    object A;
+    const object& B = stack.back();
+    const object& C = stack.at(stack.size() - 2);
+
+    switch(B.type)
+    {
+    case NUMBER:
+    case STRING:
+    case BOOL:
+        out() << "Syntax error: cannot retrieve an index from a non-array data type." << std::endl;
+        correct_parsing = false;
+        break;
+    case ARRAY:
+        switch(C.type)
+        {
+        case NUMBER:
+        case STRING:
+            out() << "Syntax error: A string cannot be an array index." << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << "Syntax error: A bool _cannot be an array index." << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            if(C.data.array->at(0).type==NUMBER)
+            {
+                if(C.data.array->at(0).data.number<B.data.array->size())
+                {
+                    A = copy_object(B.data.array->at(C.data.array->at(0).data.number));
+                }
+                else
+                {
+                    out() << "Error: Index out of range." << std::endl;
+                    correct_parsing = false;
+                }
+                break;
+            }
+            else
+            {
+                out() << "Error Indexing Array." << std::endl;
+                correct_parsing = false;
+            }
+            break;
+        }
+        break;
+    }
+
+    stack.pop_back();
+    stack.pop_back();
+    stack.push_back(A);
+}
+
+void _assign_variable()
+{
+    object A;
+    const object& B = stack.back();
+    const object& C = stack.at(stack.size() - 2);
+
+    if(B.type == ARRAY)
+    {
+        create_function(A,B,C);
+        return;
+    }
+
+    A.type = panopticon::VARIABLE;
+    A.data.string = new String(*B.data.string);
+    A.scope = get_scope();
+    std::pair<std::string,object> value(*B.data.string,copy_object(C));
+    A.scope->data.map->insert(value);
+
+    stack.pop_back();
+    stack.pop_back();
+    stack.push_back(A);
+}
+
+void _retrieve_variable()
+{
+    object A;
+    object B = stack.back();
+    B.scope = get_scope();
+    if(B.scope->data.map->find(*B.data.string)!=B.scope->data.map->end())
+    {
+        A = B.scope->data.map->at(*B.data.string);
+    }
+    else
+    {
+        A = B;
+        A.type = UNDECLARED_VARIABLE;
+    }
+
+    stack.pop_back();
+    stack.push_back(A);
+}
+
+object object_plus = { OPERATION, { _plus }, (object*) 0 };
+object object_minus = { OPERATION, { _minus }, (object*) 0 };
+object object_divide = { OPERATION, { _divide }, (object*) 0 };
+object object_multiply = { OPERATION, { _multiply }, (object*) 0 };
+object object_modulo = { OPERATION, { _modulo }, (object*) 0 };
+object object_value_pow = { OPERATION, { _value_pow }, (object*) 0 };
+object object_equal_to = { OPERATION, { _equal_to }, (object*) 0 };
+object object_not_equal_to = { OPERATION, { _not_equal_to }, (object*) 0 };
+object object_less_than = { OPERATION, { _less_than }, (object*) 0 };
+object object_greater_than = { OPERATION, { _greater_than }, (object*) 0 };
+object object_lore = { OPERATION, { _lore }, (object*) 0 };
+object object_gore = { OPERATION, { _gore }, (object*) 0 };
+object object_value_and = { OPERATION, { _value_and }, (object*) 0 };
+object object_value_or = { OPERATION, { _value_or }, (object*) 0 };
+object object_not_value = { OPERATION, { _not_value }, (object*) 0 };
+object object_shift_left = { OPERATION, { _shift_left }, (object*) 0 };
+object object_shift_right = { OPERATION, { _shift_right }, (object*) 0 };
+object object_bit_and = { OPERATION, { _bit_and }, (object*) 0 };
+object object_bit_or = { OPERATION, { _bit_or }, (object*) 0 };
+object object_bit_not = { OPERATION, { _bit_not }, (object*) 0 };
+object object_bit_xor = { OPERATION, { _bit_xor }, (object*) 0 };
+object object_assign_variable = { OPERATION, { _assign_variable }, (object*) 0 };
+object object_retrieve_variable = { OPERATION, { _retrieve_variable }, (object*) 0 };
+
+
+bool plus(object& A, const object &B, const object &C)
+{
+    std::cout << "bool plus" << std::endl;
+    stack.push_back(C);
+    stack.push_back(B);
+    stack.push_back(object_plus);
+    return true;
+}
+
+bool minus(object& A, const object& B, const object& C)
+{
+    stack.push_back(C);
+    stack.push_back(B);
+    stack.push_back(object_minus);
+    return true;
+}
+
+bool divide(object& A, const object& B, const object& C)
+{
+    std::cout << "divide" << std::endl;
+    stack.push_back(C);
+    stack.push_back(B);
+    stack.push_back(object_divide);
+    return true;
+}
+
+bool multiply(object& A, const object& B, const object& C)
+{
+    stack.push_back(C);
+    stack.push_back(B);
+    stack.push_back(object_multiply);
+    return true;
+}
+
+bool modulo(object& A, const object& B, const object& C)
+{
+    stack.push_back(C);
+    stack.push_back(B);
+    stack.push_back(object_modulo);
+    return true;
+}
+
+bool value_pow(object& A, const object& B, const object& C)
+{
+    stack.push_back(C);
+    stack.push_back(B);
+    stack.push_back(object_value_pow);
+    return true;
+}
+
+bool equal_to(object& A, const object& B, const object& C)
+{
+    stack.push_back(C);
+    stack.push_back(B);
+    stack.push_back(object_equal_to);
+    return true;
+}
+
+bool not_equal_to(object& A, const object& B, const object& C)
+{
+    stack.push_back(C);
+    stack.push_back(B);
+    stack.push_back(object_not_equal_to);
+    return true;
+}
+
+bool less_than(object& A, const object& B, const object& C)
+{
+    stack.push_back(C);
+    stack.push_back(B);
+    stack.push_back(object_less_than);
+    return true;
+}
+
+bool greater_than(object& A, const object& B, const object& C)
+{
+    stack.push_back(C);
+    stack.push_back(B);
+    stack.push_back(object_greater_than);
+    return true;
+}
+
+bool lore(object& A, const object& B, const object& C)
+{
+    stack.push_back(C);
+    stack.push_back(B);
+    stack.push_back(object_lore);
+    return true;
+}
+
+bool gore(object& A, const object& B, const object& C)
+{
+    stack.push_back(C);
+    stack.push_back(B);
+    stack.push_back(object_gore);
+    return true;
+}
+
+bool value_and(object& A, const object& B, const object& C)
+{
+    stack.push_back(C);
+    stack.push_back(B);
+    stack.push_back(object_value_and);
+    return true;
+}
+
+bool value_or(object& A, const object& B, const object& C)
+{
+    stack.push_back(C);
+    stack.push_back(B);
+    stack.push_back(object_value_or);
+    return true;
+}
+
+bool not_value(object& A, object& B)
+{
+    stack.push_back(B);
+    stack.push_back(object_not_value);
+    return true;
+}
+
+bool shift_left(object& A, const object& B, const object& C)
+{
+    stack.push_back(C);
+    stack.push_back(B);
+    stack.push_back(object_shift_left);
+    return true;
+}
+
+bool shift_right(object& A, const object& B, const object& C)
+{
+    stack.push_back(C);
+    stack.push_back(B);
+    stack.push_back(object_shift_right);
+    return true;
+}
+
+bool bit_and(object& A, const object& B, const object& C)
+{
+    stack.push_back(C);
+    stack.push_back(B);
+    stack.push_back(object_bit_and);
+    return true;
+}
+
+bool bit_or(object& A, const object& B, const object& C)
+{
+    stack.push_back(C);
+    stack.push_back(B);
+    stack.push_back(object_bit_or);
+    return true;
+}
+
+bool bit_not(object& A, object& B)
+{
+    stack.push_back(B);
+    stack.push_back(object_bit_not);
+    return true;
+}
+
+bool bit_xor(object& A, const object& B, const object& C)
+{
+    stack.push_back(C);
+    stack.push_back(B);
+    stack.push_back(object_bit_xor);
+    return true;
+}
+
+bool assign_variable(object& A, const object& B, const object& C)
+{
+    stack.push_back(C);
+    stack.push_back(B);
+    stack.push_back(object_assign_variable);
+    return true;
+}
+
+bool retrieve_variable(object& A, object& B)
+{
+    stack.push_back(B);
+    stack.push_back(object_retrieve_variable);
+    return true;
+}
+
+
+object convert_to_string( object& original)
+{
+    object newObject;
+    newObject.type = STRING;
+    std::stringstream ss;
+    ss << original.data.number;
+    newObject.data.string = new String(ss.str());
+    return newObject;
 }
 
 

@@ -21,6 +21,7 @@
 #include "../../include/Grammar/parse.h"
 #include "../../include/core/errors.h"
 #include "../../include/core/heap.h"
+#include "include/core/stack.h"
 
 #undef STRING
 #undef NUM
@@ -90,10 +91,13 @@ in ::= in start NEWLINE.
 
 start ::= spec(A).
 {
+    panopticon::evaluate_stack();
+
     if(panopticon::correct_parsing)
     {
         optic::print_object(A);
     }
+
     optic::delete_object(A);
 }
 
