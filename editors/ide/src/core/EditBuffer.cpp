@@ -120,6 +120,12 @@ void EditBuffer::keyPressEvent(QKeyEvent *e)
         }
     }
 
+    else if(e->key() == Qt::Key_F1)
+    {
+        MAIN_WINDOW->toggleOpenGL();
+        return;
+    }
+
     QTextEdit::keyPressEvent(e);
 }
 
