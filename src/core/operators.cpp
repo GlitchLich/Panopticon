@@ -361,7 +361,7 @@ bool bool_plusplus_string(object &a, object b,  object c)
 }
 
 
-bool object_operator_array(object& a,const object& obj,const object& array, operator_function func)
+bool object_operator_array(object& a,const object& obj,const object& array, stack_function func)
 {
     a.type = panopticon::ARRAY;
     a.data.array = new std::vector<object>();
@@ -370,12 +370,12 @@ bool object_operator_array(object& a,const object& obj,const object& array, oper
     for(int i=0;i<array.data.array->size();++i)
     {
         object newObject;
-        func(newObject,obj,array.data.array->at(i));
+        // func(newObject,obj,array.data.array->at(i));
         a.data.array->push_back(newObject);
     }
 }
 
-bool array_operator_object(object& a,const object& array,const object& obj, operator_function func)
+bool array_operator_object(object& a,const object& array,const object& obj, stack_function func)
 {
     a.type = panopticon::ARRAY;
     a.data.array = new std::vector<object>();
@@ -384,12 +384,12 @@ bool array_operator_object(object& a,const object& array,const object& obj, oper
     for(int i=0;i<array.data.array->size();++i)
     {
         object newObject;
-        func(newObject,array.data.array->at(i),obj);
+        //func(newObject,array.data.array->at(i),obj);
         a.data.array->push_back(newObject);
     }
 }
 
-bool array_operator_array(object& a,const object& array1,const object& array2, operator_function func)
+bool array_operator_array(object& a,const object& array1,const object& array2, stack_function func)
 {
     a.type = panopticon::ARRAY;
     a.data.array = new std::vector<object>();
@@ -409,12 +409,12 @@ bool array_operator_array(object& a,const object& array1,const object& array2, o
         object& array1Object = array1.data.array->at(i%array1.data.array->size());
         object& array2Object = array2.data.array->at(i%array2.data.array->size());
         object newObject;
-        func(newObject,array1Object,array2Object);
+        //func(newObject,array1Object,array2Object);
         a.data.array->push_back(newObject);
     }
 }
 
-bool store_operations(object& a,const object& obj1,const object& obj2, operator_function func)
+bool store_operations(object& a,const object& obj1,const object& obj2, stack_function func)
 {
     a.type = OPERATION_TREE;
     a.data.array = new Array();
@@ -442,7 +442,8 @@ bool store_operations(object& a,const object& obj1,const object& obj2, operator_
     a.data.array->reserve(size);
     object op_func;
     op_func.type = OPERATION;
-    op_func.data.operator_func = func;
+    // op_func.data.operator_func = func;
+    op_func.data.stack_func = func;
     a.data.array->push_back(op_func);
 
     if(obj1.type==OPERATION_TREE)
@@ -472,14 +473,18 @@ bool store_operations(object& a,const object& obj1,const object& obj2, operator_
     }
 }
 
-bool object_operator_object(object& a, object& b, object& c, operator_function func)
+bool object_operator_object(object& a, object& b, object& c, stack_function func)
 {
-    func(a,b,c);
+    // func(a,b,c);
+    optic_stack.push_back(b);
+    optic_stack.push_back(c);
+    func();
+    a = global_state;
     delete_object(b);
     delete_object(c);
 }
 
-bool object_operator_object2(object& a, object& b, object& c, operator_function func)
+bool object_operator_object2(object& a, object& b, object& c, stack_function func)
 {
     if(
             b.type==UNDECLARED_VARIABLE||
@@ -500,13 +505,17 @@ bool object_operator_object2(object& a, object& b, object& c, operator_function 
     }
     else
     {
-        func(a,b,c);
+        // func(a,b,c);
+        optic_stack.push_back(b);
+        optic_stack.push_back(c);
+        func();
+        a = global_state;
         delete_object(b);
         delete_object(c);
     }
 }
 
-bool parse_operations(object& a, const object& b, const object& c, operator_function func)
+bool parse_operations(object& a, const object& b, const object& c, stack_function func)
 {
     if(a.type==FUNCTION_DEC)
     {
@@ -515,12 +524,20 @@ bool parse_operations(object& a, const object& b, const object& c, operator_func
 
     else if(a.type==ASSIGNMENT)
     {
-        assign_variable(a,b,c);
+
+        optic_stack.push_back(b);
+        optic_stack.push_back(c);
+        assign_variable();
+        a = global_state;
+        // assign_variable(a,b,c);
     }
 
     else if(a.type==COMPUTE)
     {
+        a.type = OPERATION_TREE;
+        std::cout << "COMPUTE!!!!!!!!!" << std::endl;
         std::copy(a.data.array->begin(), a.data.array->end(), std::inserter(optic_stack, optic_stack.end()));
+        evaluate_stack();
         //TO DO:
         //Create system to compute shit outside
 //        object_operator_object(a,b,c,func);
@@ -529,6 +546,7 @@ bool parse_operations(object& a, const object& b, const object& c, operator_func
     else
     {
         // func(a, b, c);
+        std::cout << "STORE_OPERATIONS" << std::endl;
         store_operations(a,b,c,func);
     }
 }
@@ -737,8 +755,12 @@ bool handle_stack(object &A, Function *function)
     function->stack.pop();
 }
 
-bool call_function(object &A,const object &B,const object &C)
+void call_function()
 {
+    object A;
+    const object& B = optic_stack.back();
+    const object& C = optic_stack.at(optic_stack.size() - 2);
+
 
     if(A.scope->data.map->find(*B.data.string)!=A.scope->data.map->end())
     {
@@ -767,11 +789,15 @@ bool call_function(object &A,const object &B,const object &C)
         out() << "Error: This function has not been declared: " << *B.data.string << std::endl;
         correct_parsing = false;
     }
+
+    optic_stack.pop_back();
+    optic_stack.pop_back();
+    optic_stack.push_back(A);
 }
 
 
 
-bool recursive_apply(object& a,const object& obj1,const object& obj2, operator_function func)
+bool recursive_apply(object& a,const object& obj1,const object& obj2, stack_function func)
 {
     if(obj1.type==ARRAY)
     {
@@ -786,7 +812,7 @@ bool recursive_apply(object& a,const object& obj1,const object& obj2, operator_f
 //======================================================================================
 //======================================================================================
 //======================================================================================
-
+/*
 bool plus(object& A, const object& B, const object& C)
 {
     switch(B.type)
@@ -2023,15 +2049,14 @@ bool retrieve_variable(object &A, object &B)
         A = B;
         A.type = UNDECLARED_VARIABLE;
     }
-}
+}*/
 
-
-/*
 void plus()
 {
+    std::cout << "plus()" << std::endl;
     object A;
-    const object& B = stack.back();
-    const object& C = stack.at(stack.size() - 2);
+    const object& B = optic_stack.back();
+    const object& C = optic_stack.at(optic_stack.size() - 2);
 
     switch(B.type)
     {
@@ -2049,16 +2074,16 @@ void plus()
         break;
     }
 
-    stack.pop_back();
-    stack.pop_back();
-    stack.push_back(A);
+    optic_stack.pop_back();
+    optic_stack.pop_back();
+    optic_stack.push_back(A);
 }
 
-void _minus()
+void minus()
 {
     object A;
-    const object& B = stack.back();
-    const object& C = stack.at(stack.size() - 2);
+    const object& B = optic_stack.back();
+    const object& C = optic_stack.at(optic_stack.size() - 2);
 
     switch(B.type)
     {
@@ -2076,16 +2101,16 @@ void _minus()
         break;
     }
 
-    stack.pop_back();
-    stack.pop_back();
-    stack.push_back(A);
+    optic_stack.pop_back();
+    optic_stack.pop_back();
+    optic_stack.push_back(A);
 }
 
-void _divide()
+void divide()
 {
     object A;
-    const object& B = stack.back();
-    const object& C = stack.at(stack.size() - 2);
+    const object& B = optic_stack.back();
+    const object& C = optic_stack.at(optic_stack.size() - 2);
 
     switch(B.type)
     {
@@ -2138,17 +2163,17 @@ void _divide()
         break;
     }
 
-    stack.pop_back();
-    stack.pop_back();
-    stack.push_back(A);
+    optic_stack.pop_back();
+    optic_stack.pop_back();
+    optic_stack.push_back(A);
 }
 
 
-void _multiply()
+void multiply()
 {
     object A;
-    const object& B = stack.back();
-    const object& C = stack.at(stack.size() - 2);
+    const object& B = optic_stack.back();
+    const object& C = optic_stack.at(optic_stack.size() - 2);
 
     switch(B.type)
     {
@@ -2201,16 +2226,16 @@ void _multiply()
         break;
     }
 
-    stack.pop_back();
-    stack.pop_back();
-    stack.push_back(A);
+    optic_stack.pop_back();
+    optic_stack.pop_back();
+    optic_stack.push_back(A);
 }
 
-void _modulo()
+void modulo()
 {
     object A;
-    const object& B = stack.back();
-    const object& C = stack.at(stack.size() - 2);
+    const object& B = optic_stack.back();
+    const object& C = optic_stack.at(optic_stack.size() - 2);
 
     switch(B.type)
     {
@@ -2263,16 +2288,16 @@ void _modulo()
         break;
     }
 
-    stack.pop_back();
-    stack.pop_back();
-    stack.push_back(A);
+    optic_stack.pop_back();
+    optic_stack.pop_back();
+    optic_stack.push_back(A);
 }
 
-void _value_pow()
+void value_pow()
 {
     object A;
-    const object& B = stack.back();
-    const object& C = stack.at(stack.size() - 2);
+    const object& B = optic_stack.back();
+    const object& C = optic_stack.at(optic_stack.size() - 2);
 
     switch(B.type)
     {
@@ -2325,16 +2350,16 @@ void _value_pow()
         break;
     }
 
-    stack.pop_back();
-    stack.pop_back();
-    stack.push_back(A);
+    optic_stack.pop_back();
+    optic_stack.pop_back();
+    optic_stack.push_back(A);
 }
 
-void _equal_to()
+void equal_to()
 {
     object A;
-    const object& B = stack.back();
-    const object& C = stack.at(stack.size() - 2);
+    const object& B = optic_stack.back();
+    const object& C = optic_stack.at(optic_stack.size() - 2);
 
     switch(B.type)
     {
@@ -2420,16 +2445,16 @@ void _equal_to()
         break;
     }
 
-    stack.pop_back();
-    stack.pop_back();
-    stack.push_back(A);
+    optic_stack.pop_back();
+    optic_stack.pop_back();
+    optic_stack.push_back(A);
 }
 
-void _not_equal_to()
+void not_equal_to()
 {
     object A;
-    const object& B = stack.back();
-    const object& C = stack.at(stack.size() - 2);
+    const object& B = optic_stack.back();
+    const object& C = optic_stack.at(optic_stack.size() - 2);
 
     switch(B.type)
     {
@@ -2515,16 +2540,16 @@ void _not_equal_to()
         break;
     }
 
-    stack.pop_back();
-    stack.pop_back();
-    stack.push_back(A);
+    optic_stack.pop_back();
+    optic_stack.pop_back();
+    optic_stack.push_back(A);
 }
 
-void _less_than()
+void less_than()
 {
     object A;
-    const object& B = stack.back();
-    const object& C = stack.at(stack.size() - 2);
+    const object& B = optic_stack.back();
+    const object& C = optic_stack.at(optic_stack.size() - 2);
 
     switch(B.type)
     {
@@ -2540,7 +2565,7 @@ void _less_than()
             correct_parsing = false;
             break;
         case BOOL:
-            out() << "Syntax error: A void _cannot be greater than or less than a number." << std::endl;
+            out() << "Syntax error: A void cannot be greater than or less than a number." << std::endl;
             correct_parsing = false;
             break;
         case ARRAY:
@@ -2553,7 +2578,7 @@ void _less_than()
         correct_parsing = false;
         break;
     case BOOL:
-        out() << "Syntax error: A void _cannot be greater than or less than a number." << std::endl;
+        out() << "Syntax error: A void cannot be greater than or less than a number." << std::endl;
         correct_parsing = false;
         break;
     case ARRAY:
@@ -2567,7 +2592,7 @@ void _less_than()
             correct_parsing = false;
             break;
         case BOOL:
-            out() << "Syntax error: A void _cannot be greater than or less than a number." << std::endl;
+            out() << "Syntax error: A void cannot be greater than or less than a number." << std::endl;
             correct_parsing = false;
             break;
         case ARRAY:
@@ -2577,16 +2602,16 @@ void _less_than()
         break;
     }
 
-    stack.pop_back();
-    stack.pop_back();
-    stack.push_back(A);
+    optic_stack.pop_back();
+    optic_stack.pop_back();
+    optic_stack.push_back(A);
 }
 
-void _greater_than()
+void greater_than()
 {
     object A;
-    const object& B = stack.back();
-    const object& C = stack.at(stack.size() - 2);
+    const object& B = optic_stack.back();
+    const object& C = optic_stack.at(optic_stack.size() - 2);
 
     switch(B.type)
     {
@@ -2602,7 +2627,7 @@ void _greater_than()
             correct_parsing = false;
             break;
         case BOOL:
-            out() << "Syntax error: A void _cannot be greater than or less than a number." << std::endl;
+            out() << "Syntax error: A void cannot be greater than or less than a number." << std::endl;
             correct_parsing = false;
             break;
         case ARRAY:
@@ -2615,7 +2640,7 @@ void _greater_than()
         correct_parsing = false;
         break;
     case BOOL:
-        out() << "Syntax error: A void _cannot be greater than or less than a number." << std::endl;
+        out() << "Syntax error: A void cannot be greater than or less than a number." << std::endl;
         correct_parsing = false;
         break;
     case ARRAY:
@@ -2629,7 +2654,7 @@ void _greater_than()
             correct_parsing = false;
             break;
         case BOOL:
-            out() << "Syntax error: A void _cannot be greater than or less than a number." << std::endl;
+            out() << "Syntax error: A void cannot be greater than or less than a number." << std::endl;
             correct_parsing = false;
             break;
         case ARRAY:
@@ -2639,16 +2664,16 @@ void _greater_than()
         break;
     }
 
-    stack.pop_back();
-    stack.pop_back();
-    stack.push_back(A);
+    optic_stack.pop_back();
+    optic_stack.pop_back();
+    optic_stack.push_back(A);
 }
 
-void _lore()
+void lore()
 {
     object A;
-    const object& B = stack.back();
-    const object& C = stack.at(stack.size() - 2);
+    const object& B = optic_stack.back();
+    const object& C = optic_stack.at(optic_stack.size() - 2);
 
     switch(B.type)
     {
@@ -2701,16 +2726,16 @@ void _lore()
         break;
     }
 
-    stack.pop_back();
-    stack.pop_back();
-    stack.push_back(A);
+    optic_stack.pop_back();
+    optic_stack.pop_back();
+    optic_stack.push_back(A);
 }
 
-void _gore()
+void gore()
 {
     object A;
-    const object& B = stack.back();
-    const object& C = stack.at(stack.size() - 2);
+    const object& B = optic_stack.back();
+    const object& C = optic_stack.at(optic_stack.size() - 2);
 
     switch(B.type)
     {
@@ -2763,16 +2788,16 @@ void _gore()
         break;
     }
 
-    stack.pop_back();
-    stack.pop_back();
-    stack.push_back(A);
+    optic_stack.pop_back();
+    optic_stack.pop_back();
+    optic_stack.push_back(A);
 }
 
-void _value_and()
+void value_and()
 {
     object A;
-    const object& B = stack.back();
-    const object& C = stack.at(stack.size() - 2);
+    const object& B = optic_stack.back();
+    const object& C = optic_stack.at(optic_stack.size() - 2);
 
     switch(B.type)
     {
@@ -2868,16 +2893,16 @@ void _value_and()
         break;
     }
 
-    stack.pop_back();
-    stack.pop_back();
-    stack.push_back(A);
+    optic_stack.pop_back();
+    optic_stack.pop_back();
+    optic_stack.push_back(A);
 }
 
-void _value_or()
+void value_or()
 {
     object A;
-    const object& B = stack.back();
-    const object& C = stack.at(stack.size() - 2);
+    const object& B = optic_stack.back();
+    const object& C = optic_stack.at(optic_stack.size() - 2);
 
     switch(B.type)
     {
@@ -2973,15 +2998,15 @@ void _value_or()
         break;
     }
 
-    stack.pop_back();
-    stack.pop_back();
-    stack.push_back(A);
+    optic_stack.pop_back();
+    optic_stack.pop_back();
+    optic_stack.push_back(A);
 }
 
-void _not_value()
+void not_value()
 {
     object A;
-    const object& B = stack.back();
+    const object& B = optic_stack.back();
 
     switch(B.type)
     {
@@ -3010,15 +3035,15 @@ void _not_value()
         break;
     }
 
-    stack.pop_back();
-    stack.push_back(A);
+    optic_stack.pop_back();
+    optic_stack.push_back(A);
 }
 
-void _shift_left()
+void shift_left()
 {
     object A;
-    const object& B = stack.back();
-    const object& C = stack.at(stack.size() - 2);
+    const object& B = optic_stack.back();
+    const object& C = optic_stack.at(optic_stack.size() - 2);
 
     switch(B.type)
     {
@@ -3071,16 +3096,16 @@ void _shift_left()
         break;
     }
 
-    stack.pop_back();
-    stack.pop_back();
-    stack.push_back(A);
+    optic_stack.pop_back();
+    optic_stack.pop_back();
+    optic_stack.push_back(A);
 }
 
-void _shift_right()
+void shift_right()
 {
     object A;
-    const object& B = stack.back();
-    const object& C = stack.at(stack.size() - 2);
+    const object& B = optic_stack.back();
+    const object& C = optic_stack.at(optic_stack.size() - 2);
 
     switch(B.type)
     {
@@ -3133,15 +3158,15 @@ void _shift_right()
         break;
     }
 
-    stack.pop_back();
-    stack.pop_back();
-    stack.push_back(A);
+    optic_stack.pop_back();
+    optic_stack.pop_back();
+    optic_stack.push_back(A);
 }
 
-void _bit_not()
+void bit_not()
 {
     object A;
-    const object& B = stack.back();
+    const object& B = optic_stack.back();
 
     switch(B.type)
     {
@@ -3163,15 +3188,15 @@ void _bit_not()
         break;
     }
 
-    stack.pop_back();
-    stack.push_back(A);
+    optic_stack.pop_back();
+    optic_stack.push_back(A);
 }
 
-void _bit_and()
+void bit_and()
 {
     object A;
-    const object& B = stack.back();
-    const object& C = stack.at(stack.size() - 2);
+    const object& B = optic_stack.back();
+    const object& C = optic_stack.at(optic_stack.size() - 2);
 
     switch(B.type)
     {
@@ -3224,16 +3249,16 @@ void _bit_and()
         break;
     }
 
-    stack.pop_back();
-    stack.pop_back();
-    stack.push_back(A);
+    optic_stack.pop_back();
+    optic_stack.pop_back();
+    optic_stack.push_back(A);
 }
 
-void _bit_or()
+void bit_or()
 {
     object A;
-    const object& B = stack.back();
-    const object& C = stack.at(stack.size() - 2);
+    const object& B = optic_stack.back();
+    const object& C = optic_stack.at(optic_stack.size() - 2);
 
     switch(B.type)
     {
@@ -3286,16 +3311,16 @@ void _bit_or()
         break;
     }
 
-    stack.pop_back();
-    stack.pop_back();
-    stack.push_back(A);
+    optic_stack.pop_back();
+    optic_stack.pop_back();
+    optic_stack.push_back(A);
 }
 
-void _bit_xor()
+void bit_xor()
 {
     object A;
-    const object& B = stack.back();
-    const object& C = stack.at(stack.size() - 2);
+    const object& B = optic_stack.back();
+    const object& C = optic_stack.at(optic_stack.size() - 2);
 
     switch(B.type)
     {
@@ -3348,17 +3373,17 @@ void _bit_xor()
         break;
     }
 
-    stack.pop_back();
-    stack.pop_back();
-    stack.push_back(A);
+    optic_stack.pop_back();
+    optic_stack.pop_back();
+    optic_stack.push_back(A);
 }
 
 
-void _index()
+void index()
 {
     object A;
-    const object& B = stack.back();
-    const object& C = stack.at(stack.size() - 2);
+    const object& B = optic_stack.back();
+    const object& C = optic_stack.at(optic_stack.size() - 2);
 
     switch(B.type)
     {
@@ -3404,16 +3429,16 @@ void _index()
         break;
     }
 
-    stack.pop_back();
-    stack.pop_back();
-    stack.push_back(A);
+    optic_stack.pop_back();
+    optic_stack.pop_back();
+    optic_stack.push_back(A);
 }
 
-void _assign_variable()
+void assign_variable()
 {
     object A;
-    const object& B = stack.back();
-    const object& C = stack.at(stack.size() - 2);
+    const object& B = optic_stack.back();
+    const object& C = optic_stack.at(optic_stack.size() - 2);
 
     if(B.type == ARRAY)
     {
@@ -3427,15 +3452,15 @@ void _assign_variable()
     std::pair<std::string,object> value(*B.data.string,copy_object(C));
     A.scope->data.map->insert(value);
 
-    stack.pop_back();
-    stack.pop_back();
-    stack.push_back(A);
+    optic_stack.pop_back();
+    optic_stack.pop_back();
+    optic_stack.push_back(A);
 }
 
-void _retrieve_variable()
+void retrieve_variable()
 {
     object A;
-    object B = stack.back();
+    object B = optic_stack.back();
     B.scope = get_scope();
     if(B.scope->data.map->find(*B.data.string)!=B.scope->data.map->end())
     {
@@ -3447,10 +3472,11 @@ void _retrieve_variable()
         A.type = UNDECLARED_VARIABLE;
     }
 
-    stack.pop_back();
-    stack.push_back(A);
+    optic_stack.pop_back();
+    optic_stack.push_back(A);
 }
 
+/*
 object object_plus = { OPERATION, { _plus }, (object*) 0 };
 object object_minus = { OPERATION, { _minus }, (object*) 0 };
 object object_divide = { OPERATION, { _divide }, (object*) 0 };

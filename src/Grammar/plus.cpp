@@ -23,7 +23,7 @@ bool number_plus(object&A,const object& B,const object& C)
         break;
     case ARRAY:
 //        array_plus_number(A,C,B);
-        object_operator_array(A,B,C,&number_plus);
+        // object_operator_array(A,B,C,&number_plus);
         break;
     }
 }
@@ -50,7 +50,7 @@ bool bool_plus(object&A,const object& B,const object& C)
         }
         break;
     case ARRAY:
-        object_operator_array(A,B,C,&bool_plus);
+        // object_operator_array(A,B,C,&bool_plus);
         break;
     }
 }
@@ -70,7 +70,7 @@ bool string_plus(object&A,const object& B,const object& C)
         string_plus_bool(A,B,C);
         break;
     case ARRAY:
-        object_operator_array(A,B,C,&string_plus);
+        // object_operator_array(A,B,C,&string_plus);
         break;
     }
 }
@@ -80,16 +80,16 @@ bool array_plus(object&A,const object& B,const object& C)
     switch(C.type)
     {
     case NUMBER:
-        object_operator_array(A,C,B,&number_plus);
+        // object_operator_array(A,C,B,&number_plus);
         break;
     case STRING:
-        object_operator_array(A,B,C,&plus);
+        // object_operator_array(A,B,C,&plus);
         break;
     case BOOL:
-        object_operator_array(A,C,B,&bool_plus);
+        // object_operator_array(A,C,B,&bool_plus);
         break;
     case ARRAY:
-        array_operator_array(A,B,C,&plus);
+        // array_operator_array(A,B,C,&plus);
         break;
     }
 }

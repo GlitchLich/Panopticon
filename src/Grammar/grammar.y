@@ -93,14 +93,12 @@ in ::= in start NEWLINE.
 
 start ::= spec(A).
 {
-    panopticon::evaluate_stack();
-
-    if(panopticon::correct_parsing)
-    {
-        optic::print_object(A);
-    }
-
-    optic::delete_object(A);
+  A.type = panopticon::COMPUTE;
+  if(panopticon::correct_parsing)
+  {
+      optic::print_object(A);
+  }
+/*    optic::delete_object(A);*/
 }
 
 
@@ -206,7 +204,9 @@ name_chain(A) ::= NAME(B).
 
 expr(A) ::= NAME(B).
 {
-    panopticon::retrieve_variable(A,B);
+    panopticon::optic_stack.push_back(B);
+    panopticon::retrieve_variable();
+    A = panopticon::global_state;
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -554,7 +554,12 @@ expr(A) ::= expr(B) OR expr(C).
 
 expr(A) ::= BITNOT expr(B).
 {
-    bit_not(A,B);
+    // bit_not(A,B);
+
+    panopticon::optic_stack.push_back(B);
+    panopticon::bit_not();
+    A = panopticon::global_state;
+
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -564,7 +569,12 @@ expr(A) ::= BITNOT expr(B).
 
 expr(A) ::= NOT expr(B).
 {
-    not_value(A,B);
+    // not_value(A,B);
+
+    panopticon::optic_stack.push_back(B);
+    panopticon::not_value();
+    A = panopticon::global_state;
+
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
