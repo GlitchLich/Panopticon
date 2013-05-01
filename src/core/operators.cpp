@@ -542,6 +542,7 @@ bool resolve_stack_from_parser(object& operation_tree)
 
 bool parse_operations(object& a, const object& b, const object& c, operator_function func)
 {
+
     if(a.type==FUNCTION_DEC)
     {
         create_function(a, b, c);
