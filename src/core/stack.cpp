@@ -10,8 +10,6 @@ namespace panopticon
 std::deque<object> optic_stack;
 object global_state;
 
-namespace detail
-{
 void evaluate_binary_operator(const object& operator_object);
 
 void evaluate_top()
@@ -56,8 +54,6 @@ void evaluate_binary_operator(const object& operator_object)
     optic_stack.push_back(result);
 }
 
-} // detail namespace
-
 void evaluate_stack()
 {
     std::cout << std::cout << "evaluate_stack() optic_stack size: " << optic_stack.size() << std::endl;
@@ -65,7 +61,7 @@ void evaluate_stack()
     while(optic_stack.size())
     {
         out() << "evaluate_object() optic_stack size: " << optic_stack.size() << std::endl;
-        detail::evaluate_top();
+        evaluate_top();
 
         if(optic_stack.size())
         {

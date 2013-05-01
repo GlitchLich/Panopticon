@@ -3525,7 +3525,8 @@ void assign_variable()
 
     if(B.type == ARRAY)
     {
-        create_function(A,B,C);
+
+(A,B,C);
         return;
     }
 
