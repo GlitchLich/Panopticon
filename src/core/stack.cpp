@@ -48,11 +48,13 @@ void evaluate_top()
         break;
 
     case VARIABLE:
+    case UNDECLARED_VARIABLE:
 
         object result;
 
         if(get_variable(obj.data.string, &result) == OK)
         {
+            std::cout << "VARIABLE FOUND FGOUND FOUND FOUND " << std::endl;
             optic_stack.push_back(result);
         }
 
