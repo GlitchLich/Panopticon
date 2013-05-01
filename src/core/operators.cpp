@@ -361,7 +361,7 @@ bool bool_plusplus_string(object &a, object b,  object c)
 }
 
 
-bool object_operator_array(object& a,const object& obj,const object& array, stack_function func)
+bool object_operator_array(object& a,const object& obj,const object& array, operator_function func)
 {
     a.type = panopticon::ARRAY;
     a.data.array = new std::vector<object>();
@@ -370,12 +370,12 @@ bool object_operator_array(object& a,const object& obj,const object& array, stac
     for(int i=0;i<array.data.array->size();++i)
     {
         object newObject;
-        // func(newObject,obj,array.data.array->at(i));
+        func(newObject,obj,array.data.array->at(i));
         a.data.array->push_back(newObject);
     }
 }
 
-bool array_operator_object(object& a,const object& array,const object& obj, stack_function func)
+bool array_operator_object(object& a,const object& array,const object& obj, operator_function func)
 {
     a.type = panopticon::ARRAY;
     a.data.array = new std::vector<object>();
@@ -384,12 +384,12 @@ bool array_operator_object(object& a,const object& array,const object& obj, stac
     for(int i=0;i<array.data.array->size();++i)
     {
         object newObject;
-        //func(newObject,array.data.array->at(i),obj);
+        func(newObject,array.data.array->at(i),obj);
         a.data.array->push_back(newObject);
     }
 }
 
-bool array_operator_array(object& a,const object& array1,const object& array2, stack_function func)
+bool array_operator_array(object& a,const object& array1,const object& array2, operator_function func)
 {
     a.type = panopticon::ARRAY;
     a.data.array = new std::vector<object>();
@@ -409,12 +409,12 @@ bool array_operator_array(object& a,const object& array1,const object& array2, s
         object& array1Object = array1.data.array->at(i%array1.data.array->size());
         object& array2Object = array2.data.array->at(i%array2.data.array->size());
         object newObject;
-        //func(newObject,array1Object,array2Object);
+        func(newObject,array1Object,array2Object);
         a.data.array->push_back(newObject);
     }
 }
 
-bool store_operations(object& a,const object& obj1,const object& obj2, stack_function func)
+bool store_operations(object& a,const object& obj1,const object& obj2, operator_function func)
 {
     a.type = OPERATION_TREE;
     a.data.array = new Array();
@@ -442,8 +442,8 @@ bool store_operations(object& a,const object& obj1,const object& obj2, stack_fun
     a.data.array->reserve(size);
     object op_func;
     op_func.type = OPERATION;
-    // op_func.data.operator_func = func;
-    op_func.data.stack_func = func;
+    op_func.data.operator_func = func;
+    // op_func.data.stack_func = func;
     a.data.array->push_back(op_func);
 
     if(obj1.type==OPERATION_TREE)
@@ -473,18 +473,20 @@ bool store_operations(object& a,const object& obj1,const object& obj2, stack_fun
     }
 }
 
-bool object_operator_object(object& a, object& b, object& c, stack_function func)
+bool object_operator_object(object& a, object& b, object& c, operator_function func)
 {
     // func(a,b,c);
+    /*
     optic_stack.push_back(b);
     optic_stack.push_back(c);
     func();
-    a = global_state;
+    a = global_state;*/
+    func(a, b, c);
     delete_object(b);
     delete_object(c);
 }
 
-bool object_operator_object2(object& a, object& b, object& c, stack_function func)
+bool object_operator_object2(object& a, object& b, object& c, operator_function func)
 {
     if(
             b.type==UNDECLARED_VARIABLE||
@@ -505,17 +507,13 @@ bool object_operator_object2(object& a, object& b, object& c, stack_function fun
     }
     else
     {
-        // func(a,b,c);
-        optic_stack.push_back(b);
-        optic_stack.push_back(c);
-        func();
-        a = global_state;
+        func(a,b,c);
         delete_object(b);
         delete_object(c);
     }
 }
 
-bool parse_operations(object& a, const object& b, const object& c, stack_function func)
+bool parse_operations(object& a, const object& b, const object& c, operator_function func)
 {
     if(a.type==FUNCTION_DEC)
     {
@@ -524,12 +522,7 @@ bool parse_operations(object& a, const object& b, const object& c, stack_functio
 
     else if(a.type==ASSIGNMENT)
     {
-
-        optic_stack.push_back(b);
-        optic_stack.push_back(c);
-        assign_variable();
-        a = global_state;
-        // assign_variable(a,b,c);
+        assign_variable(a,b,c);
     }
 
     else if(a.type==COMPUTE)
@@ -545,9 +538,10 @@ bool parse_operations(object& a, const object& b, const object& c, stack_functio
 
     else
     {
-        // func(a, b, c);
+        func(a, b, c);
         std::cout << "STORE_OPERATIONS" << std::endl;
-        store_operations(a,b,c,func);
+        print_object(a);
+        // store_operations(a,b,c,func);
     }
 }
 
@@ -755,12 +749,8 @@ bool handle_stack(object &A, Function *function)
     function->stack.pop();
 }
 
-void call_function()
+bool call_function(object& A, const object& B, const object& C)
 {
-    object A;
-    const object& B = optic_stack.back();
-    const object& C = optic_stack.at(optic_stack.size() - 2);
-
 
     if(A.scope->data.map->find(*B.data.string)!=A.scope->data.map->end())
     {
@@ -790,14 +780,11 @@ void call_function()
         correct_parsing = false;
     }
 
-    optic_stack.pop_back();
-    optic_stack.pop_back();
-    optic_stack.push_back(A);
 }
 
 
 
-bool recursive_apply(object& a,const object& obj1,const object& obj2, stack_function func)
+bool recursive_apply(object& a,const object& obj1,const object& obj2, operator_function func)
 {
     if(obj1.type==ARRAY)
     {
@@ -812,7 +799,7 @@ bool recursive_apply(object& a,const object& obj1,const object& obj2, stack_func
 //======================================================================================
 //======================================================================================
 //======================================================================================
-/*
+
 bool plus(object& A, const object& B, const object& C)
 {
     switch(B.type)
@@ -2049,8 +2036,9 @@ bool retrieve_variable(object &A, object &B)
         A = B;
         A.type = UNDECLARED_VARIABLE;
     }
-}*/
+}
 
+/*
 void plus()
 {
     std::cout << "plus()" << std::endl;
@@ -3476,7 +3464,6 @@ void retrieve_variable()
     optic_stack.push_back(A);
 }
 
-/*
 object object_plus = { OPERATION, { _plus }, (object*) 0 };
 object object_minus = { OPERATION, { _minus }, (object*) 0 };
 object object_divide = { OPERATION, { _divide }, (object*) 0 };
