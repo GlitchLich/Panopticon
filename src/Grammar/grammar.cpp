@@ -1074,7 +1074,7 @@ static void yy_reduce(
 #line 215 "./src/Grammar/grammar.y"
 {
     // yygotominor.yy0.scope = optic::get_scope();
-    yygotominor.yy0.type = FUNCTION_DEC;
+    yygotominor.yy0.type = optic::FUNCTION_CALL;
     optic::parse_operations(yygotominor.yy0,yymsp[-3].minor.yy0,yymsp[-1].minor.yy0,optic::call_function);
     if(!panopticon::correct_parsing)
     {

@@ -1,3 +1,6 @@
+#include <iostream>
+#include <string>
+
 #include "../../include/core/heap.h"
 #include "include/core/operators.h"
 
@@ -47,6 +50,8 @@ RESULT get_variable(std::string* variable_name, object* result)
 
 RESULT set_variable(std::string* variable_name, const object& value)
 {
+    std::cout << "SET VARIABLE TYPE: " << value.type << std::endl;
+    std::cout << "SET VARIABLE NAME: " << variable_name->c_str() << std::endl;
     scope_pointer = current_scope->find(*variable_name);
     if(scope_pointer == current_scope->end())
     {

@@ -214,7 +214,7 @@ expr(A) ::= function_call(B).
 function_call(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN.
 {
     // A.scope = optic::get_scope();
-    A.type = FUNCTION_DEC;
+    A.type = optic::FUNCTION_CALL;
     optic::parse_operations(A,B,C,optic::call_function);
     if(!panopticon::correct_parsing)
     {
