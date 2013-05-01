@@ -3,12 +3,10 @@
 
 #include <deque>
 
-#include "include/core/panopticon.h"
-
 namespace panopticon
 {
 
-extern std::deque<object> stack;
+extern std::deque<object> optic_stack;
 extern object globa_state;
 extern void evaluate_stack();
 typedef std::deque<object>::iterator stack_iter;

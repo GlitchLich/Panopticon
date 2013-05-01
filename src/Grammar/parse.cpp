@@ -14,6 +14,7 @@
 #include "../include/Grammar/lexglobal.h"
 #include "../include/Grammar/grammar.h"
 #include "../include/core/heap.h"
+#include <algorithm>
 
 /**
  * We have to declare these here - they're not  in any header files
@@ -133,10 +134,16 @@ bool exec(std::string string, std::string& output)
     YY_BUFFER_STATE bufferstate;
     try
     {
-        if(string.c_str()[string.size()-1]!='\0'||string.c_str()[string.size()-1]!='\n'||string.c_str()[string.size()-1]!='\r')
-        {
-            string.append("\n");
-        }
+//        string_minus_string("\n");
+//        std::replace( string.begin(), string.end(), '\n', 'U');
+//        std::replace( string.begin(), string.end(), '\n', 'U');
+//        std::replace( string.begin(), string.end(), '\0', 'U');
+
+//        if(string.c_str()[string.size()-1]!='\0'||string.c_str()[string.size()-1]!='\n'||string.c_str()[string.size()-1]!='\r')
+//        {
+        string = string.append("\n");
+        std::cout << "Parsing: " << string << std::endl;
+//        }
         bufferstate = yy_scan_string(string.c_str());
 //        yy_scan_string(string.c_str());
         while( (yv=yylex()) != 0)

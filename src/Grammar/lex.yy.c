@@ -978,7 +978,7 @@ YY_RULE_SETUP
 case 37:
 YY_RULE_SETUP
 #line 63 "./src/Grammar/lexer.l"
-{ col = 0; ++line; return NEWLINE; }
+{ col = 0; ++line; printf("return!\n"); return NEWLINE; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP

@@ -1,10 +1,10 @@
 #define ASSIGN                          1
-#define FUNCTION_DEC                    2
-#define INDEX                           3
-#define OR                              4
-#define AND                             5
-#define BITXOR                          6
-#define BITOR                           7
+#define BITOR                           2
+#define FUNCTION_DEC                    3
+#define INDEX                           4
+#define OR                              5
+#define AND                             6
+#define BITXOR                          7
 #define BITAND                          8
 #define EQUALTO                         9
 #define NOTEQUALTO                     10

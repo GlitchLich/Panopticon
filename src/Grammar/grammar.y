@@ -48,12 +48,12 @@
 //Precedence: Top is lowest, bottom is highest
 
 %left ASSIGN.
+%right BITOR.
 %left FUNCTION_DEC.
 %left INDEX.
 %left OR.
 %left AND.
 %left BITXOR.
-%left BITOR.
 %left BITAND.
 %left EQUALTO NOTEQUALTO.
 %left GREATERTHAN GORE LESSTHAN LORE.
@@ -82,6 +82,8 @@ main ::= in.
 in ::= .
 in ::= in NEWLINE.
 in ::= in start NEWLINE.
+/*in ::= in*/
+/*in ::= in start.*/
 
 
 /*state ::= expr(A).   {*/
@@ -229,6 +231,24 @@ function_call(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN.
     }
 }
 
+/*
+expr(A) ::= BITOR expr(B).
+{
+    A = B;
+    A.type = optic::STRING;
+    A.data.string = new optic::String("Guard Statement.");
+    optic::out() << "Guard Statement." << std::endl;
+}
+
+
+assignment(A) ::= name_chain ASSIGN expr. [ASSIGN]
+{
+    A.type = optic::STRING;
+    A.data.string = new optic::String("GUARD!");
+    optic::out() << "GUARD!" << std::endl;
+}
+*/
+
 assignment(A) ::= name_chain(B) ASSIGN expr(C). [ASSIGN]
 {
     A.type = optic::ASSIGNMENT;
@@ -239,6 +259,7 @@ assignment(A) ::= name_chain(B) ASSIGN expr(C). [ASSIGN]
         ParseARG_STORE;
     }
 }
+
 
 //=================================
 //Statement lists /  Arrays
@@ -581,7 +602,7 @@ expr(A) ::= expr(B) BITAND expr(C).
     }
 }
 
-expr(A) ::= expr(B) BITOR expr(C).
+/*expr(A) ::= expr(B) BITOR expr(C).
 {
     parse_operations(A,B,C,&panopticon::bit_or);
     if(!panopticon::correct_parsing)
@@ -589,7 +610,7 @@ expr(A) ::= expr(B) BITOR expr(C).
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
         ParseARG_STORE;
     }
-}
+}*/
 
 expr(A) ::= expr(B) BITXOR expr(C).
 {

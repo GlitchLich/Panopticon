@@ -519,6 +519,7 @@ bool parse_operations(object& a, const object& b, const object& c, operator_func
 
     else if(a.type==COMPUTE)
     {
+        std::copy(a.data.array->begin(), a.data.array->end(), std::inserter(optic_stack, optic_stack.end()));
         //TO DO:
         //Create system to compute shit outside
 //        object_operator_object(a,b,c,func);
@@ -526,8 +527,8 @@ bool parse_operations(object& a, const object& b, const object& c, operator_func
 
     else
     {
-        func(a, b, c);
-        // store_operations(a,b,c,func);
+        // func(a, b, c);
+        store_operations(a,b,c,func);
     }
 }
 
@@ -660,7 +661,7 @@ bool create_function(object &A,const object &B,const object &C)
 
 bool handle_stack(object &A, Function *function)
 {
-    /*
+
     for(int i=function->body.data.array->size()-1;i>=0;i-=1)
     {
         //        out() << function->body.data.array->at(i).type << std::endl;
@@ -732,12 +733,12 @@ bool handle_stack(object &A, Function *function)
         function->stack.push(result);
     }
     A = copy_object(function->stack.top());
-    function->stack.pop();*/
+    function->stack.pop();
 }
 
 bool call_function(object &A,const object &B,const object &C)
 {
-    /*
+
     if(A.scope->data.map->find(*B.data.string)!=A.scope->data.map->end())
     {
         if(C.data.array->size()==(*A.scope->data.map)[*B.data.string].data.function->num_arguments)
@@ -764,7 +765,7 @@ bool call_function(object &A,const object &B,const object &C)
     {
         out() << "Error: This function has not been declared: " << *B.data.string << std::endl;
         correct_parsing = false;
-    }*/
+    }
 }
 
 
@@ -784,7 +785,7 @@ bool recursive_apply(object& a,const object& obj1,const object& obj2, operator_f
 //======================================================================================
 //======================================================================================
 //======================================================================================
-/*
+
 bool plus(object& A, const object& B, const object& C)
 {
     switch(B.type)
@@ -2023,22 +2024,18 @@ bool retrieve_variable(object &A, object &B)
     }
 }
 
-*/
 
-void _plus()
+/*
+void plus()
 {
-    std::cout << "_plus" << std::endl;
     object A;
     const object& B = stack.back();
-    std::cout << "B.data.number " << B.data.number << std::endl;
     const object& C = stack.at(stack.size() - 2);
-    std::cout << "C.data.number " << C.data.number << std::endl;
 
     switch(B.type)
     {
     case panopticon::NUMBER:
         number_plus(A,B,C);
-        std::cout << "number_plus result: " << A.data.number << std::endl;
         break;
     case panopticon::STRING:
         string_plus(A,B,C);
@@ -3659,7 +3656,7 @@ bool retrieve_variable(object& A, object& B)
     stack.push_back(B);
     stack.push_back(object_retrieve_variable);
     return true;
-}
+}*/
 
 
 object convert_to_string( object& original)
