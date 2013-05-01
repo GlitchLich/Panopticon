@@ -154,8 +154,8 @@ void  (setuservalue) (State* P, int idx);
 void (callk)  (State* P, int nargs, int nresults, int ctx, CFunction k);
 int  (getctx) (State* P, int* ctx);
 int  (pcallk) (State* P, int nargs, int nresults, int errfunc, int ctx, CFunction k);
-int  (load)   (State* P, Reader reader, void* dt, const char* chunkname, const char* mode);
-int  (dump)   (State* P, Writer writer, void* data);
+// int  (load)   (State* P, Reader reader, void* dt, const char* chunkname, const char* mode);
+// int  (dump)   (State* P, Writer writer, void* data);
 
 #define call(P,n,r) callk(P, (n), (r), 0, NULL)
 #define pcall(P,n,r,f) pcallk(P, (n), (r), (f), 0, NULL)

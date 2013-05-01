@@ -24,7 +24,7 @@ bool number_minus(object&A,const object& B,const object& C)
         correct_parsing = false;
         break;
     case ARRAY:
-        object_operator_array(A,B,C,&number_minus);
+        // object_operator_array(A,B,C,&number_minus);
         break;
     }
 }
@@ -54,7 +54,7 @@ bool string_minus(object&A, const object& B, const object& C)
 //        string_minus_string(A,B,convert_to_string(C));
         break;
     case ARRAY:
-        object_operator_array(A,B,C,&string_minus);
+        // object_operator_array(A,B,C,&string_minus);
 //        string_minus_array(A,C,B);
         break;
     }
@@ -142,7 +142,7 @@ bool array_minus_number(object& a,object& array, object& number)
     for(int i=0;i<array.data.array->size();++i)
     {
         object newObject;
-        minus(newObject,number,array.data.array->at(i));
+        // minus(newObject,number,array.data.array->at(i));
         a.data.array->push_back(newObject);
     }
 
@@ -201,7 +201,7 @@ bool array_minus_array(object& a,object& array1, object& array2)
         panopticon::object& bb = array1.data.array->at(i%(array1.data.array->size()));
         panopticon::object& cc = array2.data.array->at(i%(array2.data.array->size()));
         object newObject;
-        minus(newObject,bb,cc);
+        // minus(newObject,bb,cc);
         a.data.array->push_back(newObject);
     }
 

@@ -95,17 +95,20 @@ typedef std::vector<object> Array;
 typedef std::unordered_map<std::string, object> Map;
 typedef std::string String;
 typedef bool Boolean;
+typedef bool (*operator_function) (object &,const object &,const object &);
+typedef void (*stack_function) ();
 
 // Data type union
 union Data
 {
+    stack_function stack_func;
     Number number;
     String* string;
     bool boolean;
     Function* function;
     Array* array;
     Map* map;
-    bool (*operator_func)(object &,const object &,const object &);
+    operator_function operator_func;
 };
 
 struct object
