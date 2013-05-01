@@ -6,10 +6,10 @@
 
 //Testing Lexer Parsing for Guards
 
-1+1 
-2+2
-
+c = 1+1 
+c
 (
+
 myGuardFunc x 
 	| x > 5 = 5 
 	| x == 5 = 0 
@@ -20,7 +20,7 @@ myGuardFunc2 x
 	| x == 5 = 0 
 	_ = -5
 
-myFunc x = 
+myCaseFunc x = 
 	case x of
 	0 -> 1
 	1 -> 2

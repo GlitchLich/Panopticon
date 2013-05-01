@@ -88,12 +88,6 @@ in ::= in start NEWLINE.
 start ::= spec(A).
 {
     if(
-        A.type == optic::OPERATION_TREE
-        )
-    {
-/*        panopticon::resolve_stack_from_parser(A);*/
-    }
-    else if(
         A.type == optic::NUMBER ||
         A.type == optic::STRING ||
         A.type == optic::BOOL ||
@@ -101,6 +95,17 @@ start ::= spec(A).
         )
     {
         print_object(A);
+    }
+    else
+    {
+        std::cout << "RESOLVING!" << std::endl;
+
+/*        std::cout << A.type << std::endl;*/
+        for(int i=0;i<A.data.array->size();++i)
+        {
+            std::cout << i << ": " << A.data.array->at(i).type << std::endl;
+        }
+        optic::resolve_stack_from_parser(A);
     }
 }
 
@@ -197,8 +202,23 @@ expr(A) ::= function_call(B).
 function_call(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN.
 {
     // A.scope = optic::get_scope();
-    A.type = optic::FUNCTION_CALL;
-    optic::parse_operations(A,B,C,optic::call_function);
+    if(C.type==optic::STATEMENT_LIST)
+    {
+            C.type = optic::ARRAY;
+            optic::out() << "Received a malformed argument to the function: " << *B.data.string;
+    }
+    else
+    {
+        optic::object temp = C;
+        C.type = optic::ARRAY;
+        C.data.array = new optic::Array();
+        C.data.array->reserve(1);
+        C.data.array->push_back(temp);
+    }
+    optic::object b;
+    b.type = optic::FUNCTION_CALL;
+    b.data.string = new optic::String(*B.data.string);
+    optic::parse_operations(A,b,C,optic::call_function);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -288,7 +308,7 @@ case_statement(A) ::= case_statement(B) WILDCARD_N POINTER expr. [ASSIGN]
 
 assignment(A) ::= name_chain(B) ASSIGN expr(C). [ASSIGN]
 {
-    A.type = optic::ASSIGNMENT;
+/*    A.type = optic::FUNCTION_DEC;*/
     parse_operations(A,B,C,&panopticon::assign_variable);
     if(!panopticon::correct_parsing)
     {
