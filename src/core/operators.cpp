@@ -437,6 +437,10 @@ bool store_operations(object& a,const object& obj1,const object& obj2, bool (*fu
     }
 
     a.data.array->reserve(size);
+    object op_func;
+    op_func.type = OPERATION;
+    op_func.data.operator_func = func;
+    a.data.array->push_back(op_func);
 
     if(obj1.type==OPERATION_TREE)
     {
@@ -450,10 +454,7 @@ bool store_operations(object& a,const object& obj1,const object& obj2, bool (*fu
         a.data.array->push_back(obj1);
     }
 
-    object op_func;
-    op_func.type = OPERATION;
-    op_func.data.operator_func = func;
-    a.data.array->push_back(op_func);
+
 
     if(obj2.type==OPERATION_TREE)
     {
