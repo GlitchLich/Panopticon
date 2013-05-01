@@ -319,9 +319,9 @@ expr(A) ::= LET NAME ASSIGN expr IN expr.
 
 assignment(A) ::= name_chain(B) ASSIGN expr(C). [ASSIGN]
 {
-/*    A.type = optic::FUNCTION_DEC;*/
+    B.type = FUNCTION_DEC;
     std::cout << "Function_Dec C: " << C.type << std::endl;
-    assign_variable(A,B,C);
+    parse_operations(A,B,C,&panopticon::assign_variable);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);

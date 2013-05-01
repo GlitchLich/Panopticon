@@ -1379,9 +1379,9 @@ static void yy_reduce(
       case 31: /* assignment ::= name_chain ASSIGN expr */
 #line 321 "./src/Grammar/grammar.y"
 {
-/*    yygotominor.yy0.type = optic::FUNCTION_DEC;*/
+    yymsp[-2].minor.yy0.type = FUNCTION_DEC;
     std::cout << "Function_Dec yymsp[0].minor.yy0: " << yymsp[0].minor.yy0.type << std::endl;
-    assign_variable(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0);
+    parse_operations(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0,&panopticon::assign_variable);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
