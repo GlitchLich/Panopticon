@@ -29,6 +29,9 @@ void evaluate_top()
         optic_stack.push_back(obj);
         break;
     }
+
+    std::cout << "evaluate_top() obj.type: " << obj.type << std::endl;
+    print_object(obj);
 }
 
 void evaluate_binary_operator(const object& operator_object)
