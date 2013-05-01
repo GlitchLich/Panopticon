@@ -181,6 +181,7 @@ expr(A) ::= NAME(B).
 {
 /*    panopticon::retrieve_variable(A,B);*/
     B.type = optic::UNDECLARED_VARIABLE;
+    A = B;
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
