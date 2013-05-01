@@ -528,6 +528,7 @@ bool resolve_stack_from_parser(object& operation_tree)
         std::cout << "operation_tree.type == OPERATION_TREE operation_tree.size = " << operation_tree.data.array->size() << std::endl;
         std::reverse_copy(operation_tree.data.array->begin(), operation_tree.data.array->end(), std::inserter(optic_stack, optic_stack.end()));
     }
+
     else
     {
         std::cout << "operation_tree.type != OPERATION_TREE" << std::endl;
@@ -784,12 +785,12 @@ bool handle_stack(object &A, Function *function)
 }
 
 /**
- * @brief call_function
- * @param A = Result
- * @param B = Function name (STRING)
- * @param C = Function Arguments (ARRAY, zero indexed!)
- * @return
- */
+* @brief call_function
+* @param A = Result
+* @param B = Function name (STRING)
+* @param C = Function Arguments (ARRAY, zero indexed!)
+* @return
+*/
 bool call_function(object& A, const object& B, const object& C)
 {
     std::cout << "CALL FUNCTION!!!!!!!!!!!" << std::endl;
@@ -800,6 +801,17 @@ bool call_function(object& A, const object& B, const object& C)
     {
         out() << "function.type: " << function.type << std::endl;
 
+        // Push the arguments onto the stack
+        for(unsigned int i = 0; i < C.data.array->size(); ++i)
+        {
+            std::cout << "C.data.array-at(i).type: " << C.data.array->at(i).type << std::endl;
+            print_object(C.data.array->at(i));
+            optic_stack.push_back(C.data.array->at(i));
+        }
+
+        return call_function(function, *B.data.string);
+
+        /*
         Map context;
         context.insert(std::make_pair(*B.data.string, function));
 
@@ -808,12 +820,15 @@ bool call_function(object& A, const object& B, const object& C)
             String function_arg = *function.data.function->arguments.at(i).data.string;
             std::cout << "function_arg: " << function_arg << std::endl;
             std::cout << "C.data.array-at(i).data.number: " << C.data.array->at(i).data.number << std::endl;
-            context.insert(std::make_pair(function_arg, C.data.array->at(i)));
+
+            optic_stack.push_back(C.data.array->at(i));
+            evaluate_stack();
+            context.insert(std::make_pair(function_arg, global_state));
         }
 
         push_scope(&context);
         resolve_stack_from_parser(function.data.function->body);
-        pop_scope();
+        pop_scope();*/
     }
 
     else
@@ -860,6 +875,28 @@ bool call_function(object& A, const object& B, const object& C)
         out() << "Error: This function has not been declared: " << *B.data.string << std::endl;
         correct_parsing = false;
     }*/
+}
+
+bool call_function(const object &function, const String& name)
+{
+    out() << "function.type: " << function.type << std::endl;
+
+    Map context;
+    context.insert(std::make_pair(name, function));
+
+    std::cout << "function name: " << name << std::endl;
+    for(int i = 1; i < function.data.function->arguments.size(); ++i)
+    {
+        String function_arg = *function.data.function->arguments.at(i).data.string;
+        std::cout << "function_arg: " << function_arg << std::endl;
+        evaluate_top(); // evaluate the top of the stack for our arguments;
+        context.insert(std::make_pair(function_arg, optic_stack.back()));
+        optic_stack.pop_back();
+    }
+
+    push_scope(&context);
+    resolve_stack_from_parser(function.data.function->body);
+    pop_scope();
 }
 
 
@@ -3531,7 +3568,8 @@ void assign_variable()
 
     if(B.type == ARRAY)
     {
-        create_function(A,B,C);
+
+(A,B,C);
         return;
     }
 

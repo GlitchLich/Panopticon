@@ -61,6 +61,7 @@ extern bool resolve_stack_from_parser(object& operation_tree);
 
 extern bool create_function(object&A, const object& B, const object& C);
 extern bool call_function(object& A, const object& B, const object& C);
+extern bool call_function(const object& function, const String &name);
 extern bool handle_stack(object &A, Function* function);
 
 /*

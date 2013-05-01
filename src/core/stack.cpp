@@ -3,6 +3,8 @@
 #include "core/types.h"
 #include "core/operators.h"
 #include "include/core/panopticon.h"
+#include "include/core/heap.h"
+#include "include/Grammar/parse.h"
 
 namespace panopticon
 {
@@ -10,9 +12,25 @@ namespace panopticon
 std::deque<object> optic_stack;
 object global_state;
 
-namespace detail
-{
 void evaluate_binary_operator(const object& operator_object);
+
+void clear_stack()
+{
+    optic_stack.clear();
+    global_state.type = NIL;
+}
+
+void evaluate_function_call()
+{
+    std::cout << "evaluate_function_call()" << std::endl;
+    if(optic_stack.back().type == FUNCTION)
+    {
+        object function = optic_stack.back();
+        optic_stack.pop_back();
+        call_function(function, __LAMBDA__);
+        optic_stack.push_back(global_state);
+    }
+}
 
 void evaluate_top()
 {
@@ -25,10 +43,39 @@ void evaluate_top()
         evaluate_binary_operator(obj);
         break;
 
+    case OPERATION_TREE:
+        resolve_stack_from_parser(obj);
+        break;
+
+    case VARIABLE:
+
+        object result;
+
+        if(get_variable(obj.data.string, &result) == OK)
+        {
+            optic_stack.push_back(result);
+        }
+
+        else
+        {
+            out() << "Variable " << result.data.string << " not found." << std::endl;
+            correct_parsing = false;
+            clear_stack();
+        }
+
+        break;
+
+    // case FUNCTION_CALL:
+    //     evaluate_function_call();
+    //     break;
+
     default:
         optic_stack.push_back(obj);
         break;
     }
+
+    std::cout << "evaluate_top() obj.type: " << obj.type << std::endl;
+    print_object(obj);
 }
 
 void evaluate_binary_operator(const object& operator_object)
@@ -53,8 +100,6 @@ void evaluate_binary_operator(const object& operator_object)
     optic_stack.push_back(result);
 }
 
-} // detail namespace
-
 void evaluate_stack()
 {
     std::cout << std::cout << "evaluate_stack() optic_stack size: " << optic_stack.size() << std::endl;
@@ -62,7 +107,7 @@ void evaluate_stack()
     while(optic_stack.size())
     {
         out() << "evaluate_object() optic_stack size: " << optic_stack.size() << std::endl;
-        detail::evaluate_top();
+        evaluate_top();
 
         if(optic_stack.size())
         {
