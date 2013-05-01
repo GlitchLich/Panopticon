@@ -177,7 +177,7 @@ bool print_object(const object &A)
     case panopticon::VARIABLE:
         std::cout << "print_object: VARIABLE"<< std::endl;
         out() << *A.data.string << " = ";
-        print_object(A.scope->data.map->at(*A.data.string));
+//        print_object(A.scope->data.map->at(*A.data.string));
         break;
     case panopticon::UNDECLARED_VARIABLE:
         out() << "Undeclared Variable: " << *A.data.string << std::endl;

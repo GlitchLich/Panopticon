@@ -125,7 +125,6 @@ struct object
 {
     int type;
     Data data;
-    object* scope;
 };
 
 struct Function

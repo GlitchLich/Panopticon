@@ -98,14 +98,7 @@ start ::= spec(A).
     }
     else
     {
-        std::cout << "RESOLVING!" << std::endl;
-
-/*        std::cout << A.type << std::endl;*/
-        for(int i=0;i<A.data.array->size();++i)
-        {
-            std::cout << i << ": " << A.data.array->at(i).type << std::endl;
-        }
-        optic::resolve_stack_from_parser(A);
+/*        optic::resolve_stack_from_parser(A);*/
     }
 }
 
@@ -186,7 +179,8 @@ name_chain(A) ::= NAME(B).
 
 expr(A) ::= NAME(B).
 {
-    panopticon::retrieve_variable(A,B);
+/*    panopticon::retrieve_variable(A,B);*/
+    B.type = optic::UNDECLARED_VARIABLE;
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -245,6 +239,12 @@ spec(A) ::= final_guard_statement(B).
     A=B;
 }
 
+spec(A) ::= where_statement(B).
+{
+    panopticon::out() << "Where: " << std::endl;
+    A=B;
+}
+
 guard_statement(A) ::= name_chain(B) GUARD_N expr ASSIGN expr. [ASSIGN]
 {
     A = B;
@@ -281,9 +281,13 @@ final_guard_statement(A) ::= guard_statement(B) WILDCARD ASSIGN expr. [ASSIGN]
     A.type = optic::GUARD;
 }
 
-case_statement(A) ::= name_chain(B) ASSIGN CASE NAME OF. [ASSIGN]
+where_statement ::= guard_statement WHERE.
+where_statement ::= final_guard_statement WHERE.
+where_statement ::= name_chain ASSIGN expr WHERE.
+
+case_statement(A) ::= name_chain(B) ASSIGN CASE expr OF. [ASSIGN]
 {
-    A = B;
+    A=B;
     A.type = optic::GUARD;
 }
 
@@ -297,6 +301,12 @@ case_statement(A) ::= case_statement(B) WILDCARD_N POINTER expr. [ASSIGN]
 {
     A = B;
     A.type = optic::GUARD;
+}
+
+expr(A) ::= LET NAME ASSIGN expr IN expr.
+{
+    A.type = optic::STRING;
+    A.data.string = new optic::String("Let");
 }
 
 /*guard_statement(A) ::= guard_statement NEWLINE.

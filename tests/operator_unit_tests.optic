@@ -5,26 +5,31 @@
 //every other elements, a[::2], 1 through 3 a[1::3]
 
 //Testing Lexer Parsing for Guards
-
-c = 1+1 
-c
 (
 
 myGuardFunc x 
-	| x > 5 = 5 
-	| x == 5 = 0 
-	_ = -5
+	| x > 5 	= 5 
+	| x == 5 	= 0 
+	_ 			= -5
 
 myGuardFunc2 x 
 	| x > 5 = 5 
 	| x == 5 = 0 
 	_ = -5
+	where
 
 myCaseFunc x = 
 	case x of
 	0 -> 1
 	1 -> 2
 	_ -> 4
+
+letFunc x = 
+	let w = 2000 + x 
+	in x+w
+
+whereFunc x = x+w
+	where
 )
 
 
