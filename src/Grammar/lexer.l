@@ -25,6 +25,8 @@ false     { yylval.bval = 0;return BOOLEAN;}
 "let"         { return LET;}
 \n+[\t " "]*+"in"         { return IN;}
 "in"         { return IN;}
+\n+[\t " "]*+"where"         { return WHERE;}
+"where"         { return WHERE;}
 \n+[\t " "]+[\t " "]*          { return N_TAB;}
 [ \t]   { col += (int) strlen(yytext); }               /* ignore but count white space */
 [A-Za-z][A-Za-z0-9]* {

@@ -98,14 +98,7 @@ start ::= spec(A).
     }
     else
     {
-        std::cout << "RESOLVING!" << std::endl;
-
-/*        std::cout << A.type << std::endl;*/
-        for(int i=0;i<A.data.array->size();++i)
-        {
-            std::cout << i << ": " << A.data.array->at(i).type << std::endl;
-        }
-        optic::resolve_stack_from_parser(A);
+/*        optic::resolve_stack_from_parser(A);*/
     }
 }
 
@@ -246,75 +239,68 @@ spec(A) ::= final_guard_statement(B).
     A=B;
 }
 
-guard_statement(A) ::= GUARD_N expr ASSIGN expr. [ASSIGN]
+spec(A) ::= where_statement(B).
 {
-/*    A = B;*/
-/*    A.type = optic::GUARD;*/
+    panopticon::out() << "Where: " << std::endl;
+    A=B;
+}
+
+guard_statement(A) ::= name_chain(B) GUARD_N expr ASSIGN expr. [ASSIGN]
+{
+    A = B;
+    A.type = optic::GUARD;
 }
 
 guard_statement(A) ::= guard_statement(B) GUARD_N expr ASSIGN expr. [ASSIGN]
 {
-/*    A = B;*/
-/*    A.type = optic::GUARD;*/
+    A = B;
+    A.type = optic::GUARD;
 }
 
-guard_statement(A) ::= GUARD_S expr ASSIGN expr. [ASSIGN]
+guard_statement(A) ::= name_chain(B) GUARD_S expr ASSIGN expr. [ASSIGN]
 {
-/*    A = B;*/
-/*    A.type = optic::GUARD;*/
+    A = B;
+    A.type = optic::GUARD;
 }
 
 guard_statement(A) ::= guard_statement(B) GUARD_S expr ASSIGN expr. [ASSIGN]
 {
-/*    A = B;*/
-/*    A.type = optic::GUARD;*/
+    A = B;
+    A.type = optic::GUARD;
 }
 
 final_guard_statement(A) ::= guard_statement(B) WILDCARD_N ASSIGN expr. [ASSIGN]
 {
-/*    A = B;*/
-/*    A.type = optic::GUARD;*/
+    A = B;
+    A.type = optic::GUARD;
 }
 
 final_guard_statement(A) ::= guard_statement(B) WILDCARD ASSIGN expr. [ASSIGN]
 {
-/*    A = B;*/
-/*    A.type = optic::GUARD;*/
+    A = B;
+    A.type = optic::GUARD;
 }
 
-expr(A) ::= guard_statement.
-{
-    A.type = optic::STRING;
-    A.data.string = new optic::String("Guard");
-}
-expr(A) ::= final_guard_statement.
-{
-    A.type = optic::STRING;
-    A.data.string = new optic::String("Guard");
-}
+where_statement ::= guard_statement WHERE.
+where_statement ::= final_guard_statement WHERE.
+where_statement ::= name_chain ASSIGN expr WHERE.
 
-case_statement(A) ::= CASE NAME OF. [ASSIGN]
+case_statement(A) ::= name_chain(B) ASSIGN CASE expr OF. [ASSIGN]
 {
-/*    A = B;*/
-/*    A.type = optic::GUARD;*/
+    A=B;
+    A.type = optic::GUARD;
 }
 
 case_statement(A) ::= case_statement(B) N_TAB expr POINTER expr. [ASSIGN]
 {
-/*    A = B;*/
-/*    A.type = optic::GUARD;*/
+    A = B;
+    A.type = optic::GUARD;
 }
 
 case_statement(A) ::= case_statement(B) WILDCARD_N POINTER expr. [ASSIGN]
 {
-/*    A = B;*/
-/*    A.type = optic::GUARD;*/
-}
-
-expr(A) ::= case_statement.
-{
-    A.type = optic::STRING;
-    A.data.string = new optic::String("Case");
+    A = B;
+    A.type = optic::GUARD;
 }
 
 expr(A) ::= LET NAME ASSIGN expr IN expr.

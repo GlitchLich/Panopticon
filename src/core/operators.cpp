@@ -177,7 +177,7 @@ bool print_object(const object &A)
     case panopticon::VARIABLE:
         std::cout << "print_object: VARIABLE"<< std::endl;
         out() << *A.data.string << " = ";
-        print_object(A.scope->data.map->at(*A.data.string));
+//        print_object(A.scope->data.map->at(*A.data.string));
         break;
     case panopticon::UNDECLARED_VARIABLE:
         out() << "Undeclared Variable: " << *A.data.string << std::endl;
@@ -783,6 +783,13 @@ bool handle_stack(object &A, Function *function)
     function->stack.pop();
 }
 
+/**
+ * @brief call_function
+ * @param A = Result
+ * @param B = Function name (STRING)
+ * @param C = Function Arguments (ARRAY, zero indexed!)
+ * @return
+ */
 bool call_function(object& A, const object& B, const object& C)
 {
     std::cout << "CALL FUNCTION!!!!!!!!!!!" << std::endl;
