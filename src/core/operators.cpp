@@ -509,7 +509,6 @@ bool object_operator_object2(object& a, object& b, object& c, operator_function 
         }
         else
         {
-
             create_function(a,b,c);
         }
     }
@@ -797,12 +796,12 @@ bool call_function(object& A, const object& B, const object& C)
         Map context;
         context.insert(std::make_pair(*B.data.string, function));
 
-        for(int i = 1; i < function.data.function->arguments.size(); ++i)
+        for(int i = 0; i < function.data.function->arguments.size(); ++i)
         {
             String function_arg = *function.data.function->arguments.at(i).data.string;
             std::cout << "function_arg: " << function_arg << std::endl;
-            std::cout << "C.data.array-at(i - 1).data.number: " << C.data.array->at(i - 1).data.number << std::endl;
-            context.insert(std::make_pair(function_arg, C.data.array->at(i - 1)));
+            std::cout << "C.data.array-at(i).data.number: " << C.data.array->at(i).data.number << std::endl;
+            context.insert(std::make_pair(function_arg, C.data.array->at(i)));
         }
 
         push_scope(&context);

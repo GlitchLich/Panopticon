@@ -70,28 +70,28 @@ typedef int (*CFunction) (State* P);
 enum Type
 {
     NIL = 0,
-    BOOL,
-    NUMBER,
-    STRING,
-    FUNCTION,
-    ARRAY,
-    MAP,
+    BOOL,//1
+    NUMBER,//2
+    STRING,//3
+    FUNCTION,//4
+    ARRAY,//5
+    MAP,//6
 
 
     //THE FOLLOWING ARE FOR PARSING ONLY,
     //NOT TO BE USED AS LANGUAGE CONSTRUCTS
-    ERROR,
-    STATEMENT_LIST,
-    VARIABLE,
-    UNDECLARED_VARIABLE,
-    OPERATION_TREE,
-    OPERATION,
-    ASSIGNMENT,
-    COMPUTE,
-    LOCAL_VARIABLE_INDEX,
-    FUNCTION_DEC,
-    GUARD,
-    FUNCTION_CALL
+    ERROR,//7
+    STATEMENT_LIST,//8
+    VARIABLE,//9
+    UNDECLARED_VARIABLE,//10
+    OPERATION_TREE,//11
+    OPERATION,//12
+    ASSIGNMENT,//13
+    COMPUTE,//14
+    LOCAL_VARIABLE_INDEX,//15
+    FUNCTION_DEC,//16
+    GUARD,//17
+    FUNCTION_CALL//18
 };
 
 // Forward declarations
