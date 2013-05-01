@@ -40,8 +40,10 @@
 #define OF                             40
 #define N_TAB                          41
 #define POINTER                        42
-#define OPENBRAC                       43
-#define NUM                            44
-#define STRING                         45
-#define BOOLEAN                        46
-#define OPENQUOTEERROR                 47
+#define LET                            43
+#define IN                             44
+#define OPENBRAC                       45
+#define NUM                            46
+#define STRING                         47
+#define BOOLEAN                        48
+#define OPENQUOTEERROR                 49

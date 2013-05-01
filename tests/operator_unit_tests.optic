@@ -6,8 +6,6 @@
 
 //Testing Lexer Parsing for Guards
 
-c = 1+1 
-c
 (
 
 myGuardFunc x 
@@ -25,6 +23,14 @@ myCaseFunc x =
 	0 -> 1
 	1 -> 2
 	_ -> 4
+
+letFunc x = 
+	let w = 2000 + x 
+	in 
+		case x * w of
+			0 -> 1
+			1 -> 2
+			_ -> 4
 )
 
 

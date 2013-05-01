@@ -21,6 +21,10 @@ true       { yylval.bval = 1;return BOOLEAN;}
 false     { yylval.bval = 0;return BOOLEAN;}
 \n+[\t " "]*+"case"         { return CASE;}
 "of"         { return OF;}
+\n+[\t " "]*+"let"         { return LET;}
+"let"         { return LET;}
+\n+[\t " "]*+"in"         { return IN;}
+"in"         { return IN;}
 \n+[\t " "]+[\t " "]*          { return N_TAB;}
 [ \t]   { col += (int) strlen(yytext); }               /* ignore but count white space */
 [A-Za-z][A-Za-z0-9]* {

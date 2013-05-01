@@ -186,7 +186,8 @@ name_chain(A) ::= NAME(B).
 
 expr(A) ::= NAME(B).
 {
-    panopticon::retrieve_variable(A,B);
+/*    panopticon::retrieve_variable(A,B);*/
+    B.type = optic::UNDECLARED_VARIABLE;
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -245,58 +246,81 @@ spec(A) ::= final_guard_statement(B).
     A=B;
 }
 
-guard_statement(A) ::= name_chain(B) GUARD_N expr ASSIGN expr. [ASSIGN]
+guard_statement(A) ::= GUARD_N expr ASSIGN expr. [ASSIGN]
 {
-    A = B;
-    A.type = optic::GUARD;
+/*    A = B;*/
+/*    A.type = optic::GUARD;*/
 }
 
 guard_statement(A) ::= guard_statement(B) GUARD_N expr ASSIGN expr. [ASSIGN]
 {
-    A = B;
-    A.type = optic::GUARD;
+/*    A = B;*/
+/*    A.type = optic::GUARD;*/
 }
 
-guard_statement(A) ::= name_chain(B) GUARD_S expr ASSIGN expr. [ASSIGN]
+guard_statement(A) ::= GUARD_S expr ASSIGN expr. [ASSIGN]
 {
-    A = B;
-    A.type = optic::GUARD;
+/*    A = B;*/
+/*    A.type = optic::GUARD;*/
 }
 
 guard_statement(A) ::= guard_statement(B) GUARD_S expr ASSIGN expr. [ASSIGN]
 {
-    A = B;
-    A.type = optic::GUARD;
+/*    A = B;*/
+/*    A.type = optic::GUARD;*/
 }
 
 final_guard_statement(A) ::= guard_statement(B) WILDCARD_N ASSIGN expr. [ASSIGN]
 {
-    A = B;
-    A.type = optic::GUARD;
+/*    A = B;*/
+/*    A.type = optic::GUARD;*/
 }
 
 final_guard_statement(A) ::= guard_statement(B) WILDCARD ASSIGN expr. [ASSIGN]
 {
-    A = B;
-    A.type = optic::GUARD;
+/*    A = B;*/
+/*    A.type = optic::GUARD;*/
 }
 
-case_statement(A) ::= name_chain(B) ASSIGN CASE NAME OF. [ASSIGN]
+expr(A) ::= guard_statement.
 {
-    A = B;
-    A.type = optic::GUARD;
+    A.type = optic::STRING;
+    A.data.string = new optic::String("Guard");
+}
+expr(A) ::= final_guard_statement.
+{
+    A.type = optic::STRING;
+    A.data.string = new optic::String("Guard");
+}
+
+case_statement(A) ::= CASE NAME OF. [ASSIGN]
+{
+/*    A = B;*/
+/*    A.type = optic::GUARD;*/
 }
 
 case_statement(A) ::= case_statement(B) N_TAB expr POINTER expr. [ASSIGN]
 {
-    A = B;
-    A.type = optic::GUARD;
+/*    A = B;*/
+/*    A.type = optic::GUARD;*/
 }
 
 case_statement(A) ::= case_statement(B) WILDCARD_N POINTER expr. [ASSIGN]
 {
-    A = B;
-    A.type = optic::GUARD;
+/*    A = B;*/
+/*    A.type = optic::GUARD;*/
+}
+
+expr(A) ::= case_statement.
+{
+    A.type = optic::STRING;
+    A.data.string = new optic::String("Case");
+}
+
+expr(A) ::= LET NAME ASSIGN expr IN expr.
+{
+    A.type = optic::STRING;
+    A.data.string = new optic::String("Let");
 }
 
 /*guard_statement(A) ::= guard_statement NEWLINE.
