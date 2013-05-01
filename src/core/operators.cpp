@@ -31,6 +31,8 @@
 #include "include/core/function.h"
 #include "include/core/stack.h"
 
+#include <algorithm>
+
 namespace panopticon
 {
 #undef STRING
@@ -66,6 +68,7 @@ object copy_object(const object& original)
         }
         break;
     }
+
     return copy;
 }
 
@@ -149,6 +152,7 @@ bool print_array(const object &A, int arrayNum)
 
 bool print_object(const object &A)
 {
+    std::cout << "print_object: A.type" << std::endl;
     switch(A.type)
     {
     case panopticon::NUMBER:
@@ -171,12 +175,13 @@ bool print_object(const object &A)
         panopticon::print_array(A);
         break;
     case panopticon::VARIABLE:
+        std::cout << "print_object: VARIABLE"<< std::endl;
         out() << *A.data.string << " = ";
         print_object(A.scope->data.map->at(*A.data.string));
         break;
     case panopticon::UNDECLARED_VARIABLE:
         out() << "Undeclared Variable: " << *A.data.string << std::endl;
-        correct_parsing = false;
+//        correct_parsing = false;
         break;
     case panopticon::LOCAL_VARIABLE_INDEX:
         out() << "Local Variable Index: " << A.data.number << std::endl;
@@ -184,12 +189,12 @@ bool print_object(const object &A)
     case panopticon::OPERATION_TREE:
         for(int i=0;i<A.data.array->size();++i)
         {
-            if(A.data.array->at(i).type==UNDECLARED_VARIABLE||A.data.array->at(i).type==OPERATION_TREE)
-            {
+//            if(A.data.array->at(i).type==UNDECLARED_VARIABLE||A.data.array->at(i).type==OPERATION_TREE)
+//            {
                 print_object(A.data.array->at(i));
-            }
+//            }
         }
-        correct_parsing = false;
+//        correct_parsing = false;
         break;
     case panopticon::OPERATION:
         out() << "Operator" << std::endl;
@@ -418,6 +423,8 @@ bool store_operations(object& a,const object& obj1,const object& obj2, operator_
 {
     a.type = OPERATION_TREE;
     a.data.array = new Array();
+//    print_object(obj1);
+//    print_object(obj2);
 
     int size = 1;
 
@@ -458,8 +465,6 @@ bool store_operations(object& a,const object& obj1,const object& obj2, operator_
         a.data.array->push_back(obj1);
     }
 
-
-
     if(obj2.type==OPERATION_TREE)
     {
         for(int i=0;i<obj2.data.array->size();++i)
@@ -471,6 +476,9 @@ bool store_operations(object& a,const object& obj1,const object& obj2, operator_
     {
         a.data.array->push_back(obj2);
     }
+
+//    std::cout << a.data.array->size() << std::endl;
+//    print_object(a);
 }
 
 bool object_operator_object(object& a, object& b, object& c, operator_function func)
@@ -513,35 +521,42 @@ bool object_operator_object2(object& a, object& b, object& c, operator_function 
     }
 }
 
+bool resolve_stack_from_parser(object& operation_tree)
+{
+    std::cout << "About to copy. operation_tree.size = " << std::endl;
+    if(operation_tree.type == OPERATION_TREE)
+    {
+        std::cout << "operation_tree.type == OPERATION_TREE operation_tree.size = " << operation_tree.data.array->size() << std::endl;
+        std::reverse_copy(operation_tree.data.array->begin(), operation_tree.data.array->end(), std::inserter(optic_stack, optic_stack.end()));
+    }
+    else
+    {
+        std::cout << "operation_tree.type != OPERATION_TREE" << std::endl;
+        optic_stack.push_back(operation_tree);
+    }
+
+    std::cout << "About to evaluate." << std::endl;
+    print_object(operation_tree);
+    evaluate_stack();
+}
+
 bool parse_operations(object& a, const object& b, const object& c, operator_function func)
 {
     if(a.type==FUNCTION_DEC)
     {
-        create_function(a,b,c);
+        create_function(a, b, c);
     }
 
+    /*
     else if(a.type==ASSIGNMENT)
     {
-        assign_variable(a,b,c);
-    }
-
-    else if(a.type==COMPUTE)
-    {
-        std::cout << "COMPUTE!!!!!!!!!" << std::endl;
-        a.type = OPERATION_TREE;
-        std::copy(a.data.array->begin(), a.data.array->end(), std::inserter(optic_stack, optic_stack.end()));
-        evaluate_stack();
-        //TO DO:
-        //Create system to compute shit outside
-//        object_operator_object(a,b,c,func);
-    }
+        std::cout << "ASSIGN VARIABLE!" << std::endl;
+        assign_variable(a, b, c);
+    }*/
 
     else
     {
-        func(a, b, c);
-        std::cout << "STORE_OPERATIONS" << std::endl;
-        print_object(a);
-        // store_operations(a,b,c,func);
+        store_operations(a, b, c, func);
     }
 }
 
@@ -627,7 +642,29 @@ bool check_variables(Map& arguments,const object& B,const object& C)
 bool create_function(object &A,const object &B,const object &C)
 {
     A.type = FUNCTION;
-    std::string function_name;
+    out() << "Creating function " << std::endl;
+
+    if(B.type == ARRAY)
+    {
+        out() << "with arguments: ";
+
+        for(int i = 1; i < B.data.array->size(); ++i)
+        {
+            out() << *B.data.array->at(i).data.string << " ";
+        }
+
+        out() << std::endl;
+    }
+
+    Function* function = new Function;
+    function->num_arguments = B.data.array->size();
+    function->body = copy_object(C);
+    A.data.function = function;
+    function->arguments.resize(B.data.array->size());
+    std::copy(B.data.array->begin(), B.data.array->end(), function->arguments.begin());
+
+    /*
+    // std::string function_name;
     if(B.type == ARRAY)
     {
         function_name = *B.data.array->at(0).data.string;
@@ -636,40 +673,29 @@ bool create_function(object &A,const object &B,const object &C)
     {
         function_name = *B.data.string;
     }
+
     Map arguments;
-    if(!check_variables(arguments,B,C))
+    if(!check_variables(arguments, B, C))
     {
         out() << "Error: Function contains variables that are not in the arguments field." << std::endl;
         correct_parsing = false;
     }
-    else
-    {
+    */
+    // else
+    // {
+        /*
         if(B.scope->data.map->find(function_name)!=B.scope->data.map->end())
         {
             //TO DO, SHOULD THIS DELETE THE FUNCTION?
             //HOW CAN WE KEEP THINGS IMMUTABLE AND THREAD SAFE?
             B.scope->data.map->erase(function_name);
-        }
-        out() << "Creating function "<< function_name << std::endl;
+        }*/
 
-        if(B.type == ARRAY)
-        {
-            out() << "with arguments: ";
-            for(int i=1;i<B.data.array->size();++i)
-            {
-                out() << *B.data.array->at(i).data.string << " ";
-            }
-            out() << std::endl;
-        }
-        Function* function = new Function;
-        function->num_arguments = arguments.size();
-        function->body = copy_object(C);
 
-        A.data.function = function;
-        A.scope = B.scope;
-        std::pair<std::string,object> func(function_name,A);
-        B.scope->data.map->insert(func);
-    }
+        // A.scope = B.scope;
+        // std::pair<std::string, object> func(function_name,A);
+        // B.scope->data.map->insert(func);
+    // }
 }
 
 bool handle_stack(object &A, Function *function)
@@ -751,9 +777,36 @@ bool handle_stack(object &A, Function *function)
 
 bool call_function(object& A, const object& B, const object& C)
 {
+    std::cout << "CALL FUNCTION!!!!!!!!!!!" << std::endl;
+    object function;
 
+    if(get_variable(B.data.string, &function))
+    {
+        Map context;
+        context.insert(std::make_pair(*B.data.string, function));
+
+        for(int i = 0; i < function.data.function->arguments.size(); ++i)
+        {
+            context.insert(std::make_pair(*function.data.function->arguments.at(i).data.string, C.data.array->at(i)));
+        }
+
+        push_scope(&context);
+        resolve_stack_from_parser(function.data.function->body);
+        pop_scope();
+    }
+
+    else
+    {
+        out() << "Unable to find function: " << B.data.string << " in current scope" << std::endl;
+        std::cout << "Unable to find function: " << B.data.string << " in current scope" << std::endl;
+        correct_parsing = false;
+    }
+
+    /*
     if(A.scope->data.map->find(*B.data.string)!=A.scope->data.map->end())
     {
+        std::cout << "scoped" << std::endl;
+
         if(C.data.array->size()==(*A.scope->data.map)[*B.data.string].data.function->num_arguments)
         {
             out() << "Calling function: " << *B.data.string << std::endl;
@@ -763,8 +816,15 @@ bool call_function(object& A, const object& B, const object& C)
                 print_object(C.data.array->at(i));
             }
             //        A = (*A.scope->data.map)[*B.data.string];
+
             (*A.scope->data.map)[*B.data.string].data.function->arguments.swap(*C.data.array);
-            handle_stack(A,(*A.scope->data.map)[*B.data.string].data.function);
+
+            object d = C;
+            // resolve_stack_from_parser(d);
+
+            // handle_stack(A,(*A.scope->data.map)[*B.data.string].data.function);
+
+
             //        out() << "Function Result: " << std::endl;
             //        out() << A.type << std::endl;
         }
@@ -778,8 +838,7 @@ bool call_function(object& A, const object& B, const object& C)
     {
         out() << "Error: This function has not been declared: " << *B.data.string << std::endl;
         correct_parsing = false;
-    }
-
+    }*/
 }
 
 
@@ -2017,21 +2076,32 @@ bool assign_variable(object& A, const object& B, const object& C)
         create_function(A,B,C);
         return true;
     }
-    A.type = panopticon::VARIABLE;
-    A.data.string = new String(*B.data.string);
-    A.scope = get_scope();
-    std::pair<std::string,object> value(*B.data.string,copy_object(C));
-    A.scope->data.map->insert(value);
+
+    // std::cout << "B.data.strg: " << *B.data.string << std::endl;
+    // A.type = panopticon::VARIABLE;
+    //A.data.string = new String(*B.data.string);
+    if(set_variable(B.data.string, C) != OK)
+    {
+        out() << "Error. Unable to bind variable " << B.data.string << std::endl;
+    }
+
+
+    // A.scope = get_scope();
+    // std::pair<std::string, object> value(*B.data.string, copy_object(C));
+    // A.scope->data.map->insert(value);
 }
 
 bool retrieve_variable(object &A, object &B)
 {
+    /*
     B.scope = get_scope();
+
     if(B.scope->data.map->find(*B.data.string)!=B.scope->data.map->end())
     {
         A = B.scope->data.map->at(*B.data.string);
-    }
-    else
+    }*/
+
+    if(get_variable(B.data.string, &A) != OK)
     {
         A = B;
         A.type = UNDECLARED_VARIABLE;
@@ -2043,6 +2113,7 @@ void plus()
 {
     std::cout << "plus()" << std::endl;
     object A;
+    A.type = NUMBER;
     const object& B = optic_stack.back();
     const object& C = optic_stack.at(optic_stack.size() - 2);
 

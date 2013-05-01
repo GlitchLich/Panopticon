@@ -10,36 +10,74 @@ namespace panopticon
 std::deque<object> optic_stack;
 object global_state;
 
-void evaluate_object(const object& obj)
+namespace detail
 {
-    if(obj.type == FUNCTION)
-        obj.data.stack_func();
+void evaluate_binary_operator(const object& operator_object);
+
+void evaluate_top()
+{
+    object obj = optic_stack.back();
+    optic_stack.pop_back();
+
+    switch(obj.type)
+    {
+    case OPERATION:
+        evaluate_binary_operator(obj);
+        break;
+
+    default:
+        optic_stack.push_back(obj);
+        break;
+    }
 }
+
+void evaluate_binary_operator(const object& operator_object)
+{
+    object result, arg1, arg2;
+
+    if(optic_stack.size())
+    {
+        evaluate_top();
+        arg1 = optic_stack.back();
+        optic_stack.pop_back();
+    }
+
+    if(optic_stack.size())
+    {
+        evaluate_top();
+        arg2 = optic_stack.back();
+        optic_stack.pop_back();
+    }
+
+    operator_object.data.operator_func(result, arg1, arg2);
+    optic_stack.push_back(result);
+}
+
+} // detail namespace
 
 void evaluate_stack()
 {
-    std::cout << "evaluate_stack() optic_stack size: " << optic_stack.size() << std::endl;
+    std::cout << std::cout << "evaluate_stack() optic_stack size: " << optic_stack.size() << std::endl;
+    global_state.type = NIL;
     while(optic_stack.size())
     {
-        std::cout << "evaluate_object() optic_stack size: " << optic_stack.size() << std::endl;
-        global_state = optic_stack.back();
-        optic_stack.pop_back();
-
-        if(global_state.type == OPERATION)
-            global_state.data.stack_func();
+        out() << "evaluate_object() optic_stack size: " << optic_stack.size() << std::endl;
+        detail::evaluate_top();
 
         if(optic_stack.size())
         {
             global_state = optic_stack.back();
-            std::cout << "globa_state in loop" << std::endl;
+            out() << "global_state in loop" << std::endl;
             print_object(global_state);
+            optic_stack.pop_back();
         }
-
-        optic_stack.pop_back();
     }
 
-    std::cout << "globa_state end of loop" << std::endl;
-    print_object(global_state);
+    if(global_state.type != NIL)
+    {
+        out() << "globa_state end of loop" << std::endl;
+        print_object(global_state);
+    }
 }
 
 } // panopticon namespace

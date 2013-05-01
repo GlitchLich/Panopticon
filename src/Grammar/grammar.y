@@ -85,20 +85,14 @@ in ::= in start NEWLINE.
 /*in ::= in*/
 /*in ::= in start.*/
 
-
-/*state ::= expr(A).   {*/
-/*    panopticon::out() << "Result.expr=" << A.expr << std::endl;*/
-/*    panopticon::out() << "Result.n=" << A.n << std::endl;*/
-/*}*/
-
 start ::= spec(A).
 {
-  A.type = panopticon::COMPUTE;
-  if(panopticon::correct_parsing)
-  {
-      optic::print_object(A);
-  }
-/*    optic::delete_object(A);*/
+    panopticon::resolve_stack_from_parser(A);
+/*    if(panopticon::correct_parsing)*/
+/*    {*/
+/*        optic::print_object(A);*/
+/*    }*/
+    /*    optic::delete_object(A);*/
 }
 
 
@@ -190,7 +184,7 @@ name_chain(A) ::= name_chain(B) NAME(C).
         newObject2.type = optic::STRING;
         newObject2.data.string = new panopticon::String(C.data.string->c_str());
         A.data.array->push_back(newObject2);
-        A.scope = optic::get_scope();
+        //A.scope = optic::get_scope();
     }
     delete_object(B);
     delete_object(C);
@@ -219,7 +213,7 @@ expr(A) ::= function_call(B).
 
 function_call(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN.
 {
-    A.scope = optic::get_scope();
+    // A.scope = optic::get_scope();
     A.type = FUNCTION_DEC;
     optic::parse_operations(A,B,C,optic::call_function);
     if(!panopticon::correct_parsing)
@@ -238,14 +232,16 @@ expr(A) ::= BITOR expr(B).
     optic::out() << "Guard Statement." << std::endl;
 }
 
-
-assignment(A) ::= name_chain ASSIGN expr. [ASSIGN]
+*/
+/*
+assignment(A) ::= name_chain ASSIGN NEWLINE BITOR expr. [ASSIGN]
 {
     A.type = optic::STRING;
     A.data.string = new optic::String("GUARD!");
     optic::out() << "GUARD!" << std::endl;
 }
 */
+
 
 assignment(A) ::= name_chain(B) ASSIGN expr(C). [ASSIGN]
 {
