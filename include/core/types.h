@@ -81,7 +81,8 @@ enum Type
     ASSIGNMENT,
     COMPUTE,
     LOCAL_VARIABLE_INDEX,
-    FUNCTION_DEC
+    FUNCTION_DEC,
+    GUARD
 };
 
 // Forward declarations

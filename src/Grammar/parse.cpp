@@ -125,6 +125,27 @@ void init()
     init_heap();
 }
 
+void mutate_text_for_parsing(std::string& string)
+{
+    int whitespacecount=0;
+    int string_length = string.size();
+    for(int i=0;i<string_length-1;++i)
+    {
+//        if(string.at(i)=='\n' && string.at(i+1)=='\t')
+//        {
+//            std::cout << "TAB!" << std::endl;
+//            whitespacecount++;
+//            if(whitespacecount==3)
+//            {
+//                stringSize-=3;
+//                string.replace(i-2,3,"_TAB");
+//                whitespacecount = 0;
+//            }
+//        }
+
+    }
+}
+
 bool exec(std::string string, std::string& output)
 {
     correct_parsing = true;
@@ -134,7 +155,17 @@ bool exec(std::string string, std::string& output)
     YY_BUFFER_STATE bufferstate;
     try
     {
-        string = string.append("\r");
+        int stringSize = string.size();
+        for(int i=0;i<stringSize;++i)
+        {
+            if(((int)string.at(i))<0)
+            {
+                string.replace(i,3,"\n");
+                stringSize-=2;
+            }
+        }
+//        mutate_text_for_parsing(string);
+        string = string.append("\n");
         std::cout << "Parsing: " << string << std::endl;
         bufferstate = yy_scan_string(string.c_str());
 //        yy_scan_string(string.c_str());
