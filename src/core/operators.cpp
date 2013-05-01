@@ -516,6 +516,7 @@ bool parse_operations(object& a,const object& b,const object& c, bool (*func)(ob
     }
     else if(a.type==COMPUTE)
     {
+        a.type = OPERATION_TREE;
         //TO DO:
         //Create system to compute shit outside
 //        object_operator_object(a,b,c,func);
