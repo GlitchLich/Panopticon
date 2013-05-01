@@ -534,8 +534,8 @@ bool parse_operations(object& a, const object& b, const object& c, stack_functio
 
     else if(a.type==COMPUTE)
     {
-        a.type = OPERATION_TREE;
         std::cout << "COMPUTE!!!!!!!!!" << std::endl;
+        a.type = OPERATION_TREE;
         std::copy(a.data.array->begin(), a.data.array->end(), std::inserter(optic_stack, optic_stack.end()));
         evaluate_stack();
         //TO DO:

@@ -134,17 +134,8 @@ bool exec(std::string string, std::string& output)
     YY_BUFFER_STATE bufferstate;
     try
     {
-//        string_minus_string("\n");
-        string = string.append("\n");
-        std::replace( string.begin(), string.end(), '\n', 'U');
-        std::replace( string.begin(), string.end(), '\r', 'U');
-        std::replace( string.begin(), string.end(), '\t', 'U');
-        std::replace( string.begin(), string.end(), '\0', 'U');
-
-//        if(string.c_str()[string.size()-1]!='\0'||string.c_str()[string.size()-1]!='\n'||string.c_str()[string.size()-1]!='\r')
-//        {        
+        string = string.append("\r");
         std::cout << "Parsing: " << string << std::endl;
-//        }
         bufferstate = yy_scan_string(string.c_str());
 //        yy_scan_string(string.c_str());
         while( (yv=yylex()) != 0)
