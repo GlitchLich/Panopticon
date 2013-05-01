@@ -82,17 +82,26 @@ main ::= in.
 in ::= .
 in ::= in NEWLINE.
 in ::= in start NEWLINE.
-/*in ::= in*/
+/*in ::= in.*/
 /*in ::= in start.*/
 
 start ::= spec(A).
 {
-    panopticon::resolve_stack_from_parser(A);
-/*    if(panopticon::correct_parsing)*/
-/*    {*/
-/*        optic::print_object(A);*/
-/*    }*/
-    /*    optic::delete_object(A);*/
+    if(
+        A.type == optic::OPERATION_TREE
+        )
+    {
+/*        panopticon::resolve_stack_from_parser(A);*/
+    }
+    else if(
+        A.type == optic::NUMBER ||
+        A.type == optic::STRING ||
+        A.type == optic::BOOL ||
+        A.type == optic::GUARD
+        )
+    {
+        print_object(A);
+    }
 }
 
 
@@ -125,33 +134,6 @@ stmt(A) ::= expr(B).
     A = B;
 
 }
-
-/*stmt(A) ::= assignment(B).*/
-/*{*/
-/*    A=B;*/
-/*}*/
-
-/*conditional ::= IF stmt_list.*/
-/*expr(A) ::= retval(B).*/
-/*{*/
-/*    A=B;*/
-
-/*}*/
-/*expr ::= NOT retval.*/
-/*retval(A) ::= access(B).*/
-/*{*/
-/*    A = B;*/
-
-/*}*/
-
-/*access ::= identifier OBJECT_OPERATOR property_chain.*/
-/*access(A) ::= identifier(B).*/
-/*{*/
-/*    A = B;*/
-
-/*}*/
-
-/*identifier ::= expr.*/
 
 name_chain(A) ::= name_chain(B) NAME(C).
 {
@@ -189,6 +171,7 @@ name_chain(A) ::= name_chain(B) NAME(C).
     delete_object(B);
     delete_object(C);
 }
+
 name_chain(A) ::= NAME(B).
 {
     A.data.string = new panopticon::String(B.data.string->c_str());
@@ -223,24 +206,84 @@ function_call(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN.
     }
 }
 
-/*
-expr(A) ::= BITOR expr(B).
+spec(A) ::= case_statement(B).
 {
-    A = B;
-    A.type = optic::STRING;
-    A.data.string = new optic::String("Guard Statement.");
-    optic::out() << "Guard Statement." << std::endl;
+    panopticon::out() << "Case: " << *B.data.array->at(0).data.string << std::endl;
+    A=B;
 }
 
-*/
-/*
-assignment(A) ::= name_chain ASSIGN NEWLINE BITOR expr. [ASSIGN]
+
+spec(A) ::= guard_statement(B).
 {
-    A.type = optic::STRING;
-    A.data.string = new optic::String("GUARD!");
-    optic::out() << "GUARD!" << std::endl;
+    panopticon::out() << "Guard: " << *B.data.array->at(0).data.string << std::endl;
+    A=B;
 }
-*/
+
+spec(A) ::= final_guard_statement(B).
+{
+    panopticon::out() << "Guard: " << *B.data.array->at(0).data.string << std::endl;
+    A=B;
+}
+
+guard_statement(A) ::= name_chain(B) GUARD_N expr ASSIGN expr. [ASSIGN]
+{
+    A = B;
+    A.type = optic::GUARD;
+}
+
+guard_statement(A) ::= guard_statement(B) GUARD_N expr ASSIGN expr. [ASSIGN]
+{
+    A = B;
+    A.type = optic::GUARD;
+}
+
+guard_statement(A) ::= name_chain(B) GUARD_S expr ASSIGN expr. [ASSIGN]
+{
+    A = B;
+    A.type = optic::GUARD;
+}
+
+guard_statement(A) ::= guard_statement(B) GUARD_S expr ASSIGN expr. [ASSIGN]
+{
+    A = B;
+    A.type = optic::GUARD;
+}
+
+final_guard_statement(A) ::= guard_statement(B) WILDCARD_N ASSIGN expr. [ASSIGN]
+{
+    A = B;
+    A.type = optic::GUARD;
+}
+
+final_guard_statement(A) ::= guard_statement(B) WILDCARD ASSIGN expr. [ASSIGN]
+{
+    A = B;
+    A.type = optic::GUARD;
+}
+
+case_statement(A) ::= name_chain(B) ASSIGN CASE NAME OF. [ASSIGN]
+{
+    A = B;
+    A.type = optic::GUARD;
+}
+
+case_statement(A) ::= case_statement(B) N_TAB expr POINTER expr. [ASSIGN]
+{
+    A = B;
+    A.type = optic::GUARD;
+}
+
+case_statement(A) ::= case_statement(B) WILDCARD_N POINTER expr. [ASSIGN]
+{
+    A = B;
+    A.type = optic::GUARD;
+}
+
+/*guard_statement(A) ::= guard_statement NEWLINE.
+{
+    A.type = optic::GUARD;
+    optic::out() << "GUARD!" << std::endl;
+}*/
 
 
 assignment(A) ::= name_chain(B) ASSIGN expr(C). [ASSIGN]
@@ -556,8 +599,19 @@ expr(A) ::= BITNOT expr(B).
     }
 }
 
-expr(A) ::= NOT expr(B).
+expr(A) ::= MINUS expr(B). [UMINUS]
 {
+    A = B;
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
+
+expr(A) ::= NOT expr(B). [UMINUS]
+{
+    A = B;
     not_value(A,B);
     if(!panopticon::correct_parsing)
     {

@@ -90,6 +90,7 @@ enum Type
     COMPUTE,
     LOCAL_VARIABLE_INDEX,
     FUNCTION_DEC,
+    GUARD,
     FUNCTION_CALL
 };
 

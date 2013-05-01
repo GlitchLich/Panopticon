@@ -52,6 +52,8 @@ extern void init();
 extern void command_line_loop();
 extern bool exec(std::string input, std::string &output);
 
+extern void mutate_text_for_viewing(std::string &string);
+
 }
 
 namespace optic = panopticon;

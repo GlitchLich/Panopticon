@@ -60,6 +60,9 @@ void EditBuffer::init()
     panopticon::init();
     unsavedEdits = false;
     document()->setModified(false);
+    const int tabStop = 4;  // 4 characters
+    QFontMetrics metrics(ide::style->monoFont);
+    this->setTabStopWidth(tabStop * metrics.width(' '));
 }
 
 void EditBuffer::keyPressEvent(QKeyEvent *e)
@@ -227,7 +230,6 @@ void EditBuffer::executeCommand()
         command = textCursor().block().text();
 
     std::string string = command.toStdString();
-
 
     if(panopticon::exec(string, returnString))
     {

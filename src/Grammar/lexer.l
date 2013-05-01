@@ -19,6 +19,9 @@ int line = 1, col = 1;
                                                 return NUM; }
 true       { yylval.bval = 1;return BOOLEAN;}
 false     { yylval.bval = 0;return BOOLEAN;}
+\n+[\t " "]*+"case"         { return CASE;}
+"of"         { return OF;}
+\n+[\t " "]+[\t " "]*          { return N_TAB;}
 [ \t]   { col += (int) strlen(yytext); }               /* ignore but count white space */
 [A-Za-z][A-Za-z0-9]* {
     col += (int)strlen(yytext);
@@ -53,6 +56,11 @@ false     { yylval.bval = 0;return BOOLEAN;}
 ","          { return COMMA;}
 "="          { return ASSIGN;}
 "^"          { return POW;}
+"->"          { return POINTER;}
+[\t " "]+"|"          { return GUARD_S;}
+\n+[\t " "]*+"|"          { return GUARD_N;}
+[\t " "]+"_"          { return WILDCARD;}
+\n+[\t " "]*+"_"          { return WILDCARD_N;}
 [\"][^"]*[\"] {
     col += (int)strlen(yytext);
     yylval.sval=strndup(yytext+1,(int)strlen(yytext)-2);
