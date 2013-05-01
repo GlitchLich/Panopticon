@@ -542,6 +542,7 @@ bool resolve_stack_from_parser(object& operation_tree)
 
 bool parse_operations(object& a, const object& b, const object& c, operator_function func)
 {
+
     if(a.type==FUNCTION_DEC)
     {
         create_function(a, b, c);
@@ -801,15 +802,33 @@ bool call_function(object& A, const object& B, const object& C)
     {
         out() << "function.type: " << function.type << std::endl;
 
+        /*
         // Push the arguments onto the stack
         for(unsigned int i = 0; i < C.data.array->size(); ++i)
         {
             std::cout << "C.data.array-at(i).type: " << C.data.array->at(i).type << std::endl;
             print_object(C.data.array->at(i));
             optic_stack.push_back(C.data.array->at(i));
+        }*/
+
+        out() << "function.type: " << function.type << std::endl;
+
+        Map context;
+        context.insert(std::make_pair(*B.data.string, function));
+
+        std::cout << "function name: " << *B.data.string << std::endl;
+        for(int i = 1; i < function.data.function->arguments.size(); ++i)
+        {
+            String function_arg = *function.data.function->arguments.at(i).data.string;
+            std::cout << "function_arg: " << function_arg << std::endl;
+            // evaluate_top(); // evaluate the top of the stack for our arguments;
+            context.insert(std::make_pair(function_arg, C.data.array->at(i - 1)));
+            // optic_stack.pop_back();
         }
 
-        return call_function(function, *B.data.string);
+        push_scope(&context);
+        resolve_stack_from_parser(function.data.function->body);
+        pop_scope();
 
         /*
         Map context;

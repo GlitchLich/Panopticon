@@ -320,7 +320,8 @@ expr(A) ::= LET NAME ASSIGN expr IN expr.
 assignment(A) ::= name_chain(B) ASSIGN expr(C). [ASSIGN]
 {
 /*    A.type = optic::FUNCTION_DEC;*/
-    parse_operations(A,B,C,&panopticon::assign_variable);
+    std::cout << "Function_Dec C: " << C.type << std::endl;
+    assign_variable(A,B,C);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -482,6 +483,8 @@ operator ::= BITXOR.*/
 
 expr(A) ::= expr(B) PLUS expr(C).
 {
+    std::cout << "Plus B: " << B.type << std::endl;
+    std::cout << "Plus C: " << C.type << std::endl;
     parse_operations(A,B,C,&panopticon::plus);
     if(!panopticon::correct_parsing)
     {
