@@ -1116,7 +1116,7 @@ static void yy_reduce(
     }
     else
     {
-/*        optic::resolve_stack_from_parser(yymsp[0].minor.yy0);*/
+        optic::resolve_stack_from_parser(yymsp[0].minor.yy0);
     }
 }
 #line 1123 "./src/Grammar/grammar.c"

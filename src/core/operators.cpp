@@ -528,6 +528,7 @@ bool resolve_stack_from_parser(object& operation_tree)
         std::cout << "operation_tree.type == OPERATION_TREE operation_tree.size = " << operation_tree.data.array->size() << std::endl;
         std::reverse_copy(operation_tree.data.array->begin(), operation_tree.data.array->end(), std::inserter(optic_stack, optic_stack.end()));
     }
+
     else
     {
         std::cout << "operation_tree.type != OPERATION_TREE" << std::endl;
