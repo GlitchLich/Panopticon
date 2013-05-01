@@ -236,14 +236,16 @@ expr(A) ::= BITOR expr(B).
     optic::out() << "Guard Statement." << std::endl;
 }
 
-
-assignment(A) ::= name_chain ASSIGN expr. [ASSIGN]
+*/
+/*
+assignment(A) ::= name_chain ASSIGN NEWLINE BITOR expr. [ASSIGN]
 {
     A.type = optic::STRING;
     A.data.string = new optic::String("GUARD!");
     optic::out() << "GUARD!" << std::endl;
 }
 */
+
 
 assignment(A) ::= name_chain(B) ASSIGN expr(C). [ASSIGN]
 {

@@ -181,10 +181,10 @@ bool print_object(const object &A)
     case panopticon::OPERATION_TREE:
         for(int i=0;i<A.data.array->size();++i)
         {
-            if(A.data.array->at(i).type==UNDECLARED_VARIABLE||A.data.array->at(i).type==OPERATION_TREE)
-            {
+//            if(A.data.array->at(i).type==UNDECLARED_VARIABLE||A.data.array->at(i).type==OPERATION_TREE)
+//            {
                 print_object(A.data.array->at(i));
-            }
+//            }
         }
         correct_parsing = false;
         break;
@@ -415,6 +415,8 @@ bool store_operations(object& a,const object& obj1,const object& obj2, bool (*fu
 {
     a.type = OPERATION_TREE;
     a.data.array = new Array();
+//    print_object(obj1);
+//    print_object(obj2);
 
     int size = 1;
 
@@ -442,6 +444,8 @@ bool store_operations(object& a,const object& obj1,const object& obj2, bool (*fu
     op_func.data.operator_func = func;
     a.data.array->push_back(op_func);
 
+
+
     if(obj1.type==OPERATION_TREE)
     {
         for(int i=0;i<obj1.data.array->size();++i)
@@ -467,6 +471,9 @@ bool store_operations(object& a,const object& obj1,const object& obj2, bool (*fu
     {
         a.data.array->push_back(obj2);
     }
+
+//    std::cout << a.data.array->size() << std::endl;
+    print_object(a);
 }
 
 bool object_operator_object(object& a, object& b, object& c, bool (*func)(object &,const object &,const object &))

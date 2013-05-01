@@ -226,20 +226,10 @@ void EditBuffer::executeCommand()
     else
         command = textCursor().block().text();
 
-    char* string = new char[command.size()];
-    for(int i=0;i<command.size();++i)
-    {
-        if(command.at(i).isSpace())
-        {
-            string[i] = 32;
-        }
-        else
-        {
-            string[i] = command.at(i).toLatin1();
-        }
-    }
+    std::string string = command.toStdString();
 
-    if(panopticon::exec(command.toStdString(), returnString))
+
+    if(panopticon::exec(string, returnString))
     {
         Post(returnString.c_str());
     }
@@ -249,7 +239,6 @@ void EditBuffer::executeCommand()
         PostError(returnString.c_str());
     }
 
-    delete string;
 }
 
 void EditBuffer::loadFile()
