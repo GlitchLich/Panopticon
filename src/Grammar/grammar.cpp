@@ -1202,24 +1202,25 @@ static void yy_reduce(
 {
 /*    panopticon::retrieve_variable(yygotominor.yy0,yymsp[0].minor.yy0);*/
     yymsp[0].minor.yy0.type = optic::UNDECLARED_VARIABLE;
+    yygotominor.yy0 = yymsp[0].minor.yy0;
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
         ParseARG_STORE;
     }
 }
-#line 1212 "./src/Grammar/grammar.c"
+#line 1213 "./src/Grammar/grammar.c"
         break;
       case 12: /* expr ::= function_call */
       case 34: /* expr ::= array */ yytestcase(yyruleno==34);
-#line 192 "./src/Grammar/grammar.y"
+#line 193 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0 = yymsp[0].minor.yy0;
 }
-#line 1220 "./src/Grammar/grammar.c"
+#line 1221 "./src/Grammar/grammar.c"
         break;
       case 13: /* function_call ::= NAME LPAREN stmt_list RPAREN */
-#line 197 "./src/Grammar/grammar.y"
+#line 198 "./src/Grammar/grammar.y"
 {
     // yygotominor.yy0.scope = optic::get_scope();
     if(yymsp[-1].minor.yy0.type==optic::STATEMENT_LIST)
@@ -1247,93 +1248,93 @@ static void yy_reduce(
   yy_destructor(yypParser,27,&yymsp[-2].minor);
   yy_destructor(yypParser,28,&yymsp[0].minor);
 }
-#line 1251 "./src/Grammar/grammar.c"
+#line 1252 "./src/Grammar/grammar.c"
         break;
       case 14: /* spec ::= case_statement */
-#line 224 "./src/Grammar/grammar.y"
+#line 225 "./src/Grammar/grammar.y"
 {
     panopticon::out() << "Case: " << *yymsp[0].minor.yy0.data.array->at(0).data.string << std::endl;
     yygotominor.yy0=yymsp[0].minor.yy0;
 }
-#line 1259 "./src/Grammar/grammar.c"
+#line 1260 "./src/Grammar/grammar.c"
         break;
       case 15: /* spec ::= guard_statement */
       case 16: /* spec ::= final_guard_statement */ yytestcase(yyruleno==16);
-#line 231 "./src/Grammar/grammar.y"
+#line 232 "./src/Grammar/grammar.y"
 {
     panopticon::out() << "Guard: " << *yymsp[0].minor.yy0.data.array->at(0).data.string << std::endl;
     yygotominor.yy0=yymsp[0].minor.yy0;
 }
-#line 1268 "./src/Grammar/grammar.c"
+#line 1269 "./src/Grammar/grammar.c"
         break;
       case 17: /* spec ::= where_statement */
-#line 243 "./src/Grammar/grammar.y"
+#line 244 "./src/Grammar/grammar.y"
 {
     panopticon::out() << "Where: " << std::endl;
     yygotominor.yy0=yymsp[0].minor.yy0;
 }
-#line 1276 "./src/Grammar/grammar.c"
+#line 1277 "./src/Grammar/grammar.c"
         break;
       case 18: /* guard_statement ::= name_chain GUARD_N expr ASSIGN expr */
       case 19: /* guard_statement ::= guard_statement GUARD_N expr ASSIGN expr */ yytestcase(yyruleno==19);
-#line 249 "./src/Grammar/grammar.y"
+#line 250 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0 = yymsp[-4].minor.yy0;
     yygotominor.yy0.type = optic::GUARD;
   yy_destructor(yypParser,35,&yymsp[-3].minor);
   yy_destructor(yypParser,1,&yymsp[-1].minor);
 }
-#line 1287 "./src/Grammar/grammar.c"
+#line 1288 "./src/Grammar/grammar.c"
         break;
       case 20: /* guard_statement ::= name_chain GUARD_S expr ASSIGN expr */
       case 21: /* guard_statement ::= guard_statement GUARD_S expr ASSIGN expr */ yytestcase(yyruleno==21);
-#line 261 "./src/Grammar/grammar.y"
+#line 262 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0 = yymsp[-4].minor.yy0;
     yygotominor.yy0.type = optic::GUARD;
   yy_destructor(yypParser,36,&yymsp[-3].minor);
   yy_destructor(yypParser,1,&yymsp[-1].minor);
 }
-#line 1298 "./src/Grammar/grammar.c"
+#line 1299 "./src/Grammar/grammar.c"
         break;
       case 22: /* final_guard_statement ::= guard_statement WILDCARD_N ASSIGN expr */
-#line 273 "./src/Grammar/grammar.y"
+#line 274 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0 = yymsp[-3].minor.yy0;
     yygotominor.yy0.type = optic::GUARD;
   yy_destructor(yypParser,37,&yymsp[-2].minor);
   yy_destructor(yypParser,1,&yymsp[-1].minor);
 }
-#line 1308 "./src/Grammar/grammar.c"
+#line 1309 "./src/Grammar/grammar.c"
         break;
       case 23: /* final_guard_statement ::= guard_statement WILDCARD ASSIGN expr */
-#line 279 "./src/Grammar/grammar.y"
+#line 280 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0 = yymsp[-3].minor.yy0;
     yygotominor.yy0.type = optic::GUARD;
   yy_destructor(yypParser,38,&yymsp[-2].minor);
   yy_destructor(yypParser,1,&yymsp[-1].minor);
 }
-#line 1318 "./src/Grammar/grammar.c"
+#line 1319 "./src/Grammar/grammar.c"
         break;
       case 24: /* where_statement ::= guard_statement WHERE */
       case 25: /* where_statement ::= final_guard_statement WHERE */ yytestcase(yyruleno==25);
-#line 284 "./src/Grammar/grammar.y"
+#line 285 "./src/Grammar/grammar.y"
 {
   yy_destructor(yypParser,39,&yymsp[0].minor);
 }
-#line 1326 "./src/Grammar/grammar.c"
+#line 1327 "./src/Grammar/grammar.c"
         break;
       case 26: /* where_statement ::= name_chain ASSIGN expr WHERE */
-#line 286 "./src/Grammar/grammar.y"
+#line 287 "./src/Grammar/grammar.y"
 {
   yy_destructor(yypParser,1,&yymsp[-2].minor);
   yy_destructor(yypParser,39,&yymsp[0].minor);
 }
-#line 1334 "./src/Grammar/grammar.c"
+#line 1335 "./src/Grammar/grammar.c"
         break;
       case 27: /* case_statement ::= name_chain ASSIGN CASE expr OF */
-#line 289 "./src/Grammar/grammar.y"
+#line 290 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0=yymsp[-4].minor.yy0;
     yygotominor.yy0.type = optic::GUARD;
@@ -1341,30 +1342,30 @@ static void yy_reduce(
   yy_destructor(yypParser,40,&yymsp[-2].minor);
   yy_destructor(yypParser,41,&yymsp[0].minor);
 }
-#line 1345 "./src/Grammar/grammar.c"
+#line 1346 "./src/Grammar/grammar.c"
         break;
       case 28: /* case_statement ::= case_statement N_TAB expr POINTER expr */
-#line 295 "./src/Grammar/grammar.y"
+#line 296 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0 = yymsp[-4].minor.yy0;
     yygotominor.yy0.type = optic::GUARD;
   yy_destructor(yypParser,42,&yymsp[-3].minor);
   yy_destructor(yypParser,43,&yymsp[-1].minor);
 }
-#line 1355 "./src/Grammar/grammar.c"
+#line 1356 "./src/Grammar/grammar.c"
         break;
       case 29: /* case_statement ::= case_statement WILDCARD_N POINTER expr */
-#line 301 "./src/Grammar/grammar.y"
+#line 302 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0 = yymsp[-3].minor.yy0;
     yygotominor.yy0.type = optic::GUARD;
   yy_destructor(yypParser,37,&yymsp[-2].minor);
   yy_destructor(yypParser,43,&yymsp[-1].minor);
 }
-#line 1365 "./src/Grammar/grammar.c"
+#line 1366 "./src/Grammar/grammar.c"
         break;
       case 30: /* expr ::= LET NAME ASSIGN expr IN expr */
-#line 307 "./src/Grammar/grammar.y"
+#line 308 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = optic::STRING;
     yygotominor.yy0.data.string = new optic::String("Let");
@@ -1373,10 +1374,10 @@ static void yy_reduce(
   yy_destructor(yypParser,1,&yymsp[-3].minor);
   yy_destructor(yypParser,45,&yymsp[-1].minor);
 }
-#line 1377 "./src/Grammar/grammar.c"
+#line 1378 "./src/Grammar/grammar.c"
         break;
       case 31: /* assignment ::= name_chain ASSIGN expr */
-#line 320 "./src/Grammar/grammar.y"
+#line 321 "./src/Grammar/grammar.y"
 {
 /*    yygotominor.yy0.type = optic::FUNCTION_DEC;*/
     parse_operations(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0,&panopticon::assign_variable);
@@ -1387,10 +1388,10 @@ static void yy_reduce(
     }
   yy_destructor(yypParser,1,&yymsp[-1].minor);
 }
-#line 1391 "./src/Grammar/grammar.c"
+#line 1392 "./src/Grammar/grammar.c"
         break;
       case 33: /* stmt_list ::= stmt_list stmt */
-#line 341 "./src/Grammar/grammar.y"
+#line 342 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = panopticon::STATEMENT_LIST;
     if(yymsp[-1].minor.yy0.type!=panopticon::STATEMENT_LIST)
@@ -1406,28 +1407,28 @@ static void yy_reduce(
     }
     //yygotominor.yy0.n = yymsp[-1].minor.yy0.n+1;
 }
-#line 1410 "./src/Grammar/grammar.c"
+#line 1411 "./src/Grammar/grammar.c"
         break;
       case 35: /* array ::= OPENBRAC maybe_empty_stmt_list RBRAC */
-#line 371 "./src/Grammar/grammar.y"
+#line 372 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = panopticon::ARRAY;
     yygotominor.yy0.data.array = yymsp[-1].minor.yy0.data.array;
   yy_destructor(yypParser,46,&yymsp[-2].minor);
   yy_destructor(yypParser,31,&yymsp[0].minor);
 }
-#line 1420 "./src/Grammar/grammar.c"
+#line 1421 "./src/Grammar/grammar.c"
         break;
       case 36: /* maybe_empty_stmt_list ::= */
-#line 377 "./src/Grammar/grammar.y"
+#line 378 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = panopticon::STATEMENT_LIST;
     panopticon::create_array(yygotominor.yy0);
 }
-#line 1428 "./src/Grammar/grammar.c"
+#line 1429 "./src/Grammar/grammar.c"
         break;
       case 37: /* maybe_empty_stmt_list ::= stmt_list */
-#line 383 "./src/Grammar/grammar.y"
+#line 384 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.type = panopticon::STATEMENT_LIST;
     if(yymsp[0].minor.yy0.type!=panopticon::STATEMENT_LIST)
@@ -1440,38 +1441,38 @@ static void yy_reduce(
         yygotominor.yy0.data.array = yymsp[0].minor.yy0.data.array;
     }
 }
-#line 1444 "./src/Grammar/grammar.c"
+#line 1445 "./src/Grammar/grammar.c"
         break;
       case 41: /* num ::= NUM */
-#line 435 "./src/Grammar/grammar.y"
+#line 436 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.number = yymsp[0].minor.yy0.data.number;
     yygotominor.yy0.type = panopticon::NUMBER;
     //yygotominor.yy0.n = yymsp[0].minor.yy0.n+1;
 }
-#line 1453 "./src/Grammar/grammar.c"
+#line 1454 "./src/Grammar/grammar.c"
         break;
       case 42: /* string ::= STRING */
-#line 442 "./src/Grammar/grammar.y"
+#line 443 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.string = new panopticon::String(yymsp[0].minor.yy0.data.string->c_str());
     delete yymsp[0].minor.yy0.data.string;
     yygotominor.yy0.type = panopticon::STRING;
     //yygotominor.yy0.n = yymsp[0].minor.yy0.n+1;
 }
-#line 1463 "./src/Grammar/grammar.c"
+#line 1464 "./src/Grammar/grammar.c"
         break;
       case 43: /* bool ::= BOOLEAN */
-#line 451 "./src/Grammar/grammar.y"
+#line 452 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0.data.boolean = yymsp[0].minor.yy0.data.boolean;
     yygotominor.yy0.type = panopticon::BOOL;
     //yygotominor.yy0.n = yymsp[0].minor.yy0.n+1;
 }
-#line 1472 "./src/Grammar/grammar.c"
+#line 1473 "./src/Grammar/grammar.c"
         break;
       case 44: /* expr ::= expr PLUS expr */
-#line 483 "./src/Grammar/grammar.y"
+#line 484 "./src/Grammar/grammar.y"
 {
     parse_operations(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0,&panopticon::plus);
     if(!panopticon::correct_parsing)
@@ -1481,10 +1482,10 @@ static void yy_reduce(
     }
   yy_destructor(yypParser,17,&yymsp[-1].minor);
 }
-#line 1485 "./src/Grammar/grammar.c"
+#line 1486 "./src/Grammar/grammar.c"
         break;
       case 45: /* expr ::= expr MINUS expr */
-#line 493 "./src/Grammar/grammar.y"
+#line 494 "./src/Grammar/grammar.y"
 {
     parse_operations(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0,&panopticon::minus);
     if(!panopticon::correct_parsing)
@@ -1494,10 +1495,10 @@ static void yy_reduce(
     }
   yy_destructor(yypParser,18,&yymsp[-1].minor);
 }
-#line 1498 "./src/Grammar/grammar.c"
+#line 1499 "./src/Grammar/grammar.c"
         break;
       case 46: /* expr ::= expr DIVIDE expr */
-#line 503 "./src/Grammar/grammar.y"
+#line 504 "./src/Grammar/grammar.y"
 {
     parse_operations(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0,&panopticon::divide);
     if(!panopticon::correct_parsing)
@@ -1507,10 +1508,10 @@ static void yy_reduce(
     }
   yy_destructor(yypParser,19,&yymsp[-1].minor);
 }
-#line 1511 "./src/Grammar/grammar.c"
+#line 1512 "./src/Grammar/grammar.c"
         break;
       case 47: /* expr ::= expr TIMES expr */
-#line 513 "./src/Grammar/grammar.y"
+#line 514 "./src/Grammar/grammar.y"
 {
     parse_operations(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0,&panopticon::multiply);
     if(!panopticon::correct_parsing)
@@ -1520,10 +1521,10 @@ static void yy_reduce(
     }
   yy_destructor(yypParser,20,&yymsp[-1].minor);
 }
-#line 1524 "./src/Grammar/grammar.c"
+#line 1525 "./src/Grammar/grammar.c"
         break;
       case 48: /* expr ::= expr MODULO expr */
-#line 523 "./src/Grammar/grammar.y"
+#line 524 "./src/Grammar/grammar.y"
 {
     parse_operations(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0,&panopticon::modulo);
     if(!panopticon::correct_parsing)
@@ -1533,10 +1534,10 @@ static void yy_reduce(
     }
   yy_destructor(yypParser,21,&yymsp[-1].minor);
 }
-#line 1537 "./src/Grammar/grammar.c"
+#line 1538 "./src/Grammar/grammar.c"
         break;
       case 49: /* expr ::= expr POW expr */
-#line 533 "./src/Grammar/grammar.y"
+#line 534 "./src/Grammar/grammar.y"
 {
     parse_operations(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0,&panopticon::value_pow);
     if(!panopticon::correct_parsing)
@@ -1546,10 +1547,10 @@ static void yy_reduce(
     }
   yy_destructor(yypParser,22,&yymsp[-1].minor);
 }
-#line 1550 "./src/Grammar/grammar.c"
+#line 1551 "./src/Grammar/grammar.c"
         break;
       case 50: /* expr ::= expr EQUALTO expr */
-#line 543 "./src/Grammar/grammar.y"
+#line 544 "./src/Grammar/grammar.y"
 {
     parse_operations(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0,&panopticon::equal_to);
     if(!panopticon::correct_parsing)
@@ -1559,10 +1560,10 @@ static void yy_reduce(
     }
   yy_destructor(yypParser,9,&yymsp[-1].minor);
 }
-#line 1563 "./src/Grammar/grammar.c"
+#line 1564 "./src/Grammar/grammar.c"
         break;
       case 51: /* expr ::= expr NOTEQUALTO expr */
-#line 553 "./src/Grammar/grammar.y"
+#line 554 "./src/Grammar/grammar.y"
 {
     parse_operations(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0,&panopticon::not_equal_to);
     if(!panopticon::correct_parsing)
@@ -1572,10 +1573,10 @@ static void yy_reduce(
     }
   yy_destructor(yypParser,10,&yymsp[-1].minor);
 }
-#line 1576 "./src/Grammar/grammar.c"
+#line 1577 "./src/Grammar/grammar.c"
         break;
       case 52: /* expr ::= expr LESSTHAN expr */
-#line 563 "./src/Grammar/grammar.y"
+#line 564 "./src/Grammar/grammar.y"
 {
     parse_operations(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0,&panopticon::less_than);
     if(!panopticon::correct_parsing)
@@ -1585,10 +1586,10 @@ static void yy_reduce(
     }
   yy_destructor(yypParser,13,&yymsp[-1].minor);
 }
-#line 1589 "./src/Grammar/grammar.c"
+#line 1590 "./src/Grammar/grammar.c"
         break;
       case 53: /* expr ::= expr GREATERTHAN expr */
-#line 573 "./src/Grammar/grammar.y"
+#line 574 "./src/Grammar/grammar.y"
 {
     parse_operations(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0,&panopticon::greater_than);
     if(!panopticon::correct_parsing)
@@ -1598,10 +1599,10 @@ static void yy_reduce(
     }
   yy_destructor(yypParser,11,&yymsp[-1].minor);
 }
-#line 1602 "./src/Grammar/grammar.c"
+#line 1603 "./src/Grammar/grammar.c"
         break;
       case 54: /* expr ::= expr LORE expr */
-#line 583 "./src/Grammar/grammar.y"
+#line 584 "./src/Grammar/grammar.y"
 {
     parse_operations(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0,&panopticon::lore);
     if(!panopticon::correct_parsing)
@@ -1611,10 +1612,10 @@ static void yy_reduce(
     }
   yy_destructor(yypParser,14,&yymsp[-1].minor);
 }
-#line 1615 "./src/Grammar/grammar.c"
+#line 1616 "./src/Grammar/grammar.c"
         break;
       case 55: /* expr ::= expr GORE expr */
-#line 593 "./src/Grammar/grammar.y"
+#line 594 "./src/Grammar/grammar.y"
 {
     parse_operations(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0,&panopticon::gore);
     if(!panopticon::correct_parsing)
@@ -1624,10 +1625,10 @@ static void yy_reduce(
     }
   yy_destructor(yypParser,12,&yymsp[-1].minor);
 }
-#line 1628 "./src/Grammar/grammar.c"
+#line 1629 "./src/Grammar/grammar.c"
         break;
       case 56: /* expr ::= expr AND expr */
-#line 603 "./src/Grammar/grammar.y"
+#line 604 "./src/Grammar/grammar.y"
 {
     parse_operations(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0,&panopticon::value_and);
     if(!panopticon::correct_parsing)
@@ -1637,10 +1638,10 @@ static void yy_reduce(
     }
   yy_destructor(yypParser,6,&yymsp[-1].minor);
 }
-#line 1641 "./src/Grammar/grammar.c"
+#line 1642 "./src/Grammar/grammar.c"
         break;
       case 57: /* expr ::= expr OR expr */
-#line 613 "./src/Grammar/grammar.y"
+#line 614 "./src/Grammar/grammar.y"
 {
     parse_operations(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0,&panopticon::value_or);
     if(!panopticon::correct_parsing)
@@ -1650,10 +1651,10 @@ static void yy_reduce(
     }
   yy_destructor(yypParser,5,&yymsp[-1].minor);
 }
-#line 1654 "./src/Grammar/grammar.c"
+#line 1655 "./src/Grammar/grammar.c"
         break;
       case 58: /* expr ::= BITNOT expr */
-#line 623 "./src/Grammar/grammar.y"
+#line 624 "./src/Grammar/grammar.y"
 {
     bit_not(yygotominor.yy0,yymsp[0].minor.yy0);
     if(!panopticon::correct_parsing)
@@ -1663,10 +1664,10 @@ static void yy_reduce(
     }
   yy_destructor(yypParser,24,&yymsp[-1].minor);
 }
-#line 1667 "./src/Grammar/grammar.c"
+#line 1668 "./src/Grammar/grammar.c"
         break;
       case 59: /* expr ::= MINUS expr */
-#line 633 "./src/Grammar/grammar.y"
+#line 634 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0 = yymsp[0].minor.yy0;
     if(!panopticon::correct_parsing)
@@ -1676,10 +1677,10 @@ static void yy_reduce(
     }
   yy_destructor(yypParser,18,&yymsp[-1].minor);
 }
-#line 1680 "./src/Grammar/grammar.c"
+#line 1681 "./src/Grammar/grammar.c"
         break;
       case 60: /* expr ::= NOT expr */
-#line 643 "./src/Grammar/grammar.y"
+#line 644 "./src/Grammar/grammar.y"
 {
     yygotominor.yy0 = yymsp[0].minor.yy0;
     not_value(yygotominor.yy0,yymsp[0].minor.yy0);
@@ -1690,10 +1691,10 @@ static void yy_reduce(
     }
   yy_destructor(yypParser,23,&yymsp[-1].minor);
 }
-#line 1694 "./src/Grammar/grammar.c"
+#line 1695 "./src/Grammar/grammar.c"
         break;
       case 61: /* expr ::= expr SHIFTL expr */
-#line 654 "./src/Grammar/grammar.y"
+#line 655 "./src/Grammar/grammar.y"
 {
     parse_operations(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0,&panopticon::shift_left);
     if(!panopticon::correct_parsing)
@@ -1703,10 +1704,10 @@ static void yy_reduce(
     }
   yy_destructor(yypParser,15,&yymsp[-1].minor);
 }
-#line 1707 "./src/Grammar/grammar.c"
+#line 1708 "./src/Grammar/grammar.c"
         break;
       case 62: /* expr ::= expr SHIFTR expr */
-#line 664 "./src/Grammar/grammar.y"
+#line 665 "./src/Grammar/grammar.y"
 {
     parse_operations(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0,&panopticon::shift_right);
     if(!panopticon::correct_parsing)
@@ -1716,10 +1717,10 @@ static void yy_reduce(
     }
   yy_destructor(yypParser,16,&yymsp[-1].minor);
 }
-#line 1720 "./src/Grammar/grammar.c"
+#line 1721 "./src/Grammar/grammar.c"
         break;
       case 63: /* expr ::= expr BITAND expr */
-#line 674 "./src/Grammar/grammar.y"
+#line 675 "./src/Grammar/grammar.y"
 {
     parse_operations(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0,&panopticon::bit_and);
     if(!panopticon::correct_parsing)
@@ -1729,10 +1730,10 @@ static void yy_reduce(
     }
   yy_destructor(yypParser,8,&yymsp[-1].minor);
 }
-#line 1733 "./src/Grammar/grammar.c"
+#line 1734 "./src/Grammar/grammar.c"
         break;
       case 64: /* expr ::= expr BITXOR expr */
-#line 694 "./src/Grammar/grammar.y"
+#line 695 "./src/Grammar/grammar.y"
 {
     parse_operations(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0,&panopticon::bit_xor);
     if(!panopticon::correct_parsing)
@@ -1742,10 +1743,10 @@ static void yy_reduce(
     }
   yy_destructor(yypParser,7,&yymsp[-1].minor);
 }
-#line 1746 "./src/Grammar/grammar.c"
+#line 1747 "./src/Grammar/grammar.c"
         break;
       case 65: /* in ::= error */
-#line 745 "./src/Grammar/grammar.y"
+#line 746 "./src/Grammar/grammar.y"
 {
     switch(yymsp[0].minor.yy147)
     {
@@ -1757,16 +1758,16 @@ static void yy_reduce(
         break;
     }
 }
-#line 1761 "./src/Grammar/grammar.c"
+#line 1762 "./src/Grammar/grammar.c"
         break;
       case 66: /* error ::= OPENQUOTEERROR */
-#line 758 "./src/Grammar/grammar.y"
+#line 759 "./src/Grammar/grammar.y"
 {
     yymsp[0].minor.yy0.type = panopticon::NUMBER;
     yygotominor.yy147 = panopticon::OpenQuoteError;
     panopticon::out() << "ERROR p0001: Dangling quotation mark." << std::endl;
 }
-#line 1770 "./src/Grammar/grammar.c"
+#line 1771 "./src/Grammar/grammar.c"
         break;
       default:
       /* (0) main ::= in */ yytestcase(yyruleno==0);
@@ -1833,7 +1834,7 @@ static void yy_syntax_error(
 #line 77 "./src/Grammar/grammar.y"
 
 panopticon::out() << "Syntax error!" << std::endl;
-#line 1837 "./src/Grammar/grammar.c"
+#line 1838 "./src/Grammar/grammar.c"
   ParseARG_STORE; /* Suppress warning about unused %extra_argument variable */
 }
 
@@ -1855,7 +1856,7 @@ static void yy_accept(
 #line 72 "./src/Grammar/grammar.y"
 
 printf("parsing complete!\n\n\n");
-#line 1859 "./src/Grammar/grammar.c"
+#line 1860 "./src/Grammar/grammar.c"
   ParseARG_STORE; /* Suppress warning about unused %extra_argument variable */
 }
 
