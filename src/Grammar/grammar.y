@@ -98,7 +98,7 @@ start ::= spec(A).
     }
     else
     {
-/*        optic::resolve_stack_from_parser(A);*/
+        optic::resolve_stack_from_parser(A);
     }
 }
 
