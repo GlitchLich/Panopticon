@@ -3,6 +3,8 @@
 #include "core/types.h"
 #include "core/operators.h"
 #include "include/core/panopticon.h"
+#include "include/core/heap.h"
+#include "include/Grammar/parse.h"
 
 namespace panopticon
 {
@@ -11,6 +13,24 @@ std::deque<object> optic_stack;
 object global_state;
 
 void evaluate_binary_operator(const object& operator_object);
+
+void clear_stack()
+{
+    optic_stack.clear();
+    global_state.type = NIL;
+}
+
+void evaluate_function_call()
+{
+    std::cout << "evaluate_function_call()" << std::endl;
+    if(optic_stack.back().type == FUNCTION)
+    {
+        object function = optic_stack.back();
+        optic_stack.pop_back();
+        call_function(function, __LAMBDA__);
+        optic_stack.push_back(global_state);
+    }
+}
 
 void evaluate_top()
 {
@@ -22,6 +42,32 @@ void evaluate_top()
     case OPERATION:
         evaluate_binary_operator(obj);
         break;
+
+    case OPERATION_TREE:
+        resolve_stack_from_parser(obj);
+        break;
+
+    case VARIABLE:
+
+        object result;
+
+        if(get_variable(obj.data.string, &result) == OK)
+        {
+            optic_stack.push_back(result);
+        }
+
+        else
+        {
+            out() << "Variable " << result.data.string << " not found." << std::endl;
+            correct_parsing = false;
+            clear_stack();
+        }
+
+        break;
+
+    // case FUNCTION_CALL:
+    //     evaluate_function_call();
+    //     break;
 
     default:
         optic_stack.push_back(obj);
