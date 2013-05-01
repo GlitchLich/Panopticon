@@ -50,18 +50,20 @@ extern bool concatenate_arrays(object &a, object b, object c);
 extern bool create_array(object &a);
 extern bool print_array(const object &A, int arrayNum=0);
 extern bool delete_array(object& a);
-extern bool object_operator_array(object &a,const object &obj, const object& array, stack_function);
-extern bool array_operator_object(object &a,const object &array,const object& obj, stack_function);
-extern bool recursive_apply(object &a,const object &obj1,const object& obj2, stack_function);
-extern bool object_operator_object(object& a, object& b, object& c, stack_function);
-extern bool array_operator_array(object& a,const object& array1,const object& array2, stack_function);
-extern bool parse_operations(object& a, const object& b, const object& c, stack_function func);
+
+extern bool object_operator_array(object &a,const object &obj, const object& array, operator_function func);
+extern bool array_operator_object(object &a,const object &array,const object& obj, operator_function func);
+extern bool recursive_apply(object &a,const object &obj1,const object& obj2, operator_function func);
+extern bool object_operator_object(object& a, object& b, object& c, operator_function func);
+extern bool array_operator_array(object& a,const object& array1,const object& array2, operator_function func);
+extern bool parse_operations(object& a, const object& b, const object& c, operator_function func);
 extern bool resolve_stack_from_parser(object& operation_tree);
 
 extern bool create_function(object&A, const object& B, const object& C);
-extern void call_function();
+extern bool call_function(object& A, const object& B, const object& C);
 extern bool handle_stack(object &A, Function* function);
 
+/*
 extern void plus();
 extern void minus();
 extern void divide();
@@ -84,10 +86,10 @@ extern void bit_or();
 extern void bit_not();
 extern void bit_xor();
 extern void assign_variable();
-extern void retrieve_variable();
+extern void retrieve_variable();*/
 
 // Called by parser
-/*
+
 extern bool plus(object&A, const object& B, const object& C);
 extern bool minus(object&A, const object& B, const object& C);
 extern bool divide(object&A, const object& B, const object& C);
@@ -110,7 +112,7 @@ extern bool bit_or(object&A, const object& B, const object& C);
 extern bool bit_not(object&A, object& B);
 extern bool bit_xor(object&A, const object& B, const object& C);
 extern bool assign_variable(object&A, const object& B, const object& C);
-extern bool retrieve_variable(object&A, object& B);*/
+extern bool retrieve_variable(object&A, object& B);
 
 //NOT DONE
 extern bool plusplus(object&A, const object& B, const object& C);

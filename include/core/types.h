@@ -36,13 +36,21 @@ namespace panopticon
 // thread status
 enum ThreadStatus
 {
-    OK = 0,
+    OKRUN = 0,
     YIELD,
     ERRRUN,
     ERRSYNTAX,
     ERRMEM,
     ERRGCMM,
     ERRERR
+};
+
+enum RESULT
+{
+    OK,
+    ERR,
+    VARIABLE_NOT_FOUND,
+    VARIABLE_ALREADY_BOUND
 };
 
 // functions that read/write blocks when loading/dumping Panopticon chunks
@@ -82,7 +90,8 @@ enum Type
     COMPUTE,
     LOCAL_VARIABLE_INDEX,
     FUNCTION_DEC,
-    GUARD
+    GUARD,
+    FUNCTION_CALL
 };
 
 // Forward declarations
@@ -122,9 +131,9 @@ struct object
 struct Function
 {
     std::stack<object> stack;
-    std::unordered_map<std::string,object> heap;
+    Map heap;
     int num_arguments;
-    std::vector<object> arguments;
+    Array arguments;
     object body;
 };
 
