@@ -538,7 +538,6 @@ bool resolve_stack_from_parser(object& operation_tree)
 
     else
     {
-//        std::cout << "operation_tree.data.array->size() < 2" << std::endl;
         optic_stack.push_back(operation_tree);
         std::cout << "test" << std::endl;
     }
@@ -550,23 +549,7 @@ bool resolve_stack_from_parser(object& operation_tree)
 
 bool parse_operations(object& a, const object& b, const object& c, operator_function func)
 {
-
-//    if(a.type==FUNCTION_DEC)
-//    {
-//        create_function(a, b, c);
-//    }
-
-    /*
-    else if(a.type==ASSIGNMENT)
-    {
-        std::cout << "ASSIGN VARIABLE!" << std::endl;
-        assign_variable(a, b, c);
-    }*/
-
-//    else
-//    {
         store_operations(a, b, c, func);
-//    }
 }
 
 

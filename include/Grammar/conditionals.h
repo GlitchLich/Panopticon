@@ -15,5 +15,6 @@ namespace panopticon
  */
 extern bool guard(object& resulting_tree, object& condition_array, object& operation_tree_array);
 
+extern bool guard(object& A, object& B, object& C);
 }
 #endif // CONDITIONALS_H

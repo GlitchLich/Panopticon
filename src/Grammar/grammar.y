@@ -82,6 +82,7 @@ main ::= in.
 in ::= .
 in ::= in NEWLINE.
 in ::= in start NEWLINE.
+in ::= in test NEWLINE.
 
 
 start ::= spec(A).
@@ -225,7 +226,9 @@ function_call(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN.
     }
     optic::object b;
     b.type = optic::STRING;
-    std::cout << "FUNCTION_CALL B.data.string " << *B.data.string << std::endl;
+    optic::out() << "FUNCTION_CALL B.data.string " << *B.data.string << "arguments: " << std::endl;
+    print_object(C);
+
     b.data.string = new optic::String(B.data.string->c_str());
     optic::parse_operations(A,b,C,optic::call_function);
     if(!panopticon::correct_parsing)
@@ -251,23 +254,10 @@ function_call(A) ::= NAME(B) LPAREN RPAREN.
     }
 }
 
-spec(A) ::= case_statement(B).
+test(A) ::= case_statement(B).
 {
-    panopticon::out() << "Case: " << *B.data.array->at(0).data.string << std::endl;
     A=B;
-}
-
-
-spec(A) ::= guard_statement(B).
-{
-    panopticon::out() << "Guard: " << *B.data.array->at(0).data.string << std::endl;
-    A=B;
-}
-
-spec(A) ::= final_guard_statement(B).
-{
-    panopticon::out() << "Guard: " << *B.data.array->at(0).data.string << std::endl;
-    A=B;
+/*    panopticon::out() << "Case: " << *B.data.array->at(0).data.string << std::endl;*/
 }
 
 spec(A) ::= where_statement(B).
@@ -276,28 +266,35 @@ spec(A) ::= where_statement(B).
     A=B;
 }
 
-guard_statement(A) ::= name_chain(B) GUARD_N expr ASSIGN expr. [ASSIGN]
+test(A) ::= guard_assignment(B).
 {
-    A = B;
-    A.type = optic::GUARD;
+    A=B;
+    A.type = optic::STRING;
+    A.data.string = new optic::String("Guard");
+}
+
+guard_assignment ::= name_chain final_guard_statement.
+guard_assignment ::= name_chain guard_statement.
+
+guard_statement(A) ::= GUARD_N expr ASSIGN expr. [ASSIGN]
+{
+    A.type = optic::STRING;
+    A.data.string = new optic::String("Guard");
 }
 
 guard_statement(A) ::= guard_statement(B) GUARD_N expr ASSIGN expr. [ASSIGN]
 {
     A = B;
-    A.type = optic::GUARD;
 }
 
-guard_statement(A) ::= name_chain(B) GUARD_S expr ASSIGN expr. [ASSIGN]
+guard_statement ::= GUARD_S expr ASSIGN expr. [ASSIGN]
 {
-    A = B;
-    A.type = optic::GUARD;
+
 }
 
 guard_statement(A) ::= guard_statement(B) GUARD_S expr ASSIGN expr. [ASSIGN]
 {
     A = B;
-    A.type = optic::GUARD;
 }
 
 final_guard_statement(A) ::= guard_statement(B) WILDCARD_N ASSIGN expr. [ASSIGN]
