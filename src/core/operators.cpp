@@ -56,7 +56,7 @@ object copy_object(const object& original)
         copy = original;
         break;
     case panopticon::STRING:
-        copy.data.string = new String(*copy.data.string);
+        copy.data.string = new String(*original.data.string);
         break;
     case panopticon::OPERATION_TREE:
     case panopticon::ARRAY:
@@ -66,6 +66,10 @@ object copy_object(const object& original)
         {
             copy.data.array->push_back(copy_object(original.data.array->at(i)));
         }
+        break;
+
+    default:
+        copy = original;
         break;
     }
 
@@ -658,20 +662,28 @@ bool create_function(object &A, const object &B, const object &C)
         out() << std::endl;
 
         function->num_arguments = B.data.array->size();
+        for(int i = 0; i < function->num_arguments; ++i)
+        {
+            function->arguments.push_back(copy_object(B.data.array->at(i)));
+            std::cout << "create_function function->arguments->at(i): " << function->arguments.at(i).data.string->c_str() << std::endl;
+        }
+
+        /*
         function->arguments.resize(B.data.array->size());
-        std::copy(B.data.array->begin(), B.data.array->end(), function->arguments.begin());
+        std::copy(B.data.array->begin(), B.data.array->end(), function->arguments.begin());*/
     }
 
     else if(B.type == STRING)
     {
+        std::cout << "create_function B.type == STRING" << std::endl;
         function->num_arguments = 0;
         function->arguments.push_back(B);
     }
 
     function->body = C;
+    function->body.type = OPERATION_TREE;
     std::cout << "FUNCTION BODY.TYPE: " << function->body.type << std::endl;
     A.data.function = function;
-
 
     /*
     // std::string function_name;
@@ -795,11 +807,13 @@ bool handle_stack(object &A, Function *function)
 bool call_function(object& A, const object& B, const object& C)
 {
     std::cout << "CALL FUNCTION!!!!!!!!!!!" << std::endl;
-    std::cout << "Function name: " << B.data.string->c_str() << std::endl;
+
     object function;
 
     if(get_variable(B.data.string, &function) == OK)
     {
+        std::string function_name = *B.data.string;
+        std::cout << "Function name: " << function_name << std::endl;
         out() << "function.type: " << function.type << std::endl;
 
         /*
@@ -814,9 +828,9 @@ bool call_function(object& A, const object& B, const object& C)
         out() << "function.type: " << function.type << std::endl;
 
         Map context;
-        context.insert(std::make_pair(*B.data.string, function));
+        context.insert(std::make_pair(function_name, function));
 
-        std::cout << "function name: " << *B.data.string << std::endl;
+        std::cout << "function name: " << function_name << std::endl;
         for(int i = 1; i < function.data.function->arguments.size(); ++i)
         {
             String function_arg = *function.data.function->arguments.at(i).data.string;
@@ -852,8 +866,8 @@ bool call_function(object& A, const object& B, const object& C)
 
     else
     {
-        out() << "Unable to find function: " << B.data.array->at(0).data.string << " in current scope" << std::endl;
-        std::cout << "Unable to find function: " << B.data.array->at(0).data.string << " in current scope" << std::endl;
+        out() << "Unable to find function: " << B.data.string->c_str() << " in current scope" << std::endl;
+        std::cout << "Unable to find function: " << B.data.string->c_str() << " in current scope" << std::endl;
         correct_parsing = false;
     }
 
@@ -2149,10 +2163,14 @@ bool index(object& A, const object& B, const object& C)
 bool assign_variable(object& A, const object& B, const object& C)
 {
     out() << "ASSIGN ASSIGN ASSIGN ASSIGN ASSIGN ASSIGN" << std::endl;
-    create_function(A,B,C);
+
 
     if(B.type == ARRAY)
     {
+        std::cout << "ASSIGN B.data.array->size(): " << B.data.array->size() << std::endl;
+
+        create_function(A,B,C);
+        std::cout << "ASSIGN_VARIABLE A.type = " << A.type << std::endl;
         // out() << "ARRAY!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
         std::cout << "A.data.function->num_arguments: " << A.data.function->num_arguments << std::endl;
         std::cout << "B.data.string: " << B.data.array->at(0).data.string->c_str() << std::endl;
@@ -2162,15 +2180,25 @@ bool assign_variable(object& A, const object& B, const object& C)
         {
             out() << "Error. Unable to bind variable " << B.data.array->at(0).data.string << std::endl;
         }
+
+        // std::cout << "ASSIGN_VARIABLE A.type = " << A.data.function->arguments.at(0).type << std::endl;
     }
 
-    else
+    else if(B.type == STRING)
     {
+        std::cout << "ASSGN_VARIABLE: B.type == STRING";
         if(set_variable(B.data.string, A) != OK)
         {
             out() << "Error. Unable to bind variable " << B.data.string << std::endl;
         }
     }
+
+    else
+    {
+        std::cout << "assign_variable unable to determine type" << std::endl;
+    }
+
+    A.type = VOID; // prevent return to stack
 
     // A.scope = get_scope();
     // std::pair<std::string, object> value(*B.data.string, copy_object(C));

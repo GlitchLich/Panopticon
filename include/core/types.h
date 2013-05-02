@@ -91,7 +91,9 @@ enum Type
     LOCAL_VARIABLE_INDEX,//15
     FUNCTION_DEC,//16
     GUARD,//17
-    FUNCTION_CALL//18
+    FUNCTION_CALL, //18
+    FUNCTION_BODY, // Used to prevent further parsing by the stack, enables lazy evaluation
+    VOID // 19, Use to prevent return on the stack
 };
 
 // Forward declarations
@@ -111,7 +113,6 @@ typedef void (*stack_function) ();
 // Data type union
 union Data
 {
-    stack_function stack_func;
     Number number;
     String* string;
     bool boolean;

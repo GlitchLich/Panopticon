@@ -211,8 +211,9 @@ function_call(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN.
         C.data.array->push_back(temp);
     }
     optic::object b;
-    b.type = optic::FUNCTION_CALL;
-    b.data.string = new optic::String(*B.data.string);
+    b.type = optic::STRING;
+    std::cout << "FUNCTION_CALL B.data.string " << *B.data.string << std::endl;
+    b.data.string = new optic::String(B.data.string->c_str());
     optic::parse_operations(A,b,C,optic::call_function);
     if(!panopticon::correct_parsing)
     {
@@ -319,9 +320,13 @@ expr(A) ::= LET NAME ASSIGN expr IN expr.
 
 assignment(A) ::= name_chain(B) ASSIGN expr(C). [ASSIGN]
 {
-    B.type = FUNCTION_DEC;
-    std::cout << "Function_Dec C: " << C.type << std::endl;
-    parse_operations(A,B,C,&panopticon::assign_variable);
+    // B.type = panopticon::ARRAY;
+    // C.type = panopticon::OPERATION_TREE;
+    // B.type = FUNCTION_DEC;
+    // std::cout << "Function_Dec C: " << C.type << std::endl;
+    // panopticon::parse_operations(A, B, C, panopticon::create_function);
+    C.type = panopticon::FUNCTION_BODY;
+    panopticon::parse_operations(A, B, C, panopticon::assign_variable);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
