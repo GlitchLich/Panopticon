@@ -92,7 +92,9 @@ enum Type
     FUNCTION_DEC,//16
     GUARD,//17
     FUNCTION_CALL,//18
-    CODE_BLOCK//19
+    FUNCTION_BODY, //19 Used to prevent further parsing by the stack, enables lazy evaluation
+    VOID, // 20, Use to prevent return on the stack
+    CODE_BLOCK //21 Denotes several expression in a row
 };
 
 // Forward declarations
@@ -112,7 +114,6 @@ typedef void (*stack_function) ();
 // Data type union
 union Data
 {
-    stack_function stack_func;
     Number number;
     String* string;
     bool boolean;
