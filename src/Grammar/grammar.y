@@ -342,39 +342,9 @@ expr(A) ::= LET NAME ASSIGN expr IN expr.
     A.data.string = new optic::String("Let");
 }
 
-/*guard_statement(A) ::= guard_statement NEWLINE.
-{
-    A.type = optic::GUARD;
-    optic::out() << "GUARD!" << std::endl;
-}*/
-
-
 assignment(A) ::= name_chain(B) ASSIGN expr(C). [ASSIGN]
 {
-    C.type = panopticon::FUNCTION_BODY;
-    if(
-        C.type == optic::OPERATION ||
-        C.type == optic::OPERATION ||
-        C.type == optic::NUMBER ||
-        C.type == optic::STRING ||
-        C.type == optic::BOOL   ||
-        C.type == optic::ARRAY
-    )
-    {
-        optic::object temp = C;
-        C.data.array = new optic::Array();
-        C.data.array->reserve(1);
-        C.data.array->push_back(temp);
-    }
-
-    if(B.type!=optic::ARRAY)
-    {
-        optic::object temp = B;
-        B.type=optic::ARRAY;
-        B.data.array = new optic::Array();
-        B.data.array->reserve(1);
-        B.data.array->push_back(temp);
-    }
+    insure_ready_for_assignment(B,C);
 
     panopticon::parse_operations(A, B, C, panopticon::assign_variable);
     if(!panopticon::correct_parsing)

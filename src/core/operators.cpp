@@ -538,8 +538,9 @@ bool resolve_stack_from_parser(object& operation_tree)
 
     else
     {
-        std::cout << "operation_tree.type != OPERATION_TREE" << std::endl;
+//        std::cout << "operation_tree.data.array->size() < 2" << std::endl;
         optic_stack.push_back(operation_tree);
+        std::cout << "test" << std::endl;
     }
 
     std::cout << "About to evaluate." << std::endl;
