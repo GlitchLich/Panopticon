@@ -1,0 +1,3 @@
+binOp op x y = op( x y )
+mul x y = x * y
+binOp( mul x y )

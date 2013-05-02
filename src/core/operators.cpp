@@ -814,54 +814,43 @@ bool call_function(object& A, const object& B, const object& C)
     {
         std::string function_name = *B.data.string;
         std::cout << "Function name: " << function_name << std::endl;
-        out() << "function.type: " << function.type << std::endl;
-
-        /*
-        // Push the arguments onto the stack
-        for(unsigned int i = 0; i < C.data.array->size(); ++i)
-        {
-            std::cout << "C.data.array-at(i).type: " << C.data.array->at(i).type << std::endl;
-            print_object(C.data.array->at(i));
-            optic_stack.push_back(C.data.array->at(i));
-        }*/
-
+        std::cout << "Function type: " << function.type << std::endl;
         out() << "function.type: " << function.type << std::endl;
 
         Map context;
         context.insert(std::make_pair(function_name, function));
 
-        std::cout << "function name: " << function_name << std::endl;
         for(int i = 1; i < function.data.function->arguments.size(); ++i)
         {
-            String function_arg = *function.data.function->arguments.at(i).data.string;
-            std::cout << "function_arg: " << function_arg << std::endl;
-            // evaluate_top(); // evaluate the top of the stack for our arguments;
-            context.insert(std::make_pair(function_arg, C.data.array->at(i - 1)));
-            // optic_stack.pop_back();
+            object arg = C.data.array->at(i - 1);
+            bool arg_found;
+
+            if(arg.type == VARIABLE)
+            {
+                if(get_variable(arg.data.string, &arg) != OK)
+                    arg_found = false;
+            }
+
+            else
+            {
+                arg_found = false;
+            }
+
+            if(!arg_found)
+            {
+                std::cout << "Unable to find value for variable " << arg.data.string->c_str() << " in function call." << std::endl;
+                out() << "Unable to find value for variable " << arg.data.string->c_str() << " in function call." << std::endl;
+                correct_parsing = false;
+            }
+
+            String arg_name = *function.data.function->arguments.at(i).data.string;
+            std::cout << "function_arg: " << arg_name << std::endl;
+            context.insert(std::make_pair(arg_name, C.data.array->at(i - 1)));
         }
 
         push_scope(&context);
         resolve_stack_from_parser(function.data.function->body);
         pop_scope();
-
-        /*
-        Map context;
-        context.insert(std::make_pair(*B.data.string, function));
-
-        for(int i = 0; i < function.data.function->arguments.size(); ++i)
-        {
-            String function_arg = *function.data.function->arguments.at(i).data.string;
-            std::cout << "function_arg: " << function_arg << std::endl;
-            std::cout << "C.data.array-at(i).data.number: " << C.data.array->at(i).data.number << std::endl;
-
-            optic_stack.push_back(C.data.array->at(i));
-            evaluate_stack();
-            context.insert(std::make_pair(function_arg, global_state));
-        }
-
-        push_scope(&context);
-        resolve_stack_from_parser(function.data.function->body);
-        pop_scope();*/
     }
 
     else
@@ -871,43 +860,6 @@ bool call_function(object& A, const object& B, const object& C)
         correct_parsing = false;
     }
 
-    /*
-    if(A.scope->data.map->find(*B.data.string)!=A.scope->data.map->end())
-    {
-        std::cout << "scoped" << std::endl;
-
-        if(C.data.array->size()==(*A.scope->data.map)[*B.data.string].data.function->num_arguments)
-        {
-            out() << "Calling function: " << *B.data.string << std::endl;
-            out() << "with arguments: " << std::endl;
-            for(int i=0;i<C.data.array->size();++i)
-            {
-                print_object(C.data.array->at(i));
-            }
-            //        A = (*A.scope->data.map)[*B.data.string];
-
-            (*A.scope->data.map)[*B.data.string].data.function->arguments.swap(*C.data.array);
-
-            object d = C;
-            // resolve_stack_from_parser(d);
-
-            // handle_stack(A,(*A.scope->data.map)[*B.data.string].data.function);
-
-
-            //        out() << "Function Result: " << std::endl;
-            //        out() << A.type << std::endl;
-        }
-        else
-        {
-            out() << "Error: Incorrect number of supplied arguments for this function: " << *B.data.string << std::endl;
-            correct_parsing = false;
-        }
-    }
-    else
-    {
-        out() << "Error: This function has not been declared: " << *B.data.string << std::endl;
-        correct_parsing = false;
-    }*/
 }
 
 bool call_function(const object &function, const String& name)
