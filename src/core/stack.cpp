@@ -68,7 +68,7 @@ void evaluate_top()
 
     case OPERATION_TREE:
         std::cout << "EVALUATE OPERATION_TREE" << std::endl;
-        resolve_stack_from_parser(obj);
+        resolve_stack_from_parser(obj, false);
         break;
 
     case VARIABLE:
