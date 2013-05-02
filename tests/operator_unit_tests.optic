@@ -1,6 +1,8 @@
 //Unit Tests
 
-//Switches? Guards? 
+//An interesting idea....We could have a function library, this library would be compiled at startup, and would follow rules similar to Pure functional languages: Any functions/Values (which are functions in reality) are immutable and cannot be redefined. Furthermore they are immutable even at runtime. However, one may define functions / values at run time which are mutable. Would serve our two purposes (composed pieces and live coding) well.
+
+//Switches? Guards? Pattern Matching?
 //Array Slicing? first five elements: a[:5],last five elements, a[5:],
 //every other elements, a[::2], 1 through 3 a[1::3]
 
@@ -30,10 +32,11 @@ letFunc x =
 		z = 399/x
 	in x + w * z
 
-whereFunc x = x+w
-	where
+whereFunc x = x + w
+	where 
+		w = 5
+		
 )
-
 
 //variables
 num = 5
@@ -62,11 +65,11 @@ metaArray[2][2]
 metaArray[2][3][0]
 
 //Functions
-myFunc x y z = x + y * z << x
-myFunc(2 2 3)
+myFuncz x y z = x + y * z << x
+myFuncz(2 2 3)
 myArray = [23 22 0 20]
-myFunc(2 [9 10] myArray)
-myFunc(1 2 myFunc(1 2 myFunc(1 2 myFunc(1 2 myFunc(1 2 1)))))
+myFuncz(2 [9 10] myArray)
+myFuncz(1 2 myFunc(1 2 myFunc(1 2 myFunc(1 2 myFunc(1 2 1)))))
 
 myFunc x y z = x + y * z << x
 myFunc 2 2 3
@@ -77,7 +80,7 @@ myFunc 1 2 myFunc 1 2 myFunc 1 2 myFunc 1 2 myFunc 1 2 1
 myFunc(1 2)
 
 //Non-existent Functions throw errors.
-myFuncz(10 11)
+myFun(10 11)
 
 "hey"[0]
 4[0]
@@ -152,8 +155,8 @@ true *  [0 [true 2 [3 "hey"] 5 [6 7] ] 8]
 [0 [1 2 [3 4] 5 [6 7] ] 8] * 4
 [0 [true 2 [3 "hey"] 5 [6 7] ] 8] * false
 ["e" ["h" "y" ["ey" "he"] "h" ["hey" " "] ] "e"] * "h"
-[0 [1 2 [3 4] 5 [6 7] ] 8] * [0 [1 2 [3 4] 5 [6 7] ] 8]
-
+mulArrays = [0 [1 2 [3 4] 5 [6 7] ] 8] * [0 [1 2 [3 4] 5 [6 7] ] 8]
+mulArrays()
 //DIVIDE
 4 / 4.5
 4 / true

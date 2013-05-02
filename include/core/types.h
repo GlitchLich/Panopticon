@@ -91,7 +91,8 @@ enum Type
     LOCAL_VARIABLE_INDEX,//15
     FUNCTION_DEC,//16
     GUARD,//17
-    FUNCTION_CALL//18
+    FUNCTION_CALL,//18
+    CODE_BLOCK//19
 };
 
 // Forward declarations

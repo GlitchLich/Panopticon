@@ -82,8 +82,7 @@ main ::= in.
 in ::= .
 in ::= in NEWLINE.
 in ::= in start NEWLINE.
-/*in ::= in.*/
-/*in ::= in start.*/
+
 
 start ::= spec(A).
 {
@@ -96,25 +95,42 @@ start ::= spec(A).
     {
         print_object(A);
     }
+    if( A.type == optic::CODE_BLOCK )
+    {
+        optic::out() << "CODE BLOCK!" << std::endl;
+    }
     else
     {
         optic::resolve_stack_from_parser(A);
     }
 }
 
+spec(A) ::= closed_block(B).
+{
+    A = B;
+    optic::out() << "CODE BLOCK!" << std::endl;
+}
+
+open_block(A) ::= OPENING_LPAREN spec(B).
+{
+    A = B;
+}
+
+open_block(A) ::= open_block NEWLINE spec.
+{
+    A.type = optic::CODE_BLOCK;
+}
+
+closed_block(A) ::= open_block CLOSING_RPAREN.
+{
+    A.type = optic::CODE_BLOCK;
+}
 
 spec(A) ::= assignment(B).
 {
     A=B;
 }
-/*spec(A) ::= function_declaration(B).
-{
-    A=B;
-}*/
 
-/*start ::= function_declaration.*/
-
-/*spec ::= MOD STRING top_stmt.*/
 spec(A) ::= top_stmt(B).
 {
     A=B;
@@ -179,7 +195,6 @@ name_chain(A) ::= NAME(B).
 
 expr(A) ::= NAME(B).
 {
-/*    panopticon::retrieve_variable(A,B);*/
     B.type = optic::UNDECLARED_VARIABLE;
     A = B;
     if(!panopticon::correct_parsing)
@@ -196,11 +211,9 @@ expr(A) ::= function_call(B).
 
 function_call(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN.
 {
-    // A.scope = optic::get_scope();
     if(C.type==optic::STATEMENT_LIST)
     {
             C.type = optic::ARRAY;
-            optic::out() << "Received a malformed argument to the function: " << *B.data.string;
     }
     else
     {
@@ -210,6 +223,22 @@ function_call(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN.
         C.data.array->reserve(1);
         C.data.array->push_back(temp);
     }
+    optic::object b;
+    b.type = optic::FUNCTION_CALL;
+    b.data.string = new optic::String(*B.data.string);
+    optic::parse_operations(A,b,C,optic::call_function);
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
+
+function_call(A) ::= NAME(B) LPAREN RPAREN.
+{
+    optic::object C;
+    C.type = optic::OPERATION_TREE;
+    C.data.array = new optic::Array();
     optic::object b;
     b.type = optic::FUNCTION_CALL;
     b.data.string = new optic::String(*B.data.string);
@@ -286,6 +315,8 @@ where_statement ::= guard_statement WHERE.
 where_statement ::= final_guard_statement WHERE.
 where_statement ::= name_chain ASSIGN expr WHERE.
 
+where_statement ::= where_statement NAME ASSIGN expr.
+
 case_statement(A) ::= name_chain(B) ASSIGN CASE expr OF. [ASSIGN]
 {
     A=B;
@@ -319,9 +350,10 @@ expr(A) ::= LET NAME ASSIGN expr IN expr.
 
 assignment(A) ::= name_chain(B) ASSIGN expr(C). [ASSIGN]
 {
-    B.type = FUNCTION_DEC;
-    std::cout << "Function_Dec C: " << C.type << std::endl;
+/*    B.type = FUNCTION_DEC;*/
+/*    std::cout << "Function_Dec C: " << C.type << std::endl;*/
     parse_operations(A,B,C,&panopticon::assign_variable);
+    assign_variable(A,B,C);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
