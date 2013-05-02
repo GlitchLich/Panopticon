@@ -10,9 +10,9 @@
 (
 
 myGuardFunc x 
-	| x > 5 	= 5 
-	| x == 5 	= 0 
-	_ 			= -5
+	| x > 5 	= x * 5 
+	| x == 5 	= x * 0.1 
+	_ 			= x * -5
 
 myGuardFunc2 x 
 	| x > 5 = 5 
