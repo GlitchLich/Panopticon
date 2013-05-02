@@ -526,11 +526,14 @@ bool object_operator_object2(object& a, object& b, object& c, operator_function 
 
 bool resolve_stack_from_parser(object& operation_tree)
 {
-    std::cout << "About to copy. operation_tree.size = " << std::endl;
+    std::cout << "About to copy. operation_tree.size = " << operation_tree.data.array->size() << std::endl;
     if(operation_tree.type == OPERATION_TREE)
     {
-        std::cout << "operation_tree.type == OPERATION_TREE operation_tree.size = " << operation_tree.data.array->size() << std::endl;
-        std::reverse_copy(operation_tree.data.array->begin(), operation_tree.data.array->end(), std::inserter(optic_stack, optic_stack.end()));
+        if(operation_tree.data.array->size() > 1)
+        {
+            std::cout << "operation_tree.type == OPERATION_TREE operation_tree.size = " << operation_tree.data.array->size() << std::endl;
+            std::reverse_copy(operation_tree.data.array->begin(), operation_tree.data.array->end(), std::inserter(optic_stack, optic_stack.end()));
+        }
     }
 
     else
