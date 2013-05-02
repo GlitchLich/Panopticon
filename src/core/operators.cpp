@@ -823,6 +823,7 @@ bool call_function(object& A, const object& B, const object& C)
         for(int i = 1; i < function.data.function->arguments.size(); ++i)
         {
             object arg = C.data.array->at(i - 1);
+            /*
             bool arg_found;
 
             if(arg.type == VARIABLE)
@@ -841,11 +842,11 @@ bool call_function(object& A, const object& B, const object& C)
                 std::cout << "Unable to find value for variable " << arg.data.string->c_str() << " in function call." << std::endl;
                 out() << "Unable to find value for variable " << arg.data.string->c_str() << " in function call." << std::endl;
                 correct_parsing = false;
-            }
+            }*/
 
             String arg_name = *function.data.function->arguments.at(i).data.string;
             std::cout << "function_arg: " << arg_name << std::endl;
-            context.insert(std::make_pair(arg_name, C.data.array->at(i - 1)));
+            context.insert(std::make_pair(arg_name, arg));
         }
 
         push_scope(&context);
