@@ -24,16 +24,19 @@ void push_scope(Map* scope)
     global_scope.push_back(scope);
     current_scope = scope;
     scope_pointer = current_scope->begin();
+    std::cout << "heap: push_scope" << std::endl;
 }
 void pop_scope()
 {
     global_scope.pop_back();
     current_scope = global_scope.back();
     scope_pointer = current_scope->begin();
+    std::cout << "heap: pop_scope" << std::endl;
 }
 
 RESULT get_variable(std::string* variable_name, object* result)
 {
+    std::cout << "GET VARIABLE NAME: " << variable_name->c_str() << std::endl;
     scope_pointer = current_scope->find(*variable_name);
     if(scope_pointer == current_scope->end())
     {
@@ -44,6 +47,7 @@ RESULT get_variable(std::string* variable_name, object* result)
     else
     {
         *result = scope_pointer->second;
+        std::cout << "GET VARIABLE TYPE: " << result->type << std::endl;
         return OK;
     }
 }
