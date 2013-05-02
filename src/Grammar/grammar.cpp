@@ -1330,7 +1330,7 @@ static void yy_reduce(
     C.type = optic::OPERATION_TREE;
     C.data.array = new optic::Array();
     optic::object b;
-    b.type = optic::FUNCTION_CALL;
+    b.type = optic::STRING;
     b.data.string = new optic::String(*yymsp[-2].minor.yy0.data.string);
     optic::parse_operations(yygotominor.yy0,b,C,optic::call_function);
     if(!panopticon::correct_parsing)

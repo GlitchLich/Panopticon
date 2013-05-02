@@ -1,5 +1,7 @@
 #include "../../include/Grammar/conditionals.h"
 #include "../../include/Grammar/parse.h"
+#include "../../include/core/stack.h"
+
 namespace panopticon
 {
 
@@ -7,9 +9,21 @@ bool guard(object& resulting_tree, object& condition_array, object& operation_tr
 {
     for(int i=0;i<condition_array.data.array->size();++i)
     {
-        if(condition_array.data.array->at(i).type==BOOL)
+        optic_stack.push_back(condition_array.data.array->at(i));
+        evaluate_top();
+        const object& my_result = optic_stack.back();
+        optic_stack.pop_back();
+        if(my_result.type==BOOL)
         {
-            if(condition_array.data.array->at(i).data.boolean)
+            if(my_result.data.boolean)
+            {
+                resulting_tree = operation_tree_array.data.array->at(i);
+                return true;
+            }
+        }
+        else if(my_result.type==BOOL)
+        {
+            if(my_result.data.number>0)
             {
                 resulting_tree = operation_tree_array.data.array->at(i);
                 return true;
@@ -17,8 +31,7 @@ bool guard(object& resulting_tree, object& condition_array, object& operation_tr
         }
         else
         {
-            out() << "Error: Non-boolean condition found in a guard statement." << std::endl;
-            correct_parsing = false;
+            out() << "Error: Non-conditional statement used in a guard conditional." << std::endl;
         }
     }
     resulting_tree.type = VOID;

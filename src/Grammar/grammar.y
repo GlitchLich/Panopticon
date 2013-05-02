@@ -241,7 +241,7 @@ function_call(A) ::= NAME(B) LPAREN RPAREN.
     C.type = optic::OPERATION_TREE;
     C.data.array = new optic::Array();
     optic::object b;
-    b.type = optic::FUNCTION_CALL;
+    b.type = optic::STRING;
     b.data.string = new optic::String(*B.data.string);
     optic::parse_operations(A,b,C,optic::call_function);
     if(!panopticon::correct_parsing)
