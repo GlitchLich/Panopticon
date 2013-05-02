@@ -354,6 +354,7 @@ assignment(A) ::= name_chain(B) ASSIGN expr(C). [ASSIGN]
     C.type = panopticon::FUNCTION_BODY;
     if(
         C.type == optic::OPERATION ||
+        C.type == optic::OPERATION ||
         C.type == optic::NUMBER ||
         C.type == optic::STRING ||
         C.type == optic::BOOL   ||
@@ -369,7 +370,7 @@ assignment(A) ::= name_chain(B) ASSIGN expr(C). [ASSIGN]
     if(B.type!=optic::ARRAY)
     {
         optic::object temp = B;
-        B.type==optic::ARRAY;
+        B.type=optic::ARRAY;
         B.data.array = new optic::Array();
         B.data.array->reserve(1);
         B.data.array->push_back(temp);
