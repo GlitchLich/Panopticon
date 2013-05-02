@@ -524,7 +524,7 @@ bool object_operator_object2(object& a, object& b, object& c, operator_function 
     }
 }
 
-bool resolve_stack_from_parser(object& operation_tree)
+bool resolve_stack_from_parser(object& operation_tree, bool resolve_entire_stack)
 {
     std::cout << "About to copy. operation_tree.size = " << operation_tree.data.array->size() << std::endl;
     if(operation_tree.type == OPERATION_TREE)
@@ -538,14 +538,17 @@ bool resolve_stack_from_parser(object& operation_tree)
 
     else
     {
-//        std::cout << "operation_tree.data.array->size() < 2" << std::endl;
         optic_stack.push_back(operation_tree);
         std::cout << "test" << std::endl;
     }
 
     std::cout << "About to evaluate." << std::endl;
     print_object(operation_tree);
-    evaluate_stack();
+
+    if(resolve_entire_stack)
+        evaluate_stack();
+    else
+        evaluate_top();
 }
 
 bool parse_operations(object& a, const object& b, const object& c, operator_function func)
@@ -848,14 +851,26 @@ bool call_function(object& A, const object& B, const object& C)
                 correct_parsing = false;
             }*/
 
+            optic_stack.push_back(arg);
+        }
+
+        for(int i = 1; i < function.data.function->num_arguments && optic_stack.size() > 0; ++i)
+        {
+            evaluate_top();
             String arg_name = *function.data.function->arguments.at(i).data.string;
             std::cout << "function_arg: " << arg_name << std::endl;
-            context.insert(std::make_pair(arg_name, arg));
+            context.insert(std::make_pair(arg_name, optic_stack.back()));
+            optic_stack.pop_back();
         }
 
         push_scope(&context);
-        resolve_stack_from_parser(function.data.function->body);
+        resolve_stack_from_parser(function.data.function->body, false);
+        A = optic_stack.back();
+        optic_stack.pop_back();
         pop_scope();
+
+        out() << "FUNCTION RESULT" << std::endl;
+        print_object(optic_stack.back());
     }
 
     else

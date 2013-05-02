@@ -58,7 +58,7 @@ extern bool recursive_apply(object &a,const object &obj1,const object& obj2, ope
 extern bool object_operator_object(object& a, object& b, object& c, operator_function func);
 extern bool array_operator_array(object& a,const object& array1,const object& array2, operator_function func);
 extern bool parse_operations(object& a, const object& b, const object& c, operator_function func);
-extern bool resolve_stack_from_parser(object& operation_tree);
+extern bool resolve_stack_from_parser(object& operation_tree, bool resolve_entire_stack = true);
 
 extern bool create_function(object&A, const object& B, const object& C);
 extern bool call_function(object& A, const object& B, const object& C);
