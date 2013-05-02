@@ -25,6 +25,7 @@
 #include <iostream>
 #include <sstream>
 #include <algorithm>
+#include "../../include/core/types.h"
 
 bool is_number(const std::string& s)
 {
@@ -51,4 +52,31 @@ double string_to_double( const std::string& s )
         return 0;
     return x;
 }
+
+bool insure_ready_for_assignment(panopticon::object& B, panopticon::object& C)
+{
+    if(
+        C.type == panopticon::OPERATION ||
+        C.type == panopticon::NUMBER ||
+        C.type == panopticon::STRING ||
+        C.type == panopticon::BOOL   ||
+        C.type == panopticon::ARRAY
+    )
+    {
+        panopticon::object temp = C;
+        C.data.array = new panopticon::Array();
+        C.data.array->reserve(1);
+        C.data.array->push_back(temp);
+    }
+    C.type = panopticon::FUNCTION_BODY;
+    if(B.type!=optic::ARRAY)
+    {
+        panopticon::object temp = B;
+        B.type=optic::ARRAY;
+        B.data.array = new optic::Array();
+        B.data.array->reserve(1);
+        B.data.array->push_back(temp);
+    }
+}
+
 #endif // PARSINGUTILITIES_H
