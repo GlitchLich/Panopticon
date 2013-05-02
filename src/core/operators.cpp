@@ -423,6 +423,21 @@ bool array_operator_array(object& a,const object& array1,const object& array2, o
     }
 }
 
+bool create_tree(object&a,const object& obj)
+{
+    a.type = OPERATION_TREE;
+    a.data.array = new Array();
+    if(obj.type==OPERATION_TREE)
+    {
+        a = obj;
+    }
+    else
+    {
+        a.data.array->push_back(obj);
+    }
+
+}
+
 bool store_operations(object& a,const object& obj1,const object& obj2, operator_function func)
 {
     a.type = OPERATION_TREE;
