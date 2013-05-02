@@ -91,9 +91,10 @@ enum Type
     LOCAL_VARIABLE_INDEX,//15
     FUNCTION_DEC,//16
     GUARD,//17
-    FUNCTION_CALL, //18
-    FUNCTION_BODY, // Used to prevent further parsing by the stack, enables lazy evaluation
-    VOID // 19, Use to prevent return on the stack
+    FUNCTION_CALL,//18
+    FUNCTION_BODY, //19 Used to prevent further parsing by the stack, enables lazy evaluation
+    VOID, // 20, Use to prevent return on the stack
+    CODE_BLOCK //21 Denotes several expression in a row
 };
 
 // Forward declarations

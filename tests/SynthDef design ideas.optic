@@ -1,0 +1,7 @@
+//Synthfunc syntax
+*sinSynth f mf mf2 dur a ch g = 
+	mod2([mf2 mf]) ~>> mod([mf mf2]) ~> sin(f*~*fin <~) * env * a ~> fout(~) ~> out(ch ~)
+	where
+		env = env([0 1 1 1] [0.1 0.1 4] -3 g)
+		mod f = sin(f)*sin(0.1)
+		mod2 f = saw(f)*tri(0.1)	

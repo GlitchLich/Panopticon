@@ -8,5 +8,6 @@ set(Panopticon_SRC
         ${CMAKE_CURRENT_SOURCE_DIR}/plus.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/minus.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/divide.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/conditionals.cpp
 	PARENT_SCOPE
 )
