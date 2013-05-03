@@ -451,9 +451,9 @@ expr(A) ::= bool(B).
 //======================
 //BASICS
 //======================
-expr(A) ::= PRINT LPAREN expr(B) RPAREN
+expr(A) ::= PRINT LPAREN expr(B) RPAREN.
 {
-    optic::store_operations(A,b,&optic::print_object);
+    optic::store_operations(A,B,&optic::unary_print_object);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);

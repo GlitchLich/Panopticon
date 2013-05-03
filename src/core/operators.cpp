@@ -203,6 +203,13 @@ bool print_object(const object &A)
     }
 }
 
+bool unary_print_object(object &A, const object &B)
+{
+    A = copy_object(B);
+    out() << "PRINTING FROM LANGUAGE: ";
+    print_object(B);
+}
+
 bool concatenate_arrays(object &a,object b, object c)
 {
     a.data.array->reserve(b.data.array->size() + c.data.array->size());
@@ -321,7 +328,7 @@ bool create_tree(object&a,const object& obj)
 
 }
 
-bool store_operations(object& a,const object& obj1,operator_function func)
+bool store_operations(object& a,const object& obj1,unary_operator_function func)
 {
     a.type = OPERATION_TREE;
     a.data.array = new Array();
@@ -340,8 +347,7 @@ bool store_operations(object& a,const object& obj1,operator_function func)
     a.data.array->reserve(size);
     object op_func;
     op_func.type = UNARY_OPERATION;
-    op_func.data.operator_func = func;
-    // op_func.data.stack_func = func;
+    op_func.data.unary_operator_func = func;
     a.data.array->push_back(op_func);
 
     if(obj1.type==OPERATION_TREE)
@@ -350,6 +356,10 @@ bool store_operations(object& a,const object& obj1,operator_function func)
         {
             a.data.array->push_back(obj1.data.array->at(i));
         }
+    }
+    else
+    {
+        a.data.array->push_back(obj1);
     }
 }
 
