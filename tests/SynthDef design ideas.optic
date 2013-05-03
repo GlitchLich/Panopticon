@@ -1,21 +1,13 @@
 //Synthfunc syntax
-*sinSynth f mf mf2 dur a ch g = 
-	mod2([mf2 mf]) ~>> mod([mf mf2]) ~> sin(f*~*fin <~) * env * a ~> fout(~) ~> out(ch ~)
+*sinSynth 
+	f<440> mf<220> mf2<100.5> dur a ch g
+	= msin ~> filter(~ 1200*env) * env * a ~> fout(~) ~> out(ch ~)
 	where
-		env = env([0 1 1 1] [0.1 0.1 4] -3 g)
-		mod f = sin(f)*sin(0.1)
-		mod2 f = saw(f)*tri(0.1)	
+		env = env([0 1 1 1] [0.1 0.1 4] (-3) g)
+		mod = sin(f)*sin(0.1)
+		mod2 = saw(f)*tri(0.1)
+		f = f*mod([mf mf2])*fin()
+		sa = mod2([mf2 mf])
+		msin = sin(f sa) 
 
-//parallel streams?
-∿> mul( 2 ∿ 3 ) ∿> Filter( ∿ 20000 0.3 ) ∿> out( ∿ )
-||							
-∿> mul( 5 ∿ 4 ) ∿> 		||^
-
-*sinSynth f mf mf2 dur a ch g = 
-					mod2([mf2 mf])∿v
-	mod([mf mf2]) ∿> sin(f*∿*∿   ∿) * env * a ∿> out(ch ∿)
-							   ^				  <|
-	where
-		env = env([0 1 1 1] [0.1 0.1 4] -3 g)
-		mod f = sin(f)*sin(0.1)
-		mod2 f = saw(f)*tri(0.1)	
+	
