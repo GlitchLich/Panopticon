@@ -548,13 +548,21 @@ bool resolve_stack_from_parser(object& operation_tree, bool resolve_entire_stack
             std::cout << "operation_tree.type == OPERATION_TREE operation_tree.size = " << operation_tree.data.array->size() << std::endl;
             std::reverse_copy(operation_tree.data.array->begin(), operation_tree.data.array->end(), std::inserter(optic_stack, optic_stack.end()));
         }
+
+        else if(operation_tree.data.array->size() == 1)
+        {
+            optic_stack.push_back(operation_tree.data.array->at(0));
+            std::cout << "test" << std::endl;
+        }
+
+        else
+        {
+            out() << "Error: No operations to put on the stack." << std::endl;
+            correct_parsing = false;
+        }
     }
 
-    else
-    {
-        optic_stack.push_back(operation_tree);
-        std::cout << "test" << std::endl;
-    }
+
 
     std::cout << "About to evaluate." << std::endl;
     print_object(operation_tree);

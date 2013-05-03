@@ -1582,28 +1582,28 @@ static void yy_reduce(
       case 49: /* num ::= NUM */
 #line 458 "./src/Grammar/grammar.y"
 {
-    yygotominor.yy0.data.number = yymsp[0].minor.yy0.data.number;
-    yygotominor.yy0.type = panopticon::NUMBER;
-    //yygotominor.yy0.n = yymsp[0].minor.yy0.n+1;
+/*    yygotominor.yy0.data.number = yymsp[0].minor.yy0.data.number;*/
+    yymsp[0].minor.yy0.type = panopticon::NUMBER;
+    create_tree(yygotominor.yy0,yymsp[0].minor.yy0);
 }
 #line 1590 "./src/Grammar/grammar.c"
         break;
       case 50: /* string ::= STRING */
 #line 465 "./src/Grammar/grammar.y"
 {
-    yygotominor.yy0.data.string = new panopticon::String(yymsp[0].minor.yy0.data.string->c_str());
-    delete yymsp[0].minor.yy0.data.string;
-    yygotominor.yy0.type = panopticon::STRING;
-    //yygotominor.yy0.n = yymsp[0].minor.yy0.n+1;
+/*    yygotominor.yy0.data.string = new panopticon::String(yymsp[0].minor.yy0.data.string->c_str());*/
+/*    delete yymsp[0].minor.yy0.data.string;*/
+    yymsp[0].minor.yy0.type = panopticon::STRING;
+    create_tree(yygotominor.yy0,yymsp[0].minor.yy0);
 }
 #line 1600 "./src/Grammar/grammar.c"
         break;
       case 51: /* bool ::= BOOLEAN */
 #line 474 "./src/Grammar/grammar.y"
 {
-    yygotominor.yy0.data.boolean = yymsp[0].minor.yy0.data.boolean;
-    yygotominor.yy0.type = panopticon::BOOL;
-    //yygotominor.yy0.n = yymsp[0].minor.yy0.n+1;
+/*    yygotominor.yy0.data.boolean = yymsp[0].minor.yy0.data.boolean;*/
+    yymsp[0].minor.yy0.type = panopticon::BOOL;
+    create_tree(yygotominor.yy0,yymsp[0].minor.yy0);
 }
 #line 1609 "./src/Grammar/grammar.c"
         break;

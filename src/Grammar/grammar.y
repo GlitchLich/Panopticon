@@ -456,25 +456,25 @@ expr(A) ::= bool(B).
 
 num(A) ::= NUM(B).
 {
-    A.data.number = B.data.number;
-    A.type = panopticon::NUMBER;
-    //A.n = B.n+1;
+/*    A.data.number = B.data.number;*/
+    B.type = panopticon::NUMBER;
+    create_tree(A,B);
 }
 
 string(A) ::= STRING(B).
 {
-    A.data.string = new panopticon::String(B.data.string->c_str());
-    delete B.data.string;
-    A.type = panopticon::STRING;
-    //A.n = B.n+1;
+/*    A.data.string = new panopticon::String(B.data.string->c_str());*/
+/*    delete B.data.string;*/
+    B.type = panopticon::STRING;
+    create_tree(A,B);
 }
 
 
 bool(A) ::= BOOLEAN(B).
 {
-    A.data.boolean = B.data.boolean;
-    A.type = panopticon::BOOL;
-    //A.n = B.n+1;
+/*    A.data.boolean = B.data.boolean;*/
+    B.type = panopticon::BOOL;
+    create_tree(A,B);
 }
 
 //=======================
