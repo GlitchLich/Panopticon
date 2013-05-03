@@ -101,11 +101,14 @@ public slots:
 
     void newFile();
     void openFile();
+    void openFileFromMenu();
     void saveFile();
     void saveFileAs();
     void closeFile();
     void closeAllFiles();
     void quit();
+
+    void updateRecentFiles();
 
     void incrementBuffer();
     void decrementBuffer();
@@ -117,7 +120,7 @@ public slots:
 
 protected:
 
-    QMenu *fileMenu, *sessionMenu, *editMenu, *languageMenu, *helpMenu;
+    QMenu *fileMenu, *recentMenu, *sessionMenu, *editMenu, *languageMenu, *helpMenu;
 };
 
 
@@ -134,6 +137,7 @@ public slots:
     void postError(const QString& string);
     void newFile();
     void openFile();
+    void openFile(const QString& filePath);
     void saveFile();
     void saveFileAs();
     bool closeFile(bool autospawn = true); // returns true if user agrees to close file

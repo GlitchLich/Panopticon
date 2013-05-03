@@ -16,6 +16,7 @@
 #include "ide/include/style/StyleGlobals.h"
 #include "ide/include/core/MainWindow.h"
 #include "ide/include/core/ide.h"
+#include "ide/include/core/Session.h"
 
 namespace panopticon
 {
@@ -173,7 +174,10 @@ MenuBar::MenuBar(QWidget *parent) :
     fileMenu = new QMenu("File");
     fileMenu->addAction("New", this, SLOT(newFile()), QKeySequence("CTRL+N"));
     fileMenu->addAction("Open", this, SLOT(openFile()), QKeySequence("CTRL+O"));
-    fileMenu->addAction("Open Recent");
+    // fileMenu->addAction("Open Recent");
+    recentMenu = new QMenu("Open recent files");
+    fileMenu->addMenu(recentMenu);
+
     fileMenu->addAction("Save", this, SLOT(saveFile()), QKeySequence("CTRL+S"));
     fileMenu->addAction("Save As...", this, SLOT(saveFileAs()), QKeySequence("SHIFT+CTRL+S"));
     fileMenu->addSeparator();
@@ -241,6 +245,22 @@ void MenuBar::closeAllFiles()
 void MenuBar::quit()
 {
     MAIN_WINDOW->quit();
+}
+
+void MenuBar::openFileFromMenu()
+{
+    QAction* action = ((QAction*) sender());
+    MAIN_WINDOW->openFile(action->text());
+}
+
+void MenuBar::updateRecentFiles()
+{
+    recentMenu->clear();
+
+    foreach(const QString& filePath, Session::recentFiles)
+    {
+        recentMenu->addAction(filePath, this, SLOT(openFileFromMenu()));
+    }
 }
 
 void MenuBar::incrementBuffer()
@@ -321,7 +341,17 @@ MainWindow::MainWindow(QWidget* parent) :
     setCentralWidget(&graphicsView);
     // setLayout(&vLayout);
     // setLayout(new QHBoxLayout());
+    menuBar.updateRecentFiles();
+
     show();
+
+    if(Session::recentFiles.size() > 0)
+    {
+        if(Session::recentFiles.back().size() > 0)
+        {
+            openFile(Session::recentFiles.back());
+        }
+    }
 }
 
 MainWindow::~MainWindow()
@@ -362,6 +392,15 @@ void MainWindow::openFile()
         newEditBuffer();
 
     focusedBuffer->open();
+    focusedBuffer->grabKeyboard();
+}
+
+void MainWindow::openFile(const QString& filePath)
+{
+    if(focusedBuffer->getFileName().length() > 0)
+        newEditBuffer();
+
+    focusedBuffer->open(filePath);
     focusedBuffer->grabKeyboard();
 }
 
@@ -516,6 +555,7 @@ void MainWindow::newEditBuffer()
     buffer->proxy = graphicsView.scene()->addWidget(buffer);
     editBuffers[bufferCount] = buffer;
     buffer->connect(buffer, SIGNAL(fileChanged(uint,QString)), &filePanel, SLOT(setFileName(uint,QString)));
+    buffer->connect(buffer, SIGNAL(fileChanged(uint,QString)), &menuBar, SLOT(updateRecentFiles()));
     filePanel.addEditBuffer(bufferCount);
     ++bufferCount;
     focusedBuffer = buffer;

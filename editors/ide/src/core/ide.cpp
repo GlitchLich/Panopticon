@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
         app.setStyleSheet(styleSheet);
     }
 
-    QSettings settings("Chad McKinney and Curtis McKinney", "Panopticon");
+    QSettings settings("Glitch Lich", "Panopticon");
     panopticon::ide::IDE_SETTINGS = &settings;
     panopticon::ide::Session::initRecentFiles();
     panopticon::ide::Style style;

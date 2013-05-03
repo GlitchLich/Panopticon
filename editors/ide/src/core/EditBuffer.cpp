@@ -144,9 +144,13 @@ void EditBuffer::keyPressEvent(QKeyEvent *e)
     QTextEdit::keyPressEvent(e);
 }
 
-void EditBuffer::open()
+void EditBuffer::open(QString path)
 {
-    filePath = QFileDialog::getOpenFileName(this, tr("Open File"), QApplication::applicationDirPath(), tr("*.optic"));
+    if(path.size() > 0)
+        filePath = path;
+    else
+        filePath = QFileDialog::getOpenFileName(this, tr("Open File"), QApplication::applicationDirPath(), tr("*.optic"));
+
     fileName = filePath.mid(filePath.lastIndexOf("/") + 1);
     loadFile();
 }
