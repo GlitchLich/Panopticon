@@ -86,15 +86,16 @@ enum Type
     UNDECLARED_VARIABLE,//10
     OPERATION_TREE,//11
     OPERATION,//12
-    ASSIGNMENT,//13
-    COMPUTE,//14
-    LOCAL_VARIABLE_INDEX,//15
-    FUNCTION_DEC,//16
-    GUARD,//17
-    FUNCTION_CALL,//18
-    FUNCTION_BODY, //19 Used to prevent further parsing by the stack, enables lazy evaluation
-    VOID, // 20, Use to prevent return on the stack
-    CODE_BLOCK //21 Denotes several expression in a row
+    UNARY_OPERATION, // 13
+    ASSIGNMENT,//14
+    COMPUTE,//15
+    LOCAL_VARIABLE_INDEX,//16
+    FUNCTION_DEC,//17
+    GUARD,//18
+    FUNCTION_CALL,//19
+    FUNCTION_BODY, //20 Used to prevent further parsing by the stack, enables lazy evaluation
+    VOID, // 21, Use to prevent return on the stack
+    CODE_BLOCK //22 Denotes several expression in a row
 };
 
 // Forward declarations
@@ -108,8 +109,8 @@ typedef std::vector<object> Array;
 typedef std::unordered_map<std::string, object> Map;
 typedef std::string String;
 typedef bool Boolean;
-typedef bool (*operator_function) (object &,const object &,const object &);
-typedef void (*stack_function) ();
+typedef bool (*operator_function) (object &, const object &, const object &);
+typedef bool (*unary_operator_function) (object &, const object &);
 
 // Data type union
 union Data
@@ -121,6 +122,7 @@ union Data
     Array* array;
     Map* map;
     operator_function operator_func;
+    unary_operator_function unary_operator_func;
 };
 
 struct object
