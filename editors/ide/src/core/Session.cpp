@@ -16,15 +16,21 @@ Session::Session()
 
 void Session::initRecentFiles()
 {
-    recentFiles = IDE_SETTINGS->value("recentFileList").toStringList();
+    QSettings settings("Glitch Lich", "Panopticon");
+    recentFiles = settings.value("recentFileList").toStringList();
 }
 
 void Session::pushRecentFile(const QString& fileName)
 {
-    recentFiles = IDE_SETTINGS->value("recentFileList").toStringList();
+    QSettings settings("Glitch Lich", "Panopticon");
+    recentFiles = settings.value("recentFileList").toStringList();
     recentFiles.removeAll(fileName);
     recentFiles.push_back(fileName);
-    IDE_SETTINGS->setValue("recentFileList", recentFiles);
+
+    if(recentFiles.size() > 10)
+        recentFiles.pop_front();
+
+    settings.setValue("recentFileList", recentFiles);
 }
 
 void Session::open()

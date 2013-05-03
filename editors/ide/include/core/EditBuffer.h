@@ -30,7 +30,7 @@ public:
     EditBuffer(unsigned int id, QWidget *parent, const QString& fileName);
 
     void keyPressEvent(QKeyEvent *e);
-    void open();
+    void open(QString path = "");
     void save();
     void saveAs();
     bool getUnsavedEdits();
