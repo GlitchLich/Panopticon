@@ -1,9 +1,33 @@
+// Works
+1 + ( 1 + 2 )
+
+// Doesn't
+( 1 + 2 ) + 1
+
+// Works
+mul x y = x * y
+mul( 2 3 ) + 1
+
+// Doesn't work
+mul(
+	2
+	3
+)
+
+// Doesn't work
+ten = 10
+ten()
+
+// Doesn't work
+1 + [ 0 1 2 3]
+
+// Passing functions
 binOp op x y = op( x y )
 mul x y = x * y
 binOp( mul 2 3 )
 div x y = x / y
 binOp( div 2 3 )
 
+// Nested Functions
 myFunc x y = x * y
-
 myFunc( myFunc( 2 3 ) 2)
