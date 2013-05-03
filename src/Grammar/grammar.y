@@ -393,8 +393,7 @@ expr(A) ::= array(B).
 
 array(A) ::= OPENBRAC maybe_empty_stmt_list(B) RBRAC. [COLLECTARRAY]
 {
-    A.type = panopticon::ARRAY;
-    A.data.array = B.data.array;
+    create_tree(A,de_tree(B));
 }
 
 maybe_empty_stmt_list(A) ::= .

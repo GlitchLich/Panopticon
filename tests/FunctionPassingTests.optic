@@ -1,9 +1,34 @@
+//Function calls in Function declarations
 binOp op x y = op( x y )
 mul x y = x * y
 binOp( mul 2 3 )
 div x y = x / y
 binOp( div 2 3 )
 
-myFunc x y = x * y
+//Arrays in Functions
+plusOne x = x + 1
+plusOne([0 1 2 3]) //Works
+plusOne(plusOne([0 1 2 3])) //Works
 
+combiner x y = [x y]
+combiner(12 13) //Doesn't Work
+
+//No argument functions
+ten = 10
+ten()
+
+//Functions calls in Function calls
+myFunc x y = x * y
 myFunc( myFunc( 2 3 ) 2)
+
+//Goes infinite, crashes. Need guards for this to work
+plusOne x = x + 1
+funcRepeater op x t = funcRepeater(op op(x) t-1)
+
+//Guard version, needs logic:
+plusOne x = x + 1
+funcRepeater op x t 
+	| t > 0 = funcRepeater(op op(x) t-1)
+	_		= op(x)
+
+myMap["monkey"] == 4

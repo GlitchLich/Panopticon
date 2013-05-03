@@ -47,9 +47,10 @@ extern bool delete_object(object& obj);
 extern bool print_object(const object& A);
 extern object convert_to_string( object& original);
 
+extern object de_tree(object& obj);
 extern bool concatenate_arrays(object &a, object b, object c);
 extern bool create_array(object &a);
-extern bool print_array(const object &A, int arrayNum=0);
+extern bool print_array(const object &A, int arrayNum=0, bool isTree=false);
 extern bool delete_array(object& a);
 extern bool unary_print_object(object &A, const object &B);
 

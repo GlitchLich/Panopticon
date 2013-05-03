@@ -76,6 +76,40 @@ object copy_object(const object& original)
     return copy;
 }
 
+object de_tree(object &obj)
+{
+    object new_object;
+    out() << "object de_tree(object &obj): obj.type: " << obj.type << std::endl;
+    if(obj.type==panopticon::OPERATION_TREE)
+    {
+        if(obj.data.array->size()==1)
+        {
+            return obj.data.array->at(0);
+        }
+        else
+        {
+            new_object.type = ARRAY;
+            new_object.data.array = new Array();
+            new_object.data.array->reserve(obj.data.array->size());
+            for(int i=0;i<obj.data.array->size();++i)
+            {
+                new_object.data.array->push_back(de_tree(obj.data.array->at(i)));
+            }
+        }
+    }
+    else if(obj.type==ARRAY||obj.type==STATEMENT_LIST)
+    {
+        new_object.type = ARRAY;
+        new_object.data.array = new Array();
+        new_object.data.array->reserve(obj.data.array->size());
+        for(int i=0;i<obj.data.array->size();++i)
+        {
+            new_object.data.array->push_back(de_tree(obj.data.array->at(i)));
+        }
+    }
+    return new_object;
+}
+
 bool delete_array(object& a)
 {
     for(int i=0;i<a.data.array->size();++i)
@@ -89,7 +123,7 @@ bool delete_array(object& a)
             break;
         case STRING:
             delete b.data.string;
-            break;        
+            break;
         case OPERATION_TREE:
         case ARRAY:
             delete_array(b);
@@ -117,13 +151,20 @@ bool delete_object(object& obj)
     }
 }
 
-bool print_array(const object &A, int arrayNum)
+bool print_array(const object &A, int arrayNum,bool isTree)
 {
     if(arrayNum!=0)
     {
         out() << " ";
     }
-    out() << "[";
+    if(isTree)
+    {
+        out() << "{";
+    }
+    else
+    {
+        out() << "[";
+    }
     for(int i=0;i<A.data.array->size();++i)
     {
         panopticon::object& B = A.data.array->at(i);
@@ -151,7 +192,14 @@ bool print_array(const object &A, int arrayNum)
             break;
         }
     }
-    out() << " ] ";
+    if(isTree)
+    {
+        out() << " }";
+    }
+    else
+    {
+        out() << " ]";
+    }
     if(arrayNum==0)
     {
         out() << std::endl;
@@ -195,7 +243,7 @@ bool print_object(const object &A)
         out() << "Local Variable Index: " << A.data.number << std::endl;
         break;
     case panopticon::OPERATION_TREE:
-        panopticon::print_array(A);
+        panopticon::print_array(A,0,true);
         break;
     case panopticon::OPERATION:
         out() << "Operator, as in plus, minus, or something else" << std::endl;
@@ -436,7 +484,8 @@ bool resolve_stack_from_parser(object& operation_tree, bool resolve_entire_stack
     {
         if(operation_tree.data.array->size() > 1)
         {
-            std::cout << "operation_tree.type == OPERATION_TREE operation_tree.size = " << operation_tree.data.array->size() << std::endl;
+            out() << "operation_tree.type == OPERATION_TREE operation_tree.size = " << operation_tree.data.array->size() << std::endl;
+            print_object(operation_tree);
             std::reverse_copy(operation_tree.data.array->begin(), operation_tree.data.array->end(), std::inserter(optic_stack, optic_stack.end()));
         }
 
@@ -455,7 +504,7 @@ bool resolve_stack_from_parser(object& operation_tree, bool resolve_entire_stack
 
 
 
-    std::cout << "About to evaluate." << std::endl;
+    out() << "About to evaluate: ";
     print_object(operation_tree);
 
     if(resolve_entire_stack)
@@ -804,6 +853,15 @@ bool plus(object& A, const object& B, const object& C)
         break;
     case panopticon::ARRAY:
         array_plus(A,B,C);
+        out() << "ARRAY_PLUS(A,B,C): A = ";
+        print_object(A);
+        out() << std::endl;
+        out() << "B = ";
+        print_object(B);
+        out() << std::endl;
+        out() << "C = ";
+        print_object(C);
+        out() << std::endl;
         break;
     }
 }

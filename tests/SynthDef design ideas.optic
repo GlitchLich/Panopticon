@@ -1,13 +1,26 @@
 //Synthfunc syntax
-*sinSynth 
-	f<440> mf<220> mf2<100.5> dur a ch g
-	= msin ~> filter(~ 1200*env) * env * a ~> fout(~) ~> out(ch ~)
+*sinSynth <f=440 mf=220 mf2=100.5 dur a ch g> =
+	msin ~> filter(~ 1200*env) * env * a ~> fout(~) ~> out(ch ~)
 	where
-		env = env([0 1 1 1] [0.1 0.1 4] (-3) g)
+		env = adr(1 0.5 0.1 0.2 -3 g)
 		mod = sin(f)*sin(0.1)
 		mod2 = saw(f)*tri(0.1)
-		f = f*mod([mf mf2])*fin()
+		f2 = f*mod([mf mf2])*fin()
 		sa = mod2([mf2 mf])
-		msin = sin(f sa) 
+		msin = sin(f2 sa) 
+
+*sinSynth <f=440 mf=220 mf2=100.5 dur a ch g> =
+	let
+		env = adr(1 0.5 0.1 0.2 -3 g)
+		mod = sin(f)*sin(0.1)
+		mod2 = saw(f)*tri(0.1)
+		f2 = f*mod([mf mf2])*fin()
+		sa = mod2([mf2 mf])
+		msin = sin(f2 sa)
+	in
+	msin ~> filter(~ 1200*env) * env * a ~> fout(~) ~> out(ch ~)
+		 
+myMap = < monkey="monkey" brains="brains" >
+
 
 	
