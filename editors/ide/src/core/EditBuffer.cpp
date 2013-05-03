@@ -8,6 +8,7 @@
 #include "ide/include/style/StyleGlobals.h"
 #include "ide/include/core/ide.h"
 #include "Grammar/parse.h"
+#include "ide/include/core/Session.h"
 
 namespace panopticon
 {
@@ -255,6 +256,7 @@ void EditBuffer::loadFile()
         file.close();
         unsavedEdits = false;
         document()->setModified(false);
+        Session::pushRecentFile(filePath);
         emit fileChanged(id, fileName);
     }
 

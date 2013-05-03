@@ -15,14 +15,13 @@ class Session
 public:
     Session();
 
+    static void initRecentFiles();
     static void pushRecentFile(const QString& fileName);
     static void open();
     static void save();
     static void saveAs();
 
-protected:
-
-    static QList<QString> recentFiles;
+    static QStringList recentFiles;
 
 };
 

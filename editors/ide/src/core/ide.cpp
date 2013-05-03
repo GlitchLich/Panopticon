@@ -1,5 +1,6 @@
 #include <QApplication>
 #include "ide/include/core/ide.h"
+#include "ide/include/core/Session.h"
 #include "ide/include/style/StyleGlobals.h"
 
 namespace panopticon
@@ -9,6 +10,7 @@ namespace ide
 {
 
 MainWindow* MAIN_WINDOW = 0; // global pointer
+QSettings* IDE_SETTINGS = 0; // global pointer
 
 void Post(const QString& string)
 {
@@ -41,6 +43,9 @@ int main(int argc, char* argv[])
         app.setStyleSheet(styleSheet);
     }
 
+    QSettings settings("Chad McKinney and Curtis McKinney", "Panopticon");
+    panopticon::ide::IDE_SETTINGS = &settings;
+    panopticon::ide::Session::initRecentFiles();
     panopticon::ide::Style style;
     panopticon::ide::style = &style;
     panopticon::ide::MainWindow mainWindow;

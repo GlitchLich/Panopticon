@@ -95,7 +95,8 @@ enum Type
     FUNCTION_CALL,//19
     FUNCTION_BODY, //20 Used to prevent further parsing by the stack, enables lazy evaluation
     VOID, // 21, Use to prevent return on the stack
-    CODE_BLOCK //22 Denotes several expression in a row
+    CODE_BLOCK, //22 Denotes several expression in a row
+    PRIMITIVE // 23
 };
 
 // Forward declarations
@@ -111,6 +112,7 @@ typedef std::string String;
 typedef bool Boolean;
 typedef bool (*operator_function) (object &, const object &, const object &);
 typedef bool (*unary_operator_function) (object &, const object &);
+typedef bool (*primitive_function) (object&, const Array& arguments);
 
 // Data type union
 union Data
