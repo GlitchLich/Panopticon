@@ -178,7 +178,7 @@ void evaluate_stack()
 
     if(global_state.type != NIL)
     {
-        out() << "globa_state end of loop" << std::endl;
+        out() << "RESULT OF THE FUCKING STACK" << std::endl;
         print_object(global_state);
     }
 }
