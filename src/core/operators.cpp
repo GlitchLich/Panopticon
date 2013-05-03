@@ -321,6 +321,38 @@ bool create_tree(object&a,const object& obj)
 
 }
 
+bool store_operations(object& a,const object& obj1,operator_function func)
+{
+    a.type = OPERATION_TREE;
+    a.data.array = new Array();
+
+    int size = 1;
+
+    if(obj1.type==OPERATION_TREE)
+    {
+        size+=obj1.data.array->size();
+    }
+    else
+    {
+        size++;
+    }
+
+    a.data.array->reserve(size);
+    object op_func;
+    op_func.type = UNARY_OPERATION;
+    op_func.data.operator_func = func;
+    // op_func.data.stack_func = func;
+    a.data.array->push_back(op_func);
+
+    if(obj1.type==OPERATION_TREE)
+    {
+        for(int i=0;i<obj1.data.array->size();++i)
+        {
+            a.data.array->push_back(obj1.data.array->at(i));
+        }
+    }
+}
+
 bool store_operations(object& a,const object& obj1,const object& obj2, operator_function func)
 {
     a.type = OPERATION_TREE;
@@ -378,9 +410,6 @@ bool store_operations(object& a,const object& obj1,const object& obj2, operator_
     {
         a.data.array->push_back(obj2);
     }
-
-    //    std::cout << a.data.array->size() << std::endl;
-    print_object(a);
 }
 
 bool object_operator_object(object& a, object& b, object& c, operator_function func)

@@ -453,14 +453,7 @@ expr(A) ::= bool(B).
 //======================
 expr(A) ::= PRINT LPAREN expr(B) RPAREN
 {
-
-    optic::object b;
-    b.type = optic::STRING;
-    optic::out() << "FUNCTION_CALL B.data.string " << *B.data.string << "arguments: " << std::endl;
-    print_object(C);
-
-    b.data.string = new optic::String(B.data.string->c_str());
-    optic::parse_operations(A,b,C,optic::call_function);
+    optic::store_operations(A,b,&optic::print_object);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
