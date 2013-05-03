@@ -5,13 +5,20 @@ binOp( mul 2 3 )
 div x y = x / y
 binOp( div 2 3 )
 
-//Arrays in Functions
+//Arrays in Function Calls
 plusOne x = x + 1
-plusOne([0 1 2 3]) //Works
-plusOne(plusOne([0 1 2 3])) //Works
+//Works
+plusOne([0 1 2 3])
+//Works
+plusOne(plusOne([0 1 2 3])) 
 
+//Arrays in Function Declarations
+arrayPlusOne x = [2 3]+x
+arrayPlusOne(1)
+
+//Doesn't Work
 combiner x y = [x y]
-combiner(12 13) //Doesn't Work
+combiner(12 13)
 
 //No argument functions
 ten = 10
