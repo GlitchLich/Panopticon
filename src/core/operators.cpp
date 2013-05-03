@@ -726,6 +726,7 @@ bool call_function(object& A, const object& B, const object& C)
         context.insert(std::make_pair(function_name, function));
 
         // iterate backwards through the argument list to put them on the stack, this way the resolve in the correct order when we collect them for mapping
+        // we use arguments.size() - 2 because we don't want to count the function name which is included in the arguments array
         for(int i = function.data.function->arguments.size() - 2; i >= 0; --i)
         {
             object arg = C.data.array->at(i);
