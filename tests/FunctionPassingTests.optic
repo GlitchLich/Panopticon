@@ -1,6 +1,8 @@
 binOp op x y = op( x y )
 mul x y = x * y
-binOp( mul x y )
+binOp( mul 2 3 )
+div x y = x / y
+binOp( div 2 3 )
 
 myFunc x y = x * y
 
