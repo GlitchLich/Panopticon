@@ -38,6 +38,18 @@ whereFunc x = x + w
 		
 )
 
+//Arrays with variables in Function declarations
+combinedPlus x y = [x y]+1
+combinedPlus(1 2)
+
+separatedPlus x = x[0]+1
+anArray = [14 15 16]
+separatedPlus(anArray)
+
+getIndex x = x[0]
+
+getIndex([2 3 4])
+
 //parentheses with operations
 pL = 10*(2+1)
 pL()
@@ -45,7 +57,7 @@ pR x y = (x+y)*10
 pR(1 1)
 
 ten = 10
-ten()
+ten
 
 twenty = 10 + 10
 twenty()
@@ -68,20 +80,27 @@ myArray[0]
 myArray[1]
 myArray[2]
 myArray[3]
+myArray[[[3 1]]]
 myArray[myArray[myArray[2]+2]+1]
 nestedarray = [23 [22 21] 20]
+nestedarray[1]
 
 metaArray = [0 1 myarray 3]
-metaArray[2]
+metaArray[0]
 metaArray[2][2]
 metaArray[2][3][0]
 
-//Functions
-myFunc x y z = x + y * z
-myFunc(5.1 4.5 3.25)
+//Array functions used for Function Calls
+myFunc x y = x + y
 myArray = [23 22 0 20]
-myFunc(2 [9 10] myArray)
-myFunc(1 2 myFunc(1 2 myFunc(1 2 myFunc(1 2 myFunc(1 2 1)))))
+myFunc(2 myArray())
+myFunc(myArray[1] myArray[2])
+
+//Functions as arguments to Function calls
+ten = 10
+doubler x = x*2
+doubler(ten())
+doubler(myArray())
 
 //Incorrect number of arguments throws an error.
 myFunc(1 2)

@@ -76,6 +76,17 @@ object copy_object(const object& original)
     return copy;
 }
 
+object create_void_tree()
+{
+    object void_tree;
+    void_tree.type = OPERATION_TREE;
+    object v;
+    v.type = VOID;
+    void_tree.data.array = new Array();
+    void_tree.data.array->push_back(v);
+    return void_tree;
+}
+
 object de_tree(object &obj)
 {
     object new_object;
@@ -2014,16 +2025,20 @@ bool index(object& A, const object& B, const object& C)
 {
     switch(B.type)
     {
-    case NUMBER:
-    case STRING:
-    case BOOL:
-        out() << "Syntax error: cannot retrieve an index from a non-array data type." << std::endl;
-        correct_parsing = false;
-        break;
     case ARRAY:
         switch(C.type)
         {
         case NUMBER:
+            if(C.data.number<B.data.array->size())
+            {
+                A = copy_object(B.data.array->at(C.data.number));
+            }
+            else
+            {
+                out() << "Error: Index out of range." << std::endl;
+                correct_parsing = false;
+            }
+            break;
         case STRING:
             out() << "Syntax error: A string cannot be an array index." << std::endl;
             correct_parsing = false;
@@ -2033,26 +2048,31 @@ bool index(object& A, const object& B, const object& C)
             correct_parsing = false;
             break;
         case ARRAY:
-            if(C.data.array->at(0).type==NUMBER)
+            if(C.data.array->size() > 0)
             {
-                if(C.data.array->at(0).data.number<B.data.array->size())
-                {
-                    A = copy_object(B.data.array->at(C.data.array->at(0).data.number));
-                }
-                else
-                {
-                    out() << "Error: Index out of range." << std::endl;
-                    correct_parsing = false;
-                }
-                break;
+                index(A,B,C.data.array->at(0));
             }
             else
             {
-                out() << "Error Indexing Array." << std::endl;
+                out() << "Error: Attempting to index with an array of size zero." << std::endl;
                 correct_parsing = false;
             }
             break;
         }
+        break;
+    case STRING:
+        out() << "Evaluating a string as a Function call for an index lookup." << std::endl;
+        object func_object;
+        call_function(func_object,B,create_void_tree());
+//        out() << "Function produced: ";
+//        print_object(func_object);
+        index(A,func_object,C);
+        break;
+    default:
+        out() << "Syntax error: cannot retrieve an index from a non-array data type." << std::endl;
+        out() << "Object with index called on it: ";
+        print_object(B);
+        correct_parsing = false;
         break;
     }
 }
