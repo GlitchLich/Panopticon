@@ -1,7 +1,7 @@
-// Works
+// Doesn't work, should be 4
 1 + ( 1 + 2 )
 
-// Doesn't
+// Doesn't work, should be 4
 ( 1 + 2 ) + 1
 
 // Works
