@@ -719,17 +719,21 @@ bool call_function(object& A, const object& B, const object& C)
         std::string function_name = *B.data.string;
         std::cout << "Function name: " << function_name << std::endl;
         std::cout << "Function type: " << function.type << std::endl;
+        std::cout << "Function number of arguments: " << function.data.function->arguments.size() << std::endl;
         out() << "function.type: " << function.type << std::endl;
 
         Map context;
         context.insert(std::make_pair(function_name, function));
 
-        for(int i = 1; i < function.data.function->arguments.size(); ++i)
+        // iterate backwards through the argument list to put them on the stack, this way the resolve in the correct order when we collect them for mapping
+        // we use arguments.size() - 2 because we don't want to count the function name which is included in the arguments array
+        for(int i = function.data.function->arguments.size() - 2; i >= 0; --i)
         {
-            object arg = C.data.array->at(i - 1);
+            object arg = C.data.array->at(i);
             optic_stack.push_back(arg);
         }
 
+        // Collect the the results and map them to the local scope
         for(int i = 1; i < function.data.function->num_arguments && optic_stack.size() > 0; ++i)
         {
             evaluate_top();
