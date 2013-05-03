@@ -12,12 +12,76 @@ namespace panopticon
 std::deque<object> optic_stack;
 object global_state;
 
-void evaluate_binary_operator(const object& operator_object);
+void evaluate_top();
 
 void clear_stack()
 {
     optic_stack.clear();
     global_state.type = NIL;
+}
+
+void evaluate_binary_operator(const object& operator_object)
+{
+    object result, arg1, arg2;
+    bool eval = true;
+
+    if(optic_stack.size())
+    {
+        evaluate_top();
+        arg1 = optic_stack.back();
+        optic_stack.pop_back();
+    }
+
+    else
+    {
+        eval = false;
+    }
+
+    if(optic_stack.size())
+    {
+        evaluate_top();
+        arg2 = optic_stack.back();
+        optic_stack.pop_back();
+    }
+
+    else
+    {
+        eval = false;
+    }
+
+    if(eval)
+    {
+        operator_object.data.operator_func(result, arg1, arg2);
+        optic_stack.push_back(result);
+    }
+
+    else
+    {
+        out() << "Missing arguments for binary operator" << std::endl;
+        correct_parsing = false;
+    }
+}
+
+
+void evaluate_unary_operator(const object& operator_object)
+{
+    object result, arg;
+
+    if(optic_stack.size())
+    {
+        evaluate_top();
+        arg = optic_stack.back();
+        optic_stack.pop_back();
+
+        operator_object.data.unary_operator_func(result, arg);
+        optic_stack.push_back(result);
+    }
+
+    else
+    {
+        out() << "Missing argument for unary operator" << std::endl;
+        correct_parsing = false;
+    }
 }
 
 void evaluate_function_dec()
@@ -54,6 +118,45 @@ void evaluate_function_call()
     }
 }
 
+void evaluate_variable(std::string* variable_name)
+{
+    std::cout << "EVALUATE VARIABLE" << std::endl;
+    object result;
+
+    if(get_variable(variable_name, &result) == OK)
+    {
+        std::cout << "VARIABLE " << variable_name << " FOUND FOUND FOUND FOUND " << std::endl;
+        optic_stack.push_back(result);
+    }
+
+    else
+    {
+        out() << "Variable " << variable_name << " not found." << std::endl;
+        correct_parsing = false;
+        clear_stack();
+    }
+}
+
+void evaluate_assignment()
+{
+    object result;
+    std::cout << "EVALUATE ASSIGNMENT" << std::endl;
+    evaluate_top();
+
+    if(set_variable(result.data.string, optic_stack.back()) == OK)
+    {
+        std::cout << "VARIABLE " << result.data.string << " bound." << std::endl;
+        optic_stack.pop_back();
+    }
+
+    else
+    {
+        out() << "Unable to bind variable " << result.data.string << std::endl;
+        correct_parsing = false;
+        clear_stack();
+    }
+}
+
 void evaluate_top()
 {
     object obj = optic_stack.back();
@@ -66,6 +169,10 @@ void evaluate_top()
         evaluate_binary_operator(obj);
         break;
 
+    case UNARY_OPERATION:
+        evaluate_unary_operator(obj);
+        break;
+
     case OPERATION_TREE:
         std::cout << "EVALUATE OPERATION_TREE" << std::endl;
         resolve_stack_from_parser(obj, false);
@@ -73,41 +180,11 @@ void evaluate_top()
 
     case VARIABLE:
     case UNDECLARED_VARIABLE:
-        std::cout << "EVALUATE VARIABLE" << std::endl;
-        object result;
-
-        if(get_variable(obj.data.string, &result) == OK)
-        {
-            std::cout << "VARIABLE FOUND FOUND FOUND FOUND " << std::endl;
-            optic_stack.push_back(result);
-        }
-
-        else
-        {
-            out() << "Variable " << result.data.string << " not found." << std::endl;
-            correct_parsing = false;
-            clear_stack();
-        }
-
+        evaluate_variable(obj.data.string);
         break;
 
     case ASSIGNMENT:
-        std::cout << "EVALUATE ASSIGNMENT" << std::endl;
-        evaluate_top();
-
-        if(set_variable(result.data.string, optic_stack.back()) == OK)
-        {
-            std::cout << "VARIABLE " << result.data.string << " bound." << std::endl;
-            optic_stack.pop_back();
-        }
-
-        else
-        {
-            out() << "Unable to bind variable " << result.data.string << std::endl;
-            correct_parsing = false;
-            clear_stack();
-        }
-
+        evaluate_assignment();
         break;
 
     case FUNCTION_DEC:
@@ -125,8 +202,7 @@ void evaluate_top()
         break;
 
     case FUNCTION:
-        std::cout << "EVALUATE FUNCTION" << std::endl;
-        std::cout << "FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION FUNCTION" << std::endl;
+        std::cout << "EVALUATE FUNCTION ON THE STACK. (In reality nothing much happens, just returned as an object back to the top)" << std::endl;
     default:
         optic_stack.push_back(obj);
         break;
@@ -134,28 +210,6 @@ void evaluate_top()
 
     std::cout << "evaluate_top() obj.type: " << obj.type << std::endl;
     print_object(obj);
-}
-
-void evaluate_binary_operator(const object& operator_object)
-{
-    object result, arg1, arg2;
-
-    if(optic_stack.size())
-    {
-        evaluate_top();
-        arg1 = optic_stack.back();
-        optic_stack.pop_back();
-    }
-
-    if(optic_stack.size())
-    {
-        evaluate_top();
-        arg2 = optic_stack.back();
-        optic_stack.pop_back();
-    }
-
-    operator_object.data.operator_func(result, arg1, arg2);
-    optic_stack.push_back(result);
 }
 
 void evaluate_stack()
@@ -178,7 +232,7 @@ void evaluate_stack()
 
     if(global_state.type != NIL)
     {
-        out() << "globa_state end of loop" << std::endl;
+        out() << "RESULT OF THE FUCKING STACK: ";
         print_object(global_state);
     }
 }

@@ -162,6 +162,9 @@ bool print_object(const object &A)
 {
     switch(A.type)
     {
+    case panopticon::FUNCTION:
+        // -1 arguments because it counts itself as an argument internally
+        out() << "Function with " << (A.data.function->num_arguments - 1) << " arguments and " << A.data.function->body.data.array->size() << " body objects" << std::endl;
     case panopticon::NUMBER:
         out() << A.data.number << std::endl;
         break;
@@ -182,7 +185,7 @@ bool print_object(const object &A)
         panopticon::print_array(A);
         break;
     case panopticon::VARIABLE:
-        std::cout << "print_object: VARIABLE"<< std::endl;
+        out() << "print_object: VARIABLE"<< std::endl;
         out() << *A.data.string << " = ";
         break;
     case panopticon::UNDECLARED_VARIABLE:
@@ -397,11 +400,13 @@ bool resolve_stack_from_parser(object& operation_tree, bool resolve_entire_stack
             std::cout << "operation_tree.type == OPERATION_TREE operation_tree.size = " << operation_tree.data.array->size() << std::endl;
             std::reverse_copy(operation_tree.data.array->begin(), operation_tree.data.array->end(), std::inserter(optic_stack, optic_stack.end()));
         }
+
         else if(operation_tree.data.array->size() == 1)
         {
             optic_stack.push_back(operation_tree.data.array->at(0));
             std::cout << "test" << std::endl;
         }
+
         else
         {
             out() << "Error: No operations to put on the stack." << std::endl;
@@ -683,27 +688,6 @@ bool call_function(object& A, const object& B, const object& C)
         for(int i = 1; i < function.data.function->arguments.size(); ++i)
         {
             object arg = C.data.array->at(i - 1);
-            /*
-            bool arg_found;
-
-            if(arg.type == VARIABLE)
-            {
-                if(get_variable(arg.data.string, &arg) != OK)
-                    arg_found = false;
-            }
-
-            else
-            {
-                arg_found = false;
-            }
-
-            if(!arg_found)
-            {
-                std::cout << "Unable to find value for variable " << arg.data.string->c_str() << " in function call." << std::endl;
-                out() << "Unable to find value for variable " << arg.data.string->c_str() << " in function call." << std::endl;
-                correct_parsing = false;
-            }*/
-
             optic_stack.push_back(arg);
         }
 
@@ -1988,7 +1972,14 @@ bool assign_variable(object& A, const object& B, const object& C)
         std::cout << "B.data.string: " << B.data.array->at(0).data.string->c_str() << std::endl;
         // A.type = panopticon::VARIABLE;
         //A.data.string = new String(*B.data.string);
-        if(set_variable(B.data.array->at(0).data.string, A) != OK)
+        if(set_variable(B.data.array->at(0).data.string, A) == OK)
+        {
+            out() << "FUNCTION ASSIGNMENT RIGHT NOW: ";
+            out() << "Bound variable_name " << B.data.array->at(0).data.string->c_str() << " to: ";
+            print_object(A);
+        }
+
+        else
         {
             out() << "Error. Unable to bind variable " << B.data.array->at(0).data.string << std::endl;
         }
@@ -1999,9 +1990,16 @@ bool assign_variable(object& A, const object& B, const object& C)
     else if(B.type == STRING)
     {
         std::cout << "ASSGN_VARIABLE: B.type == STRING";
-        if(set_variable(B.data.string, A) != OK)
+        if(set_variable(B.data.string, A) == OK)
+        {
+            out() << "Bound variable_name " << B.data.string->c_str() << " to: ";
+            print_object(A);
+        }
+
+        else
         {
             out() << "Error. Unable to bind variable " << B.data.string << std::endl;
+            correct_parsing = false;
         }
     }
 
