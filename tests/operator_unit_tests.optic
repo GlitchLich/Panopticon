@@ -65,8 +65,8 @@ metaArray[2][2]
 metaArray[2][3][0]
 
 //Functions
-myFunc x y z = x + y * z << x
-myFunc(2 2 3)
+myFunc x y z = x + y * z
+myFunc(5.1 4.5 3.25)
 myArray = [23 22 0 20]
 myFunc(2 [9 10] myArray)
 myFunc(1 2 myFunc(1 2 myFunc(1 2 myFunc(1 2 myFunc(1 2 1)))))

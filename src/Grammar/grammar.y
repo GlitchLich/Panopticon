@@ -205,12 +205,12 @@ expr(A) ::= NAME(B).
     }
 }
 
-expr(A) ::= function_call(B).
+/*expr(A) ::= function_call(B).
 {
     A = B;
-}
+}*/
 
-function_call(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN.
+expr(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN.
 {
     if(C.type==optic::STATEMENT_LIST)
     {
@@ -238,14 +238,14 @@ function_call(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN.
     }
 }
 
-function_call(A) ::= NAME(B) LPAREN RPAREN.
+expr(A) ::= NAME(B) LPAREN RPAREN.
 {
     optic::object C;
     C.type = optic::OPERATION_TREE;
     C.data.array = new optic::Array();
     optic::object b;
     b.type = optic::STRING;
-    b.data.string = new optic::String(*B.data.string);
+    b.data.string = new optic::String(B.data.string->c_str());
     optic::parse_operations(A,b,C,optic::call_function);
     if(!panopticon::correct_parsing)
     {
@@ -451,8 +451,15 @@ expr(A) ::= bool(B).
 //======================
 //BASICS
 //======================
-
-
+expr(A) ::= PRINT LPAREN expr(B) RPAREN.
+{
+    optic::store_operations(A,B,&optic::unary_print_object);
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
 
 num(A) ::= NUM(B).
 {

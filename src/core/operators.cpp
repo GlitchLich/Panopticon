@@ -83,13 +83,14 @@ bool delete_array(object& a)
         panopticon::object& b = a.data.array->at(i);
         switch(b.type)
         {
+        case OPERATION:
+        case BOOL:
         case NUMBER:
             break;
         case STRING:
             delete b.data.string;
-            break;
-        case BOOL:
-            break;
+            break;        
+        case OPERATION_TREE:
         case ARRAY:
             delete_array(b);
             break;
@@ -102,12 +103,14 @@ bool delete_object(object& obj)
 {
     switch(obj.type)
     {
+    case OPERATION:
     case optic::NUMBER:
     case optic::BOOL:
         break;
     case optic::STRING:
         delete obj.data.string;
         break;
+    case OPERATION_TREE:
     case optic::ARRAY:
         panopticon::delete_array(obj);
         break;
@@ -142,6 +145,7 @@ bool print_array(const object &A, int arrayNum)
                 out() << " false";
             }
             break;
+        case OPERATION_TREE:
         case ARRAY:
             print_array(B,arrayNum+1);
             break;
@@ -183,30 +187,27 @@ bool print_object(const object &A)
     case panopticon::VARIABLE:
         out() << "print_object: VARIABLE"<< std::endl;
         out() << *A.data.string << " = ";
-//        print_object(A.scope->data.map->at(*A.data.string));
         break;
     case panopticon::UNDECLARED_VARIABLE:
         out() << "Undeclared Variable: " << *A.data.string << std::endl;
-//        correct_parsing = false;
         break;
     case panopticon::LOCAL_VARIABLE_INDEX:
         out() << "Local Variable Index: " << A.data.number << std::endl;
         break;
     case panopticon::OPERATION_TREE:
-        for(int i=0;i<A.data.array->size();++i)
-        {
-//            if(A.data.array->at(i).type==UNDECLARED_VARIABLE||A.data.array->at(i).type==OPERATION_TREE)
-//            {
-                print_object(A.data.array->at(i));
-//            }
-        }
-//        correct_parsing = false;
+        panopticon::print_array(A);
         break;
     case panopticon::OPERATION:
-        out() << "Operator" << std::endl;
-        //        correct_parsing = false;
+        out() << "Operator, as in plus, minus, or something else" << std::endl;
         break;
     }
+}
+
+bool unary_print_object(object &A, const object &B)
+{
+    A = copy_object(B);
+    out() << "PRINTING FROM LANGUAGE: ";
+    print_object(B);
 }
 
 bool concatenate_arrays(object &a,object b, object c)
@@ -258,119 +259,6 @@ bool create_array(object &a)
 {
     a.data.array = new std::vector<panopticon::object>();
 }
-
-//STRING_STRING
-
-
-bool string_plusplus_string(object &a, object b,  object c)
-{
-    a.data.string = new String(*b.data.string);
-    try
-    {
-        a.data.string->append(*c.data.string);
-    }
-    catch(std::exception &e)
-    {
-        delete b.data.string;
-        delete c.data.string;
-        return false;
-    }
-    delete b.data.string;
-    delete c.data.string;
-    return true;
-}
-
-//STRING_NUM
-bool string_plusplus_num(object &a, object b,  object c)
-{
-    a.type = panopticon::STRING;
-    a.data.string = new String(*b.data.string);
-    std::stringstream ss;
-    ss << c.data.number;
-    try
-    {
-        a.data.string->append(ss.str());
-    }
-    catch(std::exception &e)
-    {
-        out() << "Error String ++ Number: " << e.what() << std::endl;
-        delete b.data.string;
-        return false;
-    }
-    delete b.data.string;
-    return true;
-}
-
-bool num_plusplus_string(object &a, object b,  object c)
-{
-    std::stringstream ss;
-    ss << b.data.number;
-    a.data.string = new String(ss.str());
-    try
-    {
-        a.data.string->append(*c.data.string);
-    }
-    catch(std::exception &e)
-    {
-        out() << "Error Number ++ String: " << e.what() << std::endl;
-        delete c.data.string;
-        return false;
-    }
-    delete c.data.string;
-    return true;
-}
-
-bool string_plusplus_bool(object &a, object b,  object c)
-{
-    a.data.string = new String(*b.data.string);
-    try
-    {
-        if(c.data.boolean)
-        {
-            a.data.string->append("true");
-        }
-        else
-        {
-            a.data.string->append("false");
-        }
-    }
-    catch(std::exception &e)
-    {
-        out() << "Error String ++ bool: " << e.what() << std::endl;
-        delete b.data.string;
-        return false;
-    }
-    delete b.data.string;
-    return true;
-}
-
-
-
-bool bool_plusplus_string(object &a, object b,  object c)
-{
-    try
-    {
-        if(b.data.boolean)
-        {
-            a.data.string = new String("true");
-        }
-        else
-        {
-            a.data.string = new String("false");
-        }
-
-        a.data.string->append(*c.data.string);
-    }
-    catch(std::exception &e)
-    {
-        out() << "Error Boolean ++ String: " << e.what() << std::endl;
-        delete c.data.string;
-        return false;
-    }
-    delete c.data.string;
-    return true;
-}
-
 
 bool object_operator_array(object& a,const object& obj,const object& array, operator_function func)
 {
@@ -440,12 +328,47 @@ bool create_tree(object&a,const object& obj)
 
 }
 
+bool store_operations(object& a,const object& obj1,unary_operator_function func)
+{
+    a.type = OPERATION_TREE;
+    a.data.array = new Array();
+
+    int size = 1;
+
+    if(obj1.type==OPERATION_TREE)
+    {
+        size+=obj1.data.array->size();
+    }
+    else
+    {
+        size++;
+    }
+
+    a.data.array->reserve(size);
+    object op_func;
+    op_func.type = UNARY_OPERATION;
+    op_func.data.unary_operator_func = func;
+    a.data.array->push_back(op_func);
+
+    if(obj1.type==OPERATION_TREE)
+    {
+        for(int i=0;i<obj1.data.array->size();++i)
+        {
+            a.data.array->push_back(obj1.data.array->at(i));
+        }
+    }
+    else
+    {
+        a.data.array->push_back(obj1);
+    }
+}
+
 bool store_operations(object& a,const object& obj1,const object& obj2, operator_function func)
 {
     a.type = OPERATION_TREE;
     a.data.array = new Array();
-//    print_object(obj1);
-//    print_object(obj2);
+    //    print_object(obj1);
+    //    print_object(obj2);
 
     int size = 1;
 
@@ -497,48 +420,13 @@ bool store_operations(object& a,const object& obj1,const object& obj2, operator_
     {
         a.data.array->push_back(obj2);
     }
-
-//    std::cout << a.data.array->size() << std::endl;
-    print_object(a);
 }
 
 bool object_operator_object(object& a, object& b, object& c, operator_function func)
 {
-    // func(a,b,c);
-    /*
-    optic_stack.push_back(b);
-    optic_stack.push_back(c);
-    func();
-    a = global_state;*/
     func(a, b, c);
     delete_object(b);
     delete_object(c);
-}
-
-bool object_operator_object2(object& a, object& b, object& c, operator_function func)
-{
-    if(
-            b.type==UNDECLARED_VARIABLE||
-            c.type==UNDECLARED_VARIABLE||
-            b.type==OPERATION_TREE||
-            c.type==OPERATION_TREE
-            )
-    {
-        if(a.type!=ASSIGNMENT)
-        {
-            store_operations(a,b,c,func);
-        }
-        else
-        {
-            create_function(a,b,c);
-        }
-    }
-    else
-    {
-        func(a,b,c);
-        delete_object(b);
-        delete_object(c);
-    }
 }
 
 bool resolve_stack_from_parser(object& operation_tree, bool resolve_entire_stack)
@@ -578,7 +466,7 @@ bool resolve_stack_from_parser(object& operation_tree, bool resolve_entire_stack
 
 bool parse_operations(object& a, const object& b, const object& c, operator_function func)
 {
-        store_operations(a, b, c, func);
+    store_operations(a, b, c, func);
 }
 
 
@@ -721,7 +609,7 @@ bool create_function(object &A, const object &B, const object &C)
     */
     // else
     // {
-        /*
+    /*
         if(B.scope->data.map->find(function_name)!=B.scope->data.map->end())
         {
             //TO DO, SHOULD THIS DELETE THE FUNCTION?
@@ -730,9 +618,9 @@ bool create_function(object &A, const object &B, const object &C)
         }*/
 
 
-        // A.scope = B.scope;
-        // std::pair<std::string, object> func(function_name,A);
-        // B.scope->data.map->insert(func);
+    // A.scope = B.scope;
+    // std::pair<std::string, object> func(function_name,A);
+    // B.scope->data.map->insert(func);
     // }
 }
 
@@ -890,23 +778,10 @@ bool call_function(const object &function, const String& name)
         optic_stack.pop_back();
     }
 
+
     push_scope(&context);
     resolve_stack_from_parser(function.data.function->body);
     pop_scope();
-}
-
-
-
-bool recursive_apply(object& a,const object& obj1,const object& obj2, operator_function func)
-{
-    if(obj1.type==ARRAY)
-    {
-        array_operator_object(a,obj1,obj2,func);
-    }
-    else
-    {
-        object_operator_array(a,obj1,obj2,func);
-    }
 }
 
 //======================================================================================
@@ -1026,7 +901,7 @@ bool multiply(object& A, const object& B, const object& C)
             correct_parsing = false;
             break;
         case ARRAY:
-            recursive_apply(A,B,C,&multiply);
+            object_operator_array(A,B,C,&multiply);
             break;
         }
         break;
@@ -2197,6 +2072,11 @@ bool retrieve_variable(object &A, object &B)
         A = B;
         A.type = UNDECLARED_VARIABLE;
     }
+}
+
+bool print(object& A, const object& B)
+{
+
 }
 
 /*
