@@ -65,16 +65,11 @@ metaArray[2][2]
 metaArray[2][3][0]
 
 //Functions
-myFuncz x y z = x + y * z << x
-myFuncz(2 2 3)
-myArray = [23 22 0 20]
-myFuncz(2 [9 10] myArray)
-myFuncz(1 2 myFunc(1 2 myFunc(1 2 myFunc(1 2 myFunc(1 2 1)))))
-
 myFunc x y z = x + y * z << x
-myFunc 2 2 3
-myFunc 2 [9 10] myarray
-myFunc 1 2 myFunc 1 2 myFunc 1 2 myFunc 1 2 myFunc 1 2 1
+myFunc(2 2 3)
+myArray = [23 22 0 20]
+myFunc(2 [9 10] myArray)
+myFunc(1 2 myFunc(1 2 myFunc(1 2 myFunc(1 2 myFunc(1 2 1)))))
 
 //Incorrect number of arguments throws an error.
 myFunc(1 2)

@@ -55,7 +55,7 @@ double string_to_double( const std::string& s )
 
 bool insure_ready_for_assignment(panopticon::object& B, panopticon::object& C)
 {
-    std::cout << "insure_ready_for_assignment: C.type: " << C.type << std::endl;
+//    std::cout << "insure_ready_for_assignment: C.type: " << C.type << std::endl;
     if(
         C.type == panopticon::OPERATION ||
         C.type == panopticon::NUMBER ||
