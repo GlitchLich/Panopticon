@@ -190,8 +190,8 @@ MenuBar::MenuBar(QWidget *parent) :
 
 
     editMenu = new QMenu("Edit");
-    editMenu->addAction("Previous Buffer", this, SLOT(decrementBuffer()), QKeySequence("SHIFT+LEFT"));
-    editMenu->addAction("Next Buffer", this, SLOT(incrementBuffer()), QKeySequence("SHIFT+RIGHT"));
+    editMenu->addAction("Previous Buffer", this, SLOT(decrementBuffer()), QKeySequence("ALT+LEFT"));
+    editMenu->addAction("Next Buffer", this, SLOT(incrementBuffer()), QKeySequence("ALT+RIGHT"));
 
     languageMenu = new QMenu("Language");
     languageMenu->addAction("Evaluate code", this, SLOT(evaluateCode()), QKeySequence("SHIFT+RETURN"));
