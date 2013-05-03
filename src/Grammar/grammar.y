@@ -106,7 +106,7 @@ start ::= spec(A).
     }
 }
 
-spec(A) ::= closed_block(B).
+/*spec(A) ::= closed_block(B).
 {
     A = B;
     optic::out() << "CODE BLOCK!" << std::endl;
@@ -125,7 +125,7 @@ open_block(A) ::= open_block NEWLINE spec.
 closed_block(A) ::= open_block CLOSING_RPAREN.
 {
     A.type = optic::CODE_BLOCK;
-}
+}*/
 
 spec(A) ::= assignment(B).
 {
@@ -241,8 +241,11 @@ expr(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN.
 expr(A) ::= NAME(B) LPAREN RPAREN.
 {
     optic::object C;
-    C.type = optic::OPERATION_TREE;
+    C.type = optic::ARRAY;
     C.data.array = new optic::Array();
+/*    optic::object v;*/
+/*    v.type = optic::VOID;*/
+/*    C.data.array->push_back(v);*/
     optic::object b;
     b.type = optic::STRING;
     b.data.string = new optic::String(B.data.string->c_str());
@@ -458,6 +461,11 @@ expr(A) ::= PRINT LPAREN expr(B) RPAREN.
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
         ParseARG_STORE;
     }
+}
+
+expr(A) ::= LPAREN expr(B) RPAREN.
+{
+    A = B;
 }
 
 num(A) ::= NUM(B).

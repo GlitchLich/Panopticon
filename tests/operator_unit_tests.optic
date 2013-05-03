@@ -38,10 +38,22 @@ whereFunc x = x + w
 		
 )
 
-//variables
+//parentheses with operations
+pL = 10*(2+1)
+pL()
+pR x y = (x+y)*10
+pR(1 1)
+
+ten = 10
+ten()
+
+twenty = 10 + 10
+twenty()
+
+//variables, crashes needs lexical scoping
 num = 5
-otherNum = num*33.3
-num * otherNum
+otherNum = num()*33.3
+num() * otherNum()
 
 mybool = true
 myfalsebool = !mybool
