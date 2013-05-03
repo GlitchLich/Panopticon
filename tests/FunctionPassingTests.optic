@@ -1,8 +1,8 @@
-// Doesn't work, should be 4
+// Works
 1 + ( 1 + 2 )
 
-// Doesn't work, should be 4
-( 1 + 2 ) + 1
+// Works
+( 1 + 2 ) + 2.5
 
 // Works
 mul x y = x * y
@@ -14,13 +14,21 @@ mul(
 	3
 )
 
-// Doesn't work
+// Works
 ten = 10
 ten()
+ten() + 1
+1 + ten()
+ten() * ten()
+mul( ten() ten() )
+
+// Doesn't work
+1 + [ ten() ten() ]
+
 
 // Works
-1 + [ 0 1 2 3]
-[ 0 1 2 3 ] + 1
+1 + [ 0 1 2 3] + ten()
+ten() + [ 0 1 2 3 ] + 1
 
 // Passing functions
 
@@ -56,10 +64,12 @@ printer( 2 3 )
 plusOne x = x + 1
 funcRepeater op x t = funcRepeater(op op(x) t-1)
 
+// maps
+myMap< monkey = 4 >
+myMap["monkey"] == 4
+
 //Guard version, needs logic:
 plusOne x = x + 1
 funcRepeater op x t 
 	| t > 0 = funcRepeater(op op(x) t-1)
 	_		= op(x)
-
-myMap["monkey"] == 4

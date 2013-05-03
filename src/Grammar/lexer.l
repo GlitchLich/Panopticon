@@ -28,8 +28,8 @@ false     { yylval.bval = 0;return BOOLEAN;}
 \n+[\t " "]*+"where"         { return WHERE;}
 "where"         { return WHERE;}
 \n+[\t " "]+[\t " "]*          { return N_TAB;}
-"("+\n           {  return OPENING_LPAREN; }
-\n+")"           {  return CLOSING_RPAREN; }
+    /*"("+\n           {  return OPENING_LPAREN; }
+    \n+")"           {  return CLOSING_RPAREN; }*/
  "print"    {return PRINT;}
 [ \t]   { col += (int) strlen(yytext); }               /* ignore but count white space */
 [A-Za-z][A-Za-z0-9]* {
