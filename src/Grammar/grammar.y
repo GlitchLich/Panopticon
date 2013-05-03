@@ -205,12 +205,12 @@ expr(A) ::= NAME(B).
     }
 }
 
-expr(A) ::= function_call(B).
+/*expr(A) ::= function_call(B).
 {
     A = B;
-}
+}*/
 
-function_call(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN.
+expr(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN.
 {
     if(C.type==optic::STATEMENT_LIST)
     {
@@ -238,14 +238,14 @@ function_call(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN.
     }
 }
 
-function_call(A) ::= NAME(B) LPAREN RPAREN.
+expr(A) ::= NAME(B) LPAREN RPAREN.
 {
     optic::object C;
     C.type = optic::OPERATION_TREE;
     C.data.array = new optic::Array();
     optic::object b;
     b.type = optic::STRING;
-    b.data.string = new optic::String(*B.data.string);
+    b.data.string = new optic::String(B.data.string->c_str());
     optic::parse_operations(A,b,C,optic::call_function);
     if(!panopticon::correct_parsing)
     {
@@ -451,8 +451,22 @@ expr(A) ::= bool(B).
 //======================
 //BASICS
 //======================
+expr(A) ::= PRINT LPAREN expr(B) RPAREN
+{
 
+    optic::object b;
+    b.type = optic::STRING;
+    optic::out() << "FUNCTION_CALL B.data.string " << *B.data.string << "arguments: " << std::endl;
+    print_object(C);
 
+    b.data.string = new optic::String(B.data.string->c_str());
+    optic::parse_operations(A,b,C,optic::call_function);
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
 
 num(A) ::= NUM(B).
 {

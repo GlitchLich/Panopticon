@@ -5,3 +5,17 @@
 		env = env([0 1 1 1] [0.1 0.1 4] -3 g)
 		mod f = sin(f)*sin(0.1)
 		mod2 f = saw(f)*tri(0.1)	
+
+//parallel streams?
+∿> mul( 2 ∿ 3 ) ∿> Filter( ∿ 20000 0.3 ) ∿> out( ∿ )
+||							
+∿> mul( 5 ∿ 4 ) ∿> 		||^
+
+*sinSynth f mf mf2 dur a ch g = 
+					mod2([mf2 mf])∿v
+	mod([mf mf2]) ∿> sin(f*∿*∿   ∿) * env * a ∿> out(ch ∿)
+							   ^				  <|
+	where
+		env = env([0 1 1 1] [0.1 0.1 4] -3 g)
+		mod f = sin(f)*sin(0.1)
+		mod2 f = saw(f)*tri(0.1)	
