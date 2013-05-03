@@ -21,6 +21,24 @@ ten() + 1
 1 + ten()
 ten() * ten()
 mul( ten() ten() )
+twenty = ten() * 2
+twenty()
+
+// WORKS
+thirty = three() * 10
+three = 3
+thirty()
+
+// Lazy evaluation
+lazy op = op( anon() )
+double x = x * 2
+lazier anon = lazy( double )
+hundred = 100
+fiveHundred = hundred() * 5
+fiveThousand = fiveHundred () * 10
+lazier( hundred )
+lazier( fiveHundred )
+lazier( fiveThousand )
 
 // Doesn't work
 1 + [ ten() ten() ]

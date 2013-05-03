@@ -8,6 +8,7 @@ namespace panopticon
 {
 
 heap_t global_scope;
+heap_t::iterator dynamic_scope_pointer;
 Map initial_scope;
 Map::iterator scope_pointer;
 Map* current_scope;
@@ -17,6 +18,7 @@ void init_heap()
     global_scope.push_back(&initial_scope);
     current_scope = &initial_scope;
     scope_pointer = current_scope->end();
+    dynamic_scope_pointer = global_scope.begin();
 }
 
 void push_scope(Map* scope)
@@ -24,10 +26,13 @@ void push_scope(Map* scope)
     global_scope.push_back(scope);
     current_scope = scope;
     scope_pointer = current_scope->begin();
+    ++dynamic_scope_pointer;
     std::cout << "heap: push_scope" << std::endl;
 }
+
 void pop_scope()
 {
+    --dynamic_scope_pointer;
     global_scope.pop_back();
     current_scope = global_scope.back();
     scope_pointer = current_scope->begin();
@@ -37,7 +42,33 @@ void pop_scope()
 RESULT get_variable(std::string* variable_name, object* result)
 {
     std::cout << "GET VARIABLE NAME: " << variable_name->c_str() << std::endl;
+
+    heap_t::iterator dynamic_scope = dynamic_scope_pointer;
+
+    // Reverse  backwards through each scope
+    while(dynamic_scope >= global_scope.begin())
+    {
+        // Check to see if that scope contains the variable we want
+        scope_pointer = (*dynamic_scope)->find(*variable_name);
+
+        // If it does assign the results and return OK
+        if(scope_pointer != (*dynamic_scope)->end())
+        {
+            *result = scope_pointer->second;
+            std::cout << "GET VARIABLE TYPE: " << result->type << std::endl;
+            return OK;
+        }
+
+        --dynamic_scope;
+    }
+
+    // If we get to the end we never found it. Return = NULL, return VARIABLE_NOT_FOUND
+    result = 0;
+    return VARIABLE_NOT_FOUND;
+
+    /*
     scope_pointer = current_scope->find(*variable_name);
+
     if(scope_pointer == current_scope->end())
     {
         result = 0;
@@ -49,7 +80,7 @@ RESULT get_variable(std::string* variable_name, object* result)
         *result = scope_pointer->second;
         std::cout << "GET VARIABLE TYPE: " << result->type << std::endl;
         return OK;
-    }
+    }*/
 }
 
 RESULT set_variable(std::string* variable_name, const object& value)
@@ -69,4 +100,4 @@ RESULT set_variable(std::string* variable_name, const object& value)
     }
 }
 
-}
+} // panopticon namespace
