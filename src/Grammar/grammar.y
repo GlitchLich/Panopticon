@@ -214,6 +214,7 @@ expr(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN.
 {
     if(C.type==optic::STATEMENT_LIST)
     {
+/*            C = de_tree(C);*/
             C.type = optic::ARRAY;
     }
     else
@@ -443,11 +444,6 @@ expr(A) ::= bool(B).
 {
     create_tree(A,B);
 }
-
-/*expr(A) ::= array(B).*/
-/*{*/
-/*    A=B;*/
-/*}*/
 
 
 //======================
@@ -739,17 +735,17 @@ expr(A) ::= expr(B) BITXOR expr(C).
     }
 }
 
-/*
-expr(A) ::= expr(B) array(C). [INDEX]
+expr(A) ::= NAME(B) LBRAC expr(C) RBRAC. [INDEX]
 {
-    index(A,B,C);
+    B.type = optic::STRING;
+    optic::store_operations(A,B,C,&optic::index);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
         ParseARG_STORE;
     }
 }
-*/
+
 
 /*
 stmt(A) ::= variable(B).

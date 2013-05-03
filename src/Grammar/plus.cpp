@@ -22,7 +22,6 @@ bool number_plus(object&A,const object& B,const object& C)
         number_plus_bool(A,B,C);
         break;
     case ARRAY:
-//        array_plus_number(A,C,B);
         object_operator_array(A,B,C,&number_plus);
         break;
     }

@@ -46,6 +46,7 @@ extern object copy_object(const object &original);
 extern bool delete_object(object& obj);
 extern bool print_object(const object& A);
 extern object convert_to_string( object& original);
+extern object create_void_tree();
 
 extern object de_tree(object& obj);
 extern bool concatenate_arrays(object &a, object b, object c);
