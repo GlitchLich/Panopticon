@@ -270,47 +270,79 @@ spec(A) ::= where_statement(B).
     A=B;
 }
 
-test(A) ::= guard_assignment(B).
+assignment(A) ::= guard_statement(B).
 {
+    panopticon::object& b = B.data.array->at(0);
+    panopticon::object& c = B.data.array->at(1);
+
+    panopticon::object resolve;
+    panopticon::store_operations(resolve, c, &panopticon::resolve_guard);
+
+    insure_ready_for_assignment(b,resolve);
+    panopticon::parse_operations(A, b, resolve, &panopticon::assign_variable);
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
+
+assignment(A) ::= final_guard_statement(B).
+{
+    panopticon::object& b = B.data.array->at(0);
+    panopticon::object& c = B.data.array->at(1);
+
+    panopticon::object resolve;
+    panopticon::store_operations(resolve, c, &panopticon::resolve_guard);
+
+    insure_ready_for_assignment(b,resolve);
+    panopticon::parse_operations(A, b, resolve, &panopticon::assign_variable);
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
+
+/*guard_assignment ::= name_chain final_guard_statement.*/
+/*guard_assignment ::= name_chain guard_statement.*/
+
+
+//GUARD STATEMENT BEGINNING
+guard_statement(A) ::= name_chain(B) GUARD_N expr(C) ASSIGN expr(D). [ASSIGN]
+{
+    optic::object tree = create_condition_tree(C,D);
+    A = create_guard(B,tree);
+}
+
+guard_statement(A) ::= name_chain(B) GUARD_S expr(C) ASSIGN expr(D). [ASSIGN]
+{
+    optic::object tree = create_condition_tree(C,D);
+    A = create_guard(B,tree);
+}
+
+guard_statement(A) ::= guard_statement(B) GUARD_N expr(C) ASSIGN expr(D). [ASSIGN]
+{
+    add_branch_to_tree(B,C,D);
     A=B;
-    A.type = optic::STRING;
-    A.data.string = new optic::String("Guard");
 }
 
-guard_assignment ::= name_chain final_guard_statement.
-guard_assignment ::= name_chain guard_statement.
-
-guard_statement(A) ::= GUARD_N expr ASSIGN expr. [ASSIGN]
+guard_statement(A) ::= guard_statement(B) GUARD_S expr(C) ASSIGN expr(D). [ASSIGN]
 {
-    A.type = optic::STRING;
-    A.data.string = new optic::String("Guard");
+    add_branch_to_tree(B,C,D);
+    A=B;
 }
 
-guard_statement(A) ::= guard_statement(B) GUARD_N expr ASSIGN expr. [ASSIGN]
+final_guard_statement(A) ::= guard_statement(B) WILDCARD_N ASSIGN expr(D). [ASSIGN]
 {
-    A = B;
+    add_wildcard_to_tree(B,D);
+    A=B;
 }
 
-guard_statement ::= GUARD_S expr ASSIGN expr. [ASSIGN]
+final_guard_statement(A) ::= guard_statement(B) WILDCARD ASSIGN expr(D). [ASSIGN]
 {
-
-}
-
-guard_statement(A) ::= guard_statement(B) GUARD_S expr ASSIGN expr. [ASSIGN]
-{
-    A = B;
-}
-
-final_guard_statement(A) ::= guard_statement(B) WILDCARD_N ASSIGN expr. [ASSIGN]
-{
-    A = B;
-    A.type = optic::GUARD;
-}
-
-final_guard_statement(A) ::= guard_statement(B) WILDCARD ASSIGN expr. [ASSIGN]
-{
-    A = B;
-    A.type = optic::GUARD;
+    add_wildcard_to_tree(B,D);
+    A=B;
 }
 
 where_statement ::= guard_statement WHERE.

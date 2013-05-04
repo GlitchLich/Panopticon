@@ -9,17 +9,39 @@
 //Testing Lexer Parsing for Guards
 (
 
+//Basic Guard statements working
 myGuardFunc x 
-	| x > 5 	= x * 5 
-	| x == 5 	= x * 0.1 
-	_ 			= x * -5
+	| x > 5 	= 6
+	| x == 5 	= 5
+	_ 			= 0
 
-myGuardFunc2 x 
-	| x > 5 = 5 
-	| x == 5 = 0 
-	_ = -5
-	where
+myGuardFunc(6)
+myGuardFunc(5)
+myGuardFunc(4)
 
+//Can Match to different types, produce different types
+myGuardFunc3 x 
+	| x == "hey" 	= "Hell yeah" 
+	| x == 3 		= x^4
+
+myGuardFunc3("hey")
+myGuardFunc3(3)
+//Throws an error, because no conditions are met. Be careful about this!
+myGuardFunc3(0)
+
+//Recursive guards. This way you can make recursion STOP. haha....
+factorial n
+	| n <= 0 	= 1
+	_ 			= n * factorial(n -1)
+
+factorial(1)
+factorial(5)
+factorial(10)
+factorial(20)
+//Speed Test (though printing doesn't help....)
+factorial(2000)
+
+//NOT WORKING
 myCaseFunc x = 
 	case x of
 	0 -> 1
