@@ -111,8 +111,10 @@ myArray[myArray[myArray[2]+2]+1]
 nestedarray = [23 [22 21] 20]
 nestedarray[1]
 
-metaArray = [0 1 myarray 3]
-metaArray[0]
+myArray()
+
+metaArray = [0 1 myArray() 3]
+metaArray[2]
 metaArray[2][2]
 metaArray[2][3][0]
 
