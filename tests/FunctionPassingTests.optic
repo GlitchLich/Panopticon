@@ -35,7 +35,7 @@ double x = x * 2
 lazier anon = lazy( double )
 hundred = 100
 fiveHundred = hundred() * 5
-fiveThousand = fiveHundred () * 10
+fiveThousand = fiveHundred() * 10
 lazier( hundred )
 lazier( fiveHundred )
 lazier( fiveThousand )
