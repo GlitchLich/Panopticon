@@ -32,7 +32,7 @@ void evaluate_array_array_binary_operator(object* result, const object& operator
         optic_stack.push_back(array1->data.array->at(i % array1->data.array->size()));
         optic_stack.push_back(operator_object);
         evaluate_top();
-        delete_object(larger_array->data.array->at(i));
+        // delete_object(larger_array->data.array->at(i));
         (*larger_array->data.array)[i] = optic_stack.back();
         optic_stack.pop_back();
         std::cout << "evaluate_array_array_binary_operator iteration: " << i << std::endl;
@@ -85,7 +85,7 @@ void evaluate_binary_operator(const object& operator_object)
                 optic_stack.push_back(arg1.data.array->at(i));
                 optic_stack.push_back(operator_object);
                 evaluate_top();
-                delete_object(arg1.data.array->at(i));
+                // delete_object(arg1.data.array->at(i));
                 (*arg1.data.array)[i] = optic_stack.back();
                 optic_stack.pop_back();
             }
@@ -101,7 +101,7 @@ void evaluate_binary_operator(const object& operator_object)
                 optic_stack.push_back(arg1);
                 optic_stack.push_back(operator_object);
                 evaluate_top();
-                delete_object(arg2.data.array->at(i));
+                // delete_object(arg2.data.array->at(i));
                 (*arg2.data.array)[i] = optic_stack.back();
                 optic_stack.pop_back();
             }
@@ -144,7 +144,7 @@ void evaluate_unary_operator(const object& operator_object)
                 optic_stack.push_back(arg.data.array->at(i));
                 optic_stack.push_back(operator_object);
                 evaluate_top();
-                delete_object(arg.data.array->at(i));
+                // delete_object(arg.data.array->at(i));
                 (*arg.data.array)[i] = optic_stack.back();
                 optic_stack.pop_back();
             }
