@@ -20,6 +20,27 @@ void clear_stack()
     global_state.type = NIL;
 }
 
+void evaluate_array_array_binary_operator(object* result, const object& operator_object, object* array1, object* array2)
+{
+    std::cout << "evaluate_array_array_binary_operator" << std::endl;
+    object* larger_array = array1->data.array->size() > array2->data.array->size() ? array1 : array2;
+    unsigned int num_iterations = larger_array->data.array->size();
+
+    for(unsigned int i = 0; i < num_iterations; ++i)
+    {
+        optic_stack.push_back(array2->data.array->at(i % array2->data.array->size()));
+        optic_stack.push_back(array1->data.array->at(i % array1->data.array->size()));
+        optic_stack.push_back(operator_object);
+        evaluate_top();
+        delete_object(larger_array->data.array->at(i));
+        (*larger_array->data.array)[i] = optic_stack.back();
+        optic_stack.pop_back();
+        std::cout << "evaluate_array_array_binary_operator iteration: " << i << std::endl;
+    }
+
+    *result = *larger_array;
+}
+
 void evaluate_binary_operator(const object& operator_object)
 {
     object result, arg1, arg2;
@@ -51,7 +72,49 @@ void evaluate_binary_operator(const object& operator_object)
 
     if(eval)
     {
-        operator_object.data.operator_func(result, arg1, arg2);
+        if(arg1.type == ARRAY && arg2.type == ARRAY)
+        {
+            evaluate_array_array_binary_operator(&result, operator_object, &arg1, &arg2);
+        }
+
+        else if(arg1.type == ARRAY)
+        {
+            for(int i = 0; i < arg1.data.array->size(); ++i)
+            {
+                optic_stack.push_back(arg2);
+                optic_stack.push_back(arg1.data.array->at(i));
+                optic_stack.push_back(operator_object);
+                evaluate_top();
+                delete_object(arg1.data.array->at(i));
+                (*arg1.data.array)[i] = optic_stack.back();
+                optic_stack.pop_back();
+            }
+
+            result = arg1;
+        }
+
+        else if(arg2.type == ARRAY)
+        {
+            for(int i = 0; i < arg2.data.array->size(); ++i)
+            {
+                optic_stack.push_back(arg2.data.array->at(i));
+                optic_stack.push_back(arg1);
+                optic_stack.push_back(operator_object);
+                evaluate_top();
+                delete_object(arg2.data.array->at(i));
+                (*arg2.data.array)[i] = optic_stack.back();
+                optic_stack.pop_back();
+            }
+
+            result = arg2;
+        }
+
+        else
+        {
+            operator_object.data.operator_func(result, arg1, arg2);
+        }
+
+        std::cout << "BINARY OP RESULT TYPE: " << result.type << std::endl;
         optic_stack.push_back(result);
     }
 
@@ -73,7 +136,27 @@ void evaluate_unary_operator(const object& operator_object)
         arg = optic_stack.back();
         optic_stack.pop_back();
 
-        operator_object.data.unary_operator_func(result, arg);
+
+        if(arg.type == ARRAY)
+        {
+            for(int i = 0; i < arg.data.array->size(); ++i)
+            {
+                optic_stack.push_back(arg.data.array->at(i));
+                optic_stack.push_back(operator_object);
+                evaluate_top();
+                delete_object(arg.data.array->at(i));
+                (*arg.data.array)[i] = optic_stack.back();
+                optic_stack.pop_back();
+            }
+
+            result = arg;
+        }
+
+        else
+        {
+            operator_object.data.unary_operator_func(result, arg);
+        }
+
         optic_stack.push_back(result);
     }
 
@@ -201,8 +284,10 @@ void evaluate_top()
         std::cout << "EVALUATE VOID" << std::endl;
         break;
 
-    case FUNCTION:
-        std::cout << "EVALUATE FUNCTION ON THE STACK. (In reality nothing much happens, just returned as an object back to the top)" << std::endl;
+    // case FUNCTION:
+    //    std::cout << "EVALUATE FUNCTION ON THE STACK. (In reality nothing much happens, just returned as an object back to the top)" << std::endl;
+    case ARRAY:
+        std::cout << "ARRAY ON THE STACK ARRAY ON THE STACK ARRAY ON THE STACK ARRAY ON THE STACK ARRAY ON THE STACK ARRAY ON THE STACK ." << std::endl;
     default:
         optic_stack.push_back(obj);
         break;
