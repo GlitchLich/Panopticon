@@ -26,13 +26,11 @@ void push_scope(Map* scope)
     global_scope.push_back(scope);
     current_scope = scope;
     scope_pointer = current_scope->begin();
-    ++dynamic_scope_pointer;
     std::cout << "heap: push_scope" << std::endl;
 }
 
 void pop_scope()
 {
-    --dynamic_scope_pointer;
     global_scope.pop_back();
     current_scope = global_scope.back();
     scope_pointer = current_scope->begin();
@@ -43,23 +41,21 @@ RESULT get_variable(std::string* variable_name, object* result)
 {
     std::cout << "GET VARIABLE NAME: " << variable_name->c_str() << std::endl;
 
-    heap_t::iterator dynamic_scope = dynamic_scope_pointer;
+    dynamic_scope_pointer = global_scope.end();
 
-    // Reverse  backwards through each scope
-    while(dynamic_scope >= global_scope.begin())
+    // Iterate backwards through each scope
+    while(--dynamic_scope_pointer >= global_scope.begin())
     {
         // Check to see if that scope contains the variable we want
-        scope_pointer = (*dynamic_scope)->find(*variable_name);
+        scope_pointer = (*dynamic_scope_pointer)->find(*variable_name);
 
         // If it does assign the results and return OK
-        if(scope_pointer != (*dynamic_scope)->end())
+        if(scope_pointer != (*dynamic_scope_pointer)->end())
         {
             *result = scope_pointer->second;
             std::cout << "GET VARIABLE TYPE: " << result->type << std::endl;
             return OK;
         }
-
-        --dynamic_scope;
     }
 
     // If we get to the end we never found it. Return = NULL, return VARIABLE_NOT_FOUND
