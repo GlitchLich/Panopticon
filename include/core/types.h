@@ -96,7 +96,9 @@ enum Type
     FUNCTION_BODY, //20 Used to prevent further parsing by the stack, enables lazy evaluation
     VOID, // 21, Use to prevent return on the stack
     CODE_BLOCK, //22 Denotes several expression in a row
-    PRIMITIVE // 23
+    PRIMITIVE, // 23
+    CONDITION_TREE, //24
+    CONDITION_BRANCH //25
 };
 
 // Forward declarations

@@ -27,58 +27,37 @@
 #include <algorithm>
 #include "../../include/core/types.h"
 
-bool is_number(const std::string& s)
-{
-    bool isNumber = false;
-    std::string::const_iterator it = s.begin();
-    if(std::count(s.begin(), s.end(), '.')<2)
-    {
-        while (
-               it != s.end() && (
-                   std::isdigit(*it) ||
-                   ((*it)=='.')
-                    )
-               ) ++it;
-        isNumber = !s.empty() && it == s.end();
-    }
-    return isNumber;
-}
+//bool is_number(const std::string& s)
+//{
+//    bool isNumber = false;
+//    std::string::const_iterator it = s.begin();
+//    if(std::count(s.begin(), s.end(), '.')<2)
+//    {
+//        while (
+//               it != s.end() && (
+//                   std::isdigit(*it) ||
+//                   ((*it)=='.')
+//                    )
+//               ) ++it;
+//        isNumber = !s.empty() && it == s.end();
+//    }
+//    return isNumber;
+//}
 
-double string_to_double( const std::string& s )
-{
-    std::istringstream i(s);
-    double x;
-    if (!(i >> x))
-        return 0;
-    return x;
-}
+//double string_to_double( const std::string& s )
+//{
+//    std::istringstream i(s);
+//    double x;
+//    if (!(i >> x))
+//        return 0;
+//    return x;
+//}
 
-bool insure_ready_for_assignment(panopticon::object& B, panopticon::object& C)
+namespace panopticon
 {
-//    std::cout << "insure_ready_for_assignment: C.type: " << C.type << std::endl;
-    if(
-        C.type == panopticon::OPERATION ||
-        C.type == panopticon::NUMBER ||
-        C.type == panopticon::STRING ||
-        C.type == panopticon::BOOL   ||
-        C.type == panopticon::ARRAY ||
-        C.type != panopticon::OPERATION_TREE
-    )
-    {
-        panopticon::object temp = C;
-        C.data.array = new panopticon::Array();
-        C.data.array->reserve(1);
-        C.data.array->push_back(temp);
-    }
-    C.type = panopticon::FUNCTION_BODY;
-    if(B.type!=optic::ARRAY)
-    {
-        panopticon::object temp = B;
-        B.type=optic::ARRAY;
-        B.data.array = new optic::Array();
-        B.data.array->reserve(1);
-        B.data.array->push_back(temp);
-    }
+
+extern bool insure_ready_for_assignment(panopticon::object& B, panopticon::object& C);
+
 }
 
 #endif // PARSINGUTILITIES_H
