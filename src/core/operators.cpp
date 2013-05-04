@@ -201,6 +201,15 @@ bool print_array(const object &A, int arrayNum,bool isTree)
         case ARRAY:
             print_array(B,arrayNum+1);
             break;
+        case panopticon::OPERATION:
+            out() << " Operator";
+            break;
+        case panopticon::VARIABLE:
+            out() << " " << *B.data.string;
+            break;
+        case panopticon::UNDECLARED_VARIABLE:
+            out() << " " << *B.data.string;
+            break;
         }
     }
     if(isTree)
@@ -257,7 +266,7 @@ bool print_object(const object &A)
         panopticon::print_array(A,0,true);
         break;
     case panopticon::OPERATION:
-        out() << "Operator, as in plus, minus, or something else" << std::endl;
+        out() << "Operator" << std::endl;
         break;
     }
 }

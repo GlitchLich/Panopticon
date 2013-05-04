@@ -272,7 +272,14 @@ spec(A) ::= where_statement(B).
 
 assignment(A) ::= guard_statement(B).
 {
-    panopticon::parse_operations(A, B, C, panopticon::resolve_guard);
+    panopticon::object& b = B.data.array->at(0);
+    panopticon::object& c = B.data.array->at(1);
+
+    panopticon::object resolve;
+    panopticon::store_operations(resolve, c, &panopticon::resolve_guard);
+
+    insure_ready_for_assignment(b,resolve);
+    panopticon::parse_operations(A, b, resolve, &panopticon::assign_variable);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -282,7 +289,14 @@ assignment(A) ::= guard_statement(B).
 
 assignment(A) ::= final_guard_statement(B).
 {
-    panopticon::parse_operations(A, B, C, panopticon::resolve_guard);
+    panopticon::object& b = B.data.array->at(0);
+    panopticon::object& c = B.data.array->at(1);
+
+    panopticon::object resolve;
+    panopticon::store_operations(resolve, c, &panopticon::resolve_guard);
+
+    insure_ready_for_assignment(b,resolve);
+    panopticon::parse_operations(A, b, resolve, &panopticon::assign_variable);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);

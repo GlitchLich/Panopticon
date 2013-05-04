@@ -15,9 +15,10 @@ namespace panopticon
  */
 bool resolve_guard(object& A, const object &condition_tree)
 {
-    if(condition_tree.type!=GUARD)
+    if(condition_tree.type!=CONDITION_TREE)
     {
-        out() << "Error: Malformed guard statement." << std::endl;
+        out() << "Error: Malformed guard statement. Object of type: ";
+        out() << condition_tree.type << std::endl;
         correct_parsing = false;
         A.type = VOID;
         return false;
@@ -39,19 +40,16 @@ bool resolve_guard(object& A, const object &condition_tree)
         evaluate_top();
         const object& condition = optic_stack.back();
         optic_stack.pop_back();
+        out() << "Condition: ";
+        print_object(condition);
         if(condition.type==BOOL)
         {
             if(condition.data.boolean)
             {
-                A = operations->at(i);
-                return true;
-            }
-        }
-        else if(condition.type==NUMBER)
-        {
-            if(condition.data.number>0)
-            {
-                A = operations->at(i);
+                optic_stack.push_back(operations->at(i));
+                evaluate_top();
+                A = optic_stack.back();
+                optic_stack.pop_back();
                 return true;
             }
         }
@@ -63,6 +61,8 @@ bool resolve_guard(object& A, const object &condition_tree)
             return false;
         }
     }
+    out() << "Error: No suitable guard conditions found" << std::endl;
+    correct_parsing = false;
     A.type = VOID;
     return false;
 }
@@ -78,11 +78,12 @@ object create_guard(object &function_call_name_and_args, object &condition_tree)
     object guard;
     guard.type = GUARD;
     guard.data.array = new Array();
-    insure_ready_for_assignment(function_call_name_and_args,condition_tree);
     //2 branches, 1 for the function name/args, one for the condition_tree
     guard.data.array->reserve(2);
     guard.data.array->push_back(function_call_name_and_args);
     guard.data.array->push_back(condition_tree);
+
+    return guard;
 }
 
 /**
@@ -111,6 +112,11 @@ object create_condition_tree(const object &condition, const object &operation)
     operation_branch.data.array->push_back(operation);
     tree.data.array->push_back(operation_branch);
 
+    out() << "Condition: ";
+    print_object(condition);
+    out() << "Operation: ";
+    print_object(operation);
+
     return tree;
 }
 
@@ -124,21 +130,27 @@ void add_branch_to_tree(object &tree, const object &condition, const object &ope
 {
     tree.data.array->at(1).data.array->at(0).data.array->push_back(condition);
     tree.data.array->at(1).data.array->at(1).data.array->push_back(operation);
+
+    out() << "Condition: ";
+    print_object(condition);
+    out() << "Operation: ";
+    print_object(operation);
 }
 
 void add_wildcard_to_tree(object &tree, const object &operation)
 {
-    object wildcard_operation;
-    wildcard_operation.type = OPERATION_TREE;
-    wildcard_operation.data.array = new Array();
-    wildcard_operation.data.array->reserve(1);
+
     object wild_card;
     wild_card.type = BOOL;
     wild_card.data.boolean = true;
-    wildcard_operation.data.array->push_back(wild_card);
-    tree.data.array->at(1).data.array->at(0).data.array->push_back(wildcard_operation);
-    tree.data.array->at(1).data.array->at(1).data.array->push_back(operation);
-}
 
+    tree.data.array->at(1).data.array->at(0).data.array->push_back(wild_card);
+    tree.data.array->at(1).data.array->at(1).data.array->push_back(operation);
+
+//    out() << "Condition: ";
+//    print_object(wild_card);
+//    out() << "Operation: ";
+//    print_object(operation);
+}
 
 }
