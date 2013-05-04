@@ -10,14 +10,14 @@
 (
 
 //Basic Guard statements working
-myGuardFunc x 
-	| x > 5 	= 6
-	| x == 5 	= 5
+myGuardFunc x y
+	| x+y > 5 	= 6
+	| x+y == 5 	= 5
 	_ 			= 0
 
-myGuardFunc(6)
-myGuardFunc(5)
-myGuardFunc(4)
+myGuardFunc(6 0)
+myGuardFunc(3 2)
+myGuardFunc(2 1)
 
 //Can Match to different types, produce different types
 myGuardFunc3 x 
@@ -44,9 +44,13 @@ factorial(2000)
 //NOT WORKING
 myCaseFunc x = 
 	case x of
-	0 -> 1
-	1 -> 2
-	_ -> 4
+		0 -> 1
+		1 -> 2
+		_ -> 4
+		case x of
+			0 -> 1
+			1 -> 2
+			_ -> 4
 
 letFunc x = 
 	let	
@@ -97,7 +101,7 @@ myfalsebool != mybool
 n*m+z
 
 //INDEXING ARRAYS
-myArray = [23 22 0 20]
+myArray = [23 22 0 20+1]
 myArray[0]
 myArray[1]
 myArray[2]
@@ -107,8 +111,10 @@ myArray[myArray[myArray[2]+2]+1]
 nestedarray = [23 [22 21] 20]
 nestedarray[1]
 
-metaArray = [0 1 myarray 3]
-metaArray[0]
+myArray()
+
+metaArray = [0 1 myArray() 3]
+metaArray[2]
 metaArray[2][2]
 metaArray[2][3][0]
 

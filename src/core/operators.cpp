@@ -87,39 +87,39 @@ object create_void_tree()
     return void_tree;
 }
 
-object de_tree(object &obj)
-{
-    object new_object;
-    out() << "object de_tree(object &obj): obj.type: " << obj.type << std::endl;
-    if(obj.type==panopticon::OPERATION_TREE)
-    {
-        if(obj.data.array->size()==1)
-        {
-            return obj.data.array->at(0);
-        }
-        else
-        {
-            new_object.type = ARRAY;
-            new_object.data.array = new Array();
-            new_object.data.array->reserve(obj.data.array->size());
-            for(int i=0;i<obj.data.array->size();++i)
-            {
-                new_object.data.array->push_back(de_tree(obj.data.array->at(i)));
-            }
-        }
-    }
-    else if(obj.type==ARRAY||obj.type==STATEMENT_LIST)
-    {
-        new_object.type = ARRAY;
-        new_object.data.array = new Array();
-        new_object.data.array->reserve(obj.data.array->size());
-        for(int i=0;i<obj.data.array->size();++i)
-        {
-            new_object.data.array->push_back(de_tree(obj.data.array->at(i)));
-        }
-    }
-    return new_object;
-}
+//object de_tree(object &obj)
+//{
+//    object new_object;
+//    out() << "object de_tree(object &obj): obj.type: " << obj.type << std::endl;
+//    if(obj.type==panopticon::OPERATION_TREE)
+//    {
+//        if(obj.data.array->size()==1)
+//        {
+//            return obj.data.array->at(0);
+//        }
+//        else
+//        {
+//            new_object.type = ARRAY;
+//            new_object.data.array = new Array();
+//            new_object.data.array->reserve(obj.data.array->size());
+//            for(int i=0;i<obj.data.array->size();++i)
+//            {
+//                new_object.data.array->push_back(de_tree(obj.data.array->at(i)));
+//            }
+//        }
+//    }
+//    else if(obj.type==ARRAY||obj.type==STATEMENT_LIST)
+//    {
+//        new_object.type = ARRAY;
+//        new_object.data.array = new Array();
+//        new_object.data.array->reserve(obj.data.array->size());
+//        for(int i=0;i<obj.data.array->size();++i)
+//        {
+//            new_object.data.array->push_back(de_tree(obj.data.array->at(i)));
+//        }
+//    }
+//    return new_object;
+//}
 
 bool delete_array(object& a)
 {
@@ -198,6 +198,8 @@ bool print_array(const object &A, int arrayNum,bool isTree)
             }
             break;
         case OPERATION_TREE:
+             print_array(B,arrayNum+1,true);
+             break;
         case ARRAY:
             print_array(B,arrayNum+1);
             break;
