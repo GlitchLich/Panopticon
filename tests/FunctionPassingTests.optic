@@ -3,6 +3,7 @@
 [ 0 1 2 3 ] + 1
 [ 0 1 2 ] + [ 0 1 2 3 ]
 [ 0 1 2 3 5 6 ] / [ 0 1 2 3 ] 
+[ 3 2 1 ] / [ 1 2 3 ]
 
 // Nested Arrays
 [ [ 1 ] ] + 1
@@ -78,6 +79,9 @@ mul x y = x * y
 binOp( mul 2 3 )
 div x y = x / y
 binOp( div 2 3 )
+div( [ 1 2 3 ] 3 )
+arrayDiv x y z = [ x y ] / z
+arrayDiv( 2 3 3)
 
 //Arrays in Function Calls
 plusOne x = x + 1
