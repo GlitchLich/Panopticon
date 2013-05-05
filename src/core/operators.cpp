@@ -198,8 +198,8 @@ bool print_array(const object &A, int arrayNum,bool isTree)
             }
             break;
         case OPERATION_TREE:
-             print_array(B,arrayNum+1,true);
-             break;
+            print_array(B,arrayNum+1,true);
+            break;
         case ARRAY:
             print_array(B,arrayNum+1);
             break;
@@ -2034,8 +2034,17 @@ bool bit_xor(object& A, const object& B, const object& C)
 
 bool index(object& A, const object& B, const object& C)
 {
+    std::cout << "bool index(object& A, const object& B, const object& C)";
+    std::cout << "B.type = " << B.type << std::endl;
     switch(B.type)
     {
+    case OPERATION_TREE:
+        optic_stack.push_back(B);
+        evaluate_top();
+        index(A,optic_stack.back(),C);
+        optic_stack.pop_back();
+        optic_stack.push_back(A);
+        break;
     case ARRAY:
         switch(C.type)
         {
@@ -2043,6 +2052,7 @@ bool index(object& A, const object& B, const object& C)
             if(C.data.number<B.data.array->size())
             {
                 A = copy_object(B.data.array->at(C.data.number));
+                optic_stack.push_back(A);
             }
             else
             {
@@ -2075,8 +2085,7 @@ bool index(object& A, const object& B, const object& C)
         out() << "Evaluating a string as a Function call for an index lookup." << std::endl;
         object func_object;
         call_function(func_object,B,create_void_tree());
-//        out() << "Function produced: ";
-//        print_object(func_object);
+//        optic_stack.pop_back();
         index(A,func_object,C);
         break;
     default:

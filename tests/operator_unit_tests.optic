@@ -109,13 +109,13 @@ myArray[3]
 myArray[[[3 1]]]
 myArray[myArray[myArray[2]+2]+1]
 nestedarray = [23 [22 21] 20]
-nestedarray[1]
+nestedarray[1][0]
 
 myArray()
 
 metaArray = [0 1 myArray() 3]
 metaArray[2]
-metaArray[2][2]
+metaArray[2][0]
 metaArray[2][3][0]
 
 //Array functions used for Function Calls
