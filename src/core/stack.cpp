@@ -147,17 +147,22 @@ void evaluate_unary_operator(const object& operator_object)
 
         if(arg.type == ARRAY)
         {
+            object new_array;
+            new_array.data.array = new Array();
+            new_array.type = ARRAY;
+
             for(int i = 0; i < arg.data.array->size(); ++i)
             {
-                optic_stack.push_back(arg.data.array->at(i));
+                optic_stack.push_back(copy_object(arg.data.array->at(i)));
                 optic_stack.push_back(operator_object);
                 evaluate_top();
                 // delete_object(arg.data.array->at(i));
-                (*arg.data.array)[i] = optic_stack.back();
+                // (*arg.data.array)[i] = optic_stack.back();
+                new_array.data.array->push_back(optic_stack.back());
                 optic_stack.pop_back();
             }
 
-            result = arg;
+            result = new_array;
         }
 
         else
