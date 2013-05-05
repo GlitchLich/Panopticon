@@ -62,7 +62,7 @@ lazier( hundred )
 lazier( fiveHundred )
 lazier( fiveThousand )
 
-// Doesn't work
+// Works
 1 + [ ten() ten() ]
 
 
@@ -92,13 +92,15 @@ arrayPlusOne(1)
 arrayPlusOne([ 3 4 5 6 7 ])
 arrayPlusOne( arrayPlusOne([ 0 1 2 3 4 5]) )
 
-//Doesn't Work
+// STILL Doesn't Work
 combiner x y = [x y]
 combiner(12 13)
 
-// Doesn't work
+// ONLY WORKS ONCE?????????????????????
 printer x y = print([ x y ])
 printer( 2 3 )
+printer( [ 0 1 2 ] 2 )
+printer( 5 6 )
 
 //Goes infinite, crashes. Need guards for this to work
 plusOne x = x + 1

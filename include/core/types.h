@@ -94,11 +94,13 @@ enum Type
     GUARD,//18
     FUNCTION_CALL,//19
     FUNCTION_BODY, //20 Used to prevent further parsing by the stack, enables lazy evaluation
-    VOID, // 21, Use to prevent return on the stack
-    CODE_BLOCK, //22 Denotes several expression in a row
-    PRIMITIVE, // 23
-    CONDITION_TREE, //24
-    CONDITION_BRANCH //25
+    FUNCTION_ARG_NAMES, // 21 Used to pass argument names to functions for composition
+    FUNCTION_ARG_VALUES, // 22 Used to pass argument values to functions for calling
+    VOID, // 23, Use to prevent return on the stack
+    CODE_BLOCK, //24 Denotes several expression in a row
+    PRIMITIVE, // 25
+    CONDITION_TREE, //26
+    CONDITION_BRANCH //27
 };
 
 // Forward declarations

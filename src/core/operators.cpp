@@ -625,7 +625,7 @@ bool create_function(object &A, const object &B, const object &C)
     out() << "Creating function " << std::endl;
     Function* function = new Function;
 
-    if(B.type == ARRAY)
+    if(B.type == FUNCTION_ARG_NAMES)
     {
         out() << "with arguments: ";
 
@@ -2093,7 +2093,7 @@ bool assign_variable(object& A, const object& B, const object& C)
     out() << "ASSIGN ASSIGN ASSIGN ASSIGN ASSIGN ASSIGN" << std::endl;
 
 
-    if(B.type == ARRAY)
+    if(B.type == FUNCTION_ARG_NAMES)
     {
         std::cout << "ASSIGN B.data.array->size(): " << B.data.array->size() << std::endl;
 

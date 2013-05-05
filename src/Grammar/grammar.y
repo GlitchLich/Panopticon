@@ -215,12 +215,12 @@ expr(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN.
     if(C.type==optic::STATEMENT_LIST)
     {
 /*            C = de_tree(C);*/
-            C.type = optic::ARRAY;
+            C.type = optic::FUNCTION_ARG_VALUES;
     }
     else
     {
         optic::object temp = C;
-        C.type = optic::ARRAY;
+        C.type = optic::FUNCTION_ARG_VALUES;
         C.data.array = new optic::Array();
         C.data.array->reserve(1);
         C.data.array->push_back(temp);
@@ -242,7 +242,7 @@ expr(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN.
 expr(A) ::= NAME(B) LPAREN RPAREN.
 {
     optic::object C;
-    C.type = optic::ARRAY;
+    C.type = optic::FUNCTION_ARG_VALUES;
     C.data.array = new optic::Array();
 /*    optic::object v;*/
 /*    v.type = optic::VOID;*/
@@ -279,6 +279,7 @@ assignment(A) ::= guard_statement(B).
     panopticon::store_operations(resolve, c, &panopticon::resolve_guard);
 
     insure_ready_for_assignment(b,resolve);
+    b.type = optic::FUNCTION_ARG_NAMES;
     panopticon::parse_operations(A, b, resolve, &panopticon::assign_variable);
     if(!panopticon::correct_parsing)
     {
@@ -296,6 +297,7 @@ assignment(A) ::= final_guard_statement(B).
     panopticon::store_operations(resolve, c, &panopticon::resolve_guard);
 
     insure_ready_for_assignment(b,resolve);
+    b.type = optic::FUNCTION_ARG_NAMES;
     panopticon::parse_operations(A, b, resolve, &panopticon::assign_variable);
     if(!panopticon::correct_parsing)
     {
@@ -378,7 +380,7 @@ expr(A) ::= LET NAME ASSIGN expr IN expr.
 assignment(A) ::= name_chain(B) ASSIGN expr(C). [ASSIGN]
 {
     insure_ready_for_assignment(B,C);
-
+    B.type = optic::FUNCTION_ARG_NAMES;
     panopticon::parse_operations(A, B, C, panopticon::assign_variable);
     if(!panopticon::correct_parsing)
     {
