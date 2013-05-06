@@ -13,7 +13,7 @@
 #include "../include/Grammar/tokens.h"
 #include "../include/Grammar/lexglobal.h"
 #include "../include/Grammar/grammar.h"
-#include "../include/Grammar/lexer.h"
+//#include "../include/Grammar/lexer.h"
 #include "../include/core/heap.h"
 #include <algorithm>
 
@@ -27,7 +27,7 @@
 extern FILE *yyin;
 typedef size_t yy_size_t;
 struct yy_buffer_state
-    {
+{
     FILE *yy_input_file;
 
     char *yy_ch_buf;		/* input buffer */
@@ -86,7 +86,7 @@ struct yy_buffer_state
      */
 #define YY_BUFFER_EOF_PENDING 2
 
-    };
+};
 typedef struct yy_buffer_state *YY_BUFFER_STATE;
 
 extern "C" {
@@ -105,6 +105,25 @@ struct panopticon::object mToken;
 
 namespace panopticon
 {
+
+
+#define MAX_DEPTH 72
+unsigned int indent_stack[MAX_DEPTH];
+unsigned int level = 0;
+int nesting = 0;
+unsigned int first = 1;
+
+void clear_lexer()
+{
+    //clear lexer
+    for(int i=0;i<72;++i)
+    {
+        indent_stack[i] = 0;
+    }
+    level = 0;
+    nesting = 0;
+    first = 1;
+}
 
 bool cli = true;
 std::stringstream stream_out;
@@ -132,17 +151,17 @@ void mutate_text_for_parsing(std::string& string)
     int string_length = string.size();
     for(int i=0;i<string_length-1;++i)
     {
-//        if(string.at(i)=='\n' && string.at(i+1)=='\t')
-//        {
-//            std::cout << "TAB!" << std::endl;
-//            whitespacecount++;
-//            if(whitespacecount==3)
-//            {
-//                stringSize-=3;
-//                string.replace(i-2,3,"_TAB");
-//                whitespacecount = 0;
-//            }
-//        }
+        //        if(string.at(i)=='\n' && string.at(i+1)=='\t')
+        //        {
+        //            std::cout << "TAB!" << std::endl;
+        //            whitespacecount++;
+        //            if(whitespacecount==3)
+        //            {
+        //                stringSize-=3;
+        //                string.replace(i-2,3,"_TAB");
+        //                whitespacecount = 0;
+        //            }
+        //        }
 
     }
 }
@@ -154,9 +173,13 @@ bool exec(std::string string, std::string& output)
     output.clear();
     stream_out.str(std::string());
     YY_BUFFER_STATE bufferstate;
+
+    clear_lexer();
+
     try
     {
         int stringSize = string.size();
+        int white_count = 0;
         for(int i=0;i<stringSize;++i)
         {
             if(((int)string.at(i))<0)
@@ -164,12 +187,44 @@ bool exec(std::string string, std::string& output)
                 string.replace(i,3,"\n");
                 stringSize-=2;
             }
+            if(((int)string.at(i))=='\n')
+            {
+                white_count=0;
+            }
+            if(((int)string.at(i))==' ')
+            {
+                white_count = (white_count + 1)%4;
+            }
+            else if(((int)string.at(i))=='\t')
+            {
+                if(white_count==0)
+                {
+                    string.replace(i,1,"    ");
+                    stringSize+=3;
+                }
+                else if(white_count==1)
+                {
+                    string.replace(i,1,"   ");
+                    stringSize+=2;
+                }
+                else if(white_count==2)
+                {
+                    string.replace(i,1,"  ");
+                    stringSize+=1;
+                }
+                else if(white_count==3)
+                {
+                    string.replace(i,1," ");
+                }
+            }
         }
-//        mutate_text_for_parsing(string);
         string = string.append("\n");
-        std::cout << "Parsing: " << string << std::endl;
+        calculate_white_space(string);
+        //        mutate_text_for_parsing(string);
+
+//        std::cout << "Parsing: " << string << std::endl;
         bufferstate = yy_scan_string(string.c_str());
-//        yy_scan_string(string.c_str());
+        //        yy_scan_string(string.c_str());
         while( (yv=yylex()) != 0)
         {
             //            std::cout << " yylex() " << yv << " yylval.dval " << yylval.dval << std::endl;
@@ -190,7 +245,6 @@ bool exec(std::string string, std::string& output)
                 t0.data.boolean = yylval.bval;
             }
             Parse(pParser, yv, t0);
-            std::cout << "WHITESPACE COUNT: " << w_count << std::endl;
         }
 
         //Error Handling
@@ -258,6 +312,67 @@ void command_line_loop()
 
     Parse (pParser, 0, t0);
     ParseFree(pParser, free );
+}
+
+//Significant whitespace
+void string_whitespace_check(std::string &line, int start)
+{
+
+}
+
+unsigned int white_count(std::string& line,int start,int stop) {
+    unsigned int count = 0;
+    for(int i=start;i<stop;++i)
+    {
+        if(line.at(i) == ' ')
+        {
+            std::cout << line.at(i);
+            count++;
+        }
+    }
+    return count ;
+}
+
+
+void calculate_white_space(std::string& line) {
+    int previous_break = 0;
+    for(int i=0;i<line.size();++i)
+    {
+        if(line.at(i)=='\n')
+        {
+
+            if (nesting)
+                /* Ignore indents while nested. */
+                return ;
+
+            std::cout << "____" << std::endl;
+            unsigned int indent = white_count(line,previous_break,i);
+
+            if (indent == indent_stack[level]) {
+                if (!first)
+                {
+                    std::cout << ";";
+                }
+                first = 0 ;
+                return ;
+            }
+
+            if (indent > indent_stack[level]) {
+                std::cout << "{";
+                assert(level+1 < MAX_DEPTH);
+                indent_stack[++level] = indent;
+                return ;
+            }
+
+            while (indent < indent_stack[level]) {
+                --level ;
+                std::cout << "}";
+            }
+            std::cout << "____"  << std::endl;
+            previous_break = i;
+            assert(level >= 0) ;
+        }
+    }
 }
 
 }

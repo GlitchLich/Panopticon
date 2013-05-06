@@ -50,6 +50,7 @@
 %left ASSIGN.
 %right BITOR.
 %left FUNCTION_DEC.
+%left FUNCTION_CALL.
 %left INDEX.
 %left OR.
 %left AND.
@@ -210,11 +211,10 @@ expr(A) ::= NAME(B).
     A = B;
 }*/
 
-expr(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN.
+expr(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN. [FUNCTION_CALL]
 {
     if(C.type==optic::STATEMENT_LIST)
     {
-/*            C = de_tree(C);*/
             C.type = optic::FUNCTION_ARG_VALUES;
     }
     else
@@ -239,7 +239,30 @@ expr(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN.
     }
 }
 
-expr(A) ::= NAME(B) LPAREN RPAREN.
+expr(A) ::= array_index(B) LPAREN stmt_list(C) RPAREN. [FUNCTION_CALL]
+{
+    if(C.type==optic::STATEMENT_LIST)
+    {
+            C.type = optic::FUNCTION_ARG_VALUES;
+    }
+    else
+    {
+        optic::object temp = C;
+        C.type = optic::FUNCTION_ARG_VALUES;
+        C.data.array = new optic::Array();
+        C.data.array->reserve(1);
+        C.data.array->push_back(temp);
+    }
+    optic::parse_operations(A,B,C,optic::call_function);
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
+
+
+expr(A) ::= NAME(B) LPAREN RPAREN. [FUNCTION_CALL]
 {
     B.type = optic::UNDECLARED_VARIABLE;
     A = B;
@@ -249,6 +272,18 @@ expr(A) ::= NAME(B) LPAREN RPAREN.
         ParseARG_STORE;
     }
 }
+
+expr(A) ::= array_index(B) LPAREN RPAREN. [FUNCTION_CALL]
+{
+/*    B.type = optic::UNDECLARED_VARIABLE;*/
+    A = B;
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
+
 
 test(A) ::= case_statement(B).
 {
@@ -361,11 +396,11 @@ case_statement(A) ::= name_chain(B) ASSIGN CASE expr OF. [ASSIGN]
     A.type = optic::GUARD;
 }
 
-case_statement(A) ::= case_statement(B) N_TAB expr POINTER expr. [ASSIGN]
+/*case_statement(A) ::= case_statement(B) N_TAB expr POINTER expr. [ASSIGN]
 {
     A = B;
     A.type = optic::GUARD;
-}
+}*/
 
 case_statement(A) ::= case_statement(B) WILDCARD_N POINTER expr. [ASSIGN]
 {
