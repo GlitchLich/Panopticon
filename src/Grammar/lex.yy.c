@@ -545,12 +545,11 @@ char *yytext;
 #include <string.h>
 #include <math.h>
 #include <stdio.h>
-#include "../../include/Grammar/lexer.h"
 
 int line = 1, col = 1;
 
 
-#line 554 "lex.yy.c"
+#line 553 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -737,21 +736,25 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 16 "./src/Grammar/lexer.l"
+#line 15 "./src/Grammar/lexer.l"
 
 
         /*^[ ]*\n       {/* Ignore}*/
-        /*^[ ]*[^ \n]+  {
-            int last = (int) strlen(yytext) - 2;
-            calculate_white_space(yytext);
-            while( (last >= 0) && (yytext[last] != ' ') )
+    /*^[ ]*[^ \n]+  {
+        int last = (int) strlen(yytext) - 2;
+        calculate_white_space(yytext);
+        while( (last >= 0) )
+        {
+            if(yytext[last] != '\n')
             {
+                printf("Unput: %c\n",yytext[last]);
                 unput( yytext[last] );
-                last-- ;
             }
-        }*/
+            last-- ;
+        }
+    }*/
 
-#line 755 "lex.yy.c"
+#line 758 "lex.yy.c"
 
 	if ( !(yy_init) )
 		{
@@ -836,7 +839,7 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 29 "./src/Grammar/lexer.l"
+#line 32 "./src/Grammar/lexer.l"
 {
     col += (int) strlen(yytext);
     yylval.dval = atof(yytext);
@@ -845,59 +848,59 @@ YY_RULE_SETUP
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 34 "./src/Grammar/lexer.l"
+#line 37 "./src/Grammar/lexer.l"
 { yylval.bval = 1;return BOOLEAN;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 35 "./src/Grammar/lexer.l"
+#line 38 "./src/Grammar/lexer.l"
 { yylval.bval = 0;return BOOLEAN;}
 	YY_BREAK
 /*\n+[\t " "]*+"case"         { return CASE;}*/
 case 4:
 YY_RULE_SETUP
-#line 37 "./src/Grammar/lexer.l"
+#line 40 "./src/Grammar/lexer.l"
 { return CASE;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 38 "./src/Grammar/lexer.l"
+#line 41 "./src/Grammar/lexer.l"
 { return OF;}
 	YY_BREAK
 /*\n+[\t " "]*+"let"         { return LET;}*/
 case 6:
 YY_RULE_SETUP
-#line 40 "./src/Grammar/lexer.l"
+#line 43 "./src/Grammar/lexer.l"
 { return LET;}
 	YY_BREAK
 /*\n+[\t " "]*+"in"         { return IN;}*/
 case 7:
 YY_RULE_SETUP
-#line 42 "./src/Grammar/lexer.l"
+#line 45 "./src/Grammar/lexer.l"
 { return IN;}
 	YY_BREAK
 /*\n+[\t " "]*+"where"         { return WHERE;}*/
 case 8:
 YY_RULE_SETUP
-#line 44 "./src/Grammar/lexer.l"
+#line 47 "./src/Grammar/lexer.l"
 { return WHERE;}
 	YY_BREAK
 /*\n+[\t " "]+[\t " "]*          { return N_TAB;}*/
 case 9:
 YY_RULE_SETUP
-#line 46 "./src/Grammar/lexer.l"
+#line 49 "./src/Grammar/lexer.l"
 {return PRINT;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 47 "./src/Grammar/lexer.l"
+#line 50 "./src/Grammar/lexer.l"
 {
         col += (int) strlen(yytext);
 }               /* ignore but count white space */
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 50 "./src/Grammar/lexer.l"
+#line 53 "./src/Grammar/lexer.l"
 {
     col += (int)strlen(yytext);
     yylval.sval=strndup(yytext,(int)strlen(yytext));
@@ -906,175 +909,175 @@ YY_RULE_SETUP
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 55 "./src/Grammar/lexer.l"
+#line 58 "./src/Grammar/lexer.l"
 {  return PLUSPLUS; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 56 "./src/Grammar/lexer.l"
+#line 59 "./src/Grammar/lexer.l"
 {  return PLUS; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 57 "./src/Grammar/lexer.l"
+#line 60 "./src/Grammar/lexer.l"
 {  return MINUS; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 58 "./src/Grammar/lexer.l"
+#line 61 "./src/Grammar/lexer.l"
 {  return TIMES; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 59 "./src/Grammar/lexer.l"
+#line 62 "./src/Grammar/lexer.l"
 {  return DIVIDE; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 60 "./src/Grammar/lexer.l"
-{  nesting++ ;return LPAREN; }
+#line 63 "./src/Grammar/lexer.l"
+{  return LPAREN; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 61 "./src/Grammar/lexer.l"
-{  nesting-- ;return RPAREN; }
+#line 64 "./src/Grammar/lexer.l"
+{  return RPAREN; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 62 "./src/Grammar/lexer.l"
+#line 65 "./src/Grammar/lexer.l"
 {  return LESSTHAN; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 63 "./src/Grammar/lexer.l"
+#line 66 "./src/Grammar/lexer.l"
 {  return GREATERTHAN; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 64 "./src/Grammar/lexer.l"
+#line 67 "./src/Grammar/lexer.l"
 {  return EQUALTO;  }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 65 "./src/Grammar/lexer.l"
+#line 68 "./src/Grammar/lexer.l"
 {  return GORE;  }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 66 "./src/Grammar/lexer.l"
+#line 69 "./src/Grammar/lexer.l"
 {  return LORE;  }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 67 "./src/Grammar/lexer.l"
+#line 70 "./src/Grammar/lexer.l"
 {  return NOTEQUALTO;  }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 68 "./src/Grammar/lexer.l"
+#line 71 "./src/Grammar/lexer.l"
 {  return SHIFTL;  }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 69 "./src/Grammar/lexer.l"
+#line 72 "./src/Grammar/lexer.l"
 {  return SHIFTR;  }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 70 "./src/Grammar/lexer.l"
+#line 73 "./src/Grammar/lexer.l"
 {  return AND;  }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 71 "./src/Grammar/lexer.l"
+#line 74 "./src/Grammar/lexer.l"
 {  return OR;  }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 72 "./src/Grammar/lexer.l"
+#line 75 "./src/Grammar/lexer.l"
 {  return NOT;  }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 73 "./src/Grammar/lexer.l"
+#line 76 "./src/Grammar/lexer.l"
 {  return BITNOT;  }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 74 "./src/Grammar/lexer.l"
+#line 77 "./src/Grammar/lexer.l"
 {  return BITAND;  }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 75 "./src/Grammar/lexer.l"
+#line 78 "./src/Grammar/lexer.l"
 {  return BITOR;  }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 76 "./src/Grammar/lexer.l"
+#line 79 "./src/Grammar/lexer.l"
 {  return BITXOR;  }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 77 "./src/Grammar/lexer.l"
+#line 80 "./src/Grammar/lexer.l"
 {  return MODULO;  }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 78 "./src/Grammar/lexer.l"
+#line 81 "./src/Grammar/lexer.l"
 {  return LBRAC;  }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 79 "./src/Grammar/lexer.l"
+#line 82 "./src/Grammar/lexer.l"
 {  return RBRAC;  }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 80 "./src/Grammar/lexer.l"
+#line 83 "./src/Grammar/lexer.l"
 { return COMMA;}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 81 "./src/Grammar/lexer.l"
+#line 84 "./src/Grammar/lexer.l"
 { return ASSIGN;}
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 82 "./src/Grammar/lexer.l"
+#line 85 "./src/Grammar/lexer.l"
 { return POW;}
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 83 "./src/Grammar/lexer.l"
+#line 86 "./src/Grammar/lexer.l"
 { return POINTER;}
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 84 "./src/Grammar/lexer.l"
+#line 87 "./src/Grammar/lexer.l"
 { return GUARD_S;}
 	YY_BREAK
 case 42:
 /* rule 42 can match eol */
 YY_RULE_SETUP
-#line 85 "./src/Grammar/lexer.l"
+#line 88 "./src/Grammar/lexer.l"
 { return GUARD_N;}
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 86 "./src/Grammar/lexer.l"
+#line 89 "./src/Grammar/lexer.l"
 { return WILDCARD;}
 	YY_BREAK
 case 44:
 /* rule 44 can match eol */
 YY_RULE_SETUP
-#line 87 "./src/Grammar/lexer.l"
+#line 90 "./src/Grammar/lexer.l"
 { return WILDCARD_N;}
 	YY_BREAK
 case 45:
 /* rule 45 can match eol */
 YY_RULE_SETUP
-#line 88 "./src/Grammar/lexer.l"
+#line 91 "./src/Grammar/lexer.l"
 {
     col += (int)strlen(yytext);
     yylval.sval=strndup(yytext+1,(int)strlen(yytext)-2);
@@ -1084,13 +1087,13 @@ YY_RULE_SETUP
 case 46:
 /* rule 46 can match eol */
 YY_RULE_SETUP
-#line 93 "./src/Grammar/lexer.l"
+#line 96 "./src/Grammar/lexer.l"
 {yyerror(yytext,1);return OPENQUOTEERROR;}
 	YY_BREAK
 case 47:
 /* rule 47 can match eol */
 YY_RULE_SETUP
-#line 95 "./src/Grammar/lexer.l"
+#line 98 "./src/Grammar/lexer.l"
 { col = 0; ++line;
 
           return NEWLINE;
@@ -1098,28 +1101,27 @@ YY_RULE_SETUP
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 99 "./src/Grammar/lexer.l"
+#line 102 "./src/Grammar/lexer.l"
 { col = 0; ++line; printf("return!\n"); return NEWLINE; }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 101 "./src/Grammar/lexer.l"
+#line 104 "./src/Grammar/lexer.l"
 {
-    calculate_white_space("");
+    /*calculate_white_space("");*/
     col += (int) strlen(yytext);
     return yytext[0];
 }
 	YY_BREAK
-case YY_STATE_EOF(INITIAL):
-#line 107 "./src/Grammar/lexer.l"
-{ calculate_white_space("") ; return 0 ; }
-	YY_BREAK
+/*<<EOF>>  { calculate_white_space("") ; return 0 ; }*/
 case 50:
 YY_RULE_SETUP
-#line 109 "./src/Grammar/lexer.l"
+#line 112 "./src/Grammar/lexer.l"
 ECHO;
 	YY_BREAK
 #line 1123 "lex.yy.c"
+case YY_STATE_EOF(INITIAL):
+	yyterminate();
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2115,7 +2117,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 109 "./src/Grammar/lexer.l"
+#line 112 "./src/Grammar/lexer.l"
 
 
 /**

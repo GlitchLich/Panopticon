@@ -4,7 +4,6 @@
 #include <string.h>
 #include <math.h>
 #include <stdio.h>
-#include "../../include/Grammar/lexer.h"
 
 int line = 1, col = 1;
 
@@ -16,15 +15,19 @@ int line = 1, col = 1;
 %%
 
         /*^[ ]*\n       {/* Ignore}*/
-        /*^[ ]*[^ \n]+  {
-            int last = (int) strlen(yytext) - 2;
-            calculate_white_space(yytext);
-            while( (last >= 0) && (yytext[last] != ' ') )
+    /*^[ ]*[^ \n]+  {
+        int last = (int) strlen(yytext) - 2;
+        calculate_white_space(yytext);
+        while( (last >= 0) )
+        {
+            if(yytext[last] != '\n')
             {
+                printf("Unput: %c\n",yytext[last]);
                 unput( yytext[last] );
-                last-- ;
             }
-        }*/
+            last-- ;
+        }
+    }*/
 
 [0-9]+|[0-9]*\.[0-9]+    {
     col += (int) strlen(yytext);
@@ -57,8 +60,8 @@ false     { yylval.bval = 0;return BOOLEAN;}
 "-"           {  return MINUS; }
 "*"           {  return TIMES; }
 "/"           {  return DIVIDE; }
-"("           {  nesting++ ;return LPAREN; }
-")"           {  nesting-- ;return RPAREN; }
+"("           {  return LPAREN; }
+")"           {  return RPAREN; }
 "<"           {  return LESSTHAN; }
 ">"           {  return GREATERTHAN; }
 "=="          {  return EQUALTO;  }
@@ -99,12 +102,12 @@ false     { yylval.bval = 0;return BOOLEAN;}
 \r      { col = 0; ++line; printf("return!\n"); return NEWLINE; }
 
 .       {
-    calculate_white_space("");
+    /*calculate_white_space("");*/
     col += (int) strlen(yytext);
     return yytext[0];
 }
 
-<<EOF>>  { calculate_white_space("") ; return 0 ; }
+    /*<<EOF>>  { calculate_white_space("") ; return 0 ; }*/
 
 %%
 /**

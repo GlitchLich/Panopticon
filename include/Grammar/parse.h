@@ -54,6 +54,15 @@ extern bool exec(std::string input, std::string &output);
 
 extern void mutate_text_for_viewing(std::string &string);
 
+extern unsigned int indent_stack[];
+extern unsigned int level;
+extern unsigned int first;
+extern int nesting;
+extern void string_whitespace_check(std::string& line,int start,int stop);
+extern void calculate_white_space(std::string &line);
+extern unsigned int w_count(std::string &line);
+
+
 }
 
 namespace optic = panopticon;
