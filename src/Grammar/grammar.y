@@ -241,16 +241,8 @@ expr(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN.
 
 expr(A) ::= NAME(B) LPAREN RPAREN.
 {
-    optic::object C;
-    C.type = optic::FUNCTION_ARG_VALUES;
-    C.data.array = new optic::Array();
-/*    optic::object v;*/
-/*    v.type = optic::VOID;*/
-/*    C.data.array->push_back(v);*/
-    optic::object b;
-    b.type = optic::STRING;
-    b.data.string = new optic::String(B.data.string->c_str());
-    optic::parse_operations(A,b,C,optic::call_function);
+    B.type = optic::UNDECLARED_VARIABLE;
+    A = B;
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -261,7 +253,6 @@ expr(A) ::= NAME(B) LPAREN RPAREN.
 test(A) ::= case_statement(B).
 {
     A=B;
-/*    panopticon::out() << "Case: " << *B.data.array->at(0).data.string << std::endl;*/
 }
 
 spec(A) ::= where_statement(B).
@@ -347,11 +338,22 @@ final_guard_statement(A) ::= guard_statement(B) WILDCARD ASSIGN expr(D). [ASSIGN
     A=B;
 }
 
-where_statement ::= guard_statement WHERE.
-where_statement ::= final_guard_statement WHERE.
-where_statement ::= name_chain ASSIGN expr WHERE.
-
-where_statement ::= where_statement NAME ASSIGN expr.
+where_statement(A) ::= guard_statement(B) WHERE.
+{
+    A = B;
+}
+where_statement(A) ::= final_guard_statement(B) WHERE.
+{
+    A = B;
+}
+/*where_statement(A) ::= name_chain ASSIGN expr WHERE.
+{
+    A = B;
+}
+where_statement(A) ::= where_statement NAME(B) ASSIGN expr.
+{
+    A = B;
+}*/
 
 case_statement(A) ::= name_chain(B) ASSIGN CASE expr OF. [ASSIGN]
 {

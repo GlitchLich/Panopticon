@@ -245,7 +245,6 @@ void evaluate_variable(const object& variable_name)
                 call_function(result, variable_name, arguments);
             }
         }
-
         optic_stack.push_back(result);
     }
 

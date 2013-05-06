@@ -1212,8 +1212,20 @@ bool less_than(object& A, const object& B, const object& C)
         }
         break;
     case STRING:
-        out() << "Syntax error: A string cannot be greater than or less than a number." << std::endl;
-        correct_parsing = false;
+        switch(C.type)
+        {
+        case STRING:
+            A.type = BOOL;
+            A.data.boolean =  B.data.string->size() < C.data.string->size();
+            break;
+        case ARRAY:
+            object_operator_array(A,B,C,&less_than);
+            break;
+        default:
+            out() << "Syntax error: A string cannot be greater than or less than a number, or a bool." << std::endl;
+            correct_parsing = false;
+            break;
+        }
         break;
     case BOOL:
         out() << "Syntax error: A bool cannot be greater than or less than a number." << std::endl;
@@ -1226,8 +1238,7 @@ bool less_than(object& A, const object& B, const object& C)
             array_operator_object(A,B,C,&less_than);
             break;
         case STRING:
-            out() << "Syntax error: A string cannot be greater than or less than a number." << std::endl;
-            correct_parsing = false;
+            array_operator_object(A,B,C,&less_than);
             break;
         case BOOL:
             out() << "Syntax error: A bool cannot be greater than or less than a number." << std::endl;
@@ -1266,8 +1277,20 @@ bool greater_than(object& A, const object& B, const object& C)
         }
         break;
     case STRING:
-        out() << "Syntax error: A string cannot be greater than or less than a number." << std::endl;
-        correct_parsing = false;
+        switch(C.type)
+        {
+        case STRING:
+            A.type = BOOL;
+            A.data.boolean =  B.data.string->size() > C.data.string->size();
+            break;
+        case ARRAY:
+            object_operator_array(A,B,C,&greater_than);
+            break;
+        default:
+            out() << "Syntax error: A string cannot be greater than or less than a number, or a bool." << std::endl;
+            correct_parsing = false;
+            break;
+        }
         break;
     case BOOL:
         out() << "Syntax error: A bool cannot be greater than or less than a number." << std::endl;
@@ -1280,8 +1303,7 @@ bool greater_than(object& A, const object& B, const object& C)
             array_operator_object(A,B,C,&greater_than);
             break;
         case STRING:
-            out() << "Syntax error: A string cannot be greater than or less than a number." << std::endl;
-            correct_parsing = false;
+            array_operator_object(A,B,C,&less_than);
             break;
         case BOOL:
             out() << "Syntax error: A bool cannot be greater than or less than a number." << std::endl;
@@ -1320,8 +1342,20 @@ bool lore(object& A, const object& B, const object& C)
         }
         break;
     case STRING:
-        out() << "Syntax error: A string cannot be greater than or less than a number." << std::endl;
-        correct_parsing = false;
+        switch(C.type)
+        {
+        case STRING:
+            A.type = BOOL;
+            A.data.boolean =  B.data.string->size() <= C.data.string->size();
+            break;
+        case ARRAY:
+            object_operator_array(A,B,C,&lore);
+            break;
+        default:
+            out() << "Syntax error: A string cannot be greater than or less than a number, or a bool." << std::endl;
+            correct_parsing = false;
+            break;
+        }
         break;
     case BOOL:
         out() << "Syntax error: A bool cannot be greater than or less than a number." << std::endl;
@@ -1334,8 +1368,7 @@ bool lore(object& A, const object& B, const object& C)
             array_operator_object(A,B,C,&lore);
             break;
         case STRING:
-            out() << "Syntax error: A string cannot be greater than or less than a number." << std::endl;
-            correct_parsing = false;
+            array_operator_object(A,B,C,&less_than);
             break;
         case BOOL:
             out() << "Syntax error: A bool cannot be greater than or less than a number." << std::endl;
@@ -1374,8 +1407,20 @@ bool gore(object& A, const object& B, const object& C)
         }
         break;
     case STRING:
-        out() << "Syntax error: A string cannot be greater than or less than a number." << std::endl;
-        correct_parsing = false;
+        switch(C.type)
+        {
+        case STRING:
+            A.type = BOOL;
+            A.data.boolean =  B.data.string->size() >= C.data.string->size();
+            break;
+        case ARRAY:
+            object_operator_array(A,B,C,&gore);
+            break;
+        default:
+            out() << "Syntax error: A string cannot be greater than or less than a number, or a bool." << std::endl;
+            correct_parsing = false;
+            break;
+        }
         break;
     case BOOL:
         out() << "Syntax error: A bool cannot be greater than or less than a number." << std::endl;
@@ -1388,8 +1433,7 @@ bool gore(object& A, const object& B, const object& C)
             array_operator_object(A,B,C,&gore);
             break;
         case STRING:
-            out() << "Syntax error: A string cannot be greater than or less than a number." << std::endl;
-            correct_parsing = false;
+            array_operator_object(A,B,C,&gore);
             break;
         case BOOL:
             out() << "Syntax error: A bool cannot be greater than or less than a number." << std::endl;
