@@ -20,7 +20,7 @@ void clear_stack()
     global_state.type = NIL;
 }
 
-void evaluate_binary_operator(const object& operator_object)
+void evaluate_binary_operator(const object& operator_object, bool expand = true)
 {
     object result, arg1, arg2;
     bool eval = true;
@@ -51,70 +51,78 @@ void evaluate_binary_operator(const object& operator_object)
 
     if(eval)
     {
-        if(arg1.type == ARRAY && arg2.type == ARRAY)
+        if(expand)
         {
-            std::cout << "evaluate_array_array_binary_operator" << std::endl;
-            object new_array;
-            new_array.data.array = new Array();
-            new_array.type = ARRAY;
-            unsigned int num_iterations = arg1.data.array->size() > arg2.data.array->size() ? arg1.data.array->size() : arg2.data.array->size();
-
-            for(unsigned int i = 0; i < num_iterations; ++i)
+            if(arg1.type == ARRAY && arg2.type == ARRAY)
             {
-                optic_stack.push_back(copy_object(arg2.data.array->at(i % arg2.data.array->size())));
-                optic_stack.push_back(copy_object(arg1.data.array->at(i % arg1.data.array->size())));
-                optic_stack.push_back(operator_object);
-                evaluate_top();
-                // delete_object(larger_array->data.array->at(i));
-                // (*new_array.data.array)[i] = optic_stack.back();
-                new_array.data.array->push_back(optic_stack.back());
-                optic_stack.pop_back();
-                std::cout << "evaluate_array_array_binary_operator iteration: " << i << std::endl;
+                std::cout << "evaluate_array_array_binary_operator" << std::endl;
+                object new_array;
+                new_array.data.array = new Array();
+                new_array.type = ARRAY;
+                unsigned int num_iterations = arg1.data.array->size() > arg2.data.array->size() ? arg1.data.array->size() : arg2.data.array->size();
+
+                for(unsigned int i = 0; i < num_iterations; ++i)
+                {
+                    optic_stack.push_back(copy_object(arg2.data.array->at(i % arg2.data.array->size())));
+                    optic_stack.push_back(copy_object(arg1.data.array->at(i % arg1.data.array->size())));
+                    optic_stack.push_back(operator_object);
+                    evaluate_top();
+                    // delete_object(larger_array->data.array->at(i));
+                    // (*new_array.data.array)[i] = optic_stack.back();
+                    new_array.data.array->push_back(optic_stack.back());
+                    optic_stack.pop_back();
+                    std::cout << "evaluate_array_array_binary_operator iteration: " << i << std::endl;
+                }
+
+                result = new_array;
             }
 
-            result = new_array;
-        }
-
-        else if(arg1.type == ARRAY)
-        {
-            object new_array;
-            new_array.data.array = new Array();
-            new_array.type = ARRAY;
-
-            for(int i = 0; i < arg1.data.array->size(); ++i)
+            else if(arg1.type == ARRAY)
             {
-                optic_stack.push_back(copy_object(arg2));
-                optic_stack.push_back(copy_object(arg1.data.array->at(i)));
-                optic_stack.push_back(operator_object);
-                evaluate_top();
-                // delete_object(arg1.data.array->at(i));
-                // (*arg1.data.array)[i] = optic_stack.back();
-                new_array.data.array->push_back(optic_stack.back());
-                optic_stack.pop_back();
+                object new_array;
+                new_array.data.array = new Array();
+                new_array.type = ARRAY;
+
+                for(int i = 0; i < arg1.data.array->size(); ++i)
+                {
+                    optic_stack.push_back(copy_object(arg2));
+                    optic_stack.push_back(copy_object(arg1.data.array->at(i)));
+                    optic_stack.push_back(operator_object);
+                    evaluate_top();
+                    // delete_object(arg1.data.array->at(i));
+                    // (*arg1.data.array)[i] = optic_stack.back();
+                    new_array.data.array->push_back(optic_stack.back());
+                    optic_stack.pop_back();
+                }
+
+                result = new_array;
             }
 
-            result = new_array;
-        }
-
-        else if(arg2.type == ARRAY)
-        {
-            object new_array;
-            new_array.data.array = new Array();
-            new_array.type = ARRAY;
-
-            for(int i = 0; i < arg2.data.array->size(); ++i)
+            else if(arg2.type == ARRAY)
             {
-                optic_stack.push_back(copy_object(arg2.data.array->at(i)));
-                optic_stack.push_back(copy_object(arg1));
-                optic_stack.push_back(operator_object);
-                evaluate_top();
-                // delete_object(arg2.data.array->at(i));
-                // (*arg2.data.array)[i] = optic_stack.back();
-                new_array.data.array->push_back(optic_stack.back());
-                optic_stack.pop_back();
+                object new_array;
+                new_array.data.array = new Array();
+                new_array.type = ARRAY;
+
+                for(int i = 0; i < arg2.data.array->size(); ++i)
+                {
+                    optic_stack.push_back(copy_object(arg2.data.array->at(i)));
+                    optic_stack.push_back(copy_object(arg1));
+                    optic_stack.push_back(operator_object);
+                    evaluate_top();
+                    // delete_object(arg2.data.array->at(i));
+                    // (*arg2.data.array)[i] = optic_stack.back();
+                    new_array.data.array->push_back(optic_stack.back());
+                    optic_stack.pop_back();
+                }
+
+                result = new_array;
             }
 
-            result = new_array;
+            else
+            {
+                operator_object.data.operator_func(result, arg1, arg2);
+            }
         }
 
         else
@@ -265,6 +273,11 @@ void evaluate_top()
         evaluate_binary_operator(obj);
         break;
 
+    case NO_EXPANSION_OPERATION:
+        std::cout << "EVALUATE NO_EXPANSION_OPERATION" << std::endl;
+        evaluate_binary_operator(obj,false);
+        break;
+
     case UNARY_OPERATION:
         evaluate_unary_operator(obj);
         break;
@@ -290,15 +303,15 @@ void evaluate_top()
 
     case FUNCTION_CALL:
         std::cout << "EVALUATE FUNCTION_CALL" << std::endl;
-         evaluate_function_call();
-         break;
+        evaluate_function_call();
+        break;
 
     case VOID: // don't return
         std::cout << "EVALUATE VOID" << std::endl;
         break;
 
-    // case FUNCTION:
-    //    std::cout << "EVALUATE FUNCTION ON THE STACK. (In reality nothing much happens, just returned as an object back to the top)" << std::endl;
+        // case FUNCTION:
+        //    std::cout << "EVALUATE FUNCTION ON THE STACK. (In reality nothing much happens, just returned as an object back to the top)" << std::endl;
     case ARRAY:
         std::cout << "ARRAY ON THE STACK ARRAY ON THE STACK ARRAY ON THE STACK ARRAY ON THE STACK ARRAY ON THE STACK ARRAY ON THE STACK ." << std::endl;
     default:
@@ -333,6 +346,19 @@ void evaluate_stack()
         out() << "RESULT OF THE FUCKING STACK: ";
         print_object(global_state);
     }
+}
+
+void print_stack()
+{
+    out() << "Contents of the stack: ( " << std::endl;
+    int i=0;
+    for(std::deque<object>::iterator it = optic_stack.begin();it!=optic_stack.end();++it)
+    {
+        out() << "  ["<< i << "] ";
+        print_object(*(it));
+        i++;
+    }
+    out() << ")" << std::endl;
 }
 
 } // panopticon namespace

@@ -13,6 +13,7 @@ void clear_stack();
 void evaluate_top();
 void evaluate_stack();
 typedef std::deque<object>::iterator stack_iter;
+extern void print_stack();
 
 } // panopticon namespace
 

@@ -100,7 +100,8 @@ enum Type
     CODE_BLOCK, //24 Denotes several expression in a row
     PRIMITIVE, // 25
     CONDITION_TREE, //26
-    CONDITION_BRANCH //27
+    CONDITION_BRANCH, //27
+    NO_EXPANSION_OPERATION //28 For those operations that you DON'T want to multichannel expand
 };
 
 // Forward declarations

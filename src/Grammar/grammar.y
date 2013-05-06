@@ -774,7 +774,7 @@ expr(A) ::= expr(B) BITXOR expr(C).
 array_index(A) ::= NAME(B) LBRAC expr(C) RBRAC. [INDEX]
 {
     B.type = optic::STRING;
-    optic::store_operations(A,B,C,&optic::index);
+    optic::store_operations(A,B,C,&optic::index,false);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -784,7 +784,7 @@ array_index(A) ::= NAME(B) LBRAC expr(C) RBRAC. [INDEX]
 
 array_index(A) ::= array_index(B) LBRAC expr(C) RBRAC. [INDEX]
 {
-    optic::store_operations(A,B,C,&optic::index);
+    optic::store_operations(A,B,C,&optic::index,false);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
