@@ -239,15 +239,8 @@ void evaluate_variable(std::string* variable_name)
             {
                 call_function(result,*variable_name,false);
             }
-            else
-            {
-                optic_stack.push_back(result);
-            }
         }
-        else
-        {
-            optic_stack.push_back(result);
-        }
+        optic_stack.push_back(result);
     }
 
     else

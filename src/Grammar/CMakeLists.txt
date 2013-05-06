@@ -10,5 +10,8 @@ set(Panopticon_SRC
         ${CMAKE_CURRENT_SOURCE_DIR}/divide.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/conditionals.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/parsingutilities.cpp
-	PARENT_SCOPE
+        ${CMAKE_CURRENT_SOURCE_DIR}/lexer.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/lexer.l
+        ${CMAKE_CURRENT_SOURCE_DIR}/grammar.y
+        PARENT_SCOPE
 )

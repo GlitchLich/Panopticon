@@ -13,6 +13,7 @@
 #include "../include/Grammar/tokens.h"
 #include "../include/Grammar/lexglobal.h"
 #include "../include/Grammar/grammar.h"
+#include "../include/Grammar/lexer.h"
 #include "../include/core/heap.h"
 #include <algorithm>
 
@@ -189,6 +190,7 @@ bool exec(std::string string, std::string& output)
                 t0.data.boolean = yylval.bval;
             }
             Parse(pParser, yv, t0);
+            std::cout << "WHITESPACE COUNT: " << w_count << std::endl;
         }
 
         //Error Handling

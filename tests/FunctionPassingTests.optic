@@ -147,4 +147,6 @@ myMap["monkey"] == 4
 plusOne x = x + 1
 funcRepeater op x t 
 	| t > 0 = funcRepeater(op op(x) t-1)
-	_		= op(x)
+	_		= x+op(x)
+
+funcReapeter(plusOne,10,5)

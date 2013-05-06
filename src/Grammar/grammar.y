@@ -261,7 +261,6 @@ expr(A) ::= NAME(B) LPAREN RPAREN.
 test(A) ::= case_statement(B).
 {
     A=B;
-/*    panopticon::out() << "Case: " << *B.data.array->at(0).data.string << std::endl;*/
 }
 
 spec(A) ::= where_statement(B).
@@ -347,11 +346,22 @@ final_guard_statement(A) ::= guard_statement(B) WILDCARD ASSIGN expr(D). [ASSIGN
     A=B;
 }
 
-where_statement ::= guard_statement WHERE.
-where_statement ::= final_guard_statement WHERE.
-where_statement ::= name_chain ASSIGN expr WHERE.
-
-where_statement ::= where_statement NAME ASSIGN expr.
+where_statement(A) ::= guard_statement(B) WHERE.
+{
+    A = B;
+}
+where_statement(A) ::= final_guard_statement(B) WHERE.
+{
+    A = B;
+}
+/*where_statement(A) ::= name_chain ASSIGN expr WHERE.
+{
+    A = B;
+}
+where_statement(A) ::= where_statement NAME(B) ASSIGN expr.
+{
+    A = B;
+}*/
 
 case_statement(A) ::= name_chain(B) ASSIGN CASE expr OF. [ASSIGN]
 {

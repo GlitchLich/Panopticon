@@ -4,9 +4,10 @@
 #include <string.h>
 #include <math.h>
 #include <stdio.h>
+#include "../../include/Grammar/lexer.h"
 //#include "../../include/core/panerrors.h"
 
-int line = 1, col = 1;
+int line = 1, col = 0;
 
 
 %}
@@ -14,7 +15,10 @@ int line = 1, col = 1;
 %%
 
 
-[0-9]+|[0-9]*\.[0-9]+    {                      col += (int) strlen(yytext);
+[0-9]+|[0-9]*\.[0-9]+    {
+                                                int len = (int) strlen(yytext);
+                                                col += len;
+                                                w_count = col - len;
                                                 yylval.dval = atof(yytext);
                                                 return NUM; }
 true       { yylval.bval = 1;return BOOLEAN;}
@@ -31,55 +35,67 @@ false     { yylval.bval = 0;return BOOLEAN;}
     /*"("+\n           {  return OPENING_LPAREN; }
     \n+")"           {  return CLOSING_RPAREN; }*/
  "print"    {return PRINT;}
-[ \t]   { col += (int) strlen(yytext); }               /* ignore but count white space */
+[ \t]   {
+     int len = (int) strlen(yytext);
+     col += len;
+     w_count = col - len;
+    }               /* ignore but count white space */
 [A-Za-z][A-Za-z0-9]* {
-    col += (int)strlen(yytext);
+    int len = (int) strlen(yytext);
+    col += len;
+    w_count = col - len;
     yylval.sval=strndup(yytext,(int)strlen(yytext));
     return NAME;
 }
 [+]+[+]           {  return PLUSPLUS; }
-"+"           {  return PLUS; }
-"-"           {  return MINUS; }
-"*"           {  return TIMES; }
-"/"           {  return DIVIDE; }
-"("           {  return LPAREN; }
-")"           {  return RPAREN; }
-"<"           {  return LESSTHAN; }
-">"           {  return GREATERTHAN; }
-"=="          {  return EQUALTO;  }
-">="          {  return GORE;  }
-"<="          {  return LORE;  }
-"!="          {  return NOTEQUALTO;  }
-"<<"          {  return SHIFTL;  }
-">>"          {  return SHIFTR;  }
-"&&"          {  return AND;  }
-"||"          {  return OR;  }
-"!"          {  return NOT;  }
-"~"          {  return BITNOT;  }
-"&"          {  return BITAND;  }
-"|"          {  return BITOR;  }
-"^|"          {  return BITXOR;  }
-"%"          {  return MODULO;  }
-"["          {  return LBRAC;  }
-"]"          {  return RBRAC;  }
-","          { return COMMA;}
-"="          { return ASSIGN;}
-"^"          { return POW;}
-"->"          { return POINTER;}
+"+"           {  col++;w_count++; return PLUS; }
+"-"           {  col++;w_count++; return MINUS; }
+"*"           {  col++;w_count++; return TIMES; }
+"/"           {  col++;w_count++; return DIVIDE; }
+"("           {  col++;w_count++; return LPAREN; }
+")"           {  col++;w_count++; return RPAREN; }
+"<"           {  col++;w_count++; return LESSTHAN; }
+">"           {  col++;w_count++; return GREATERTHAN; }
+"=="          {  col++;w_count++; return EQUALTO;  }
+">="          {  col++;w_count++; return GORE;  }
+"<="          {  col++;w_count++; return LORE;  }
+"!="          {  col++;w_count++; return NOTEQUALTO;  }
+"<<"          {  col++;w_count++; return SHIFTL;  }
+">>"          {  col++;w_count++; return SHIFTR;  }
+"&&"          {  col++;w_count++; return AND;  }
+"||"          {  col++;w_count++; return OR;  }
+"!"          {  col++;w_count++; return NOT;  }
+"~"          {  col++;w_count++; return BITNOT;  }
+"&"          {  col++;w_count++; return BITAND;  }
+"|"          {  col++;w_count++; return BITOR;  }
+"^|"          {  col++;w_count++; return BITXOR;  }
+"%"          {  col++;w_count++; return MODULO;  }
+"["          {  col++;w_count++; return LBRAC;  }
+"]"          {  col++;w_count++; return RBRAC;  }
+","          { col++;w_count++; return COMMA;}
+"="          { col++;w_count++; return ASSIGN;}
+"^"          { col++;w_count++; return POW;}
+"->"          { col++;w_count++; return POINTER;}
 [\t " "]+"|"          { return GUARD_S;}
 \n+[\t " "]*+"|"          { return GUARD_N;}
 [\t " "]+"_"          { return WILDCARD;}
 \n+[\t " "]*+"_"          { return WILDCARD_N;}
 [\"][^"]*[\"] {
-    col += (int)strlen(yytext);
+    int len = (int) strlen(yytext);
+    col += len;
+    w_count = col - len;
     yylval.sval=strndup(yytext+1,(int)strlen(yytext)-2);
     return STRING;}
 "\""+[__+-={}|:;?/>.<,~`!@#$%^&*()A-Za-z0-9 \t\n\r]* {yyerror(yytext,1);return OPENQUOTEERROR;}
 
-\n      { col = 0; ++line; return NEWLINE; }
-\r      { col = 0; ++line; printf("return!\n"); return NEWLINE; }
+\n      { col = 0; ++line; w_count = col; calculate_tabs(); return NEWLINE; }
+\r      { col = 0; ++line;  w_count = col; calculate_tabs(); printf("return!\n"); return NEWLINE; }
 
-.       { col += (int) strlen(yytext); return yytext[0]; }
+.       {
+        int len = (int) strlen(yytext);
+        col += len;
+        w_count = col - len; return yytext[0];
+    }
 %%
 /**
  * reset the line and column count

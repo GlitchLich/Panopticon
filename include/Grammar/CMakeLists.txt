@@ -11,5 +11,6 @@ set(Panopticon_SRC
         ${CMAKE_CURRENT_SOURCE_DIR}/minus.h
         ${CMAKE_CURRENT_SOURCE_DIR}/divide.h
         ${CMAKE_CURRENT_SOURCE_DIR}/conditionals.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/lexer.h
 	PARENT_SCOPE
 )

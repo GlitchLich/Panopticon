@@ -9,6 +9,10 @@
 //Testing Lexer Parsing for Guards
 (
 
+//Significant White Space tests
+3 + 3
+	+ 4
+
 //Basic Guard statements working
 myGuardFunc x y
 	| x+y > 5 	= 6
@@ -42,6 +46,15 @@ factorial(20)
 factorial(2000)
 
 //NOT WORKING
+myWhereFunc x
+	| x + y < 4 = 0
+	| x + y > 4 = 2
+	_			= 1
+	where
+		y = 1
+
+
+
 myCaseFunc x = 
 	case x of
 		0 -> 1
@@ -64,13 +77,21 @@ whereFunc x = x + w
 		
 )
 
+//Guard version, needs logic:
+plusOne x = x + 1
+funcRepeater op x t 
+	| t > 0 = x + funcRepeater(op op(x) t-1)
+	_		= x+op(x)
+
+funcReapeter(plusOne,2,5)
+
 // STILL Doesn't Work
 combiner x y = [x y]
 combiner(12 13)
 
 //Arrays with variables in Function declarations
-combinedPlus x y = [x y]+1
-combinedPlus(1 2)
+combinedPlus x y i1 i2 = [ x[i1] y[i2] ] + 1
+combinedPlus([2 3 4] [4 5 6] 0 2)
 
 separatedPlus x = x[0]+1
 anArray = [14 15 16]
@@ -232,7 +253,7 @@ true *  [0 [true 2 [3 "hey"] 5 [6 7] ] 8]
 [0 [true 2 [3 "hey"] 5 [6 7] ] 8] * false
 ["e" ["h" "y" ["ey" "he"] "h" ["hey" " "] ] "e"] * "h"
 mulArrays = [0 [1 2 [3 4] 5 [6 7] ] 8] * [0 [1 2 [3 4] 5 [6 7] ] 8]
-mulArrays()
+mulArrays
 //DIVIDE
 4 / 4.5
 4 / true
@@ -314,8 +335,25 @@ true ^  [0 [true 2 [3 "hey"] 5 [6 7] ] 8]
 "hey" == true
 "hey" == "h"
 "hey" == "hey"
+"hey" < "hey"
+"hey" < "heyhey"
+"hey" > "hey"
+"hey" > "heyhey"
+"hey" <= "hey"
+"hey" <= "heyhey"
+"hey" >= "hey"
+"hey" >= "heyhey"
 "hey" == [0 [1 2 [3 6] 5 [6 7] ] 8]
 "hey" == ["e" ["h" "y" ["ey" "he"] "h" ["hey" " "] ] "3"]
+"hey" > ["1" ["123" "12" ["12345" "1234"] "123" ["12" "1"] ] "1234"]
+"hey" < ["1" ["123" "12" ["12345" "1234"] "123" ["12" "1"] ] "1234"]
+"hey" >= ["1" ["123" "12" ["12345" "1234"] "123" ["12" "1"] ] "1234"]
+"hey" <= ["1" ["123" "12" ["12345" "1234"] "123" ["12" "1"] ] "1234"]
+["1" ["123" "12" ["12345" "1234"] "123" ["12" "1"] ] "1234"] < "hey"
+["1" ["123" "12" ["12345" "1234"] "123" ["12" "1"] ] "1234"] > "hey"
+["1" ["123" "12" ["12345" "1234"] "123" ["12" "1"] ] "1234"] <= "hey"
+["1" ["123" "12" ["12345" "1234"] "123" ["12" "1"] ] "1234"] >= "hey"
+
 
 true == 4
 true == true
