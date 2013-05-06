@@ -263,12 +263,13 @@ bool print_object(const object &A)
         {
             if(result.type==FUNCTION)
             {
-                if(result.data.function->arguments.size()==1)
+                if(result.data.function->arguments.size() == 1)
                 {
-                    //                    object func_result;
-                    call_function(result,*A.data.string);
-                    //                    out() << *A.data.string << ": " << print_object(func_result);
+                    object arguments; // empty, won't be used by call_function so no need to initialize
+                    call_function(result, A, arguments);
+                    out() << *A.data.string << ": " << print_object(result);
                 }
+
                 else
                 {
                     out() << "Function: " << *A.data.string << std::endl;
@@ -679,22 +680,25 @@ bool call_function(object& A, const object& B, const object& C)
         Map context;
         context.insert(std::make_pair(function_name, function));
 
-        // iterate backwards through the argument list to put them on the stack, this way the resolve in the correct order when we collect them for mapping
-        // we use arguments.size() - 2 because we don't want to count the function name which is included in the arguments array
-        for(int i = function.data.function->arguments.size() - 2; i >= 0; --i)
+        if(function.data.function->arguments.size() > 1) // if it has any arguments
         {
-            object arg = C.data.array->at(i);
-            optic_stack.push_back(arg);
-        }
+            // iterate backwards through the argument list to put them on the stack, this way the resolve in the correct order when we collect them for mapping
+            // we use arguments.size() - 2 because we don't want to count the function name which is included in the arguments array
+            for(int i = function.data.function->arguments.size() - 2; i >= 0; --i)
+            {
+                object arg = C.data.array->at(i);
+                optic_stack.push_back(arg);
+            }
 
-        // Collect the the results and map them to the local scope
-        for(int i = 1; i < function.data.function->num_arguments && optic_stack.size() > 0; ++i)
-        {
-            evaluate_top();
-            String arg_name = *function.data.function->arguments.at(i).data.string;
-            std::cout << "function_arg: " << arg_name << std::endl;
-            context.insert(std::make_pair(arg_name, optic_stack.back()));
-            optic_stack.pop_back();
+            // Collect the the results and map them to the local scope
+            for(int i = 1; i < function.data.function->num_arguments && optic_stack.size() > 0; ++i)
+            {
+                evaluate_top();
+                String arg_name = *function.data.function->arguments.at(i).data.string;
+                std::cout << "function_arg: " << arg_name << std::endl;
+                context.insert(std::make_pair(arg_name, optic_stack.back()));
+                optic_stack.pop_back();
+            }
         }
 
         push_scope(&context);
@@ -716,6 +720,7 @@ bool call_function(object& A, const object& B, const object& C)
 
 }
 
+/* DON'T USE THIS, IT's BROKEN
 bool call_function(const object &function, const String& name,bool resolve)
 {
     std::cout << "function.type: " << function.type << std::endl;
@@ -738,6 +743,7 @@ bool call_function(const object &function, const String& name,bool resolve)
     resolve_stack_from_parser(function.data.function->body,resolve);
     pop_scope();
 }
+*/
 
 //======================================================================================
 //======================================================================================

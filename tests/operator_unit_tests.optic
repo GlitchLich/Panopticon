@@ -8,7 +8,6 @@
 
 //Testing Lexer Parsing for Guards
 (
-
 //Significant White Space tests
 3 + 3
 	+ 4

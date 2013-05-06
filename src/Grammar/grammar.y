@@ -102,7 +102,7 @@ start ::= spec(A).
     }
     else
     {
-        optic::resolve_stack_from_parser(A);
+        optic::resolve_stack_from_parser(A, true);
     }
 }
 
@@ -241,16 +241,8 @@ expr(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN.
 
 expr(A) ::= NAME(B) LPAREN RPAREN.
 {
-    optic::object C;
-    C.type = optic::FUNCTION_ARG_VALUES;
-    C.data.array = new optic::Array();
-/*    optic::object v;*/
-/*    v.type = optic::VOID;*/
-/*    C.data.array->push_back(v);*/
-    optic::object b;
-    b.type = optic::STRING;
-    b.data.string = new optic::String(B.data.string->c_str());
-    optic::parse_operations(A,b,C,optic::call_function);
+    B.type = optic::UNDECLARED_VARIABLE;
+    A = B;
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);

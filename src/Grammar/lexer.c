@@ -12,7 +12,11 @@ void calculate_tabs()
     {
         previous_tab_level = current_tab_level;
         current_tab_level++;
-        printf("Tab!");
+        printf("Tab!\n");
+    }
+    else
+    {
+        printf("Same Level\n");
     }
 }
 
