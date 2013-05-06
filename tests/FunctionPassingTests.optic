@@ -39,6 +39,7 @@ one( one )
 // Array of functions DOESN'T WORK
 add x y = x + y
 adds = [ add add add ]
+adds
 adds[0]( 1 1 )
 
 // Works
