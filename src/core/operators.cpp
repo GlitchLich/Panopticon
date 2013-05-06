@@ -257,11 +257,34 @@ bool print_object(const object &A)
         panopticon::print_array(A);
         break;
     case panopticon::VARIABLE:
-        out() << "print_object: VARIABLE"<< std::endl;
-        out() << *A.data.string << " = ";
-        break;
     case panopticon::UNDECLARED_VARIABLE:
-        out() << "Undeclared Variable: " << *A.data.string << std::endl;
+        object result;
+        if(get_variable(A.data.string,&result) == OK)
+        {
+            if(result.type==FUNCTION)
+            {
+                if(result.data.function->arguments.size()==1)
+                {
+                    //                    object func_result;
+                    call_function(result,*A.data.string);
+                    //                    out() << *A.data.string << ": " << print_object(func_result);
+                }
+                else
+                {
+                    out() << "Function: " << *A.data.string << std::endl;
+                    out() << "with arguments: " << result.data.function->arguments.size() << std::endl;
+                }
+            }
+            else
+            {
+                out() << *A.data.string << ": " << print_object(result);
+            }
+
+        }
+        else
+        {
+            out() << "Undeclared Variable: " << *A.data.string << std::endl;
+        }
         break;
     case panopticon::OPERATION_TREE:
         panopticon::print_array(A,0,true);
@@ -693,7 +716,7 @@ bool call_function(object& A, const object& B, const object& C)
 
 }
 
-bool call_function(const object &function, const String& name)
+bool call_function(const object &function, const String& name,bool resolve)
 {
     std::cout << "function.type: " << function.type << std::endl;
 
@@ -712,7 +735,7 @@ bool call_function(const object &function, const String& name)
 
 
     push_scope(&context);
-    resolve_stack_from_parser(function.data.function->body);
+    resolve_stack_from_parser(function.data.function->body,resolve);
     pop_scope();
 }
 

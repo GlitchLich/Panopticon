@@ -229,8 +229,25 @@ void evaluate_variable(std::string* variable_name)
 
     if(get_variable(variable_name, &result) == OK)
     {
-        std::cout << "VARIABLE " << variable_name << " FOUND FOUND FOUND FOUND " << std::endl;
-        optic_stack.push_back(result);
+        std::cout << "VARIABLE " << *variable_name << " FOUND FOUND FOUND FOUND " << std::endl;
+        //=============
+        //Curtis: Added this to auto call zero argument functions when they are found.
+        //=============
+        if(result.type==FUNCTION)
+        {
+            if(result.data.function->arguments.size()==1)
+            {
+                call_function(result,*variable_name,false);
+            }
+            else
+            {
+                optic_stack.push_back(result);
+            }
+        }
+        else
+        {
+            optic_stack.push_back(result);
+        }
     }
 
     else
