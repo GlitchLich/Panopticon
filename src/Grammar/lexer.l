@@ -28,7 +28,9 @@ int line = 1, col = 1;
             last-- ;
         }
     }*/
-
+[;]     {return DELIMITER;}
+[{]     {return LCURL;}
+[}]     {return RCURL;}
 [0-9]+|[0-9]*\.[0-9]+    {
     col += (int) strlen(yytext);
     yylval.dval = atof(yytext);
@@ -36,16 +38,11 @@ int line = 1, col = 1;
 }
 true       { yylval.bval = 1;return BOOLEAN;}
 false     { yylval.bval = 0;return BOOLEAN;}
-    /*\n+[\t " "]*+"case"         { return CASE;}*/
 "case"      { return CASE;}
 "of"         { return OF;}
-    /*\n+[\t " "]*+"let"         { return LET;}*/
 "let"         { return LET;}
-    /*\n+[\t " "]*+"in"         { return IN;}*/
 "in"         { return IN;}
-    /*\n+[\t " "]*+"where"         { return WHERE;}*/
 "where"         { return WHERE;}
-    /*\n+[\t " "]+[\t " "]*          { return N_TAB;}*/
 "print"    {return PRINT;}
 [ \t]   {
         col += (int) strlen(yytext);
@@ -83,11 +80,7 @@ false     { yylval.bval = 0;return BOOLEAN;}
 ","          { return COMMA;}
 "="          { return ASSIGN;}
 "^"          { return POW;}
-"->"          { return POINTER;}
-[\t " "]+"|"          { return GUARD_S;}
-\n+[\t " "]*+"|"          { return GUARD_N;}
-[\t " "]+"_"          { return WILDCARD;}
-\n+[\t " "]*+"_"          { return WILDCARD_N;}
+"_"          { return WILDCARD;}
 [\"][^"]*[\"] {
     col += (int)strlen(yytext);
     yylval.sval=strndup(yytext+1,(int)strlen(yytext)-2);
@@ -95,11 +88,8 @@ false     { yylval.bval = 0;return BOOLEAN;}
 }
 "\""+[__+-={}|:;?/>.<,~`!@#$%^&*()A-Za-z0-9 \t\n\r]* {yyerror(yytext,1);return OPENQUOTEERROR;}
 
-\n      { col = 0; ++line;
-
-          return NEWLINE;
-        }
-\r      { col = 0; ++line; printf("return!\n"); return NEWLINE; }
+\n      { col = 0; ++line; /*return NEWLINE;*/}
+\r      { col = 0; ++line; /*printf("return!\n"); return NEWLINE; */}
 
 .       {
     /*calculate_white_space("");*/

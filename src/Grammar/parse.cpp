@@ -218,11 +218,11 @@ bool exec(std::string string, std::string& output)
                 }
             }
         }
-        string = string.append("\n");
+        string = string.append("\n\n");
         calculate_white_space(string);
         //        mutate_text_for_parsing(string);
 
-//        std::cout << "Parsing: " << string << std::endl;
+        //        std::cout << "Parsing: " << string << std::endl;
         bufferstate = yy_scan_string(string.c_str());
         //        yy_scan_string(string.c_str());
         while( (yv=yylex()) != 0)
@@ -322,12 +322,17 @@ void string_whitespace_check(std::string &line, int start)
 
 unsigned int white_count(std::string& line,int start,int stop) {
     unsigned int count = 0;
+    bool firstChar = false;
     for(int i=start;i<stop;++i)
     {
-        if(line.at(i) == ' ')
+        //        std::cout << line.at(i);
+        if(line.at(i) == ' ' && !firstChar)
         {
-            std::cout << line.at(i);
             count++;
+        }
+        else if(line.at(i) != '\n')
+        {
+            firstChar = true;
         }
     }
     return count ;
@@ -336,43 +341,65 @@ unsigned int white_count(std::string& line,int start,int stop) {
 
 void calculate_white_space(std::string& line) {
     int previous_break = 0;
-    for(int i=0;i<line.size();++i)
+    int size = line.size();
+    std::string string;
+    string.reserve(line.size()*1.15);
+    int insert = -1;
+    int insert_add = 0;
+    nesting = 0;
+    for(int i=0;i<size;++i)
     {
-        if(line.at(i)=='\n')
+        insert_add++;
+        string.push_back(line.at(i));
+        if(line.at(i)=='(')
         {
+            nesting-=1;
+        }
+        else if(line.at(i)==')')
+        {
+            nesting+=1;
+        }
+        else if(line.at(i)=='\n'||line.at(i)=='\r'||line.at(i)=='\0')
+        {
+            if (nesting==0)
+            {
 
-            if (nesting)
-                /* Ignore indents while nested. */
-                return ;
+                unsigned int indent = white_count(line,previous_break,i);
 
-            std::cout << "____" << std::endl;
-            unsigned int indent = white_count(line,previous_break,i);
-
-            if (indent == indent_stack[level]) {
-                if (!first)
-                {
-                    std::cout << ";";
+                if (indent == indent_stack[level]) {
+                    if (!first)
+                    {
+                        string.insert(insert,";");
+                        insert++;
+                    }
+                    first = 0;
                 }
-                first = 0 ;
-                return ;
+                else if (indent > indent_stack[level]) {
+                    string.insert(insert,"{");
+                    insert++;
+                    assert(level+1 < MAX_DEPTH);
+                    indent_stack[++level] = indent;
+                }
+                else
+                {
+                    while (indent < indent_stack[level]) {
+                        --level ;
+                        string.insert(insert,"};");
+                        insert++;
+                        insert++;
+                    }
+                }
             }
-
-            if (indent > indent_stack[level]) {
-                std::cout << "{";
-                assert(level+1 < MAX_DEPTH);
-                indent_stack[++level] = indent;
-                return ;
-            }
-
-            while (indent < indent_stack[level]) {
-                --level ;
-                std::cout << "}";
-            }
-            std::cout << "____"  << std::endl;
             previous_break = i;
-            assert(level >= 0) ;
+            insert+=insert_add;
+            insert_add = 0;
+            assert(level >= 0);
         }
     }
+
+    std::cout << "Result: " << std::endl;
+    std::cout << string;
+    string.swap(line);
 }
 
 }
