@@ -204,6 +204,7 @@ void evaluate_function_dec()
 void evaluate_function_call()
 {
     std::cout << "evaluate_function_call()" << std::endl;
+    /* DOESN'T WORK
     if(optic_stack.back().type == FUNCTION)
     {
         object function = optic_stack.back();
@@ -212,7 +213,9 @@ void evaluate_function_call()
         optic_stack.push_back(global_state);
     }
 
-    else if(optic_stack.back().type == STRING)
+    else */
+
+    if(optic_stack.back().type == STRING)
     {
         object name = optic_stack.back();
         optic_stack.pop_back();
@@ -222,37 +225,33 @@ void evaluate_function_call()
     }
 }
 
-void evaluate_variable(std::string* variable_name)
+void evaluate_variable(const object& variable_name)
 {
     std::cout << "EVALUATE VARIABLE" << std::endl;
     object result;
 
-    if(get_variable(variable_name, &result) == OK)
+    if(get_variable(variable_name.data.string, &result) == OK)
     {
-        std::cout << "VARIABLE " << *variable_name << " FOUND FOUND FOUND FOUND " << std::endl;
+        std::cout << "VARIABLE " << variable_name.data.string->c_str() << " FOUND FOUND FOUND FOUND " << std::endl;
         //=============
         //Curtis: Added this to auto call zero argument functions when they are found.
         //=============
-        if(result.type==FUNCTION)
+        if(result.type == FUNCTION)
         {
-            if(result.data.function->arguments.size()==1)
+            std::cout << "RESULT.TYPE: FUNCTION" << std::endl;
+            if(result.data.function->arguments.size() == 1)
             {
-                call_function(result,*variable_name,false);
-            }
-            else
-            {
-                optic_stack.push_back(result);
+                object arguments; // empty, won't be used by call_function so no need to initialize
+                call_function(result, variable_name, arguments);
             }
         }
-        else
-        {
-            optic_stack.push_back(result);
-        }
+
+        optic_stack.push_back(result);
     }
 
     else
     {
-        out() << "Variable " << variable_name << " not found." << std::endl;
+        out() << "Variable " << variable_name.data.string->c_str() << " not found." << std::endl;
         correct_parsing = false;
         clear_stack();
     }
@@ -306,7 +305,7 @@ void evaluate_top()
 
     case VARIABLE:
     case UNDECLARED_VARIABLE:
-        evaluate_variable(obj.data.string);
+        evaluate_variable(obj);
         break;
 
     case ASSIGNMENT:

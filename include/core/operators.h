@@ -61,14 +61,14 @@ extern bool recursive_apply(object &a,const object &obj1,const object& obj2, ope
 extern bool object_operator_object(object& a, object& b, object& c, operator_function func);
 extern bool array_operator_array(object& a,const object& array1,const object& array2, operator_function func);
 extern bool parse_operations(object& a, const object& b, const object& c, operator_function func);
-extern bool resolve_stack_from_parser(object& operation_tree, bool resolve_entire_stack = true);
+extern bool resolve_stack_from_parser(object& operation_tree, bool resolve_entire_stack = false);
 extern bool create_tree(object&a,const object& obj);
 extern bool store_operations(object& a,const object& obj1,unary_operator_function func);
 extern bool store_operations(object& a, const object& obj1, const object& obj2, operator_function func, bool expand = true);
 
 extern bool create_function(object&A, const object& B, const object& C);
 extern bool call_function(object& A, const object& B, const object& C);
-extern bool call_function(const object& function, const String &name, bool resolve = true);
+// extern bool call_function(const object& function, const String &name, bool resolve = true); DON'T USE THIS, IT's BROKEN
 extern bool handle_stack(object &A, Function* function);
 
 /*
