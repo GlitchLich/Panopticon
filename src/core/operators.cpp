@@ -703,8 +703,19 @@ bool call_function(object& A, const object& B, const object& C)
 
         push_scope(&context);
         resolve_stack_from_parser(function.data.function->body, false);
+
+        if(optic_stack.back().type == ARRAY)
+        {
+            object parse_array;
+            parse_array.type = UNARY_OPERATION;
+            parse_array.data.unary_operator_func = resolve_function_array;
+            optic_stack.push_back(parse_array);
+            evaluate_top();
+        }
+
         A = optic_stack.back();
         optic_stack.pop_back();
+
         pop_scope();
 
         //        out() << "FUNCTION RESULT" << std::endl;
@@ -718,6 +729,23 @@ bool call_function(object& A, const object& B, const object& C)
         correct_parsing = false;
     }
 
+}
+
+extern bool resolve_function_array(object& A, const object& B)
+{
+    if(B.type != FUNCTION)
+    {
+        optic_stack.push_back(B);
+        evaluate_top();
+        A = optic_stack.back();
+        optic_stack.pop_back();
+        std::cout << "RESOLVE FUNCTION var.type: " << B.type << std::endl;
+    }
+
+    else
+    {
+        A = B;
+    }
 }
 
 /* DON'T USE THIS, IT's BROKEN

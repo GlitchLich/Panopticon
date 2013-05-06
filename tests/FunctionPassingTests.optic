@@ -21,12 +21,56 @@ printed( 1 )
 printed( 2 )
 printed( 3 )
 
+// Doesn't work
 function x = [ x 1 2 ]
 function( 0 )
 function( 1 )
 
+// Works
+one x = x
+one( 1 )
+one( 2 )
+one( [ 3 * 3] )
+one( "String" )
 
+// STILL WORKS
+one( one ) 
 
+// Array of functions DOESN'T WORK
+add x y = x + y
+adds = [ add add add ]
+adds[0]( 1 1 )
+
+// Works
+anArray x = [ x ]
+anArray( 1 )
+seven = 7
+sevened x = [ x seven seven ]
+sevened( 1 )
+funcArray f = [ f f f ]
+// Doesn't work because arrays of functions isn ot working
+functions = funcArray( anArray )
+functions[0]( 0 )
+shift x y = x << y
+shift( 2 3 )
+shifts = funcArray( shift )
+shifts[0]( 2 3 )
+moreshifts = [ shift shift shift ]
+moreshifts[0]( 2 3 )
+
+// Nested Arrays from functions
+nest x = [ [ [ x ] x ] x ]
+nest( 1 )
+nest( seven )
+cube x = x ^ 3
+// Doesnt work because arrays of functions don't work
+nest( cube )[0]
+nest( cube( 3 ) )
+
+// Works
+paren x = ( x )
+paren( 2 )
+paren( [ 2 ] )
 
 // Nested Arrays
 [ [ 1 ] ] + 1
@@ -76,7 +120,7 @@ mul x y = x * y
 double x = x * 2
 mul( double( 10 ) 2 ) // double is eager evaluated, the call has been made
 ten = 10
-mul( ten 2 ) // ten is lazy evaluated
+mul( ten ten ) // ten is lazy evaluated
 
 // WORKS
 thirty = three() * 10
