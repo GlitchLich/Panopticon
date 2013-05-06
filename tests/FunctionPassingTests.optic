@@ -71,6 +71,12 @@ mul( ten ten )
 twenty = ten * 2
 twenty
 
+mul x y = x * y
+double x = x * 2
+mul( double( 10 ) 2 ) // double is eager evaluated, the call has been made
+ten = 10
+mul( ten 2 ) // ten is lazy evaluated
+
 // WORKS
 thirty = three() * 10
 three = 3
@@ -92,8 +98,8 @@ lazier( fiveThousand )
 
 
 // Works
-1 + [ 0 1 2 3] + ten()
-ten() + [ 0 1 2 3 ] + 1
+1 + [ 0 1 2 3 ] + ten
+ten + [ 0 1 2 3 ] + 1
 
 // Passing functions
 
@@ -127,7 +133,7 @@ combiner x y = [x y]
 combiner(12 13)
 //Here's a hint: This works.
 combinedPlus x y = [x y]+1
-combinedPlus(1 2)
+combinedPlus(3 2)
 
 // ONLY WORKS ONCE?????????????????????
 printer x y = print([ x y ])
