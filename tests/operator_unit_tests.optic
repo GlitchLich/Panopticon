@@ -64,6 +64,10 @@ whereFunc x = x + w
 		
 )
 
+// STILL Doesn't Work
+combiner x y = [x y]
+combiner(12 13)
+
 //Arrays with variables in Function declarations
 combinedPlus x y = [x y]+1
 combinedPlus(1 2)
