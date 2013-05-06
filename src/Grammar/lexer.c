@@ -1,22 +1,51 @@
 #include "../../include/Grammar/lexer.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <assert.h>
 
-int w_count = 0;
-int previous_w_count = 0;
-int tab_count = 0;
-int previous_tab_level = 0;
-int current_tab_level = 0;
+#define MAX_DEPTH 72
+unsigned int indent_stack[MAX_DEPTH];
+unsigned int level = 0;
+int nesting = 0;
+unsigned int first = 1;
 
-void calculate_tabs()
+void clear_lexer()
 {
-    if(w_count > previous_w_count+3)
-    {
-        previous_tab_level = current_tab_level;
-        current_tab_level++;
-        printf("Tab!\n");
-    }
-    else
-    {
-        printf("Same Level\n");
-    }
+
 }
 
+unsigned int white_count(char* line) {
+    unsigned int count = 0 ;
+    while (*line == ' ')
+        count++, line++ ;
+    return count ;
+}
+
+void calculate_white_space(char* line) {
+    if (nesting)
+        /* Ignore indents while nested. */
+        return ;
+
+    printf("              \n");
+    unsigned int indent = white_count(line) ;
+
+    if (indent == indent_stack[level]) {
+        if (!first) printf(" ;\n") ;
+        first = 0 ;
+        return ;
+    }
+
+    if (indent > indent_stack[level]) {
+        printf(" {\n") ;
+        assert(level+1 < MAX_DEPTH) ;
+        indent_stack[++level] = indent ;
+        return ;
+    }
+
+    while (indent < indent_stack[level]) {
+        --level ;
+        printf(" }\n") ;
+    }
+    printf("              \n");
+    assert(level >= 0) ;
+}

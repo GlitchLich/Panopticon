@@ -1,8 +1,11 @@
 #ifndef LEXER_H
 #define LEXER_H
 
-extern int w_count;
-extern int tab_count;
-extern void calculate_tabs();
+extern unsigned int indent_stack[];
+extern unsigned int level;
+extern unsigned int first;
+extern int nesting;
+extern void calculate_white_space(char* line);
+extern unsigned int w_count(char* line);
 
 #endif // LEXER_H

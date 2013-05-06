@@ -27,7 +27,7 @@
 extern FILE *yyin;
 typedef size_t yy_size_t;
 struct yy_buffer_state
-    {
+{
     FILE *yy_input_file;
 
     char *yy_ch_buf;		/* input buffer */
@@ -86,7 +86,7 @@ struct yy_buffer_state
      */
 #define YY_BUFFER_EOF_PENDING 2
 
-    };
+};
 typedef struct yy_buffer_state *YY_BUFFER_STATE;
 
 extern "C" {
@@ -132,17 +132,17 @@ void mutate_text_for_parsing(std::string& string)
     int string_length = string.size();
     for(int i=0;i<string_length-1;++i)
     {
-//        if(string.at(i)=='\n' && string.at(i+1)=='\t')
-//        {
-//            std::cout << "TAB!" << std::endl;
-//            whitespacecount++;
-//            if(whitespacecount==3)
-//            {
-//                stringSize-=3;
-//                string.replace(i-2,3,"_TAB");
-//                whitespacecount = 0;
-//            }
-//        }
+        //        if(string.at(i)=='\n' && string.at(i+1)=='\t')
+        //        {
+        //            std::cout << "TAB!" << std::endl;
+        //            whitespacecount++;
+        //            if(whitespacecount==3)
+        //            {
+        //                stringSize-=3;
+        //                string.replace(i-2,3,"_TAB");
+        //                whitespacecount = 0;
+        //            }
+        //        }
 
     }
 }
@@ -154,9 +154,20 @@ bool exec(std::string string, std::string& output)
     output.clear();
     stream_out.str(std::string());
     YY_BUFFER_STATE bufferstate;
+
+    //clear lexer
+    for(int i=0;i<72;++i)
+    {
+        indent_stack[i] = 0;
+    }
+    level = 0;
+    nesting = 0;
+    first = 1;
+
     try
     {
         int stringSize = string.size();
+        int white_count = 0;
         for(int i=0;i<stringSize;++i)
         {
             if(((int)string.at(i))<0)
@@ -164,12 +175,42 @@ bool exec(std::string string, std::string& output)
                 string.replace(i,3,"\n");
                 stringSize-=2;
             }
+            if(((int)string.at(i))=='\n')
+            {
+                white_count=0;
+            }
+            if(((int)string.at(i))==' ')
+            {
+                white_count = (white_count + 1)%4;
+            }
+            else if(((int)string.at(i))=='\t')
+            {
+                if(white_count==0)
+                {
+                    string.replace(i,1,"    ");
+                    stringSize+=3;
+                }
+                else if(white_count==1)
+                {
+                    string.replace(i,1,"   ");
+                    stringSize+=2;
+                }
+                else if(white_count==2)
+                {
+                    string.replace(i,1,"  ");
+                    stringSize+=1;
+                }
+                else if(white_count==3)
+                {
+                    string.replace(i,1," ");
+                }
+            }
         }
-//        mutate_text_for_parsing(string);
+        //        mutate_text_for_parsing(string);
         string = string.append("\n");
         std::cout << "Parsing: " << string << std::endl;
         bufferstate = yy_scan_string(string.c_str());
-//        yy_scan_string(string.c_str());
+        //        yy_scan_string(string.c_str());
         while( (yv=yylex()) != 0)
         {
             //            std::cout << " yylex() " << yv << " yylval.dval " << yylval.dval << std::endl;
@@ -190,7 +231,6 @@ bool exec(std::string string, std::string& output)
                 t0.data.boolean = yylval.bval;
             }
             Parse(pParser, yv, t0);
-            std::cout << "WHITESPACE COUNT: " << w_count << std::endl;
         }
 
         //Error Handling
