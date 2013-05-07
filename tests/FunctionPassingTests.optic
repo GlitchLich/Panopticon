@@ -49,7 +49,6 @@ seven = 7
 sevened x = [ x seven seven ]
 sevened( 1 )
 funcArray f = [ f f f ]
-// Doesn't work because arrays of functions isn ot working
 functions = funcArray( anArray )
 functions[0]( 0 )
 shift x y = x << y
@@ -58,6 +57,9 @@ shifts = funcArray( shift )
 shifts[0]( 2 3 )
 moreshifts = [ shift shift shift ]
 moreshifts[0]( 2 3 )
+moreshifts[]( 2 3 )
+moremoreshifts = [ moreshifts ]
+moremoreshifts[0]( 2 3 )
 
 // Nested Arrays from functions
 nest x = [ [ [ x ] x ] x ]

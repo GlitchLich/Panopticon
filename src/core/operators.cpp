@@ -707,6 +707,20 @@ bool create_function(object &A, const object &B, const object &C)
     // }
 }
 
+bool call_function_array(object& A, const object& B, const object& C)
+{
+    std::cout << "ARRAY OF FUNCTIONS ARRAY OF FUNCTIONS ARRAY OF FUNCTIONS ARRAY OF FUNCTIONS ARRAY OF FUNCTIONS " << std::endl;
+    optic_stack.push_back(C);
+    optic_stack.push_back(B);
+    object call;
+    call.type = OPERATION;
+    call.data.operator_func = call_function;
+    optic_stack.push_back(call);
+    evaluate_top();
+    A = optic_stack.back();
+    optic_stack.pop_back();
+}
+
 /**
 * @brief call_function
 * @param A = Result
@@ -719,106 +733,126 @@ bool call_function(object& A, const object& B, const object& C)
     std::cout << "CALL FUNCTION!!!!!!!!!!!" << std::endl;
 
     object function;
-    bool eval = true;
 
-    if(B.type == VARIABLE || B.type == UNDECLARED_VARIABLE || B.type == STRING)
+    switch(B.type)
     {
+    case VARIABLE:
+    case UNDECLARED_VARIABLE:
+    case STRING:
+
         if(get_variable(B.data.string, &function) != OK)
         {
             out() << "Unable to find function: " << B.data.string->c_str() << " in current scope" << std::endl;
             std::cout << "Unable to find function: " << B.data.string->c_str() << " in current scope" << std::endl;
             correct_parsing = false;
-            eval = false;
+            return false;
         }
 
         if(function.type == ARRAY)
         {
-            std::cout << "ARRAY OF FUNCTIONS ARRAY OF FUNCTIONS ARRAY OF FUNCTIONS ARRAY OF FUNCTIONS ARRAY OF FUNCTIONS " << std::endl;
-            optic_stack.push_back(C);
-            optic_stack.push_back(function);
-            object call;
-            call.type = OPERATION;
-            call.data.operator_func = call_function;
-            optic_stack.push_back(call);
-            evaluate_top();
-            A = optic_stack.back();
-            optic_stack.pop_back();
-            return true;
+            return call_function_array(A, function, C);
         }
 
         else if(function.type != FUNCTION)
         {
-            eval = false;
+            return false;
         }
-    }
 
-    else if(B.type == FUNCTION)
-    {
+        break;
+
+    case FUNCTION:
         function = B;
-    }
+        break;
 
-    else
-    {
-        eval = false;
+    case Array_Map_Value_To_Functions:
+        std::cout << "WILL THIS CRASH?: ";
+        std::cout << *B.data.string << std::endl;
+
+        /*
+        object object_array;
+
+        if(get_variable(B.data.string, &object_array) != OK)
+        {
+            out() << "Unable to find variable: " << B.data.string->c_str() << " in current scope" << std::endl;
+            std::cout << "Unable to find variable: " << B.data.string->c_str() << " in current scope" << std::endl;
+            correct_parsing = false;
+            return false;
+        }
+
+        if(object_array.type == ARRAY)
+        {
+            return call_function_array(A, object_array, C);
+        }
+
+        else
+        {
+            out() << "Can't map array of functions for variable " << function.data.string->c_str() << " in current scope" << std::endl;
+            std::cout << "Can't map array of functions for variable " << function.data.string->c_str() << " in current scope" << std::endl;
+            correct_parsing = false;
+            return false;
+        }*/
+
+        break;
+
+    default:
         out() << "Object is not a function and is not callable: ";
+        out() << "OBJECT TYPE: " << B.type << " ";
         print_object(B);
+        return false;
+        break;
     }
 
+    std::string function_name = function.data.function->name;
+    std::cout << "Function name: " << function_name << std::endl;
+    std::cout << "Function type: " << function.type << std::endl;
+    std::cout << "Function number of arguments: " << function.data.function->arguments.size() << std::endl;
+    //        out() << "function.type: " << function.type << std::endl;
 
+    Map context;
+    context.insert(std::make_pair(function_name, function));
 
-    if(eval)
+    if(function.data.function->arguments.size() > 1) // if it has any arguments
     {
-        std::string function_name = function.data.function->name;
-        std::cout << "Function name: " << function_name << std::endl;
-        std::cout << "Function type: " << function.type << std::endl;
-        std::cout << "Function number of arguments: " << function.data.function->arguments.size() << std::endl;
-        //        out() << "function.type: " << function.type << std::endl;
-
-        Map context;
-        context.insert(std::make_pair(function_name, function));
-
-        if(function.data.function->arguments.size() > 1) // if it has any arguments
+        // iterate backwards through the argument list to put them on the stack, this way the resolve in the correct order when we collect them for mapping
+        // we use arguments.size() - 2 because we don't want to count the function name which is included in the arguments array
+        for(int i = function.data.function->arguments.size() - 2; i >= 0; --i)
         {
-            // iterate backwards through the argument list to put them on the stack, this way the resolve in the correct order when we collect them for mapping
-            // we use arguments.size() - 2 because we don't want to count the function name which is included in the arguments array
-            for(int i = function.data.function->arguments.size() - 2; i >= 0; --i)
-            {
-                object arg = C.data.array->at(i);
-                optic_stack.push_back(arg);
-            }
-
-            // Collect the the results and map them to the local scope
-            for(int i = 1; i < function.data.function->num_arguments && optic_stack.size() > 0; ++i)
-            {
-                evaluate_top();
-                String arg_name = *function.data.function->arguments.at(i).data.string;
-                std::cout << "function_arg: " << arg_name << std::endl;
-                context.insert(std::make_pair(arg_name, optic_stack.back()));
-                optic_stack.pop_back();
-            }
+            object arg = C.data.array->at(i);
+            optic_stack.push_back(arg);
         }
 
-        push_scope(&context);
-        resolve_stack_from_parser(function.data.function->body, false);
-
-        if(optic_stack.back().type == ARRAY)
+        // Collect the the results and map them to the local scope
+        for(int i = 1; i < function.data.function->num_arguments && optic_stack.size() > 0; ++i)
         {
-            object parse_array;
-            parse_array.type = UNARY_OPERATION;
-            parse_array.data.unary_operator_func = resolve_function_array;
-            optic_stack.push_back(parse_array);
             evaluate_top();
+            String arg_name = *function.data.function->arguments.at(i).data.string;
+            std::cout << "function_arg: " << arg_name << std::endl;
+            context.insert(std::make_pair(arg_name, optic_stack.back()));
+            optic_stack.pop_back();
         }
-
-        A = optic_stack.back();
-        optic_stack.pop_back();
-
-        pop_scope();
-
-        //        out() << "FUNCTION RESULT" << std::endl;
-        //        print_object(optic_stack.back());
     }
 
+    push_scope(&context);
+    resolve_stack_from_parser(function.data.function->body, false);
+
+    if(optic_stack.back().type == ARRAY)
+    {
+        object parse_array;
+        parse_array.type = UNARY_OPERATION;
+        parse_array.data.unary_operator_func = resolve_function_array;
+        optic_stack.push_back(parse_array);
+        evaluate_top();
+    }
+
+    A = optic_stack.back();
+    optic_stack.pop_back();
+
+    pop_scope();
+
+    //        out() << "FUNCTION RESULT" << std::endl;
+    //        print_object(optic_stack.back());
+
+    return true;
 }
 
 extern bool resolve_function_array(object& A, const object& B)
