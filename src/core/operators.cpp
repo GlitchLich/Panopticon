@@ -459,6 +459,56 @@ bool store_operations(object& a,const object& obj1,unary_operator_function func)
     }
 }
 
+bool store_operations(object& a,const object& obj1,const object& obj2)
+{
+    a.type = OPERATION_TREE;
+    a.data.array = new Array();
+
+    int size = 0;
+
+    if(obj1.type==OPERATION_TREE)
+    {
+        size+=obj1.data.array->size();
+    }
+    else
+    {
+        size++;
+    }
+
+    if(obj2.type==OPERATION_TREE)
+    {
+        size+=obj2.data.array->size();
+    }
+    else
+    {
+        size++;
+    }
+
+    if(obj1.type==OPERATION_TREE)
+    {
+        for(int i=0;i<obj1.data.array->size();++i)
+        {
+            a.data.array->push_back(obj1.data.array->at(i));
+        }
+    }
+    else
+    {
+        a.data.array->push_back(obj1);
+    }
+
+    if(obj2.type==OPERATION_TREE)
+    {
+        for(int i=0;i<obj2.data.array->size();++i)
+        {
+            a.data.array->push_back(obj2.data.array->at(i));
+        }
+    }
+    else
+    {
+        a.data.array->push_back(obj2);
+    }
+}
+
 bool store_operations(object& a,const object& obj1,const object& obj2, operator_function func, bool expand)
 {
     a.type = OPERATION_TREE;

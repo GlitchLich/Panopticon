@@ -290,11 +290,11 @@ test(A) ::= case_statement(B).
     A=B;
 }
 
-spec(A) ::= final_where_statement(B).
+/*spec(A) ::= final_where_statement(B).
 {
     panopticon::out() << "Where: " << std::endl;
     A=B;
-}
+}*/
 
 assignment(A) ::= final_guard_statement(B).
 {
@@ -348,52 +348,73 @@ final_guard_statement(A) ::= guard_statement(B) WILDCARD ASSIGN expr(D) RCURL. [
     std::cout << "GUARD8" << std::endl;
 }
 
-where_guard_statement(A) ::= guard_statement(B) WILDCARD ASSIGN expr(D) DELIMITER. [ASSIGN]
-{
-    std::cout << "GUARD9" << std::endl;
-    add_wildcard_to_tree(B,D);
-    A=B;
-    std::cout << "GUARD10" << std::endl;
-}
 
 //==================
 //Where
 //==================
 
-where_statement(A) ::= guard_statement(B) WHERE LCURL. [ASSIGN]
+where_statement(A) ::= WHERE LCURL. [ASSIGN]
 {
-     std::cout << "WHERE!!!!!!!!!!!!!" << std::endl;
-    A = B;
+    A.type = optic::NIL;
+    std::cout << "Where 1" << std::endl;
 }
 
-where_statement(A) ::= where_guard_statement(B) WHERE LCURL. [ASSIGN]
+where_statement(A) ::= WHERE name_chain(B) ASSIGN expr(C) LCURL. [ASSIGN]
 {
-     std::cout << "WHERE!!!!!!!!!!!!!" << std::endl;
-    A = B;
+    std::cout << "Where 1.5" << std::endl;
+    insure_ready_for_assignment(B,C);
+    B.type = optic::FUNCTION_ARG_NAMES;
+    panopticon::parse_operations(A, B, C, panopticon::assign_variable);
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
 }
 
-where_statement(A) ::= guard_statement(B) WHERE name_chain ASSIGN expr LCURL. [ASSIGN]
+where_statement(A) ::= where_statement(D) name_chain(B) ASSIGN expr(C) DELIMITER. [ASSIGN]
 {
-     std::cout << "WHERE!!!!!!!!!!!!!" << std::endl;
-    A = B;
+    std::cout << "Where 2" << std::endl;
+    insure_ready_for_assignment(B,C);
+    B.type = optic::FUNCTION_ARG_NAMES;
+
+    if(D.type!=optic::NIL)
+    {
+        optic::object assign;
+        panopticon::parse_operations(assign, B, C, panopticon::assign_variable);
+        optic::store_operations(A,D,assign);
+    }
+    else
+    {
+        panopticon::parse_operations(A, B, C, panopticon::assign_variable);
+    }
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
 }
 
-where_statement(A) ::= where_guard_statement(B) WHERE name_chain ASSIGN expr LCURL. [ASSIGN]
+final_where_statement(A) ::= where_statement(D) name_chain(B) ASSIGN expr(C) RCURL DELIMITER RCURL. [ASSIGN]
 {
-     std::cout << "WHERE!!!!!!!!!!!!!" << std::endl;
-    A = B;
-}
-
-where_statement(A) ::= where_statement(B) name_chain ASSIGN expr DELIMITER. [ASSIGN]
-{
-     std::cout << "WHERE!!!!!!!!!!!!!" << std::endl;
-    A = B;
-}
-
-final_where_statement(A) ::= where_statement(B) name_chain ASSIGN expr RCURL DELIMITER RCURL. [ASSIGN]
-{
-    std::cout << "WHERE!!!!!!!!!!!!!" << std::endl;
-    A = B;
+    std::cout << "Where 3" << std::endl;
+    insure_ready_for_assignment(B,C);
+    B.type = optic::FUNCTION_ARG_NAMES;
+    if(D.type!=optic::NIL)
+    {
+        optic::object assign;
+        panopticon::parse_operations(assign, B, C, panopticon::assign_variable);
+        optic::store_operations(A,D,assign);
+    }
+    else
+    {
+        panopticon::parse_operations(A, B, C, panopticon::assign_variable);
+    }
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
 }
 
 case_statement(A) ::= name_chain(B) ASSIGN CASE expr OF. [ASSIGN]
@@ -413,6 +434,22 @@ assignment(A) ::= name_chain(B) ASSIGN expr(C). [ASSIGN]
     insure_ready_for_assignment(B,C);
     B.type = optic::FUNCTION_ARG_NAMES;
     panopticon::parse_operations(A, B, C, panopticon::assign_variable);
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
+
+//Assignment with where
+assignment(A) ::= name_chain(B) ASSIGN expr(C) LCURL final_where_statement(D). [ASSIGN]
+{
+    std::cout << "Where assign" << std::endl;
+    B.type = optic::FUNCTION_ARG_NAMES;
+    panopticon::object body;
+    panopticon::store_operations(body,D,C);
+    insure_ready_for_assignment(B,body);
+    panopticon::parse_operations(A, B, body, panopticon::assign_variable);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);

@@ -78,7 +78,7 @@ factorial(20)
 //Speed Test (though printing doesn't help....)
 factorial(2000)
 
-//NOT WORKING
+//Syntax WORKING
 myWhereFunc x
 	| x + y < 4 = 0
 	| x + y > 4 = 2
@@ -87,7 +87,7 @@ myWhereFunc x
 		y = 1
 
 
-
+//Not working
 myCaseFunc x = 
 	case x of
 		0 -> 1
@@ -107,6 +107,8 @@ letFunc x =
 whereFunc x = x + w
 	where 
 		w = 5
+
+whereFunc( 5 )
 		
 )
 

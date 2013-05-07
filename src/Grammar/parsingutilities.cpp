@@ -6,11 +6,11 @@ namespace panopticon {
 extern bool insure_ready_for_assignment(panopticon::object& B, panopticon::object& C)
 {
     if(
-        C.type == panopticon::OPERATION ||
-        C.type == panopticon::NUMBER ||
-        C.type == panopticon::STRING ||
-        C.type == panopticon::BOOL   ||
-        C.type == panopticon::ARRAY ||
+        C.type == panopticon::OPERATION     ||
+        C.type == panopticon::NUMBER        ||
+        C.type == panopticon::STRING        ||
+        C.type == panopticon::BOOL          ||
+        C.type == panopticon::ARRAY         ||
         C.type != panopticon::OPERATION_TREE
     )
     {
