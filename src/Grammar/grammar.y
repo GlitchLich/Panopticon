@@ -452,7 +452,6 @@ assignment(A) ::= name_chain(B) ASSIGN expr(C). [ASSIGN]
 assignment(A) ::= name_chain(B) ASSIGN expr(C) LCURL final_where_statement(D). [ASSIGN]
 {
     std::cout << "Where assign" << std::endl;
-    B.type = optic::FUNCTION_ARG_NAMES;
     panopticon::object body;
     panopticon::store_operations(body,D,C);
     insure_ready_for_assignment(B,body);

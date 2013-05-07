@@ -7,20 +7,27 @@
 //every other elements, a[::2], 1 through 3 a[1::3]
 
 (
+subvariable = x * z
+	where
+		x = 10
+		z = 11
+
+subvariable
+
 //Where
 whereFunc x = x + w - t
 	where 
 		w = 5
 		t = w * x
 
-whereFunc( 12 )
+whereArray = [ whereFunc( 11 ) whereFunc( 11 ) ] 
+whereArray
 
 //Where with sub functions
 subFunc x y = ( x + w ) - ( t(x y) - y ) 
 	where 
 		w = 5
-		t z d = z * d / 10
-
+		t z d = ( z * d ) / 10
 subFunc( 13 10 )
 
 //Dynamic Scoping in action
@@ -29,6 +36,20 @@ subFunc2 x y= t(x y)
 		t y x = x - y
 
 subFunc2( 1 2 )
+
+//Arrays with sub functions crashes
+subFunc3 x y= t(x y)
+	where 
+		t y x = [ x y ]
+
+subFunc3( 1 2 )
+
+//Arrays with sub functions crashes
+subFunc3 x y= [ t(x y) t(x y) ]
+	where 
+		t w z = w - z
+
+subFunc3( 1 2 )
 
 
 

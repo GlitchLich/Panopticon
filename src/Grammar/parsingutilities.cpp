@@ -23,11 +23,11 @@ extern bool insure_ready_for_assignment(panopticon::object& B, panopticon::objec
     if(B.type!=panopticon::ARRAY)
     {
         panopticon::object temp = B;
-        B.type=panopticon::ARRAY;
         B.data.array = new panopticon::Array();
         B.data.array->reserve(1);
         B.data.array->push_back(temp);
     }
+    B.type=panopticon::FUNCTION_ARG_NAMES;
 }
 
 }
