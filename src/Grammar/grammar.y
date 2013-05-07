@@ -220,8 +220,8 @@ expr(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN. [FUNCTION_CALL]
 
 expr(A) ::= NAME(B) LBRAC RBRAC LPAREN stmt_list(C) RPAREN. [FUNCTION_CALL]
 {
-    std::cout << "B.type = optic::Array_Map_Value_To_Functions" << std::endl;
-    std::cout << *B.data.string << std::endl;
+/*    std::cout << "B.type = optic::Array_Map_Value_To_Functions" << std::endl;*/
+/*    std::cout << *B.data.string << std::endl;*/
     if(C.type==optic::STATEMENT_LIST)
     {
             C.type = optic::FUNCTION_ARG_VALUES;
@@ -234,9 +234,9 @@ expr(A) ::= NAME(B) LBRAC RBRAC LPAREN stmt_list(C) RPAREN. [FUNCTION_CALL]
         C.data.array->reserve(1);
         C.data.array->push_back(temp);
     }
-/*    optic::object b;*/
+    optic::object b;
     B.type = optic::Array_Map_Value_To_Functions;
-/*    b.data.string = new optic::String(B.data.string->c_str());*/
+    b.data.string = new optic::String(*B.data.string;
     optic::parse_operations(A,B,C,optic::call_function);
     if(!panopticon::correct_parsing)
     {
