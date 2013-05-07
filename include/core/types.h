@@ -101,7 +101,8 @@ enum Type
     PRIMITIVE, // 25
     CONDITION_TREE, //26
     CONDITION_BRANCH, //27
-    NO_EXPANSION_OPERATION //28 For those operations that you DON'T want to multichannel expand
+    NO_EXPANSION_OPERATION, //28 For those operations that you DON'T want to multichannel expand
+    Array_Map_Value_To_Functions //29 Map a value to an array of functions
 };
 
 // Forward declarations

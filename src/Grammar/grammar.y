@@ -239,6 +239,31 @@ expr(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN. [FUNCTION_CALL]
     }
 }
 
+expr(A) ::= NAME(B) LBRAC RBRAC LPAREN stmt_list(C) RPAREN. [FUNCTION_CALL]
+{
+    if(C.type==optic::STATEMENT_LIST)
+    {
+            C.type = optic::FUNCTION_ARG_VALUES;
+    }
+    else
+    {
+        optic::object temp = C;
+        C.type = optic::FUNCTION_ARG_VALUES;
+        C.data.array = new optic::Array();
+        C.data.array->reserve(1);
+        C.data.array->push_back(temp);
+    }
+    optic::object b;
+    b.type = optic::Array_Map_Value_To_Functions;
+    b.data.string = new optic::String(B.data.string->c_str());
+    optic::parse_operations(A,b,C,optic::call_function);
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
+
 expr(A) ::= array_index(B) LPAREN stmt_list(C) RPAREN. [FUNCTION_CALL]
 {
     if(C.type==optic::STATEMENT_LIST)

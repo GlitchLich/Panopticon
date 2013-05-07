@@ -7,8 +7,8 @@ State 0:
           in ::= * error
           error ::= * OPENQUOTEERROR
 
-                OPENQUOTEERROR shift  101
-                         error shift  102
+                OPENQUOTEERROR shift  104
+                         error shift  105
                           main accept
                             in shift  1
                      {default} reduce 1
@@ -27,6 +27,7 @@ State 1:
           name_chain ::= * NAME
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
           expr ::= * array_index LPAREN RPAREN
@@ -76,39 +77,40 @@ State 1:
           expr ::= * array_index
 
                              $ reduce 0
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                     DELIMITER shift  141
-                          NAME shift  75
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                     DELIMITER shift  145
+                          NAME shift  77
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  62
-                         start shift  100
-                          test shift  99
-                          spec shift  138
-                    assignment shift  137
-                      top_stmt shift  136
-                          stmt shift  135
-                    name_chain shift  78
-                   array_index shift  82
-                case_statement shift  107
-         final_guard_statement shift  106
-               guard_statement shift  79
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  64
+                         start shift  103
+                          test shift  102
+                          spec shift  142
+                    assignment shift  141
+                      top_stmt shift  140
+                          stmt shift  139
+                    name_chain shift  80
+                   array_index shift  84
+                case_statement shift  110
+         final_guard_statement shift  109
+               guard_statement shift  81
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
 
 State 2:
           stmt ::= * expr
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
           expr ::= * array_index LPAREN RPAREN
@@ -118,7 +120,7 @@ State 2:
           expr ::= * array
           array ::= * OPENBRAC maybe_empty_stmt_list RBRAC
           array ::= OPENBRAC * maybe_empty_stmt_list RBRAC
-     (35) maybe_empty_stmt_list ::= *
+     (36) maybe_empty_stmt_list ::= *
           maybe_empty_stmt_list ::= * stmt_list
           expr ::= * num
           expr ::= * string
@@ -153,32 +155,33 @@ State 2:
           array_index ::= * array_index LBRAC expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                          NAME shift  83
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                          NAME shift  85
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  62
-                          stmt shift  131
-                     stmt_list shift  7
-                   array_index shift  82
-                         array shift  132
-         maybe_empty_stmt_list shift  88
-                           num shift  129
-                        string shift  128
-                          bool shift  127
-                     {default} reduce 35
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  64
+                          stmt shift  135
+                     stmt_list shift  9
+                   array_index shift  84
+                         array shift  136
+         maybe_empty_stmt_list shift  91
+                           num shift  133
+                        string shift  132
+                          bool shift  131
+                     {default} reduce 36
 
 State 3:
           stmt ::= * expr
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= array_index LPAREN * stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
@@ -222,32 +225,33 @@ State 3:
           array_index ::= * array_index LBRAC expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                        RPAREN shift  120
-                          NAME shift  83
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                        RPAREN shift  124
+                          NAME shift  85
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  62
-                          stmt shift  131
-                     stmt_list shift  5
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  64
+                          stmt shift  135
+                     stmt_list shift  7
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
 
 State 4:
           stmt ::= * expr
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
           expr ::= NAME LPAREN * stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
           expr ::= NAME LPAREN * RPAREN
@@ -290,31 +294,165 @@ State 4:
           array_index ::= * array_index LBRAC expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                        RPAREN shift  118
-                          NAME shift  83
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                        RPAREN shift  122
+                          NAME shift  85
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  62
-                          stmt shift  131
-                     stmt_list shift  6
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  64
+                          stmt shift  135
+                     stmt_list shift  8
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
 
 State 5:
           stmt ::= * expr
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
+          expr ::= NAME LBRAC RBRAC LPAREN * stmt_list RPAREN
+          expr ::= * array_index LPAREN stmt_list RPAREN
+          expr ::= * NAME LPAREN RPAREN
+          expr ::= * array_index LPAREN RPAREN
+          expr ::= * LET NAME ASSIGN expr IN expr
+          stmt_list ::= * stmt
+          stmt_list ::= * stmt_list stmt
+          expr ::= * array
+          array ::= * OPENBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * num
+          expr ::= * string
+          expr ::= * bool
+          expr ::= * PRINT LPAREN expr RPAREN
+          expr ::= * LPAREN expr RPAREN
+          num ::= * NUM
+          string ::= * STRING
+          bool ::= * BOOLEAN
+          expr ::= * expr PLUS expr
+          expr ::= * expr MINUS expr
+          expr ::= * expr DIVIDE expr
+          expr ::= * expr TIMES expr
+          expr ::= * expr MODULO expr
+          expr ::= * expr POW expr
+          expr ::= * expr EQUALTO expr
+          expr ::= * expr NOTEQUALTO expr
+          expr ::= * expr LESSTHAN expr
+          expr ::= * expr GREATERTHAN expr
+          expr ::= * expr LORE expr
+          expr ::= * expr GORE expr
+          expr ::= * expr AND expr
+          expr ::= * expr OR expr
+          expr ::= * BITNOT expr
+          expr ::= * MINUS expr
+          expr ::= * NOT expr
+          expr ::= * expr SHIFTL expr
+          expr ::= * expr SHIFTR expr
+          expr ::= * expr BITAND expr
+          expr ::= * expr BITXOR expr
+          array_index ::= * NAME LBRAC expr RBRAC
+          array_index ::= * array_index LBRAC expr RBRAC
+          expr ::= * array_index
+
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                          NAME shift  85
+                           LET shift  101
+                      OPENBRAC shift  2
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  64
+                          stmt shift  135
+                     stmt_list shift  6
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
+
+State 6:
+          stmt ::= * expr
+          expr ::= * NAME
+          expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
+          expr ::= NAME LBRAC RBRAC LPAREN stmt_list * RPAREN
+          expr ::= * array_index LPAREN stmt_list RPAREN
+          expr ::= * NAME LPAREN RPAREN
+          expr ::= * array_index LPAREN RPAREN
+          expr ::= * LET NAME ASSIGN expr IN expr
+          stmt_list ::= stmt_list * stmt
+          expr ::= * array
+          array ::= * OPENBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * num
+          expr ::= * string
+          expr ::= * bool
+          expr ::= * PRINT LPAREN expr RPAREN
+          expr ::= * LPAREN expr RPAREN
+          num ::= * NUM
+          string ::= * STRING
+          bool ::= * BOOLEAN
+          expr ::= * expr PLUS expr
+          expr ::= * expr MINUS expr
+          expr ::= * expr DIVIDE expr
+          expr ::= * expr TIMES expr
+          expr ::= * expr MODULO expr
+          expr ::= * expr POW expr
+          expr ::= * expr EQUALTO expr
+          expr ::= * expr NOTEQUALTO expr
+          expr ::= * expr LESSTHAN expr
+          expr ::= * expr GREATERTHAN expr
+          expr ::= * expr LORE expr
+          expr ::= * expr GORE expr
+          expr ::= * expr AND expr
+          expr ::= * expr OR expr
+          expr ::= * BITNOT expr
+          expr ::= * MINUS expr
+          expr ::= * NOT expr
+          expr ::= * expr SHIFTL expr
+          expr ::= * expr SHIFTR expr
+          expr ::= * expr BITAND expr
+          expr ::= * expr BITXOR expr
+          array_index ::= * NAME LBRAC expr RBRAC
+          array_index ::= * array_index LBRAC expr RBRAC
+          expr ::= * array_index
+
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                        RPAREN shift  121
+                          NAME shift  85
+                           LET shift  101
+                      OPENBRAC shift  2
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  64
+                          stmt shift  134
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
+
+State 7:
+          stmt ::= * expr
+          expr ::= * NAME
+          expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= array_index LPAREN stmt_list * RPAREN
           expr ::= * NAME LPAREN RPAREN
@@ -356,31 +494,32 @@ State 5:
           array_index ::= * array_index LBRAC expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                        RPAREN shift  133
-                          NAME shift  83
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                        RPAREN shift  137
+                          NAME shift  85
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  62
-                          stmt shift  130
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  64
+                          stmt shift  134
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
 
-State 6:
+State 8:
           stmt ::= * expr
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
           expr ::= NAME LPAREN stmt_list * RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
           expr ::= * array_index LPAREN RPAREN
@@ -421,30 +560,31 @@ State 6:
           array_index ::= * array_index LBRAC expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                        RPAREN shift  134
-                          NAME shift  83
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                        RPAREN shift  138
+                          NAME shift  85
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  62
-                          stmt shift  130
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  64
+                          stmt shift  134
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
 
-State 7:
+State 9:
           stmt ::= * expr
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
           expr ::= * array_index LPAREN RPAREN
@@ -452,7 +592,7 @@ State 7:
           stmt_list ::= stmt_list * stmt
           expr ::= * array
           array ::= * OPENBRAC maybe_empty_stmt_list RBRAC
-     (36) maybe_empty_stmt_list ::= stmt_list *
+     (37) maybe_empty_stmt_list ::= stmt_list *
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -486,29 +626,30 @@ State 7:
           array_index ::= * array_index LBRAC expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                          NAME shift  83
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                          NAME shift  85
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  62
-                          stmt shift  130
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
-                     {default} reduce 36
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  64
+                          stmt shift  134
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
+                     {default} reduce 37
 
-State 8:
+State 10:
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
           expr ::= * array_index LPAREN RPAREN
@@ -551,28 +692,93 @@ State 8:
           array_index ::= * array_index LBRAC expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                          NAME shift  83
-                          CASE shift  14
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                          NAME shift  85
+                          CASE shift  17
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  52
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  54
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
 
-State 9:
+State 11:
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
+          expr ::= NAME LBRAC * RBRAC LPAREN stmt_list RPAREN
+          expr ::= * array_index LPAREN stmt_list RPAREN
+          expr ::= * NAME LPAREN RPAREN
+          expr ::= * array_index LPAREN RPAREN
+          expr ::= * LET NAME ASSIGN expr IN expr
+          expr ::= * array
+          array ::= * OPENBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * num
+          expr ::= * string
+          expr ::= * bool
+          expr ::= * PRINT LPAREN expr RPAREN
+          expr ::= * LPAREN expr RPAREN
+          num ::= * NUM
+          string ::= * STRING
+          bool ::= * BOOLEAN
+          expr ::= * expr PLUS expr
+          expr ::= * expr MINUS expr
+          expr ::= * expr DIVIDE expr
+          expr ::= * expr TIMES expr
+          expr ::= * expr MODULO expr
+          expr ::= * expr POW expr
+          expr ::= * expr EQUALTO expr
+          expr ::= * expr NOTEQUALTO expr
+          expr ::= * expr LESSTHAN expr
+          expr ::= * expr GREATERTHAN expr
+          expr ::= * expr LORE expr
+          expr ::= * expr GORE expr
+          expr ::= * expr AND expr
+          expr ::= * expr OR expr
+          expr ::= * BITNOT expr
+          expr ::= * MINUS expr
+          expr ::= * NOT expr
+          expr ::= * expr SHIFTL expr
+          expr ::= * expr SHIFTR expr
+          expr ::= * expr BITAND expr
+          expr ::= * expr BITXOR expr
+          array_index ::= * NAME LBRAC expr RBRAC
+          array_index ::= NAME LBRAC * expr RBRAC
+          array_index ::= * array_index LBRAC expr RBRAC
+          expr ::= * array_index
+
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                         RBRAC shift  90
+                          NAME shift  85
+                           LET shift  101
+                      OPENBRAC shift  2
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  58
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
+
+State 12:
+          expr ::= * NAME
+          expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
           expr ::= * array_index LPAREN RPAREN
@@ -613,27 +819,28 @@ State 9:
           array_index ::= * array_index LBRAC expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                          NAME shift  83
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                          NAME shift  85
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  49
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  51
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
 
-State 10:
+State 13:
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
           expr ::= * array_index LPAREN RPAREN
@@ -675,27 +882,28 @@ State 10:
           array_index ::= * array_index LBRAC expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                          NAME shift  83
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                          NAME shift  85
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  47
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  49
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
 
-State 11:
+State 14:
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
           expr ::= * array_index LPAREN RPAREN
@@ -737,27 +945,28 @@ State 11:
           array_index ::= * array_index LBRAC expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                          NAME shift  83
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                          NAME shift  85
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  50
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  52
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
 
-State 12:
+State 15:
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
           expr ::= * array_index LPAREN RPAREN
@@ -799,27 +1008,28 @@ State 12:
           array_index ::= * array_index LBRAC expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                          NAME shift  83
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                          NAME shift  85
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  48
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  50
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
 
-State 13:
+State 16:
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
           expr ::= * array_index LPAREN RPAREN
@@ -860,27 +1070,28 @@ State 13:
           array_index ::= * array_index LBRAC expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                          NAME shift  83
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                          NAME shift  85
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  51
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  53
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
 
-State 14:
+State 17:
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
           expr ::= * array_index LPAREN RPAREN
@@ -921,27 +1132,28 @@ State 14:
           array_index ::= * array_index LBRAC expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                          NAME shift  83
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                          NAME shift  85
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  53
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  55
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
 
-State 15:
+State 18:
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
           expr ::= * array_index LPAREN RPAREN
@@ -982,27 +1194,28 @@ State 15:
           array_index ::= * array_index LBRAC expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                          NAME shift  83
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                          NAME shift  85
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  54
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  56
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
 
-State 16:
+State 19:
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
           expr ::= * array_index LPAREN RPAREN
@@ -1043,88 +1256,28 @@ State 16:
           array_index ::= * array_index LBRAC expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                          NAME shift  83
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                          NAME shift  85
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  55
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  57
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
 
-State 17:
+State 20:
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
-          expr ::= * array_index LPAREN stmt_list RPAREN
-          expr ::= * NAME LPAREN RPAREN
-          expr ::= * array_index LPAREN RPAREN
-          expr ::= * LET NAME ASSIGN expr IN expr
-          expr ::= * array
-          array ::= * OPENBRAC maybe_empty_stmt_list RBRAC
-          expr ::= * num
-          expr ::= * string
-          expr ::= * bool
-          expr ::= * PRINT LPAREN expr RPAREN
-          expr ::= * LPAREN expr RPAREN
-          num ::= * NUM
-          string ::= * STRING
-          bool ::= * BOOLEAN
-          expr ::= * expr PLUS expr
-          expr ::= * expr MINUS expr
-          expr ::= * expr DIVIDE expr
-          expr ::= * expr TIMES expr
-          expr ::= * expr MODULO expr
-          expr ::= * expr POW expr
-          expr ::= * expr EQUALTO expr
-          expr ::= * expr NOTEQUALTO expr
-          expr ::= * expr LESSTHAN expr
-          expr ::= * expr GREATERTHAN expr
-          expr ::= * expr LORE expr
-          expr ::= * expr GORE expr
-          expr ::= * expr AND expr
-          expr ::= * expr OR expr
-          expr ::= * BITNOT expr
-          expr ::= * MINUS expr
-          expr ::= * NOT expr
-          expr ::= * expr SHIFTL expr
-          expr ::= * expr SHIFTR expr
-          expr ::= * expr BITAND expr
-          expr ::= * expr BITXOR expr
-          array_index ::= * NAME LBRAC expr RBRAC
-          array_index ::= NAME LBRAC * expr RBRAC
-          array_index ::= * array_index LBRAC expr RBRAC
-          expr ::= * array_index
-
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                          NAME shift  83
-                           LET shift  98
-                      OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  56
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
-
-State 18:
-          expr ::= * NAME
-          expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
           expr ::= * array_index LPAREN RPAREN
@@ -1165,27 +1318,28 @@ State 18:
           array_index ::= array_index LBRAC * expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                          NAME shift  83
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                          NAME shift  85
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  57
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  59
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
 
-State 19:
+State 21:
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
           expr ::= * array_index LPAREN RPAREN
@@ -1226,27 +1380,28 @@ State 19:
           array_index ::= * array_index LBRAC expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                          NAME shift  83
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                          NAME shift  85
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  90
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  93
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
 
-State 20:
+State 22:
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
           expr ::= * array_index LPAREN RPAREN
@@ -1287,27 +1442,28 @@ State 20:
           array_index ::= * array_index LBRAC expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                          NAME shift  83
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                          NAME shift  85
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  91
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  94
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
 
-State 21:
+State 23:
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
           expr ::= * array_index LPAREN RPAREN
@@ -1348,27 +1504,28 @@ State 21:
           array_index ::= * array_index LBRAC expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                          NAME shift  83
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                          NAME shift  85
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  92
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  95
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
 
-State 22:
+State 24:
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
           expr ::= * array_index LPAREN RPAREN
@@ -1409,27 +1566,28 @@ State 22:
           array_index ::= * array_index LBRAC expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                          NAME shift  83
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                          NAME shift  85
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  65
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  67
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
 
-State 23:
+State 25:
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
           expr ::= * array_index LPAREN RPAREN
@@ -1470,27 +1628,28 @@ State 23:
           array_index ::= * array_index LBRAC expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                          NAME shift  83
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                          NAME shift  85
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  66
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  68
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
 
-State 24:
+State 26:
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
           expr ::= * array_index LPAREN RPAREN
@@ -1531,27 +1690,28 @@ State 24:
           array_index ::= * array_index LBRAC expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                          NAME shift  83
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                          NAME shift  85
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  73
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  75
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
 
-State 25:
+State 27:
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
           expr ::= * array_index LPAREN RPAREN
@@ -1592,27 +1752,28 @@ State 25:
           array_index ::= * array_index LBRAC expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                          NAME shift  83
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                          NAME shift  85
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  74
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  76
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
 
-State 26:
+State 28:
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
           expr ::= * array_index LPAREN RPAREN
@@ -1653,27 +1814,28 @@ State 26:
           array_index ::= * array_index LBRAC expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                          NAME shift  83
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                          NAME shift  85
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  63
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  65
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
 
-State 27:
+State 29:
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
           expr ::= * array_index LPAREN RPAREN
@@ -1714,27 +1876,28 @@ State 27:
           array_index ::= * array_index LBRAC expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                          NAME shift  83
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                          NAME shift  85
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  64
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  66
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
 
-State 28:
+State 30:
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
           expr ::= * array_index LPAREN RPAREN
@@ -1775,27 +1938,28 @@ State 28:
           array_index ::= * array_index LBRAC expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                          NAME shift  83
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                          NAME shift  85
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  69
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  71
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
 
-State 29:
+State 31:
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
           expr ::= * array_index LPAREN RPAREN
@@ -1836,27 +2000,28 @@ State 29:
           array_index ::= * array_index LBRAC expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                          NAME shift  83
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                          NAME shift  85
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  70
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  72
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
 
-State 30:
+State 32:
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
           expr ::= * array_index LPAREN RPAREN
@@ -1897,27 +2062,28 @@ State 30:
           array_index ::= * array_index LBRAC expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                          NAME shift  83
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                          NAME shift  85
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  71
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  73
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
 
-State 31:
+State 33:
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
           expr ::= * array_index LPAREN RPAREN
@@ -1958,27 +2124,28 @@ State 31:
           array_index ::= * array_index LBRAC expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                          NAME shift  83
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                          NAME shift  85
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  72
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  74
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
 
-State 32:
+State 34:
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
           expr ::= * array_index LPAREN RPAREN
@@ -2019,27 +2186,28 @@ State 32:
           array_index ::= * array_index LBRAC expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                          NAME shift  83
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                          NAME shift  85
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  67
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  69
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
 
-State 33:
+State 35:
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
           expr ::= * array_index LPAREN RPAREN
@@ -2080,27 +2248,28 @@ State 33:
           array_index ::= * array_index LBRAC expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                          NAME shift  83
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                          NAME shift  85
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  68
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  70
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
 
-State 34:
+State 36:
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
           expr ::= * array_index LPAREN RPAREN
@@ -2141,27 +2310,28 @@ State 34:
           array_index ::= * array_index LBRAC expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                          NAME shift  83
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                          NAME shift  85
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  93
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  96
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
 
-State 35:
+State 37:
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
           expr ::= * array_index LPAREN RPAREN
@@ -2202,27 +2372,28 @@ State 35:
           array_index ::= * array_index LBRAC expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                          NAME shift  83
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                          NAME shift  85
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  94
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  97
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
 
-State 36:
+State 38:
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
           expr ::= * array_index LPAREN RPAREN
@@ -2263,27 +2434,28 @@ State 36:
           array_index ::= * array_index LBRAC expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                          NAME shift  83
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                          NAME shift  85
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  95
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  98
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
 
-State 37:
+State 39:
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
           expr ::= * array_index LPAREN RPAREN
@@ -2324,27 +2496,28 @@ State 37:
           array_index ::= * array_index LBRAC expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                          NAME shift  83
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                          NAME shift  85
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  58
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  60
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
 
-State 38:
+State 40:
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
           expr ::= * array_index LPAREN RPAREN
@@ -2385,27 +2558,28 @@ State 38:
           array_index ::= * array_index LBRAC expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                          NAME shift  83
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                          NAME shift  85
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  89
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  92
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
 
-State 39:
+State 41:
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
           expr ::= * array_index LPAREN RPAREN
@@ -2446,27 +2620,28 @@ State 39:
           array_index ::= * array_index LBRAC expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                          NAME shift  83
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                          NAME shift  85
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  59
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  61
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
 
-State 40:
+State 42:
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
           expr ::= * array_index LPAREN RPAREN
@@ -2507,27 +2682,28 @@ State 40:
           array_index ::= * array_index LBRAC expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                          NAME shift  83
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                          NAME shift  85
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  77
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  79
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
 
-State 41:
+State 43:
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
           expr ::= * array_index LPAREN RPAREN
@@ -2568,27 +2744,28 @@ State 41:
           array_index ::= * array_index LBRAC expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                          NAME shift  83
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                          NAME shift  85
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  61
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  63
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
 
-State 42:
+State 44:
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
           expr ::= * array_index LPAREN RPAREN
@@ -2629,27 +2806,28 @@ State 42:
           array_index ::= * array_index LBRAC expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                          NAME shift  83
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                          NAME shift  85
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  60
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  62
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
 
-State 43:
+State 45:
           expr ::= * NAME
           expr ::= * NAME LPAREN stmt_list RPAREN
+          expr ::= * NAME LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= * array_index LPAREN stmt_list RPAREN
           expr ::= * NAME LPAREN RPAREN
           expr ::= * array_index LPAREN RPAREN
@@ -2690,55 +2868,55 @@ State 43:
           array_index ::= * array_index LBRAC expr RBRAC
           expr ::= * array_index
 
-                         MINUS shift  20
-                           NOT shift  19
-                        BITNOT shift  21
-                        LPAREN shift  37
-                          NAME shift  83
-                           LET shift  98
+                         MINUS shift  22
+                           NOT shift  21
+                        BITNOT shift  23
+                        LPAREN shift  39
+                          NAME shift  85
+                           LET shift  101
                       OPENBRAC shift  2
-                         PRINT shift  96
-                           NUM shift  124
-                        STRING shift  123
-                       BOOLEAN shift  122
-                          expr shift  76
-                   array_index shift  82
-                         array shift  132
-                           num shift  129
-                        string shift  128
-                          bool shift  127
+                         PRINT shift  99
+                           NUM shift  128
+                        STRING shift  127
+                       BOOLEAN shift  126
+                          expr shift  78
+                   array_index shift  84
+                         array shift  136
+                           num shift  133
+                        string shift  132
+                          bool shift  131
 
-State 44:
+State 46:
           where_statement ::= * WHERE LCURL
           where_statement ::= * WHERE name_chain ASSIGN expr LCURL
           where_statement ::= * where_statement name_chain ASSIGN expr DELIMITER
           final_where_statement ::= * where_statement name_chain ASSIGN expr RCURL DELIMITER RCURL
           assignment ::= name_chain ASSIGN expr LCURL * final_where_statement
 
-                         WHERE shift  45
-               where_statement shift  46
-         final_where_statement shift  108
+                         WHERE shift  47
+               where_statement shift  48
+         final_where_statement shift  111
 
-State 45:
+State 47:
           name_chain ::= * name_chain NAME
           name_chain ::= * NAME
           where_statement ::= WHERE * LCURL
           where_statement ::= WHERE * name_chain ASSIGN expr LCURL
 
-                          NAME shift  112
-                         LCURL shift  111
-                    name_chain shift  81
+                          NAME shift  115
+                         LCURL shift  114
+                    name_chain shift  83
 
-State 46:
+State 48:
           name_chain ::= * name_chain NAME
           name_chain ::= * NAME
           where_statement ::= where_statement * name_chain ASSIGN expr DELIMITER
           final_where_statement ::= where_statement * name_chain ASSIGN expr RCURL DELIMITER RCURL
 
-                          NAME shift  112
-                    name_chain shift  80
+                          NAME shift  115
+                    name_chain shift  82
 
-State 47:
+State 49:
           guard_statement ::= guard_statement BITOR expr ASSIGN expr * DELIMITER
           final_guard_statement ::= guard_statement BITOR expr ASSIGN expr * RCURL
           expr ::= expr * PLUS expr
@@ -2760,28 +2938,28 @@ State 47:
           expr ::= expr * BITAND expr
           expr ::= expr * BITXOR expr
 
-                            OR shift  26
-                           AND shift  27
-                        BITXOR shift  22
-                        BITAND shift  23
-                       EQUALTO shift  33
-                    NOTEQUALTO shift  32
-                   GREATERTHAN shift  30
-                          GORE shift  28
-                      LESSTHAN shift  31
-                          LORE shift  29
-                        SHIFTL shift  25
-                        SHIFTR shift  24
-                          PLUS shift  43
-                         MINUS shift  40
-                        DIVIDE shift  38
-                         TIMES shift  36
-                        MODULO shift  35
-                           POW shift  34
-                     DELIMITER shift  105
-                         RCURL shift  104
+                            OR shift  28
+                           AND shift  29
+                        BITXOR shift  24
+                        BITAND shift  25
+                       EQUALTO shift  35
+                    NOTEQUALTO shift  34
+                   GREATERTHAN shift  32
+                          GORE shift  30
+                      LESSTHAN shift  33
+                          LORE shift  31
+                        SHIFTL shift  27
+                        SHIFTR shift  26
+                          PLUS shift  45
+                         MINUS shift  42
+                        DIVIDE shift  40
+                         TIMES shift  38
+                        MODULO shift  37
+                           POW shift  36
+                     DELIMITER shift  108
+                         RCURL shift  107
 
-State 48:
+State 50:
           where_statement ::= where_statement name_chain ASSIGN expr * DELIMITER
           final_where_statement ::= where_statement name_chain ASSIGN expr * RCURL DELIMITER RCURL
           expr ::= expr * PLUS expr
@@ -2803,28 +2981,28 @@ State 48:
           expr ::= expr * BITAND expr
           expr ::= expr * BITXOR expr
 
-                            OR shift  26
-                           AND shift  27
-                        BITXOR shift  22
-                        BITAND shift  23
-                       EQUALTO shift  33
-                    NOTEQUALTO shift  32
-                   GREATERTHAN shift  30
-                          GORE shift  28
-                      LESSTHAN shift  31
-                          LORE shift  29
-                        SHIFTL shift  25
-                        SHIFTR shift  24
-                          PLUS shift  43
-                         MINUS shift  40
-                        DIVIDE shift  38
-                         TIMES shift  36
-                        MODULO shift  35
-                           POW shift  34
-                     DELIMITER shift  110
-                         RCURL shift  86
+                            OR shift  28
+                           AND shift  29
+                        BITXOR shift  24
+                        BITAND shift  25
+                       EQUALTO shift  35
+                    NOTEQUALTO shift  34
+                   GREATERTHAN shift  32
+                          GORE shift  30
+                      LESSTHAN shift  33
+                          LORE shift  31
+                        SHIFTL shift  27
+                        SHIFTR shift  26
+                          PLUS shift  45
+                         MINUS shift  42
+                        DIVIDE shift  40
+                         TIMES shift  38
+                        MODULO shift  37
+                           POW shift  36
+                     DELIMITER shift  113
+                         RCURL shift  88
 
-State 49:
+State 51:
           final_guard_statement ::= guard_statement WILDCARD ASSIGN expr * RCURL
           expr ::= expr * PLUS expr
           expr ::= expr * MINUS expr
@@ -2845,27 +3023,27 @@ State 49:
           expr ::= expr * BITAND expr
           expr ::= expr * BITXOR expr
 
-                            OR shift  26
-                           AND shift  27
-                        BITXOR shift  22
-                        BITAND shift  23
-                       EQUALTO shift  33
-                    NOTEQUALTO shift  32
-                   GREATERTHAN shift  30
-                          GORE shift  28
-                      LESSTHAN shift  31
-                          LORE shift  29
-                        SHIFTL shift  25
-                        SHIFTR shift  24
-                          PLUS shift  43
-                         MINUS shift  40
-                        DIVIDE shift  38
-                         TIMES shift  36
-                        MODULO shift  35
-                           POW shift  34
-                         RCURL shift  103
+                            OR shift  28
+                           AND shift  29
+                        BITXOR shift  24
+                        BITAND shift  25
+                       EQUALTO shift  35
+                    NOTEQUALTO shift  34
+                   GREATERTHAN shift  32
+                          GORE shift  30
+                      LESSTHAN shift  33
+                          LORE shift  31
+                        SHIFTL shift  27
+                        SHIFTR shift  26
+                          PLUS shift  45
+                         MINUS shift  42
+                        DIVIDE shift  40
+                         TIMES shift  38
+                        MODULO shift  37
+                           POW shift  36
+                         RCURL shift  106
 
-State 50:
+State 52:
           guard_statement ::= guard_statement BITOR expr * ASSIGN expr DELIMITER
           final_guard_statement ::= guard_statement BITOR expr * ASSIGN expr RCURL
           expr ::= expr * PLUS expr
@@ -2887,27 +3065,27 @@ State 50:
           expr ::= expr * BITAND expr
           expr ::= expr * BITXOR expr
 
-                        ASSIGN shift  10
-                            OR shift  26
-                           AND shift  27
-                        BITXOR shift  22
-                        BITAND shift  23
-                       EQUALTO shift  33
-                    NOTEQUALTO shift  32
-                   GREATERTHAN shift  30
-                          GORE shift  28
-                      LESSTHAN shift  31
-                          LORE shift  29
-                        SHIFTL shift  25
-                        SHIFTR shift  24
-                          PLUS shift  43
-                         MINUS shift  40
-                        DIVIDE shift  38
-                         TIMES shift  36
-                        MODULO shift  35
-                           POW shift  34
+                        ASSIGN shift  13
+                            OR shift  28
+                           AND shift  29
+                        BITXOR shift  24
+                        BITAND shift  25
+                       EQUALTO shift  35
+                    NOTEQUALTO shift  34
+                   GREATERTHAN shift  32
+                          GORE shift  30
+                      LESSTHAN shift  33
+                          LORE shift  31
+                        SHIFTL shift  27
+                        SHIFTR shift  26
+                          PLUS shift  45
+                         MINUS shift  42
+                        DIVIDE shift  40
+                         TIMES shift  38
+                        MODULO shift  37
+                           POW shift  36
 
-State 51:
+State 53:
           where_statement ::= WHERE name_chain ASSIGN expr * LCURL
           expr ::= expr * PLUS expr
           expr ::= expr * MINUS expr
@@ -2928,28 +3106,28 @@ State 51:
           expr ::= expr * BITAND expr
           expr ::= expr * BITXOR expr
 
-                            OR shift  26
-                           AND shift  27
-                        BITXOR shift  22
-                        BITAND shift  23
-                       EQUALTO shift  33
-                    NOTEQUALTO shift  32
-                   GREATERTHAN shift  30
-                          GORE shift  28
-                      LESSTHAN shift  31
-                          LORE shift  29
-                        SHIFTL shift  25
-                        SHIFTR shift  24
-                          PLUS shift  43
-                         MINUS shift  40
-                        DIVIDE shift  38
-                         TIMES shift  36
-                        MODULO shift  35
-                           POW shift  34
-                         LCURL shift  113
+                            OR shift  28
+                           AND shift  29
+                        BITXOR shift  24
+                        BITAND shift  25
+                       EQUALTO shift  35
+                    NOTEQUALTO shift  34
+                   GREATERTHAN shift  32
+                          GORE shift  30
+                      LESSTHAN shift  33
+                          LORE shift  31
+                        SHIFTL shift  27
+                        SHIFTR shift  26
+                          PLUS shift  45
+                         MINUS shift  42
+                        DIVIDE shift  40
+                         TIMES shift  38
+                        MODULO shift  37
+                           POW shift  36
+                         LCURL shift  116
 
-State 52:
-     (29) assignment ::= name_chain ASSIGN expr *
+State 54:
+     (30) assignment ::= name_chain ASSIGN expr *
           assignment ::= name_chain ASSIGN expr * LCURL final_where_statement
           expr ::= expr * PLUS expr
           expr ::= expr * MINUS expr
@@ -2970,28 +3148,28 @@ State 52:
           expr ::= expr * BITAND expr
           expr ::= expr * BITXOR expr
 
-                            OR shift  26
-                           AND shift  27
-                        BITXOR shift  22
-                        BITAND shift  23
-                       EQUALTO shift  33
-                    NOTEQUALTO shift  32
-                   GREATERTHAN shift  30
-                          GORE shift  28
-                      LESSTHAN shift  31
-                          LORE shift  29
-                        SHIFTL shift  25
-                        SHIFTR shift  24
-                          PLUS shift  43
-                         MINUS shift  40
-                        DIVIDE shift  38
-                         TIMES shift  36
-                        MODULO shift  35
-                           POW shift  34
-                         LCURL shift  44
-                     {default} reduce 29
+                            OR shift  28
+                           AND shift  29
+                        BITXOR shift  24
+                        BITAND shift  25
+                       EQUALTO shift  35
+                    NOTEQUALTO shift  34
+                   GREATERTHAN shift  32
+                          GORE shift  30
+                      LESSTHAN shift  33
+                          LORE shift  31
+                        SHIFTL shift  27
+                        SHIFTR shift  26
+                          PLUS shift  45
+                         MINUS shift  42
+                        DIVIDE shift  40
+                         TIMES shift  38
+                        MODULO shift  37
+                           POW shift  36
+                         LCURL shift  46
+                     {default} reduce 30
 
-State 53:
+State 55:
           case_statement ::= name_chain ASSIGN CASE expr * OF
           expr ::= expr * PLUS expr
           expr ::= expr * MINUS expr
@@ -3012,27 +3190,27 @@ State 53:
           expr ::= expr * BITAND expr
           expr ::= expr * BITXOR expr
 
-                            OR shift  26
-                           AND shift  27
-                        BITXOR shift  22
-                        BITAND shift  23
-                       EQUALTO shift  33
-                    NOTEQUALTO shift  32
-                   GREATERTHAN shift  30
-                          GORE shift  28
-                      LESSTHAN shift  31
-                          LORE shift  29
-                        SHIFTL shift  25
-                        SHIFTR shift  24
-                          PLUS shift  43
-                         MINUS shift  40
-                        DIVIDE shift  38
-                         TIMES shift  36
-                        MODULO shift  35
-                           POW shift  34
-                            OF shift  114
+                            OR shift  28
+                           AND shift  29
+                        BITXOR shift  24
+                        BITAND shift  25
+                       EQUALTO shift  35
+                    NOTEQUALTO shift  34
+                   GREATERTHAN shift  32
+                          GORE shift  30
+                      LESSTHAN shift  33
+                          LORE shift  31
+                        SHIFTL shift  27
+                        SHIFTR shift  26
+                          PLUS shift  45
+                         MINUS shift  42
+                        DIVIDE shift  40
+                         TIMES shift  38
+                        MODULO shift  37
+                           POW shift  36
+                            OF shift  117
 
-State 54:
+State 56:
           guard_statement ::= name_chain LCURL BITOR expr ASSIGN expr * DELIMITER
           expr ::= expr * PLUS expr
           expr ::= expr * MINUS expr
@@ -3053,27 +3231,27 @@ State 54:
           expr ::= expr * BITAND expr
           expr ::= expr * BITXOR expr
 
-                            OR shift  26
-                           AND shift  27
-                        BITXOR shift  22
-                        BITAND shift  23
-                       EQUALTO shift  33
-                    NOTEQUALTO shift  32
-                   GREATERTHAN shift  30
-                          GORE shift  28
-                      LESSTHAN shift  31
-                          LORE shift  29
-                        SHIFTL shift  25
-                        SHIFTR shift  24
-                          PLUS shift  43
-                         MINUS shift  40
-                        DIVIDE shift  38
-                         TIMES shift  36
-                        MODULO shift  35
-                           POW shift  34
-                     DELIMITER shift  115
+                            OR shift  28
+                           AND shift  29
+                        BITXOR shift  24
+                        BITAND shift  25
+                       EQUALTO shift  35
+                    NOTEQUALTO shift  34
+                   GREATERTHAN shift  32
+                          GORE shift  30
+                      LESSTHAN shift  33
+                          LORE shift  31
+                        SHIFTL shift  27
+                        SHIFTR shift  26
+                          PLUS shift  45
+                         MINUS shift  42
+                        DIVIDE shift  40
+                         TIMES shift  38
+                        MODULO shift  37
+                           POW shift  36
+                     DELIMITER shift  118
 
-State 55:
+State 57:
           guard_statement ::= name_chain LCURL BITOR expr * ASSIGN expr DELIMITER
           expr ::= expr * PLUS expr
           expr ::= expr * MINUS expr
@@ -3094,27 +3272,27 @@ State 55:
           expr ::= expr * BITAND expr
           expr ::= expr * BITXOR expr
 
-                        ASSIGN shift  15
-                            OR shift  26
-                           AND shift  27
-                        BITXOR shift  22
-                        BITAND shift  23
-                       EQUALTO shift  33
-                    NOTEQUALTO shift  32
-                   GREATERTHAN shift  30
-                          GORE shift  28
-                      LESSTHAN shift  31
-                          LORE shift  29
-                        SHIFTL shift  25
-                        SHIFTR shift  24
-                          PLUS shift  43
-                         MINUS shift  40
-                        DIVIDE shift  38
-                         TIMES shift  36
-                        MODULO shift  35
-                           POW shift  34
+                        ASSIGN shift  18
+                            OR shift  28
+                           AND shift  29
+                        BITXOR shift  24
+                        BITAND shift  25
+                       EQUALTO shift  35
+                    NOTEQUALTO shift  34
+                   GREATERTHAN shift  32
+                          GORE shift  30
+                      LESSTHAN shift  33
+                          LORE shift  31
+                        SHIFTL shift  27
+                        SHIFTR shift  26
+                          PLUS shift  45
+                         MINUS shift  42
+                        DIVIDE shift  40
+                         TIMES shift  38
+                        MODULO shift  37
+                           POW shift  36
 
-State 56:
+State 58:
           expr ::= expr * PLUS expr
           expr ::= expr * MINUS expr
           expr ::= expr * DIVIDE expr
@@ -3135,27 +3313,27 @@ State 56:
           expr ::= expr * BITXOR expr
           array_index ::= NAME LBRAC expr * RBRAC
 
-                            OR shift  26
-                           AND shift  27
-                        BITXOR shift  22
-                        BITAND shift  23
-                       EQUALTO shift  33
-                    NOTEQUALTO shift  32
-                   GREATERTHAN shift  30
-                          GORE shift  28
-                      LESSTHAN shift  31
-                          LORE shift  29
-                        SHIFTL shift  25
-                        SHIFTR shift  24
-                          PLUS shift  43
-                         MINUS shift  40
-                        DIVIDE shift  38
-                         TIMES shift  36
-                        MODULO shift  35
-                           POW shift  34
-                         RBRAC shift  117
+                            OR shift  28
+                           AND shift  29
+                        BITXOR shift  24
+                        BITAND shift  25
+                       EQUALTO shift  35
+                    NOTEQUALTO shift  34
+                   GREATERTHAN shift  32
+                          GORE shift  30
+                      LESSTHAN shift  33
+                          LORE shift  31
+                        SHIFTL shift  27
+                        SHIFTR shift  26
+                          PLUS shift  45
+                         MINUS shift  42
+                        DIVIDE shift  40
+                         TIMES shift  38
+                        MODULO shift  37
+                           POW shift  36
+                         RBRAC shift  120
 
-State 57:
+State 59:
           expr ::= expr * PLUS expr
           expr ::= expr * MINUS expr
           expr ::= expr * DIVIDE expr
@@ -3176,27 +3354,27 @@ State 57:
           expr ::= expr * BITXOR expr
           array_index ::= array_index LBRAC expr * RBRAC
 
-                            OR shift  26
-                           AND shift  27
-                        BITXOR shift  22
-                        BITAND shift  23
-                       EQUALTO shift  33
-                    NOTEQUALTO shift  32
-                   GREATERTHAN shift  30
-                          GORE shift  28
-                      LESSTHAN shift  31
-                          LORE shift  29
-                        SHIFTL shift  25
-                        SHIFTR shift  24
-                          PLUS shift  43
-                         MINUS shift  40
-                        DIVIDE shift  38
-                         TIMES shift  36
-                        MODULO shift  35
-                           POW shift  34
-                         RBRAC shift  119
+                            OR shift  28
+                           AND shift  29
+                        BITXOR shift  24
+                        BITAND shift  25
+                       EQUALTO shift  35
+                    NOTEQUALTO shift  34
+                   GREATERTHAN shift  32
+                          GORE shift  30
+                      LESSTHAN shift  33
+                          LORE shift  31
+                        SHIFTL shift  27
+                        SHIFTR shift  26
+                          PLUS shift  45
+                         MINUS shift  42
+                        DIVIDE shift  40
+                         TIMES shift  38
+                        MODULO shift  37
+                           POW shift  36
+                         RBRAC shift  123
 
-State 58:
+State 60:
           expr ::= LPAREN expr * RPAREN
           expr ::= expr * PLUS expr
           expr ::= expr * MINUS expr
@@ -3217,27 +3395,27 @@ State 58:
           expr ::= expr * BITAND expr
           expr ::= expr * BITXOR expr
 
-                            OR shift  26
-                           AND shift  27
-                        BITXOR shift  22
-                        BITAND shift  23
-                       EQUALTO shift  33
-                    NOTEQUALTO shift  32
-                   GREATERTHAN shift  30
-                          GORE shift  28
-                      LESSTHAN shift  31
-                          LORE shift  29
-                        SHIFTL shift  25
-                        SHIFTR shift  24
-                          PLUS shift  43
-                         MINUS shift  40
-                        DIVIDE shift  38
-                         TIMES shift  36
-                        MODULO shift  35
-                           POW shift  34
-                        RPAREN shift  125
+                            OR shift  28
+                           AND shift  29
+                        BITXOR shift  24
+                        BITAND shift  25
+                       EQUALTO shift  35
+                    NOTEQUALTO shift  34
+                   GREATERTHAN shift  32
+                          GORE shift  30
+                      LESSTHAN shift  33
+                          LORE shift  31
+                        SHIFTL shift  27
+                        SHIFTR shift  26
+                          PLUS shift  45
+                         MINUS shift  42
+                        DIVIDE shift  40
+                         TIMES shift  38
+                        MODULO shift  37
+                           POW shift  36
+                        RPAREN shift  129
 
-State 59:
+State 61:
           expr ::= PRINT LPAREN expr * RPAREN
           expr ::= expr * PLUS expr
           expr ::= expr * MINUS expr
@@ -3258,27 +3436,27 @@ State 59:
           expr ::= expr * BITAND expr
           expr ::= expr * BITXOR expr
 
-                            OR shift  26
-                           AND shift  27
-                        BITXOR shift  22
-                        BITAND shift  23
-                       EQUALTO shift  33
-                    NOTEQUALTO shift  32
-                   GREATERTHAN shift  30
-                          GORE shift  28
-                      LESSTHAN shift  31
-                          LORE shift  29
-                        SHIFTL shift  25
-                        SHIFTR shift  24
-                          PLUS shift  43
-                         MINUS shift  40
-                        DIVIDE shift  38
-                         TIMES shift  36
-                        MODULO shift  35
-                           POW shift  34
-                        RPAREN shift  126
+                            OR shift  28
+                           AND shift  29
+                        BITXOR shift  24
+                        BITAND shift  25
+                       EQUALTO shift  35
+                    NOTEQUALTO shift  34
+                   GREATERTHAN shift  32
+                          GORE shift  30
+                      LESSTHAN shift  33
+                          LORE shift  31
+                        SHIFTL shift  27
+                        SHIFTR shift  26
+                          PLUS shift  45
+                         MINUS shift  42
+                        DIVIDE shift  40
+                         TIMES shift  38
+                        MODULO shift  37
+                           POW shift  36
+                        RPAREN shift  130
 
-State 60:
+State 62:
           expr ::= LET NAME ASSIGN expr * IN expr
           expr ::= expr * PLUS expr
           expr ::= expr * MINUS expr
@@ -3299,28 +3477,28 @@ State 60:
           expr ::= expr * BITAND expr
           expr ::= expr * BITXOR expr
 
-                            OR shift  26
-                           AND shift  27
-                        BITXOR shift  22
-                        BITAND shift  23
-                       EQUALTO shift  33
-                    NOTEQUALTO shift  32
-                   GREATERTHAN shift  30
-                          GORE shift  28
-                      LESSTHAN shift  31
-                          LORE shift  29
-                        SHIFTL shift  25
-                        SHIFTR shift  24
-                          PLUS shift  43
-                         MINUS shift  40
-                        DIVIDE shift  38
-                         TIMES shift  36
-                        MODULO shift  35
-                           POW shift  34
-                            IN shift  41
+                            OR shift  28
+                           AND shift  29
+                        BITXOR shift  24
+                        BITAND shift  25
+                       EQUALTO shift  35
+                    NOTEQUALTO shift  34
+                   GREATERTHAN shift  32
+                          GORE shift  30
+                      LESSTHAN shift  33
+                          LORE shift  31
+                        SHIFTL shift  27
+                        SHIFTR shift  26
+                          PLUS shift  45
+                         MINUS shift  42
+                        DIVIDE shift  40
+                         TIMES shift  38
+                        MODULO shift  37
+                           POW shift  36
+                            IN shift  43
 
-State 61:
-     (28) expr ::= LET NAME ASSIGN expr IN expr *
+State 63:
+     (29) expr ::= LET NAME ASSIGN expr IN expr *
           expr ::= expr * PLUS expr
           expr ::= expr * MINUS expr
           expr ::= expr * DIVIDE expr
@@ -3340,27 +3518,27 @@ State 61:
           expr ::= expr * BITAND expr
           expr ::= expr * BITXOR expr
 
-                            OR shift  26
-                           AND shift  27
-                        BITXOR shift  22
-                        BITAND shift  23
-                       EQUALTO shift  33
-                    NOTEQUALTO shift  32
-                   GREATERTHAN shift  30
-                          GORE shift  28
-                      LESSTHAN shift  31
-                          LORE shift  29
-                        SHIFTL shift  25
-                        SHIFTR shift  24
-                          PLUS shift  43
-                         MINUS shift  40
-                        DIVIDE shift  38
-                         TIMES shift  36
-                        MODULO shift  35
-                           POW shift  34
-                     {default} reduce 28
+                            OR shift  28
+                           AND shift  29
+                        BITXOR shift  24
+                        BITAND shift  25
+                       EQUALTO shift  35
+                    NOTEQUALTO shift  34
+                   GREATERTHAN shift  32
+                          GORE shift  30
+                      LESSTHAN shift  33
+                          LORE shift  31
+                        SHIFTL shift  27
+                        SHIFTR shift  26
+                          PLUS shift  45
+                         MINUS shift  42
+                        DIVIDE shift  40
+                         TIMES shift  38
+                        MODULO shift  37
+                           POW shift  36
+                     {default} reduce 29
 
-State 62:
+State 64:
       (9) stmt ::= expr *
           expr ::= expr * PLUS expr
           expr ::= expr * MINUS expr
@@ -3381,105 +3559,26 @@ State 62:
           expr ::= expr * BITAND expr
           expr ::= expr * BITXOR expr
 
-                            OR shift  26
-                           AND shift  27
-                        BITXOR shift  22
-                        BITAND shift  23
-                       EQUALTO shift  33
-                    NOTEQUALTO shift  32
-                   GREATERTHAN shift  30
-                          GORE shift  28
-                      LESSTHAN shift  31
-                          LORE shift  29
-                        SHIFTL shift  25
-                        SHIFTR shift  24
-                          PLUS shift  43
-                         MINUS shift  40
+                            OR shift  28
+                           AND shift  29
+                        BITXOR shift  24
+                        BITAND shift  25
+                       EQUALTO shift  35
+                    NOTEQUALTO shift  34
+                   GREATERTHAN shift  32
+                          GORE shift  30
+                      LESSTHAN shift  33
+                          LORE shift  31
+                        SHIFTL shift  27
+                        SHIFTR shift  26
+                          PLUS shift  45
+                         MINUS shift  42
                          MINUS reduce 9   ** Parsing conflict **
-                        DIVIDE shift  38
-                         TIMES shift  36
-                        MODULO shift  35
-                           POW shift  34
+                        DIVIDE shift  40
+                         TIMES shift  38
+                        MODULO shift  37
+                           POW shift  36
                      {default} reduce 9
-
-State 63:
-          expr ::= expr * PLUS expr
-          expr ::= expr * MINUS expr
-          expr ::= expr * DIVIDE expr
-          expr ::= expr * TIMES expr
-          expr ::= expr * MODULO expr
-          expr ::= expr * POW expr
-          expr ::= expr * EQUALTO expr
-          expr ::= expr * NOTEQUALTO expr
-          expr ::= expr * LESSTHAN expr
-          expr ::= expr * GREATERTHAN expr
-          expr ::= expr * LORE expr
-          expr ::= expr * GORE expr
-          expr ::= expr * AND expr
-          expr ::= expr * OR expr
-     (58) expr ::= expr OR expr *
-          expr ::= expr * SHIFTL expr
-          expr ::= expr * SHIFTR expr
-          expr ::= expr * BITAND expr
-          expr ::= expr * BITXOR expr
-
-                           AND shift  27
-                        BITXOR shift  22
-                        BITAND shift  23
-                       EQUALTO shift  33
-                    NOTEQUALTO shift  32
-                   GREATERTHAN shift  30
-                          GORE shift  28
-                      LESSTHAN shift  31
-                          LORE shift  29
-                        SHIFTL shift  25
-                        SHIFTR shift  24
-                          PLUS shift  43
-                         MINUS shift  40
-                        DIVIDE shift  38
-                         TIMES shift  36
-                        MODULO shift  35
-                           POW shift  34
-                     {default} reduce 58
-
-State 64:
-          expr ::= expr * PLUS expr
-          expr ::= expr * MINUS expr
-          expr ::= expr * DIVIDE expr
-          expr ::= expr * TIMES expr
-          expr ::= expr * MODULO expr
-          expr ::= expr * POW expr
-          expr ::= expr * EQUALTO expr
-          expr ::= expr * NOTEQUALTO expr
-          expr ::= expr * LESSTHAN expr
-          expr ::= expr * GREATERTHAN expr
-          expr ::= expr * LORE expr
-          expr ::= expr * GORE expr
-          expr ::= expr * AND expr
-     (57) expr ::= expr AND expr *
-          expr ::= expr * OR expr
-          expr ::= expr * SHIFTL expr
-          expr ::= expr * SHIFTR expr
-          expr ::= expr * BITAND expr
-          expr ::= expr * BITXOR expr
-
-                        BITXOR shift  22
-                        BITAND shift  23
-                       EQUALTO shift  33
-                    NOTEQUALTO shift  32
-                   GREATERTHAN shift  30
-                          GORE shift  28
-                      LESSTHAN shift  31
-                          LORE shift  29
-                        SHIFTL shift  25
-                        SHIFTR shift  24
-                          PLUS shift  43
-                         MINUS shift  40
-                        DIVIDE shift  38
-                         TIMES shift  36
-                        MODULO shift  35
-                           POW shift  34
-                     {default} reduce 57
 
 State 65:
           expr ::= expr * PLUS expr
@@ -3496,28 +3595,30 @@ State 65:
           expr ::= expr * GORE expr
           expr ::= expr * AND expr
           expr ::= expr * OR expr
+     (59) expr ::= expr OR expr *
           expr ::= expr * SHIFTL expr
           expr ::= expr * SHIFTR expr
           expr ::= expr * BITAND expr
           expr ::= expr * BITXOR expr
-     (65) expr ::= expr BITXOR expr *
 
-                        BITAND shift  23
-                       EQUALTO shift  33
-                    NOTEQUALTO shift  32
-                   GREATERTHAN shift  30
-                          GORE shift  28
-                      LESSTHAN shift  31
-                          LORE shift  29
-                        SHIFTL shift  25
-                        SHIFTR shift  24
-                          PLUS shift  43
-                         MINUS shift  40
-                        DIVIDE shift  38
-                         TIMES shift  36
-                        MODULO shift  35
-                           POW shift  34
-                     {default} reduce 65
+                           AND shift  29
+                        BITXOR shift  24
+                        BITAND shift  25
+                       EQUALTO shift  35
+                    NOTEQUALTO shift  34
+                   GREATERTHAN shift  32
+                          GORE shift  30
+                      LESSTHAN shift  33
+                          LORE shift  31
+                        SHIFTL shift  27
+                        SHIFTR shift  26
+                          PLUS shift  45
+                         MINUS shift  42
+                        DIVIDE shift  40
+                         TIMES shift  38
+                        MODULO shift  37
+                           POW shift  36
+                     {default} reduce 59
 
 State 66:
           expr ::= expr * PLUS expr
@@ -3533,28 +3634,30 @@ State 66:
           expr ::= expr * LORE expr
           expr ::= expr * GORE expr
           expr ::= expr * AND expr
+     (58) expr ::= expr AND expr *
           expr ::= expr * OR expr
           expr ::= expr * SHIFTL expr
           expr ::= expr * SHIFTR expr
           expr ::= expr * BITAND expr
-     (64) expr ::= expr BITAND expr *
           expr ::= expr * BITXOR expr
 
-                       EQUALTO shift  33
-                    NOTEQUALTO shift  32
-                   GREATERTHAN shift  30
-                          GORE shift  28
-                      LESSTHAN shift  31
-                          LORE shift  29
-                        SHIFTL shift  25
-                        SHIFTR shift  24
-                          PLUS shift  43
-                         MINUS shift  40
-                        DIVIDE shift  38
-                         TIMES shift  36
-                        MODULO shift  35
-                           POW shift  34
-                     {default} reduce 64
+                        BITXOR shift  24
+                        BITAND shift  25
+                       EQUALTO shift  35
+                    NOTEQUALTO shift  34
+                   GREATERTHAN shift  32
+                          GORE shift  30
+                      LESSTHAN shift  33
+                          LORE shift  31
+                        SHIFTL shift  27
+                        SHIFTR shift  26
+                          PLUS shift  45
+                         MINUS shift  42
+                        DIVIDE shift  40
+                         TIMES shift  38
+                        MODULO shift  37
+                           POW shift  36
+                     {default} reduce 58
 
 State 67:
           expr ::= expr * PLUS expr
@@ -3565,7 +3668,6 @@ State 67:
           expr ::= expr * POW expr
           expr ::= expr * EQUALTO expr
           expr ::= expr * NOTEQUALTO expr
-     (52) expr ::= expr NOTEQUALTO expr *
           expr ::= expr * LESSTHAN expr
           expr ::= expr * GREATERTHAN expr
           expr ::= expr * LORE expr
@@ -3576,20 +3678,24 @@ State 67:
           expr ::= expr * SHIFTR expr
           expr ::= expr * BITAND expr
           expr ::= expr * BITXOR expr
+     (66) expr ::= expr BITXOR expr *
 
-                   GREATERTHAN shift  30
-                          GORE shift  28
-                      LESSTHAN shift  31
-                          LORE shift  29
-                        SHIFTL shift  25
-                        SHIFTR shift  24
-                          PLUS shift  43
-                         MINUS shift  40
-                        DIVIDE shift  38
-                         TIMES shift  36
-                        MODULO shift  35
-                           POW shift  34
-                     {default} reduce 52
+                        BITAND shift  25
+                       EQUALTO shift  35
+                    NOTEQUALTO shift  34
+                   GREATERTHAN shift  32
+                          GORE shift  30
+                      LESSTHAN shift  33
+                          LORE shift  31
+                        SHIFTL shift  27
+                        SHIFTR shift  26
+                          PLUS shift  45
+                         MINUS shift  42
+                        DIVIDE shift  40
+                         TIMES shift  38
+                        MODULO shift  37
+                           POW shift  36
+                     {default} reduce 66
 
 State 68:
           expr ::= expr * PLUS expr
@@ -3599,7 +3705,6 @@ State 68:
           expr ::= expr * MODULO expr
           expr ::= expr * POW expr
           expr ::= expr * EQUALTO expr
-     (51) expr ::= expr EQUALTO expr *
           expr ::= expr * NOTEQUALTO expr
           expr ::= expr * LESSTHAN expr
           expr ::= expr * GREATERTHAN expr
@@ -3610,21 +3715,24 @@ State 68:
           expr ::= expr * SHIFTL expr
           expr ::= expr * SHIFTR expr
           expr ::= expr * BITAND expr
+     (65) expr ::= expr BITAND expr *
           expr ::= expr * BITXOR expr
 
-                   GREATERTHAN shift  30
-                          GORE shift  28
-                      LESSTHAN shift  31
-                          LORE shift  29
-                        SHIFTL shift  25
-                        SHIFTR shift  24
-                          PLUS shift  43
-                         MINUS shift  40
-                        DIVIDE shift  38
-                         TIMES shift  36
-                        MODULO shift  35
-                           POW shift  34
-                     {default} reduce 51
+                       EQUALTO shift  35
+                    NOTEQUALTO shift  34
+                   GREATERTHAN shift  32
+                          GORE shift  30
+                      LESSTHAN shift  33
+                          LORE shift  31
+                        SHIFTL shift  27
+                        SHIFTR shift  26
+                          PLUS shift  45
+                         MINUS shift  42
+                        DIVIDE shift  40
+                         TIMES shift  38
+                        MODULO shift  37
+                           POW shift  36
+                     {default} reduce 65
 
 State 69:
           expr ::= expr * PLUS expr
@@ -3635,11 +3743,11 @@ State 69:
           expr ::= expr * POW expr
           expr ::= expr * EQUALTO expr
           expr ::= expr * NOTEQUALTO expr
+     (53) expr ::= expr NOTEQUALTO expr *
           expr ::= expr * LESSTHAN expr
           expr ::= expr * GREATERTHAN expr
           expr ::= expr * LORE expr
           expr ::= expr * GORE expr
-     (56) expr ::= expr GORE expr *
           expr ::= expr * AND expr
           expr ::= expr * OR expr
           expr ::= expr * SHIFTL expr
@@ -3647,15 +3755,19 @@ State 69:
           expr ::= expr * BITAND expr
           expr ::= expr * BITXOR expr
 
-                        SHIFTL shift  25
-                        SHIFTR shift  24
-                          PLUS shift  43
-                         MINUS shift  40
-                        DIVIDE shift  38
-                         TIMES shift  36
-                        MODULO shift  35
-                           POW shift  34
-                     {default} reduce 56
+                   GREATERTHAN shift  32
+                          GORE shift  30
+                      LESSTHAN shift  33
+                          LORE shift  31
+                        SHIFTL shift  27
+                        SHIFTR shift  26
+                          PLUS shift  45
+                         MINUS shift  42
+                        DIVIDE shift  40
+                         TIMES shift  38
+                        MODULO shift  37
+                           POW shift  36
+                     {default} reduce 53
 
 State 70:
           expr ::= expr * PLUS expr
@@ -3665,11 +3777,11 @@ State 70:
           expr ::= expr * MODULO expr
           expr ::= expr * POW expr
           expr ::= expr * EQUALTO expr
+     (52) expr ::= expr EQUALTO expr *
           expr ::= expr * NOTEQUALTO expr
           expr ::= expr * LESSTHAN expr
           expr ::= expr * GREATERTHAN expr
           expr ::= expr * LORE expr
-     (55) expr ::= expr LORE expr *
           expr ::= expr * GORE expr
           expr ::= expr * AND expr
           expr ::= expr * OR expr
@@ -3678,15 +3790,19 @@ State 70:
           expr ::= expr * BITAND expr
           expr ::= expr * BITXOR expr
 
-                        SHIFTL shift  25
-                        SHIFTR shift  24
-                          PLUS shift  43
-                         MINUS shift  40
-                        DIVIDE shift  38
-                         TIMES shift  36
-                        MODULO shift  35
-                           POW shift  34
-                     {default} reduce 55
+                   GREATERTHAN shift  32
+                          GORE shift  30
+                      LESSTHAN shift  33
+                          LORE shift  31
+                        SHIFTL shift  27
+                        SHIFTR shift  26
+                          PLUS shift  45
+                         MINUS shift  42
+                        DIVIDE shift  40
+                         TIMES shift  38
+                        MODULO shift  37
+                           POW shift  36
+                     {default} reduce 52
 
 State 71:
           expr ::= expr * PLUS expr
@@ -3699,9 +3815,9 @@ State 71:
           expr ::= expr * NOTEQUALTO expr
           expr ::= expr * LESSTHAN expr
           expr ::= expr * GREATERTHAN expr
-     (54) expr ::= expr GREATERTHAN expr *
           expr ::= expr * LORE expr
           expr ::= expr * GORE expr
+     (57) expr ::= expr GORE expr *
           expr ::= expr * AND expr
           expr ::= expr * OR expr
           expr ::= expr * SHIFTL expr
@@ -3709,15 +3825,15 @@ State 71:
           expr ::= expr * BITAND expr
           expr ::= expr * BITXOR expr
 
-                        SHIFTL shift  25
-                        SHIFTR shift  24
-                          PLUS shift  43
-                         MINUS shift  40
-                        DIVIDE shift  38
-                         TIMES shift  36
-                        MODULO shift  35
-                           POW shift  34
-                     {default} reduce 54
+                        SHIFTL shift  27
+                        SHIFTR shift  26
+                          PLUS shift  45
+                         MINUS shift  42
+                        DIVIDE shift  40
+                         TIMES shift  38
+                        MODULO shift  37
+                           POW shift  36
+                     {default} reduce 57
 
 State 72:
           expr ::= expr * PLUS expr
@@ -3729,9 +3845,9 @@ State 72:
           expr ::= expr * EQUALTO expr
           expr ::= expr * NOTEQUALTO expr
           expr ::= expr * LESSTHAN expr
-     (53) expr ::= expr LESSTHAN expr *
           expr ::= expr * GREATERTHAN expr
           expr ::= expr * LORE expr
+     (56) expr ::= expr LORE expr *
           expr ::= expr * GORE expr
           expr ::= expr * AND expr
           expr ::= expr * OR expr
@@ -3740,15 +3856,15 @@ State 72:
           expr ::= expr * BITAND expr
           expr ::= expr * BITXOR expr
 
-                        SHIFTL shift  25
-                        SHIFTR shift  24
-                          PLUS shift  43
-                         MINUS shift  40
-                        DIVIDE shift  38
-                         TIMES shift  36
-                        MODULO shift  35
-                           POW shift  34
-                     {default} reduce 53
+                        SHIFTL shift  27
+                        SHIFTR shift  26
+                          PLUS shift  45
+                         MINUS shift  42
+                        DIVIDE shift  40
+                         TIMES shift  38
+                        MODULO shift  37
+                           POW shift  36
+                     {default} reduce 56
 
 State 73:
           expr ::= expr * PLUS expr
@@ -3761,23 +3877,25 @@ State 73:
           expr ::= expr * NOTEQUALTO expr
           expr ::= expr * LESSTHAN expr
           expr ::= expr * GREATERTHAN expr
+     (55) expr ::= expr GREATERTHAN expr *
           expr ::= expr * LORE expr
           expr ::= expr * GORE expr
           expr ::= expr * AND expr
           expr ::= expr * OR expr
           expr ::= expr * SHIFTL expr
           expr ::= expr * SHIFTR expr
-     (63) expr ::= expr SHIFTR expr *
           expr ::= expr * BITAND expr
           expr ::= expr * BITXOR expr
 
-                          PLUS shift  43
-                         MINUS shift  40
-                        DIVIDE shift  38
-                         TIMES shift  36
-                        MODULO shift  35
-                           POW shift  34
-                     {default} reduce 63
+                        SHIFTL shift  27
+                        SHIFTR shift  26
+                          PLUS shift  45
+                         MINUS shift  42
+                        DIVIDE shift  40
+                         TIMES shift  38
+                        MODULO shift  37
+                           POW shift  36
+                     {default} reduce 55
 
 State 74:
           expr ::= expr * PLUS expr
@@ -3789,42 +3907,103 @@ State 74:
           expr ::= expr * EQUALTO expr
           expr ::= expr * NOTEQUALTO expr
           expr ::= expr * LESSTHAN expr
+     (54) expr ::= expr LESSTHAN expr *
           expr ::= expr * GREATERTHAN expr
           expr ::= expr * LORE expr
           expr ::= expr * GORE expr
           expr ::= expr * AND expr
           expr ::= expr * OR expr
           expr ::= expr * SHIFTL expr
-     (62) expr ::= expr SHIFTL expr *
           expr ::= expr * SHIFTR expr
           expr ::= expr * BITAND expr
           expr ::= expr * BITXOR expr
 
-                          PLUS shift  43
-                         MINUS shift  40
-                        DIVIDE shift  38
-                         TIMES shift  36
-                        MODULO shift  35
-                           POW shift  34
-                     {default} reduce 62
+                        SHIFTL shift  27
+                        SHIFTR shift  26
+                          PLUS shift  45
+                         MINUS shift  42
+                        DIVIDE shift  40
+                         TIMES shift  38
+                        MODULO shift  37
+                           POW shift  36
+                     {default} reduce 54
 
 State 75:
+          expr ::= expr * PLUS expr
+          expr ::= expr * MINUS expr
+          expr ::= expr * DIVIDE expr
+          expr ::= expr * TIMES expr
+          expr ::= expr * MODULO expr
+          expr ::= expr * POW expr
+          expr ::= expr * EQUALTO expr
+          expr ::= expr * NOTEQUALTO expr
+          expr ::= expr * LESSTHAN expr
+          expr ::= expr * GREATERTHAN expr
+          expr ::= expr * LORE expr
+          expr ::= expr * GORE expr
+          expr ::= expr * AND expr
+          expr ::= expr * OR expr
+          expr ::= expr * SHIFTL expr
+          expr ::= expr * SHIFTR expr
+     (64) expr ::= expr SHIFTR expr *
+          expr ::= expr * BITAND expr
+          expr ::= expr * BITXOR expr
+
+                          PLUS shift  45
+                         MINUS shift  42
+                        DIVIDE shift  40
+                         TIMES shift  38
+                        MODULO shift  37
+                           POW shift  36
+                     {default} reduce 64
+
+State 76:
+          expr ::= expr * PLUS expr
+          expr ::= expr * MINUS expr
+          expr ::= expr * DIVIDE expr
+          expr ::= expr * TIMES expr
+          expr ::= expr * MODULO expr
+          expr ::= expr * POW expr
+          expr ::= expr * EQUALTO expr
+          expr ::= expr * NOTEQUALTO expr
+          expr ::= expr * LESSTHAN expr
+          expr ::= expr * GREATERTHAN expr
+          expr ::= expr * LORE expr
+          expr ::= expr * GORE expr
+          expr ::= expr * AND expr
+          expr ::= expr * OR expr
+          expr ::= expr * SHIFTL expr
+     (63) expr ::= expr SHIFTL expr *
+          expr ::= expr * SHIFTR expr
+          expr ::= expr * BITAND expr
+          expr ::= expr * BITXOR expr
+
+                          PLUS shift  45
+                         MINUS shift  42
+                        DIVIDE shift  40
+                         TIMES shift  38
+                        MODULO shift  37
+                           POW shift  36
+                     {default} reduce 63
+
+State 77:
      (11) name_chain ::= NAME *
      (12) expr ::= NAME *
           expr ::= NAME * LPAREN stmt_list RPAREN
+          expr ::= NAME * LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= NAME * LPAREN RPAREN
           array_index ::= NAME * LBRAC expr RBRAC
 
                         ASSIGN reduce 11
                         LPAREN shift  4
-                         LBRAC shift  17
+                         LBRAC shift  11
                           NAME reduce 11
                          LCURL reduce 11
                      {default} reduce 12
 
-State 76:
+State 78:
           expr ::= expr * PLUS expr
-     (45) expr ::= expr PLUS expr *
+     (46) expr ::= expr PLUS expr *
           expr ::= expr * MINUS expr
           expr ::= expr * DIVIDE expr
           expr ::= expr * TIMES expr
@@ -3843,195 +4022,130 @@ State 76:
           expr ::= expr * BITAND expr
           expr ::= expr * BITXOR expr
 
-                        DIVIDE shift  38
-                         TIMES shift  36
-                        MODULO shift  35
-                           POW shift  34
-                     {default} reduce 45
-
-State 77:
-          expr ::= expr * PLUS expr
-          expr ::= expr * MINUS expr
-     (46) expr ::= expr MINUS expr *
-          expr ::= expr * DIVIDE expr
-          expr ::= expr * TIMES expr
-          expr ::= expr * MODULO expr
-          expr ::= expr * POW expr
-          expr ::= expr * EQUALTO expr
-          expr ::= expr * NOTEQUALTO expr
-          expr ::= expr * LESSTHAN expr
-          expr ::= expr * GREATERTHAN expr
-          expr ::= expr * LORE expr
-          expr ::= expr * GORE expr
-          expr ::= expr * AND expr
-          expr ::= expr * OR expr
-          expr ::= expr * SHIFTL expr
-          expr ::= expr * SHIFTR expr
-          expr ::= expr * BITAND expr
-          expr ::= expr * BITXOR expr
-
-                        DIVIDE shift  38
-                         TIMES shift  36
-                        MODULO shift  35
-                           POW shift  34
+                        DIVIDE shift  40
+                         TIMES shift  38
+                        MODULO shift  37
+                           POW shift  36
                      {default} reduce 46
 
-State 78:
+State 79:
+          expr ::= expr * PLUS expr
+          expr ::= expr * MINUS expr
+     (47) expr ::= expr MINUS expr *
+          expr ::= expr * DIVIDE expr
+          expr ::= expr * TIMES expr
+          expr ::= expr * MODULO expr
+          expr ::= expr * POW expr
+          expr ::= expr * EQUALTO expr
+          expr ::= expr * NOTEQUALTO expr
+          expr ::= expr * LESSTHAN expr
+          expr ::= expr * GREATERTHAN expr
+          expr ::= expr * LORE expr
+          expr ::= expr * GORE expr
+          expr ::= expr * AND expr
+          expr ::= expr * OR expr
+          expr ::= expr * SHIFTL expr
+          expr ::= expr * SHIFTR expr
+          expr ::= expr * BITAND expr
+          expr ::= expr * BITXOR expr
+
+                        DIVIDE shift  40
+                         TIMES shift  38
+                        MODULO shift  37
+                           POW shift  36
+                     {default} reduce 47
+
+State 80:
           name_chain ::= name_chain * NAME
           guard_statement ::= name_chain * LCURL BITOR expr ASSIGN expr DELIMITER
           case_statement ::= name_chain * ASSIGN CASE expr OF
           assignment ::= name_chain * ASSIGN expr
           assignment ::= name_chain * ASSIGN expr LCURL final_where_statement
 
-                        ASSIGN shift  8
-                          NAME shift  116
-                         LCURL shift  87
+                        ASSIGN shift  10
+                          NAME shift  119
+                         LCURL shift  89
 
-State 79:
+State 81:
           guard_statement ::= guard_statement * BITOR expr ASSIGN expr DELIMITER
           final_guard_statement ::= guard_statement * BITOR expr ASSIGN expr RCURL
           final_guard_statement ::= guard_statement * WILDCARD ASSIGN expr RCURL
 
-                         BITOR shift  11
-                      WILDCARD shift  84
+                         BITOR shift  14
+                      WILDCARD shift  86
 
-State 80:
+State 82:
           name_chain ::= name_chain * NAME
           where_statement ::= where_statement name_chain * ASSIGN expr DELIMITER
           final_where_statement ::= where_statement name_chain * ASSIGN expr RCURL DELIMITER RCURL
 
-                        ASSIGN shift  12
-                          NAME shift  116
+                        ASSIGN shift  15
+                          NAME shift  119
 
-State 81:
+State 83:
           name_chain ::= name_chain * NAME
           where_statement ::= WHERE name_chain * ASSIGN expr LCURL
 
-                        ASSIGN shift  13
-                          NAME shift  116
+                        ASSIGN shift  16
+                          NAME shift  119
 
-State 82:
+State 84:
           expr ::= array_index * LPAREN stmt_list RPAREN
           expr ::= array_index * LPAREN RPAREN
           array_index ::= array_index * LBRAC expr RBRAC
-     (68) expr ::= array_index *
+     (69) expr ::= array_index *
 
                         LPAREN shift  3
-                         LBRAC shift  18
-                     {default} reduce 68
+                         LBRAC shift  20
+                     {default} reduce 69
 
-State 83:
+State 85:
      (12) expr ::= NAME *
           expr ::= NAME * LPAREN stmt_list RPAREN
+          expr ::= NAME * LBRAC RBRAC LPAREN stmt_list RPAREN
           expr ::= NAME * LPAREN RPAREN
           array_index ::= NAME * LBRAC expr RBRAC
 
                         LPAREN shift  4
                         LPAREN reduce 12  ** Parsing conflict **
-                         LBRAC shift  17
+                         LBRAC shift  11
                      {default} reduce 12
 
-State 84:
+State 86:
           final_guard_statement ::= guard_statement WILDCARD * ASSIGN expr RCURL
 
-                        ASSIGN shift  9
-
-State 85:
-          final_where_statement ::= where_statement name_chain ASSIGN expr RCURL DELIMITER * RCURL
-
-                         RCURL shift  109
-
-State 86:
-          final_where_statement ::= where_statement name_chain ASSIGN expr RCURL * DELIMITER RCURL
-
-                     DELIMITER shift  85
+                        ASSIGN shift  12
 
 State 87:
-          guard_statement ::= name_chain LCURL * BITOR expr ASSIGN expr DELIMITER
+          final_where_statement ::= where_statement name_chain ASSIGN expr RCURL DELIMITER * RCURL
 
-                         BITOR shift  16
+                         RCURL shift  112
 
 State 88:
-          array ::= OPENBRAC maybe_empty_stmt_list * RBRAC
+          final_where_statement ::= where_statement name_chain ASSIGN expr RCURL * DELIMITER RCURL
 
-                         RBRAC shift  121
+                     DELIMITER shift  87
 
 State 89:
-          expr ::= expr * PLUS expr
-          expr ::= expr * MINUS expr
-          expr ::= expr * DIVIDE expr
-     (47) expr ::= expr DIVIDE expr *
-          expr ::= expr * TIMES expr
-          expr ::= expr * MODULO expr
-          expr ::= expr * POW expr
-          expr ::= expr * EQUALTO expr
-          expr ::= expr * NOTEQUALTO expr
-          expr ::= expr * LESSTHAN expr
-          expr ::= expr * GREATERTHAN expr
-          expr ::= expr * LORE expr
-          expr ::= expr * GORE expr
-          expr ::= expr * AND expr
-          expr ::= expr * OR expr
-          expr ::= expr * SHIFTL expr
-          expr ::= expr * SHIFTR expr
-          expr ::= expr * BITAND expr
-          expr ::= expr * BITXOR expr
+          guard_statement ::= name_chain LCURL * BITOR expr ASSIGN expr DELIMITER
 
-                           POW shift  34
-                     {default} reduce 47
+                         BITOR shift  19
 
 State 90:
-          expr ::= expr * PLUS expr
-          expr ::= expr * MINUS expr
-          expr ::= expr * DIVIDE expr
-          expr ::= expr * TIMES expr
-          expr ::= expr * MODULO expr
-          expr ::= expr * POW expr
-          expr ::= expr * EQUALTO expr
-          expr ::= expr * NOTEQUALTO expr
-          expr ::= expr * LESSTHAN expr
-          expr ::= expr * GREATERTHAN expr
-          expr ::= expr * LORE expr
-          expr ::= expr * GORE expr
-          expr ::= expr * AND expr
-          expr ::= expr * OR expr
-     (61) expr ::= NOT expr *
-          expr ::= expr * SHIFTL expr
-          expr ::= expr * SHIFTR expr
-          expr ::= expr * BITAND expr
-          expr ::= expr * BITXOR expr
+          expr ::= NAME LBRAC RBRAC * LPAREN stmt_list RPAREN
 
-                           POW shift  34
-                     {default} reduce 61
+                        LPAREN shift  5
 
 State 91:
-          expr ::= expr * PLUS expr
-          expr ::= expr * MINUS expr
-          expr ::= expr * DIVIDE expr
-          expr ::= expr * TIMES expr
-          expr ::= expr * MODULO expr
-          expr ::= expr * POW expr
-          expr ::= expr * EQUALTO expr
-          expr ::= expr * NOTEQUALTO expr
-          expr ::= expr * LESSTHAN expr
-          expr ::= expr * GREATERTHAN expr
-          expr ::= expr * LORE expr
-          expr ::= expr * GORE expr
-          expr ::= expr * AND expr
-          expr ::= expr * OR expr
-     (60) expr ::= MINUS expr *
-          expr ::= expr * SHIFTL expr
-          expr ::= expr * SHIFTR expr
-          expr ::= expr * BITAND expr
-          expr ::= expr * BITXOR expr
+          array ::= OPENBRAC maybe_empty_stmt_list * RBRAC
 
-                           POW shift  34
-                     {default} reduce 60
+                         RBRAC shift  125
 
 State 92:
           expr ::= expr * PLUS expr
           expr ::= expr * MINUS expr
           expr ::= expr * DIVIDE expr
+     (48) expr ::= expr DIVIDE expr *
           expr ::= expr * TIMES expr
           expr ::= expr * MODULO expr
           expr ::= expr * POW expr
@@ -4043,14 +4157,13 @@ State 92:
           expr ::= expr * GORE expr
           expr ::= expr * AND expr
           expr ::= expr * OR expr
-     (59) expr ::= BITNOT expr *
           expr ::= expr * SHIFTL expr
           expr ::= expr * SHIFTR expr
           expr ::= expr * BITAND expr
           expr ::= expr * BITXOR expr
 
-                           POW shift  34
-                     {default} reduce 59
+                           POW shift  36
+                     {default} reduce 48
 
 State 93:
           expr ::= expr * PLUS expr
@@ -4059,7 +4172,6 @@ State 93:
           expr ::= expr * TIMES expr
           expr ::= expr * MODULO expr
           expr ::= expr * POW expr
-     (50) expr ::= expr POW expr *
           expr ::= expr * EQUALTO expr
           expr ::= expr * NOTEQUALTO expr
           expr ::= expr * LESSTHAN expr
@@ -4068,13 +4180,14 @@ State 93:
           expr ::= expr * GORE expr
           expr ::= expr * AND expr
           expr ::= expr * OR expr
+     (62) expr ::= NOT expr *
           expr ::= expr * SHIFTL expr
           expr ::= expr * SHIFTR expr
           expr ::= expr * BITAND expr
           expr ::= expr * BITXOR expr
 
-                           POW shift  34
-                     {default} reduce 50
+                           POW shift  36
+                     {default} reduce 62
 
 State 94:
           expr ::= expr * PLUS expr
@@ -4082,7 +4195,79 @@ State 94:
           expr ::= expr * DIVIDE expr
           expr ::= expr * TIMES expr
           expr ::= expr * MODULO expr
-     (49) expr ::= expr MODULO expr *
+          expr ::= expr * POW expr
+          expr ::= expr * EQUALTO expr
+          expr ::= expr * NOTEQUALTO expr
+          expr ::= expr * LESSTHAN expr
+          expr ::= expr * GREATERTHAN expr
+          expr ::= expr * LORE expr
+          expr ::= expr * GORE expr
+          expr ::= expr * AND expr
+          expr ::= expr * OR expr
+     (61) expr ::= MINUS expr *
+          expr ::= expr * SHIFTL expr
+          expr ::= expr * SHIFTR expr
+          expr ::= expr * BITAND expr
+          expr ::= expr * BITXOR expr
+
+                           POW shift  36
+                     {default} reduce 61
+
+State 95:
+          expr ::= expr * PLUS expr
+          expr ::= expr * MINUS expr
+          expr ::= expr * DIVIDE expr
+          expr ::= expr * TIMES expr
+          expr ::= expr * MODULO expr
+          expr ::= expr * POW expr
+          expr ::= expr * EQUALTO expr
+          expr ::= expr * NOTEQUALTO expr
+          expr ::= expr * LESSTHAN expr
+          expr ::= expr * GREATERTHAN expr
+          expr ::= expr * LORE expr
+          expr ::= expr * GORE expr
+          expr ::= expr * AND expr
+          expr ::= expr * OR expr
+     (60) expr ::= BITNOT expr *
+          expr ::= expr * SHIFTL expr
+          expr ::= expr * SHIFTR expr
+          expr ::= expr * BITAND expr
+          expr ::= expr * BITXOR expr
+
+                           POW shift  36
+                     {default} reduce 60
+
+State 96:
+          expr ::= expr * PLUS expr
+          expr ::= expr * MINUS expr
+          expr ::= expr * DIVIDE expr
+          expr ::= expr * TIMES expr
+          expr ::= expr * MODULO expr
+          expr ::= expr * POW expr
+     (51) expr ::= expr POW expr *
+          expr ::= expr * EQUALTO expr
+          expr ::= expr * NOTEQUALTO expr
+          expr ::= expr * LESSTHAN expr
+          expr ::= expr * GREATERTHAN expr
+          expr ::= expr * LORE expr
+          expr ::= expr * GORE expr
+          expr ::= expr * AND expr
+          expr ::= expr * OR expr
+          expr ::= expr * SHIFTL expr
+          expr ::= expr * SHIFTR expr
+          expr ::= expr * BITAND expr
+          expr ::= expr * BITXOR expr
+
+                           POW shift  36
+                     {default} reduce 51
+
+State 97:
+          expr ::= expr * PLUS expr
+          expr ::= expr * MINUS expr
+          expr ::= expr * DIVIDE expr
+          expr ::= expr * TIMES expr
+          expr ::= expr * MODULO expr
+     (50) expr ::= expr MODULO expr *
           expr ::= expr * POW expr
           expr ::= expr * EQUALTO expr
           expr ::= expr * NOTEQUALTO expr
@@ -4097,15 +4282,15 @@ State 94:
           expr ::= expr * BITAND expr
           expr ::= expr * BITXOR expr
 
-                           POW shift  34
-                     {default} reduce 49
+                           POW shift  36
+                     {default} reduce 50
 
-State 95:
+State 98:
           expr ::= expr * PLUS expr
           expr ::= expr * MINUS expr
           expr ::= expr * DIVIDE expr
           expr ::= expr * TIMES expr
-     (48) expr ::= expr TIMES expr *
+     (49) expr ::= expr TIMES expr *
           expr ::= expr * MODULO expr
           expr ::= expr * POW expr
           expr ::= expr * EQUALTO expr
@@ -4121,235 +4306,240 @@ State 95:
           expr ::= expr * BITAND expr
           expr ::= expr * BITXOR expr
 
-                           POW shift  34
-                     {default} reduce 48
-
-State 96:
-          expr ::= PRINT * LPAREN expr RPAREN
-
-                        LPAREN shift  39
-
-State 97:
-          expr ::= LET NAME * ASSIGN expr IN expr
-
-                        ASSIGN shift  42
-
-State 98:
-          expr ::= LET * NAME ASSIGN expr IN expr
-
-                          NAME shift  97
+                           POW shift  36
+                     {default} reduce 49
 
 State 99:
-          in ::= in test * DELIMITER
+          expr ::= PRINT * LPAREN expr RPAREN
 
-                     DELIMITER shift  139
+                        LPAREN shift  41
 
 State 100:
-          in ::= in start * DELIMITER
+          expr ::= LET NAME * ASSIGN expr IN expr
 
-                     DELIMITER shift  140
+                        ASSIGN shift  44
 
 State 101:
-     (70) error ::= OPENQUOTEERROR *
+          expr ::= LET * NAME ASSIGN expr IN expr
+
+                          NAME shift  100
+
+State 102:
+          in ::= in test * DELIMITER
+
+                     DELIMITER shift  143
+
+State 103:
+          in ::= in start * DELIMITER
+
+                     DELIMITER shift  144
+
+State 104:
+     (71) error ::= OPENQUOTEERROR *
+
+                     {default} reduce 71
+
+State 105:
+     (70) in ::= error *
 
                      {default} reduce 70
 
-State 102:
-     (69) in ::= error *
-
-                     {default} reduce 69
-
-State 103:
-     (22) final_guard_statement ::= guard_statement WILDCARD ASSIGN expr RCURL *
-
-                     {default} reduce 22
-
-State 104:
-     (21) final_guard_statement ::= guard_statement BITOR expr ASSIGN expr RCURL *
-
-                     {default} reduce 21
-
-State 105:
-     (20) guard_statement ::= guard_statement BITOR expr ASSIGN expr DELIMITER *
-
-                     {default} reduce 20
-
 State 106:
-     (18) assignment ::= final_guard_statement *
-
-                     {default} reduce 18
-
-State 107:
-     (17) test ::= case_statement *
-
-                     {default} reduce 17
-
-State 108:
-     (30) assignment ::= name_chain ASSIGN expr LCURL final_where_statement *
-
-                     {default} reduce 30
-
-State 109:
-     (26) final_where_statement ::= where_statement name_chain ASSIGN expr RCURL DELIMITER RCURL *
-
-                     {default} reduce 26
-
-State 110:
-     (25) where_statement ::= where_statement name_chain ASSIGN expr DELIMITER *
-
-                     {default} reduce 25
-
-State 111:
-     (23) where_statement ::= WHERE LCURL *
+     (23) final_guard_statement ::= guard_statement WILDCARD ASSIGN expr RCURL *
 
                      {default} reduce 23
 
+State 107:
+     (22) final_guard_statement ::= guard_statement BITOR expr ASSIGN expr RCURL *
+
+                     {default} reduce 22
+
+State 108:
+     (21) guard_statement ::= guard_statement BITOR expr ASSIGN expr DELIMITER *
+
+                     {default} reduce 21
+
+State 109:
+     (19) assignment ::= final_guard_statement *
+
+                     {default} reduce 19
+
+State 110:
+     (18) test ::= case_statement *
+
+                     {default} reduce 18
+
+State 111:
+     (31) assignment ::= name_chain ASSIGN expr LCURL final_where_statement *
+
+                     {default} reduce 31
+
 State 112:
+     (27) final_where_statement ::= where_statement name_chain ASSIGN expr RCURL DELIMITER RCURL *
+
+                     {default} reduce 27
+
+State 113:
+     (26) where_statement ::= where_statement name_chain ASSIGN expr DELIMITER *
+
+                     {default} reduce 26
+
+State 114:
+     (24) where_statement ::= WHERE LCURL *
+
+                     {default} reduce 24
+
+State 115:
      (11) name_chain ::= NAME *
 
                      {default} reduce 11
 
-State 113:
-     (24) where_statement ::= WHERE name_chain ASSIGN expr LCURL *
-
-                     {default} reduce 24
-
-State 114:
-     (27) case_statement ::= name_chain ASSIGN CASE expr OF *
-
-                     {default} reduce 27
-
-State 115:
-     (19) guard_statement ::= name_chain LCURL BITOR expr ASSIGN expr DELIMITER *
-
-                     {default} reduce 19
-
 State 116:
+     (25) where_statement ::= WHERE name_chain ASSIGN expr LCURL *
+
+                     {default} reduce 25
+
+State 117:
+     (28) case_statement ::= name_chain ASSIGN CASE expr OF *
+
+                     {default} reduce 28
+
+State 118:
+     (20) guard_statement ::= name_chain LCURL BITOR expr ASSIGN expr DELIMITER *
+
+                     {default} reduce 20
+
+State 119:
      (10) name_chain ::= name_chain NAME *
 
                      {default} reduce 10
 
-State 117:
-     (66) array_index ::= NAME LBRAC expr RBRAC *
-
-                     {default} reduce 66
-
-State 118:
-     (15) expr ::= NAME LPAREN RPAREN *
-
-                     {default} reduce 15
-
-State 119:
-     (67) array_index ::= array_index LBRAC expr RBRAC *
+State 120:
+     (67) array_index ::= NAME LBRAC expr RBRAC *
 
                      {default} reduce 67
 
-State 120:
-     (16) expr ::= array_index LPAREN RPAREN *
-
-                     {default} reduce 16
-
 State 121:
-     (34) array ::= OPENBRAC maybe_empty_stmt_list RBRAC *
-
-                     {default} reduce 34
-
-State 122:
-     (44) bool ::= BOOLEAN *
-
-                     {default} reduce 44
-
-State 123:
-     (43) string ::= STRING *
-
-                     {default} reduce 43
-
-State 124:
-     (42) num ::= NUM *
-
-                     {default} reduce 42
-
-State 125:
-     (41) expr ::= LPAREN expr RPAREN *
-
-                     {default} reduce 41
-
-State 126:
-     (40) expr ::= PRINT LPAREN expr RPAREN *
-
-                     {default} reduce 40
-
-State 127:
-     (39) expr ::= bool *
-
-                     {default} reduce 39
-
-State 128:
-     (38) expr ::= string *
-
-                     {default} reduce 38
-
-State 129:
-     (37) expr ::= num *
-
-                     {default} reduce 37
-
-State 130:
-     (32) stmt_list ::= stmt_list stmt *
-
-                     {default} reduce 32
-
-State 131:
-     (31) stmt_list ::= stmt *
-
-                     {default} reduce 31
-
-State 132:
-     (33) expr ::= array *
-
-                     {default} reduce 33
-
-State 133:
-     (14) expr ::= array_index LPAREN stmt_list RPAREN *
+     (14) expr ::= NAME LBRAC RBRAC LPAREN stmt_list RPAREN *
 
                      {default} reduce 14
 
+State 122:
+     (16) expr ::= NAME LPAREN RPAREN *
+
+                     {default} reduce 16
+
+State 123:
+     (68) array_index ::= array_index LBRAC expr RBRAC *
+
+                     {default} reduce 68
+
+State 124:
+     (17) expr ::= array_index LPAREN RPAREN *
+
+                     {default} reduce 17
+
+State 125:
+     (35) array ::= OPENBRAC maybe_empty_stmt_list RBRAC *
+
+                     {default} reduce 35
+
+State 126:
+     (45) bool ::= BOOLEAN *
+
+                     {default} reduce 45
+
+State 127:
+     (44) string ::= STRING *
+
+                     {default} reduce 44
+
+State 128:
+     (43) num ::= NUM *
+
+                     {default} reduce 43
+
+State 129:
+     (42) expr ::= LPAREN expr RPAREN *
+
+                     {default} reduce 42
+
+State 130:
+     (41) expr ::= PRINT LPAREN expr RPAREN *
+
+                     {default} reduce 41
+
+State 131:
+     (40) expr ::= bool *
+
+                     {default} reduce 40
+
+State 132:
+     (39) expr ::= string *
+
+                     {default} reduce 39
+
+State 133:
+     (38) expr ::= num *
+
+                     {default} reduce 38
+
 State 134:
+     (33) stmt_list ::= stmt_list stmt *
+
+                     {default} reduce 33
+
+State 135:
+     (32) stmt_list ::= stmt *
+
+                     {default} reduce 32
+
+State 136:
+     (34) expr ::= array *
+
+                     {default} reduce 34
+
+State 137:
+     (15) expr ::= array_index LPAREN stmt_list RPAREN *
+
+                     {default} reduce 15
+
+State 138:
      (13) expr ::= NAME LPAREN stmt_list RPAREN *
 
                      {default} reduce 13
 
-State 135:
+State 139:
       (8) top_stmt ::= stmt *
 
                      {default} reduce 8
 
-State 136:
+State 140:
       (7) spec ::= top_stmt *
 
                      {default} reduce 7
 
-State 137:
+State 141:
       (6) spec ::= assignment *
 
                      {default} reduce 6
 
-State 138:
+State 142:
       (5) start ::= spec *
 
                      {default} reduce 5
 
-State 139:
+State 143:
       (4) in ::= in test DELIMITER *
 
                      {default} reduce 4
 
-State 140:
+State 144:
       (3) in ::= in start DELIMITER *
 
                      {default} reduce 3
 
-State 141:
+State 145:
       (2) in ::= in DELIMITER *
 
                      {default} reduce 2
