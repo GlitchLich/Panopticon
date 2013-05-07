@@ -14,7 +14,7 @@ funcArray[0]()
 
 func2 x = x + 1
 funcArray2 = [func2 func2]
-funcArray2[0](1]
+funcArray2[0](1)
 
 //Significant White Space tests
 3 + 3
