@@ -35,6 +35,17 @@ functions[0]( 1 )
 functions[0]( 2 )
 functions[0]( 3 )
 functions[0]( [ functions[2]( 999 ) functions[1]( 666 ) ] )
+functions
+functions( [ 0 1 2 ] )
+
+gexplode2 x = x * 666
+gex = [ gexplode2 gexplode2 gexplode2 ]
+// Doesn't work
+gex[]( 1 )
+gex2 = [ gex ]
+// Works!?
+gex2[0]( 2 )
+gex2[0]( [ 1 2 3 ] )
 
 //Working on where, two different syntaxes:
 //Syntax works, logic not in yet.

@@ -730,6 +730,26 @@ bool call_function(object& A, const object& B, const object& C)
             correct_parsing = false;
             eval = false;
         }
+
+        if(function.type == ARRAY)
+        {
+            std::cout << "ARRAY OF FUNCTIONS ARRAY OF FUNCTIONS ARRAY OF FUNCTIONS ARRAY OF FUNCTIONS ARRAY OF FUNCTIONS " << std::endl;
+            optic_stack.push_back(C);
+            optic_stack.push_back(function);
+            object call;
+            call.type = OPERATION;
+            call.data.operator_func = call_function;
+            optic_stack.push_back(call);
+            evaluate_top();
+            A = optic_stack.back();
+            optic_stack.pop_back();
+            return true;
+        }
+
+        else if(function.type != FUNCTION)
+        {
+            eval = false;
+        }
     }
 
     else if(B.type == FUNCTION)
