@@ -40,7 +40,7 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument* parent) :
     rules.append(rule);
 
 
-    rule.pattern = QRegExp("\\b\\d\\b");
+    rule.pattern = QRegExp("\\b((\\d+(\\.\\d+)?([eE][-+]?\\d+)?))");
     rule.format = style->numberFormat;
     rules.append(rule);
 

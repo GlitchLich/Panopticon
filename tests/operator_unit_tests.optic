@@ -12,7 +12,7 @@ subvariable = x * z
 		x = 10
 		z = 11
 
-subvariable
+subvariable + subvariable / [ subvariable * 3.141592654 ]
 
 //Where
 whereFunc x = x + w - t
@@ -20,7 +20,7 @@ whereFunc x = x + w - t
 		w = 5
 		t = w * x
 
-whereArray = [ whereFunc( 11 ) whereFunc( 11 ) ] 
+whereArray = [ whereFunc( 11.1 ) whereFunc( 11 ) ] 
 whereArray
 
 //Where with sub functions

@@ -79,6 +79,7 @@ void evaluate_binary_operator(const object& operator_object, bool expand = true)
 
             else if(arg1.type == ARRAY)
             {
+                std::cout << " ARG1.type == ARRAY" << std::endl;
                 object new_array;
                 new_array.data.array = new Array();
                 new_array.type = ARRAY;
@@ -100,6 +101,7 @@ void evaluate_binary_operator(const object& operator_object, bool expand = true)
 
             else if(arg2.type == ARRAY)
             {
+                std::cout << " ARG2.type == ARRAY" << std::endl;
                 object new_array;
                 new_array.data.array = new Array();
                 new_array.type = ARRAY;
