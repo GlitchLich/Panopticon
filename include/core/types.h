@@ -142,6 +142,7 @@ struct object
 struct Function
 {
     std::stack<object> stack;
+    std::string name;
     Map heap;
     int num_arguments;
     Array arguments;

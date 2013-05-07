@@ -21,7 +21,7 @@ printed( 1 )
 printed( 2 )
 printed( 3 )
 
-// Doesn't work
+// Works
 function x = [ x 1 2 ]
 function( 0 )
 function( 1 )
@@ -39,6 +39,7 @@ one( one )
 // Array of functions DOESN'T WORK
 add x y = x + y
 adds = [ add add add ]
+adds
 adds[0]( 1 1 )
 
 // Works
@@ -118,9 +119,11 @@ twenty
 
 mul x y = x * y
 double x = x * 2
-mul( double( 10 ) 2 ) // double is eager evaluated, the call has been made
+// double is eager evaluated, the call has been made
+mul( double( 10 ) 2 ) 
 ten = 10
-mul( ten ten ) // ten is lazy evaluated
+// ten is lazy evaluated
+mul( ten ten ) 
 
 // WORKS
 thirty = three() * 10
@@ -173,14 +176,13 @@ arrayPlusOne(1)
 arrayPlusOne([ 3 4 5 6 7 ])
 arrayPlusOne( arrayPlusOne([ 0 1 2 3 4 5]) )
 
-// STILL Doesn't Work
+// Works
 combiner x y = [x y]
 combiner(12 13)
-//Here's a hint: This works.
 combinedPlus x y = [x y]+1
 combinedPlus(3 2)
 
-// ONLY WORKS ONCE?????????????????????
+// Doesn't work
 printer x y = print([ x y ])
 printer( 2 3 )
 printer( [ 0 1 2 ] 2 )
