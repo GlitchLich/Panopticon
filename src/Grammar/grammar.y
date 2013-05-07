@@ -235,7 +235,7 @@ expr(A) ::= NAME(B) LBRAC RBRAC LPAREN stmt_list(C) RPAREN. [FUNCTION_CALL]
         C.data.array->push_back(temp);
     }
 /*    optic::object b;*/
-    B.type = optic::Array_Map_Value_To_Functions;
+    B.type = optic::VARIABLE;
 /*    b.data.string = new optic::String(B.data.string->c_str());*/
     optic::parse_operations(A,B,C,optic::call_function);
     if(!panopticon::correct_parsing)

@@ -769,36 +769,6 @@ bool call_function(object& A, const object& B, const object& C)
         function = B;
         break;
 
-    case Array_Map_Value_To_Functions:
-        std::cout << "WILL THIS CRASH?: ";
-        std::cout << *B.data.string << std::endl;
-
-        /*
-        object object_array;
-
-        if(get_variable(B.data.string, &object_array) != OK)
-        {
-            out() << "Unable to find variable: " << B.data.string->c_str() << " in current scope" << std::endl;
-            std::cout << "Unable to find variable: " << B.data.string->c_str() << " in current scope" << std::endl;
-            correct_parsing = false;
-            return false;
-        }
-
-        if(object_array.type == ARRAY)
-        {
-            return call_function_array(A, object_array, C);
-        }
-
-        else
-        {
-            out() << "Can't map array of functions for variable " << function.data.string->c_str() << " in current scope" << std::endl;
-            std::cout << "Can't map array of functions for variable " << function.data.string->c_str() << " in current scope" << std::endl;
-            correct_parsing = false;
-            return false;
-        }*/
-
-        break;
-
     default:
         out() << "Object is not a function and is not callable: ";
         out() << "OBJECT TYPE: " << B.type << " ";

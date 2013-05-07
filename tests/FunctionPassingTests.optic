@@ -55,11 +55,12 @@ shift x y = x << y
 shift( 2 3 )
 shifts = funcArray( shift )
 shifts[0]( 2 3 )
+shifts[]( 2 3 )
+shifts[]( 2 shifts[]( 2 3 ) )
 moreshifts = [ shift shift shift ]
 moreshifts[0]( 2 3 )
 moreshifts[]( 2 3 )
-moremoreshifts = [ moreshifts ]
-moremoreshifts[0]( 2 3 )
+moreshifts[]( [ 2 3 4 5 ] 2 )
 
 // Nested Arrays from functions
 nest x = [ [ [ x ] x ] x ]

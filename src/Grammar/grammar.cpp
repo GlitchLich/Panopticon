@@ -1358,7 +1358,7 @@ static void yy_reduce(
         yymsp[-1].minor.yy0.data.array->push_back(temp);
     }
 /*    optic::object b;*/
-    yymsp[-5].minor.yy0.type = optic::Array_Map_Value_To_Functions;
+    yymsp[-5].minor.yy0.type = optic::VARIABLE;
 /*    b.data.string = new optic::String(yymsp[-5].minor.yy0.data.string->c_str());*/
     optic::parse_operations(yygotominor.yy0,yymsp[-5].minor.yy0,yymsp[-1].minor.yy0,optic::call_function);
     if(!panopticon::correct_parsing)
