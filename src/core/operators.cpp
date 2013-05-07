@@ -878,13 +878,6 @@ bool call_function(const object &function, const String& name,bool resolve)
 
 bool serial(object& A,const object& B,const object& C)
 {
-    std::cout << "Serial 1" << std::endl;
-    std::cout << B.type << std::endl;
-//    resolve_stack_from_parser(B,false);
-
-    std::cout << "Serial 2" << std::endl;
-    std::cout << C.type << std::endl;
-//    resolve_stack_from_parser(C,false);
     A = C;
 }
 
