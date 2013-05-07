@@ -618,6 +618,7 @@ bool create_function(object &A, const object &B, const object &C)
 
     function->body = C;
     function->body.type = OPERATION_TREE;
+    function->name = B.data.string->c_str();
     std::cout << "FUNCTION BODY.TYPE: " << function->body.type << std::endl;
     A.data.function = function;
 
@@ -668,10 +669,36 @@ bool call_function(object& A, const object& B, const object& C)
     std::cout << "CALL FUNCTION!!!!!!!!!!!" << std::endl;
 
     object function;
+    bool eval = true;
 
-    if(get_variable(B.data.string, &function) == OK)
+    if(B.type == VARIABLE || B.type == UNDECLARED_VARIABLE || B.type == STRING)
     {
-        std::string function_name = *B.data.string;
+        if(get_variable(B.data.string, &function) != OK)
+        {
+            out() << "Unable to find function: " << B.data.string->c_str() << " in current scope" << std::endl;
+            std::cout << "Unable to find function: " << B.data.string->c_str() << " in current scope" << std::endl;
+            correct_parsing = false;
+            eval = false;
+        }
+    }
+
+    else if(B.type == FUNCTION)
+    {
+        function = B;
+    }
+
+    else
+    {
+        eval = false;
+        out() << "Object is not a function and is not callable: ";
+        print_object(B);
+    }
+
+
+
+    if(eval)
+    {
+        std::string function_name = function.data.function->name;
         std::cout << "Function name: " << function_name << std::endl;
         std::cout << "Function type: " << function.type << std::endl;
         std::cout << "Function number of arguments: " << function.data.function->arguments.size() << std::endl;
@@ -720,13 +747,6 @@ bool call_function(object& A, const object& B, const object& C)
 
         //        out() << "FUNCTION RESULT" << std::endl;
         //        print_object(optic_stack.back());
-    }
-
-    else
-    {
-        out() << "Unable to find function: " << B.data.string->c_str() << " in current scope" << std::endl;
-        std::cout << "Unable to find function: " << B.data.string->c_str() << " in current scope" << std::endl;
-        correct_parsing = false;
     }
 
 }
