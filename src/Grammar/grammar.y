@@ -81,9 +81,9 @@ panopticon::out() << "Syntax error!" << std::endl;
 
 main ::= in.
 in ::= .
-in ::= in NEWLINE.
-in ::= in start NEWLINE.
-in ::= in test NEWLINE.
+in ::= in DELIMITER.
+in ::= in start DELIMITER.
+in ::= in test DELIMITER.
 
 
 start ::= spec(A).
@@ -290,32 +290,15 @@ test(A) ::= case_statement(B).
     A=B;
 }
 
-spec(A) ::= where_statement(B).
+spec(A) ::= final_where_statement(B).
 {
     panopticon::out() << "Where: " << std::endl;
     A=B;
 }
 
-assignment(A) ::= guard_statement(B).
-{
-    panopticon::object& b = B.data.array->at(0);
-    panopticon::object& c = B.data.array->at(1);
-
-    panopticon::object resolve;
-    panopticon::store_operations(resolve, c, &panopticon::resolve_guard);
-
-    insure_ready_for_assignment(b,resolve);
-    b.type = optic::FUNCTION_ARG_NAMES;
-    panopticon::parse_operations(A, b, resolve, &panopticon::assign_variable);
-    if(!panopticon::correct_parsing)
-    {
-        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
-        ParseARG_STORE;
-    }
-}
-
 assignment(A) ::= final_guard_statement(B).
 {
+    std::cout << "GUARD11" << std::endl;
     panopticon::object& b = B.data.array->at(0);
     panopticon::object& c = B.data.array->at(1);
 
@@ -332,79 +315,90 @@ assignment(A) ::= final_guard_statement(B).
     }
 }
 
-/*guard_assignment ::= name_chain final_guard_statement.*/
-/*guard_assignment ::= name_chain guard_statement.*/
-
-
 //GUARD STATEMENT BEGINNING
-guard_statement(A) ::= name_chain(B) GUARD_N expr(C) ASSIGN expr(D). [ASSIGN]
+guard_statement(A) ::= name_chain(B) LCURL BITOR expr(C) ASSIGN expr(D) DELIMITER. [ASSIGN]
 {
+    std::cout << "GUARD1" << std::endl;
     optic::object tree = create_condition_tree(C,D);
     A = create_guard(B,tree);
+    std::cout << "GUARD2" << std::endl;
 }
 
-guard_statement(A) ::= name_chain(B) GUARD_S expr(C) ASSIGN expr(D). [ASSIGN]
+guard_statement(A) ::= guard_statement(B) BITOR expr(C) ASSIGN expr(D) DELIMITER. [ASSIGN]
 {
-    optic::object tree = create_condition_tree(C,D);
-    A = create_guard(B,tree);
-}
-
-guard_statement(A) ::= guard_statement(B) GUARD_N expr(C) ASSIGN expr(D). [ASSIGN]
-{
+    std::cout << "GUARD3" << std::endl;
     add_branch_to_tree(B,C,D);
     A=B;
+    std::cout << "GUARD4" << std::endl;
 }
 
-guard_statement(A) ::= guard_statement(B) GUARD_S expr(C) ASSIGN expr(D). [ASSIGN]
+final_guard_statement(A) ::= guard_statement(B) BITOR expr(C) ASSIGN expr(D) RCURL. [ASSIGN]
 {
+    std::cout << "GUARD5" << std::endl;
     add_branch_to_tree(B,C,D);
     A=B;
+    std::cout << "GUARD6" << std::endl;
 }
 
-final_guard_statement(A) ::= guard_statement(B) WILDCARD_N ASSIGN expr(D). [ASSIGN]
+final_guard_statement(A) ::= guard_statement(B) WILDCARD ASSIGN expr(D) RCURL. [ASSIGN]
 {
+    std::cout << "GUARD7" << std::endl;
     add_wildcard_to_tree(B,D);
     A=B;
+    std::cout << "GUARD8" << std::endl;
 }
 
-final_guard_statement(A) ::= guard_statement(B) WILDCARD ASSIGN expr(D). [ASSIGN]
+where_guard_statement(A) ::= guard_statement(B) WILDCARD ASSIGN expr(D) DELIMITER. [ASSIGN]
 {
+    std::cout << "GUARD9" << std::endl;
     add_wildcard_to_tree(B,D);
     A=B;
+    std::cout << "GUARD10" << std::endl;
 }
 
-where_statement(A) ::= guard_statement(B) WHERE.
+//==================
+//Where
+//==================
+
+where_statement(A) ::= guard_statement(B) WHERE LCURL. [ASSIGN]
 {
+     std::cout << "WHERE!!!!!!!!!!!!!" << std::endl;
     A = B;
 }
-where_statement(A) ::= final_guard_statement(B) WHERE.
+
+where_statement(A) ::= where_guard_statement(B) WHERE LCURL. [ASSIGN]
 {
+     std::cout << "WHERE!!!!!!!!!!!!!" << std::endl;
     A = B;
 }
-/*where_statement(A) ::= name_chain ASSIGN expr WHERE.
+
+where_statement(A) ::= guard_statement(B) WHERE name_chain ASSIGN expr LCURL. [ASSIGN]
 {
+     std::cout << "WHERE!!!!!!!!!!!!!" << std::endl;
     A = B;
 }
-where_statement(A) ::= where_statement NAME(B) ASSIGN expr.
+
+where_statement(A) ::= where_guard_statement(B) WHERE name_chain ASSIGN expr LCURL. [ASSIGN]
 {
+     std::cout << "WHERE!!!!!!!!!!!!!" << std::endl;
     A = B;
-}*/
+}
+
+where_statement(A) ::= where_statement(B) name_chain ASSIGN expr DELIMITER. [ASSIGN]
+{
+     std::cout << "WHERE!!!!!!!!!!!!!" << std::endl;
+    A = B;
+}
+
+final_where_statement(A) ::= where_statement(B) name_chain ASSIGN expr RCURL DELIMITER RCURL. [ASSIGN]
+{
+    std::cout << "WHERE!!!!!!!!!!!!!" << std::endl;
+    A = B;
+}
 
 case_statement(A) ::= name_chain(B) ASSIGN CASE expr OF. [ASSIGN]
 {
     A=B;
-    A.type = optic::GUARD;
-}
-
-/*case_statement(A) ::= case_statement(B) N_TAB expr POINTER expr. [ASSIGN]
-{
-    A = B;
-    A.type = optic::GUARD;
-}*/
-
-case_statement(A) ::= case_statement(B) WILDCARD_N POINTER expr. [ASSIGN]
-{
-    A = B;
     A.type = optic::GUARD;
 }
 
@@ -450,14 +444,7 @@ stmt_list(A) ::= stmt_list(B) stmt(C). [COLLECTARRAY]
         A.data.array = B.data.array;
         A.data.array->push_back(C);
     }
-    //A.n = B.n+1;
 }
-/*invoke ::= access LBRAC maybe_empty_stmt_list RBRAC.*/
-
-/*access(A) ::= array(B).*/
-/*{*/
-/*    A=B;*/
-/*}*/
 
 %fallback OPENBRAC LBRAC.
 
@@ -470,7 +457,6 @@ array(A) ::= OPENBRAC maybe_empty_stmt_list(B) RBRAC. [COLLECTARRAY]
 {
     A = B;
     A.type = optic::ARRAY;
-/*    create_tree(A,de_tree(B));*/
 }
 
 maybe_empty_stmt_list(A) ::= .
@@ -492,12 +478,6 @@ maybe_empty_stmt_list(A) ::= stmt_list(B).
         A.data.array = B.data.array;
     }
 }
-
-/*identifier(A) ::= expr(B).*/
-/*{*/
-/*    A=B;*/
-
-/*}*/
 
 //=================================
 //Convert to Dynamic exprs
@@ -539,15 +519,12 @@ expr(A) ::= LPAREN expr(B) RPAREN.
 
 num(A) ::= NUM(B).
 {
-/*    A.data.number = B.data.number;*/
     B.type = panopticon::NUMBER;
     create_tree(A,B);
 }
 
 string(A) ::= STRING(B).
 {
-/*    A.data.string = new panopticon::String(B.data.string->c_str());*/
-/*    delete B.data.string;*/
     B.type = panopticon::STRING;
     create_tree(A,B);
 }
@@ -555,7 +532,6 @@ string(A) ::= STRING(B).
 
 bool(A) ::= BOOLEAN(B).
 {
-/*    A.data.boolean = B.data.boolean;*/
     B.type = panopticon::BOOL;
     create_tree(A,B);
 }
@@ -563,27 +539,6 @@ bool(A) ::= BOOLEAN(B).
 //=======================
 //operators
 //=======================
-/*operator ::= PLUS.
-operator ::= MINUS.
-operator ::= DIVIDE.
-operator ::= TIMES.
-operator ::= MODULO.
-operator ::= POW.
-operator ::= EQUALTO.
-operator ::= NOTEQUALTO.
-operator ::= LESSTHAN.
-operator ::= GREATERTHAN.
-operator ::= LORE.
-operator ::= GORE.
-operator ::= AND.
-operator ::= OR.
-operator ::= NOT.
-operator ::= BITNOT.
-operator ::= BITAND.
-operator ::= BITOR.
-operator ::= SHIFTL.
-operator ::= SHIFTR.
-operator ::= BITXOR.*/
 
 expr(A) ::= expr(B) PLUS expr(C).
 {
@@ -788,16 +743,6 @@ expr(A) ::= expr(B) BITAND expr(C).
     }
 }
 
-/*expr(A) ::= expr(B) BITOR expr(C).
-{
-    parse_operations(A,B,C,&panopticon::bit_or);
-    if(!panopticon::correct_parsing)
-    {
-        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
-        ParseARG_STORE;
-    }
-}*/
-
 expr(A) ::= expr(B) BITXOR expr(C).
 {
     parse_operations(A,B,C,&panopticon::bit_xor);
@@ -833,31 +778,6 @@ expr(A) ::= array_index(B). [INDEX]
 {
     A = B;
 }
-
-/*
-stmt(A) ::= variable(B).
-{
-    A = B;
-    if(!panopticon::correct_parsing)
-    {
-        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
-        ParseARG_STORE;
-    }
-}*/
-
-/*
-variable(A) ::= NAME ASSIGN expr(B).
-{
-    A = B;
-    A.type = panopticon::VARIABLE;
-    if(!panopticon::correct_parsing)
-    {
-        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
-        ParseARG_STORE;
-    }
-}
-*/
-
 
 //======================
 //Syntax ERROR HANDLING
