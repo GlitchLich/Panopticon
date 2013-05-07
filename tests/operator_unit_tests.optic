@@ -8,44 +8,30 @@
 
 //Testing Lexer Parsing for Guards
 (
-func = 10
-funcArray = [func func+20]
-funcArray[0]
-funcArray[1]
-funcArray * 2
+whereFunc x = x + w - t
+	where 
+		w = 5
+		t = w * 2
 
-func2 x = x + 1
-funcArray2 = [func2 func2]
-funcArray2[0](1)
+whereFunc( 12 )
 
-//Significant White Space tests
-3 + 3
-	3 + 4
-	3 + 4
-		3 + 4
-  		3 + 4
-3 + 3
+whereFunc2 x = x + w - t
+	where 
+		w = 5
+		t = x * 2
+
+whereFunc2( 12 )
+
+subFunc x y = ( x + w ) - ( t - y ) 
+	where 
+		w = 5
+		t x w = x * w / 10
+
+subFunc( 10 11 )
+
+( 10 + 5 ) - ( (10 * 5 / 10) - 11 ) 
 
 
-gexplode x = x + 666
-funcArray f = [ f f f ]
-functions = funcArray( gexplode )
-functions[0]( 0 )
-functions[0]( 1 )
-functions[0]( 2 )
-functions[0]( 3 )
-functions[0]( [ functions[2]( 999 ) functions[1]( 666 ) ] )
-functions
-functions( [ 0 1 2 ] )
-
-gexplode2 x = x * 666
-gex = [ gexplode2 gexplode2 gexplode2 ]
-// Doesn't work
-gex[]( 1 )
-gex2 = [ gex ]
-// Works!?
-gex2[0]( 2 )
-gex2[0]( [ 1 2 3 ] )
 
 //Working on where, two different syntaxes:
 //Syntax works, logic not in yet.
@@ -63,14 +49,15 @@ myGuardFunc2 x y
 		z = 5
 		mySubFunc x2 z3 = ("fuck" + x2) + x3
 
-
 //()'s disband the offside rule
 myGuardFunc(
 	6 
 	0
 )
+
+myGuardFunc(2 2)
 myGuardFunc(3 2)
-myGuardFunc(2 1)
+
 
 //Can Match to different types, produce different types
 myGuardFunc3 x 
@@ -119,14 +106,7 @@ letFunc x =
 	let	
 		w = 2000 + x 
 		z = 399/x
-	in x + w * z
-
-whereFunc x = x + w
-	where 
-		w = 5
-
-whereFunc( 5 )
-		
+	in x + w * z		
 )
 
 //Guard version, needs logic:
@@ -168,8 +148,8 @@ twenty
 
 //variables, crashes needs lexical scoping
 num = 5
-otherNum = num()*33.3
-num() * otherNum()
+otherNum = num*33.3
+num * otherNum
 
 mybool = true
 myfalsebool = !mybool

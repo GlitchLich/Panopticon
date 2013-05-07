@@ -61,7 +61,7 @@ extern bool recursive_apply(object &a,const object &obj1,const object& obj2, ope
 extern bool object_operator_object(object& a, object& b, object& c, operator_function func);
 extern bool array_operator_array(object& a,const object& array1,const object& array2, operator_function func);
 extern bool parse_operations(object& a, const object& b, const object& c, operator_function func);
-extern bool resolve_stack_from_parser(object& operation_tree, bool resolve_entire_stack = false);
+extern bool resolve_stack_from_parser(const object &operation_tree, bool resolve_entire_stack = false);
 extern bool create_tree(object&a,const object& obj);
 extern bool store_operations(object& a,const object& obj1,unary_operator_function func);
 extern bool store_operations(object& a, const object& obj1, const object& obj2, operator_function func, bool expand = true);
@@ -74,33 +74,8 @@ extern bool resolve_function_array(object& A, const object& B);
 // extern bool call_function(const object& function, const String &name, bool resolve = true); DON'T USE THIS, IT's BROKEN
 extern bool handle_stack(object &A, Function* function);
 
-/*
-extern void plus();
-extern void minus();
-extern void divide();
-extern void multiply();
-extern void modulo();
-extern void value_pow();
-extern void equal_to();
-extern void not_equal_to();
-extern void less_than();
-extern void greater_than();
-extern void lore();
-extern void gore();
-extern void value_and();
-extern void value_or();
-extern void not_value();
-extern void shift_left();
-extern void shift_right();
-extern void bit_and();
-extern void bit_or();
-extern void bit_not();
-extern void bit_xor();
-extern void assign_variable();
-extern void retrieve_variable();*/
-
-// Called by parser
-
+// Operators
+extern bool serial(object& A, const object &B, const object &C);
 extern bool plus(object&A, const object& B, const object& C);
 extern bool minus(object&A, const object& B, const object& C);
 extern bool divide(object&A, const object& B, const object& C);

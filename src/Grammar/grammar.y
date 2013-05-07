@@ -107,27 +107,6 @@ start ::= spec(A).
     }
 }
 
-/*spec(A) ::= closed_block(B).
-{
-    A = B;
-    optic::out() << "CODE BLOCK!" << std::endl;
-}
-
-open_block(A) ::= OPENING_LPAREN spec(B).
-{
-    A = B;
-}
-
-open_block(A) ::= open_block NEWLINE spec.
-{
-    A.type = optic::CODE_BLOCK;
-}
-
-closed_block(A) ::= open_block CLOSING_RPAREN.
-{
-    A.type = optic::CODE_BLOCK;
-}*/
-
 spec(A) ::= assignment(B).
 {
     A=B;
@@ -241,6 +220,8 @@ expr(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN. [FUNCTION_CALL]
 
 expr(A) ::= NAME(B) LBRAC RBRAC LPAREN stmt_list(C) RPAREN. [FUNCTION_CALL]
 {
+    std::cout << "B.type = optic::Array_Map_Value_To_Functions" << std::endl;
+    std::cout << *B.data.string << std::endl;
     if(C.type==optic::STATEMENT_LIST)
     {
             C.type = optic::FUNCTION_ARG_VALUES;
@@ -253,10 +234,10 @@ expr(A) ::= NAME(B) LBRAC RBRAC LPAREN stmt_list(C) RPAREN. [FUNCTION_CALL]
         C.data.array->reserve(1);
         C.data.array->push_back(temp);
     }
-    optic::object b;
-    b.type = optic::Array_Map_Value_To_Functions;
-    b.data.string = new optic::String(B.data.string->c_str());
-    optic::parse_operations(A,b,C,optic::call_function);
+/*    optic::object b;*/
+    B.type = optic::Array_Map_Value_To_Functions;
+/*    b.data.string = new optic::String(B.data.string->c_str());*/
+    optic::parse_operations(A,B,C,optic::call_function);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);

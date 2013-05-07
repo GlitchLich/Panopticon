@@ -484,6 +484,12 @@ bool store_operations(object& a,const object& obj1,const object& obj2)
         size++;
     }
 
+    a.data.array->reserve(size);
+    object op_func;
+    op_func.type = OPERATION;
+    op_func.data.operator_func = &serial;
+    a.data.array->push_back(op_func);
+
     if(obj1.type==OPERATION_TREE)
     {
         for(int i=0;i<obj1.data.array->size();++i)
@@ -547,7 +553,6 @@ bool store_operations(object& a,const object& obj1,const object& obj2, operator_
         op_func.type = NO_EXPANSION_OPERATION;
     }
     op_func.data.operator_func = func;
-    // op_func.data.stack_func = func;
     a.data.array->push_back(op_func);
 
     if(obj1.type==OPERATION_TREE)
@@ -582,7 +587,7 @@ bool object_operator_object(object& a, object& b, object& c, operator_function f
     delete_object(c);
 }
 
-bool resolve_stack_from_parser(object& operation_tree, bool resolve_entire_stack)
+bool resolve_stack_from_parser(const object& operation_tree, bool resolve_entire_stack)
 {
     std::cout << "About to copy. operation_tree.size = " << operation_tree.data.array->size() << std::endl;
     if(operation_tree.type == OPERATION_TREE)
@@ -898,8 +903,20 @@ bool call_function(const object &function, const String& name,bool resolve)
 */
 
 //======================================================================================
+//OPERATORS
 //======================================================================================
-//======================================================================================
+
+bool serial(object& A,const object& B,const object& C)
+{
+    std::cout << "Serial 1" << std::endl;
+    std::cout << B.type << std::endl;
+//    resolve_stack_from_parser(B,false);
+
+    std::cout << "Serial 2" << std::endl;
+    std::cout << C.type << std::endl;
+//    resolve_stack_from_parser(C,false);
+    A = C;
+}
 
 bool plus(object& A, const object& B, const object& C)
 {
@@ -916,15 +933,6 @@ bool plus(object& A, const object& B, const object& C)
         break;
     case panopticon::ARRAY:
         array_plus(A,B,C);
-        //        out() << "ARRAY_PLUS(A,B,C): A = ";
-        //        print_object(A);
-        //        out() << std::endl;
-        //        out() << "B = ";
-        //        print_object(B);
-        //        out() << std::endl;
-        //        out() << "C = ";
-        //        print_object(C);
-        //        out() << std::endl;
         break;
     }
 }
