@@ -79,7 +79,7 @@ object create_guard(object &function_call_name_and_args, object &condition_tree)
     guard.type = GUARD;
     guard.data.array = new Array();
     //2 branches, 1 for the function name/args, one for the condition_tree
-    guard.data.array->reserve(2);
+//    guard.data.array->reserve(2);
     guard.data.array->push_back(function_call_name_and_args);
     guard.data.array->push_back(condition_tree);
 
@@ -98,7 +98,7 @@ object create_condition_tree(const object &condition, const object &operation)
     tree.type = CONDITION_TREE;
     tree.data.array = new Array();
     //two dimensional array with two branches, one side for conditions, one side for operations
-    tree.data.array->reserve(2);
+//    tree.data.array->reserve(2);
 
     object condition_branch;
     condition_branch.type = CONDITION_BRANCH;

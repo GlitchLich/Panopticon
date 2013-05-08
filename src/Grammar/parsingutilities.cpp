@@ -16,7 +16,7 @@ extern bool insure_ready_for_assignment(panopticon::object& B, panopticon::objec
     {
         panopticon::object temp = C;
         C.data.array = new panopticon::Array();
-        C.data.array->reserve(1);
+//        C.data.array->reserve(1);
         C.data.array->push_back(temp);
     }
     C.type = panopticon::FUNCTION_BODY;
@@ -24,7 +24,7 @@ extern bool insure_ready_for_assignment(panopticon::object& B, panopticon::objec
     {
         panopticon::object temp = B;
         B.data.array = new panopticon::Array();
-        B.data.array->reserve(1);
+//        B.data.array->reserve(1);
         B.data.array->push_back(temp);
     }
     B.type=panopticon::FUNCTION_ARG_NAMES;

@@ -120,8 +120,8 @@ bool string_minus_string(object &a, const object &b, const object &c)
 bool number_minus_array(object& a, const object &number, const object &array)
 {
     a.type = ARRAY;
-    a.data.array = new std::vector<object>();
-    a.data.array->reserve(array.data.array->size());
+    a.data.array = new Array();
+//    a.data.array->reserve(array.data.array->size());
 
     for(int i=0;i<array.data.array->size();++i)
     {
@@ -136,8 +136,8 @@ bool number_minus_array(object& a, const object &number, const object &array)
 bool array_minus_number(object& a,object& array, object& number)
 {
     a.type = ARRAY;
-    a.data.array = new std::vector<object>();
-    a.data.array->reserve(array.data.array->size());
+    a.data.array = new Array();
+//    a.data.array->reserve(array.data.array->size());
 
     for(int i=0;i<array.data.array->size();++i)
     {
@@ -152,8 +152,8 @@ bool array_minus_number(object& a,object& array, object& number)
 bool array_minus_string(object& a,object& array, object& string)
 {
     a.type = ARRAY;
-    a.data.array = new std::vector<object>();
-    a.data.array->reserve(array.data.array->size());
+    a.data.array = new Array();
+//    a.data.array->reserve(array.data.array->size());
 
     for(int i=0;i<array.data.array->size();++i)
     {
@@ -167,8 +167,8 @@ bool array_minus_string(object& a,object& array, object& string)
 bool string_minus_array(object& a, const object &string, const object &array)
 {
     a.type = ARRAY;
-    a.data.array = new std::vector<object>();
-    a.data.array->reserve(array.data.array->size());
+    a.data.array = new Array();
+//    a.data.array->reserve(array.data.array->size());
 
     for(int i=0;i<array.data.array->size();++i)
     {
@@ -182,17 +182,17 @@ bool string_minus_array(object& a, const object &string, const object &array)
 
 bool array_minus_array(object& a,object& array1, object& array2)
 {
-    a.data.array = new std::vector<object>();
+    a.data.array = new Array();
     int size = 1;
 
     if(array1.data.array->size()>=array2.data.array->size())
     {
-        a.data.array->reserve(array1.data.array->size());
+//        a.data.array->reserve(array1.data.array->size());
         size = array1.data.array->size();
     }
     else
     {
-        a.data.array->reserve(array2.data.array->size());
+//        a.data.array->reserve(array2.data.array->size());
         size = array2.data.array->size();
     }
 
