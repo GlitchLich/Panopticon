@@ -1537,7 +1537,7 @@ static void yy_reduce(
     panopticon::object resolve;
     panopticon::store_operations(resolve, func_body, &panopticon::resolve_guard);
     optic::object combined;
-    panopticon::store_operations(combined,yymsp[0].minor.yy0,false);
+    panopticon::store_operations(combined,yymsp[0].minor.yy0,resolve,false);
     insure_ready_for_assignment(b,combined);
     panopticon::parse_operations(yygotominor.yy0, b, combined, &panopticon::assign_variable);
     if(!panopticon::correct_parsing)
@@ -1560,7 +1560,7 @@ static void yy_reduce(
     panopticon::object resolve;
     panopticon::store_operations(resolve, func_body, &panopticon::resolve_guard);
     optic::object combined;
-    panopticon::store_operations(combined,yymsp[0].minor.yy0,false);
+    panopticon::store_operations(combined,yymsp[0].minor.yy0,resolve,false);
     insure_ready_for_assignment(b,combined);
     panopticon::parse_operations(yygotominor.yy0, b, combined, &panopticon::assign_variable);
     if(!panopticon::correct_parsing)
@@ -1643,7 +1643,7 @@ static void yy_reduce(
     }
     else
     {
-        panopticon::parse_operations(yygotominor.yy0, yymsp[-5].minor.yy0, yymsp[-3].minor.yy0, panopticon::assign_variable);
+        panopticon::store_operations(yygotominor.yy0, yymsp[-5].minor.yy0, yymsp[-3].minor.yy0, panopticon::assign_variable,false);
     }
     if(!panopticon::correct_parsing)
     {
