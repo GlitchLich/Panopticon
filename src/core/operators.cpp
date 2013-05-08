@@ -258,6 +258,7 @@ bool print_object(const object &A)
         break;
     case panopticon::VARIABLE:
     case panopticon::UNDECLARED_VARIABLE:
+
         object result;
         if(get_variable(A.data.string,&result) == OK)
         {
@@ -282,11 +283,14 @@ bool print_object(const object &A)
             }
 
         }
+
         else
         {
             out() << "Undeclared Variable: " << *A.data.string << std::endl;
         }
+
         break;
+
     case panopticon::OPERATION_TREE:
         panopticon::print_array(A,0,true);
         break;

@@ -95,6 +95,7 @@ subFunc2 x y = t(x y)
 
 subFunc2( 1 2 )
 subFunc2( [ 1 2 ] 2 )
+subFunc2( [ 3 2 2 ] 2 )
 
 // Arrays in where statement
 subFunc3 x y = t(x y)

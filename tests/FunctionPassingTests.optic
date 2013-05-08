@@ -67,9 +67,10 @@ nest x = [ [ [ x ] x ] x ]
 nest( 1 )
 nest( seven )
 cube x = x ^ 3
-// Doesnt work because arrays of functions don't work
-nest( cube )[0]
+nest( cube( 9 ) )[0]
 nest( cube( 3 ) )
+testArray x = [ x 0 1 2 ]
+testArray( 99 )[0]
 
 // Works
 paren x = ( x )
@@ -91,7 +92,6 @@ paren( [ 2 ] )
 
 // unary operators
 -1
->> 16
 
 // Works
 1 + ( 1 + 2 )
@@ -103,9 +103,9 @@ paren( [ 2 ] )
 mul x y = x * y
 mul( 2 3 ) + 1
 
-// Doesn't work
+// Works
 mul(
-	2
+	7
 	3
 )
 
@@ -131,7 +131,7 @@ mul( ten ten )
 // WORKS
 thirty = three() * 10
 three = 3
-thirty()
+thirty
 
 // Lazy evaluation
 lazy op = op( anon )

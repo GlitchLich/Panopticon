@@ -12,24 +12,29 @@ namespace panopticon
 std::deque<object> optic_stack;
 object global_state;
 
-void evaluate_top();
+bool evaluate_top();
 
 void clear_stack()
 {
     optic_stack.clear();
     global_state.type = NIL;
+    correct_parsing = false;
 }
 
-void evaluate_binary_operator(const object& operator_object, bool expand = true)
+bool evaluate_binary_operator(const object& operator_object, bool expand = true)
 {
     object result, arg1, arg2;
     bool eval = true;
 
     if(optic_stack.size())
     {
-        evaluate_top();
-        arg1 = optic_stack.back();
-        optic_stack.pop_back();
+        eval = evaluate_top();
+
+        if(eval)
+        {
+            arg1 = optic_stack.back();
+            optic_stack.pop_back();
+        }
     }
 
     else
@@ -39,9 +44,13 @@ void evaluate_binary_operator(const object& operator_object, bool expand = true)
 
     if(optic_stack.size())
     {
-        evaluate_top();
-        arg2 = optic_stack.back();
-        optic_stack.pop_back();
+        eval = evaluate_top();
+
+        if(eval)
+        {
+            arg2 = optic_stack.back();
+            optic_stack.pop_back();
+        }
     }
 
     else
@@ -55,7 +64,6 @@ void evaluate_binary_operator(const object& operator_object, bool expand = true)
         {
             if(arg1.type == ARRAY && arg2.type == ARRAY)
             {
-                std::cout << "evaluate_array_array_binary_operator" << std::endl;
                 object new_array;
                 new_array.data.array = new Array();
                 new_array.type = ARRAY;
@@ -71,7 +79,6 @@ void evaluate_binary_operator(const object& operator_object, bool expand = true)
                     // (*new_array.data.array)[i] = optic_stack.back();
                     new_array.data.array->push_back(optic_stack.back());
                     optic_stack.pop_back();
-                    std::cout << "evaluate_array_array_binary_operator iteration: " << i << std::endl;
                 }
 
                 result = new_array;
@@ -79,7 +86,6 @@ void evaluate_binary_operator(const object& operator_object, bool expand = true)
 
             else if(arg1.type == ARRAY)
             {
-                std::cout << " ARG1.type == ARRAY" << std::endl;
                 object new_array;
                 new_array.data.array = new Array();
                 new_array.type = ARRAY;
@@ -101,7 +107,6 @@ void evaluate_binary_operator(const object& operator_object, bool expand = true)
 
             else if(arg2.type == ARRAY)
             {
-                std::cout << " ARG2.type == ARRAY" << std::endl;
                 object new_array;
                 new_array.data.array = new Array();
                 new_array.type = ARRAY;
@@ -132,67 +137,79 @@ void evaluate_binary_operator(const object& operator_object, bool expand = true)
             operator_object.data.operator_func(result, arg1, arg2);
         }
 
-        std::cout << "BINARY OP RESULT TYPE: " << result.type << std::endl;
         optic_stack.push_back(result);
+        return true;
     }
 
     else
     {
         out() << "Missing arguments for binary operator" << std::endl;
-        correct_parsing = false;
+        clear_stack();
+        return false;
     }
 }
 
 
-void evaluate_unary_operator(const object& operator_object)
+bool evaluate_unary_operator(const object& operator_object)
 {
     object result, arg;
+    bool eval = true;
 
     if(optic_stack.size())
     {
-        evaluate_top();
-        arg = optic_stack.back();
-        optic_stack.pop_back();
+        eval = evaluate_top();
 
-
-        if(arg.type == ARRAY)
+        if(eval)
         {
-            object new_array;
-            new_array.data.array = new Array();
-            new_array.type = ARRAY;
+            arg = optic_stack.back();
+            optic_stack.pop_back();
 
-            for(int i = 0; i < arg.data.array->size(); ++i)
+
+            if(arg.type == ARRAY)
             {
-                optic_stack.push_back(copy_object(arg.data.array->at(i)));
-                optic_stack.push_back(operator_object);
-                evaluate_top();
-                // delete_object(arg.data.array->at(i));
-                // (*arg.data.array)[i] = optic_stack.back();
-                new_array.data.array->push_back(optic_stack.back());
-                optic_stack.pop_back();
+                object new_array;
+                new_array.data.array = new Array();
+                new_array.type = ARRAY;
+
+                for(int i = 0; i < arg.data.array->size(); ++i)
+                {
+                    optic_stack.push_back(copy_object(arg.data.array->at(i)));
+                    optic_stack.push_back(operator_object);
+                    evaluate_top();
+                    // delete_object(arg.data.array->at(i));
+                    // (*arg.data.array)[i] = optic_stack.back();
+                    new_array.data.array->push_back(optic_stack.back());
+                    optic_stack.pop_back();
+                }
+
+                result = new_array;
             }
 
-            result = new_array;
-        }
+            else
+            {
+                operator_object.data.unary_operator_func(result, arg);
+            }
 
-        else
-        {
-            operator_object.data.unary_operator_func(result, arg);
+            optic_stack.push_back(result);
+            return true;
         }
-
-        optic_stack.push_back(result);
     }
 
     else
     {
+        eval = false;
+    }
+
+    if(!eval)
+    {
         out() << "Missing argument for unary operator" << std::endl;
-        correct_parsing = false;
+        clear_stack();
+        return false;
     }
 }
 
-void evaluate_function_dec()
+bool evaluate_function_dec()
 {
-    std::cout << "!!!!!!!!!!!!!!FUNCTION_DEC!!!!!!!!!!!!!!!" << std::endl;
     object arguments = optic_stack.back();
     optic_stack.pop_back();
     object body = optic_stack.back();
@@ -201,11 +218,11 @@ void evaluate_function_dec()
     object function;
     create_function(function, arguments, body);
     optic_stack.push_back(function);
+    return true;
 }
 
-void evaluate_function_call()
+bool evaluate_function_call()
 {
-    std::cout << "evaluate_function_call()" << std::endl;
     /* DOESN'T WORK
     if(optic_stack.back().type == FUNCTION)
     {
@@ -223,62 +240,63 @@ void evaluate_function_call()
         optic_stack.pop_back();
         object arguments = optic_stack.back();
         optic_stack.pop_back();
-        call_function(name, name, arguments);
+        return call_function(name, name, arguments);
     }
+
+    clear_stack();
+    return false;
 }
 
-void evaluate_variable(const object& variable_name)
+bool evaluate_variable(const object& variable_name)
 {
-    std::cout << "EVALUATE VARIABLE" << std::endl;
     object result;
 
     if(get_variable(variable_name.data.string, &result) == OK)
     {
-        std::cout << "VARIABLE " << variable_name.data.string->c_str() << " FOUND FOUND FOUND FOUND " << std::endl;
         //=============
         //Curtis: Added this to auto call zero argument functions when they are found.
         //=============
         if(result.type == FUNCTION)
         {
-            std::cout << "RESULT.TYPE: FUNCTION" << std::endl;
             if(result.data.function->arguments.size() == 1)
             {
                 object arguments; // empty, won't be used by call_function so no need to initialize
                 call_function(result, variable_name, arguments);
             }
         }
+
         optic_stack.push_back(result);
+        return true;
     }
 
     else
     {
         out() << "Variable " << variable_name.data.string->c_str() << " not found." << std::endl;
-        correct_parsing = false;
         clear_stack();
+        return false;
     }
 }
 
-void evaluate_assignment()
+bool evaluate_assignment()
 {
     object result;
-    std::cout << "EVALUATE ASSIGNMENT" << std::endl;
     evaluate_top();
 
     if(set_variable(result.data.string, optic_stack.back()) == OK)
     {
-        std::cout << "VARIABLE " << result.data.string << " bound." << std::endl;
         optic_stack.pop_back();
+        return true;
     }
 
     else
     {
         out() << "Unable to bind variable " << result.data.string << std::endl;
-        correct_parsing = false;
         clear_stack();
+        return false;
     }
 }
 
-void evaluate_top()
+bool evaluate_top()
 {
     object obj = optic_stack.back();
     optic_stack.pop_back();
@@ -286,81 +304,66 @@ void evaluate_top()
     switch(obj.type)
     {
     case OPERATION:
-        std::cout << "EVALUATE OPERATION" << std::endl;
-        evaluate_binary_operator(obj);
+        return evaluate_binary_operator(obj);
         break;
 
     case NO_EXPANSION_OPERATION:
-        std::cout << "EVALUATE NO_EXPANSION_OPERATION" << std::endl;
-        evaluate_binary_operator(obj,false);
+        return evaluate_binary_operator(obj,false);
         break;
 
     case UNARY_OPERATION:
-        evaluate_unary_operator(obj);
+        return evaluate_unary_operator(obj);
         break;
 
     case OPERATION_TREE:
-        std::cout << "EVALUATE OPERATION_TREE" << std::endl;
-        resolve_stack_from_parser(obj, false);
+        return resolve_stack_from_parser(obj, false);
         break;
 
     case VARIABLE:
     case UNDECLARED_VARIABLE:
-        evaluate_variable(obj);
+        return evaluate_variable(obj);
         break;
 
     case ASSIGNMENT:
-        evaluate_assignment();
+        return evaluate_assignment();
         break;
 
     case FUNCTION_DEC:
-        std::cout << "EVALUATE FUNCTION_DEC" << std::endl;
-        evaluate_function_dec();
+        return evaluate_function_dec();
         break;
 
     case FUNCTION_CALL:
-        std::cout << "EVALUATE FUNCTION_CALL" << std::endl;
-        evaluate_function_call();
+        return evaluate_function_call();
         break;
 
     case VOID: // don't return
-        std::cout << "EVALUATE VOID" << std::endl;
         break;
 
-        // case FUNCTION:
-        //    std::cout << "EVALUATE FUNCTION ON THE STACK. (In reality nothing much happens, just returned as an object back to the top)" << std::endl;
-    case ARRAY:
-        std::cout << "ARRAY ON THE STACK ARRAY ON THE STACK ARRAY ON THE STACK ARRAY ON THE STACK ARRAY ON THE STACK ARRAY ON THE STACK ." << std::endl;
     default:
         optic_stack.push_back(obj);
         break;
     }
 
-    std::cout << "evaluate_top() obj.type: " << obj.type << std::endl;
-    print_object(obj);
+    return true;
 }
 
 void evaluate_stack()
 {
-    std::cout << std::cout << "evaluate_stack() optic_stack size: " << optic_stack.size() << std::endl;
     global_state.type = NIL;
     while(optic_stack.size())
     {
-        out() << "evaluate_object() optic_stack size: " << optic_stack.size() << std::endl;
         evaluate_top();
 
         if(optic_stack.size())
         {
             global_state = optic_stack.back();
-            out() << "global_state in loop" << std::endl;
-            print_object(global_state);
             optic_stack.pop_back();
         }
     }
 
     if(global_state.type != NIL)
     {
-        out() << "RESULT OF THE FUCKING STACK: ";
+        out() << "optic: ";
         print_object(global_state);
     }
 }
