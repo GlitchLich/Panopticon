@@ -29,6 +29,7 @@
 #include "include/Grammar/parse.h"
 #include "include/core/function.h"
 #include "include/Grammar/conditionals.h"
+#include "containers.h"
 
 #undef STRING
 #undef NUM

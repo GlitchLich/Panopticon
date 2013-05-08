@@ -9,5 +9,6 @@ set(Panopticon_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/heap.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/stack.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/function.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/containers.cpp
     PARENT_SCOPE
 )

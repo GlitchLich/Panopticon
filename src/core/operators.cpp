@@ -60,7 +60,7 @@ object copy_object(const object& original)
     case panopticon::OPERATION_TREE:
     case panopticon::ARRAY:
         copy.data.array = new Array();
-        copy.data.array->reserve(original.data.array->size());
+//        copy.data.array->reserve(original.data.array->size());
         for(int i=0;i<original.data.array->size();++i)
         {
             copy.data.array->push_back(copy_object(original.data.array->at(i)));
@@ -308,7 +308,7 @@ bool unary_print_object(object &A, const object &B)
 
 bool concatenate_arrays(object &a,object b, object c)
 {
-    a.data.array->reserve(b.data.array->size() + c.data.array->size());
+//    a.data.array->reserve(b.data.array->size() + c.data.array->size());
     for(int i=0;i<b.data.array->size();++i)
     {
         panopticon::object& d = b.data.array->at(i);
@@ -353,14 +353,14 @@ bool concatenate_arrays(object &a,object b, object c)
 
 bool create_array(object &a)
 {
-    a.data.array = new std::vector<panopticon::object>();
+    a.data.array = new Array();
 }
 
 bool object_operator_array(object& a,const object& obj,const object& array, operator_function func)
 {
     a.type = panopticon::ARRAY;
-    a.data.array = new std::vector<object>();
-    a.data.array->reserve(array.data.array->size());
+    a.data.array = new Array();
+//    a.data.array->reserve(array.data.array->size());
 
     for(int i=0;i<array.data.array->size();++i)
     {
@@ -373,8 +373,8 @@ bool object_operator_array(object& a,const object& obj,const object& array, oper
 bool array_operator_object(object& a,const object& array,const object& obj, operator_function func)
 {
     a.type = panopticon::ARRAY;
-    a.data.array = new std::vector<object>();
-    a.data.array->reserve(array.data.array->size());
+    a.data.array = new Array();
+//    a.data.array->reserve(array.data.array->size());
 
     for(int i=0;i<array.data.array->size();++i)
     {
@@ -387,7 +387,7 @@ bool array_operator_object(object& a,const object& array,const object& obj, oper
 bool array_operator_array(object& a,const object& array1,const object& array2, operator_function func)
 {
     a.type = panopticon::ARRAY;
-    a.data.array = new std::vector<object>();
+//    a.data.array = new std::vector<object>();
     int size = 0;
     if(array1.data.array->size()>array2.data.array->size())
     {
@@ -397,7 +397,7 @@ bool array_operator_array(object& a,const object& array1,const object& array2, o
     {
         size = array2.data.array->size();
     }
-    a.data.array->reserve(size);
+//    a.data.array->reserve(size);
 
     for(int i=0;i<size;++i)
     {
@@ -440,7 +440,7 @@ bool store_operations(object& a,const object& obj1,unary_operator_function func)
         size++;
     }
 
-    a.data.array->reserve(size);
+//    a.data.array->reserve(size);
     object op_func;
     op_func.type = UNARY_OPERATION;
     op_func.data.unary_operator_func = func;
@@ -484,7 +484,7 @@ bool store_operations(object& a,const object& obj1,const object& obj2)
         size++;
     }
 
-    a.data.array->reserve(size);
+//    a.data.array->reserve(size);
     object op_func;
     op_func.type = OPERATION;
     op_func.data.operator_func = &serial;
@@ -542,7 +542,7 @@ bool store_operations(object& a,const object& obj1,const object& obj2, operator_
         size++;
     }
 
-    a.data.array->reserve(size);
+//    a.data.array->reserve(size);
     object op_func;
     if(expand)
     {

@@ -50,6 +50,7 @@
 %left ASSIGN.
 %right BITOR.
 %left FUNCTION_DEC.
+%right COLON.
 %left FUNCTION_CALL.
 %left INDEX.
 %left OR.
@@ -62,9 +63,9 @@
 %left PLUS MINUS.
 %left DIVIDE TIMES MODULO.
 %right POW NOT BITNOT UMINUS PLUSPLUS.
-%left LPAREN RPAREN COMMA LBRAC RBRAC.
+%left LPAREN RPAREN LBRAC RBRAC.
+%left COMMA.
 %left COLLECTARRAY.
-
 
 
 /*%left ASSIGN.*/
@@ -149,7 +150,7 @@ name_chain(A) ::= name_chain(B) NAME(C).
     {
         A.type = optic::ARRAY;
         A.data.array = new optic::Array();
-        A.data.array->reserve(B.data.array->size()+1);
+/*        A.data.array->reserve(B.data.array->size()+1);*/
         for(int i=0;i<B.data.array->size();++i)
         {
             optic::object newObject;
@@ -174,7 +175,7 @@ name_chain(A) ::= NAME(B).
     A.type = panopticon::STRING;
 }
 
-expr(A) ::= NAME(B).
+expr(A) ::= NAME(B). [COLON]
 {
     B.type = optic::UNDECLARED_VARIABLE;
     A = B;
@@ -201,7 +202,7 @@ expr(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN. [FUNCTION_CALL]
         optic::object temp = C;
         C.type = optic::FUNCTION_ARG_VALUES;
         C.data.array = new optic::Array();
-        C.data.array->reserve(1);
+/*        C.data.array->reserve(1);*/
         C.data.array->push_back(temp);
     }
     optic::object b;
@@ -231,7 +232,7 @@ expr(A) ::= NAME(B) LBRAC RBRAC LPAREN stmt_list(C) RPAREN. [FUNCTION_CALL]
         optic::object temp = C;
         C.type = optic::FUNCTION_ARG_VALUES;
         C.data.array = new optic::Array();
-        C.data.array->reserve(1);
+/*        C.data.array->reserve(1);*/
         C.data.array->push_back(temp);
     }
 
@@ -257,7 +258,7 @@ expr(A) ::= array_index(B) LPAREN stmt_list(C) RPAREN. [FUNCTION_CALL]
         optic::object temp = C;
         C.type = optic::FUNCTION_ARG_VALUES;
         C.data.array = new optic::Array();
-        C.data.array->reserve(1);
+/*        C.data.array->reserve(1);*/
         C.data.array->push_back(temp);
     }
     optic::parse_operations(A,B,C,optic::call_function);
@@ -296,12 +297,6 @@ test(A) ::= case_statement(B).
 {
     A=B;
 }
-
-/*spec(A) ::= final_where_statement(B).
-{
-    panopticon::out() << "Where: " << std::endl;
-    A=B;
-}*/
 
 assignment(A) ::= final_guard_statement(B).
 {
@@ -355,6 +350,41 @@ final_guard_statement(A) ::= guard_statement(B) WILDCARD ASSIGN expr(D) RCURL. [
     std::cout << "GUARD8" << std::endl;
 }
 
+assignment(A) ::= guard_statement(B) BITOR expr(C) ASSIGN expr(D) DELIMITER final_where_statement(E). [ASSIGN]
+{
+    add_branch_to_tree(B,C,D);
+    panopticon::object& b = B.data.array->at(0);
+    panopticon::object& func_body = B.data.array->at(1);
+    panopticon::object resolve;
+    panopticon::store_operations(resolve, func_body, &panopticon::resolve_guard);
+    optic::object combined;
+    panopticon::store_operations(combined,E,func_body);
+    insure_ready_for_assignment(b,combined);
+    panopticon::parse_operations(A, b, combined, &panopticon::assign_variable);
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
+
+assignment(A) ::= guard_statement(B) WILDCARD ASSIGN expr(D) DELIMITER final_where_statement(E). [ASSIGN]
+{
+    add_wildcard_to_tree(B,D);
+    panopticon::object& b = B.data.array->at(0);
+    panopticon::object& func_body = B.data.array->at(1);
+    panopticon::object resolve;
+    panopticon::store_operations(resolve, func_body, &panopticon::resolve_guard);
+    optic::object combined;
+    panopticon::store_operations(combined,E,func_body);
+    insure_ready_for_assignment(b,combined);
+    panopticon::parse_operations(A, b, combined, &panopticon::assign_variable);
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
 
 //==================
 //Where
@@ -430,11 +460,13 @@ case_statement(A) ::= name_chain(B) ASSIGN CASE expr OF. [ASSIGN]
     A.type = optic::GUARD;
 }
 
-expr(A) ::= LET NAME ASSIGN expr IN expr.
+test ::= LET IN.
+
+/*expr(A) ::= LET NAME ASSIGN expr IN expr.
 {
     A.type = optic::STRING;
     A.data.string = new optic::String("Let");
-}
+}*/
 
 assignment(A) ::= name_chain(B) ASSIGN expr(C). [ASSIGN]
 {
@@ -465,8 +497,36 @@ assignment(A) ::= name_chain(B) ASSIGN expr(C) LCURL final_where_statement(D). [
 
 
 //=================================
-//Statement lists /  Arrays
+//Statement lists /  Arrays / Maps
 //=================================
+
+test ::= map.
+
+
+map_argument_list ::= string ASSIGN expr. [COLLECTARRAY]
+map_argument_list ::= map_argument_list string ASSIGN expr. [COLLECTARRAY]
+maybe_empty_map_argument_list ::= . [COLLECTARRAY]
+maybe_empty_map_argument_list ::= map_argument_list. [COLLECTARRAY]
+
+expr(A) ::= NAME(B) LESSTHAN string GREATERTHAN. [INDEX]
+{
+    A = B;
+}
+
+map(A) ::= LESSTHAN maybe_empty_map_argument_list(B) GREATERTHAN. [COLLECTARRAY]
+{
+    A = B;
+    optic::out() << "Map" << std::endl;
+    A.type = optic::STRING;
+    A.data.string = new optic::String("Map");
+/*    A.type = optic::MAP;*/
+}
+
+expr(A) ::= map(B).
+{
+    A = B;
+}
+
 stmt_list(A) ::= stmt(B).
 {
     A = B;
@@ -489,14 +549,12 @@ stmt_list(A) ::= stmt_list(B) stmt(C). [COLLECTARRAY]
     }
 }
 
-%fallback OPENBRAC LBRAC.
-
 expr(A) ::= array(B).
 {
     A = B;
 }
 
-array(A) ::= OPENBRAC maybe_empty_stmt_list(B) RBRAC. [COLLECTARRAY]
+array(A) ::= LBRAC maybe_empty_stmt_list(B) RBRAC. [COLLECTARRAY]
 {
     A = B;
     A.type = optic::ARRAY;
@@ -583,10 +641,42 @@ bool(A) ::= BOOLEAN(B).
 //operators
 //=======================
 
+/*spec(A) ::= LPAREN WILDCARD COLON NAME(C) LPAREN. [COMMA]
+{
+    std::cout << "PATTERN_ARGUMENT" << std::endl;
+    A = B;
+    A = C;
+    A.type = C.type = optic::UNDECLARED_VARIABLE;
+}*/
+
+
+name_chain(A) ::= name_chain(B) COMMA LPAREN NAME(C) COLON NAME(D) LPAREN. [COMMA]
+{
+    std::cout << "PATTERN_ARGUMENT" << std::endl;
+    A = C;
+    A.type = C.type = optic::UNDECLARED_VARIABLE;
+    A = D;
+    A = B;
+}
+
+/*name_chain(A) ::= name_chain(B) pattern_argument. [LBRAC]
+{
+    A = B;
+}*/
+
+expr(A) ::= expr(B) COLON expr(C). [COLON]
+{
+    std::cout << "PREPEND" << std::endl;
+    optic::store_operations(A,B,C,&optic::prepend,false);
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
+
 expr(A) ::= expr(B) PLUS expr(C).
 {
-    std::cout << "Plus B: " << B.type << std::endl;
-    std::cout << "Plus C: " << C.type << std::endl;
     parse_operations(A,B,C,&panopticon::plus);
     if(!panopticon::correct_parsing)
     {

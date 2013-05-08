@@ -113,7 +113,8 @@ struct Nil { };
 /* typedefs for types in Panopticon */
 //typedef double Number;
 typedef double Number;
-typedef std::vector<object> Array;
+//typedef std::vector<object> Array;
+typedef std::deque<object> Array;
 typedef std::unordered_map<std::string, object> Map;
 typedef std::string String;
 typedef bool Boolean;

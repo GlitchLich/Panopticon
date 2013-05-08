@@ -230,8 +230,8 @@ bool string_plus_string(object &a,const object b, const object c)
 bool array_plus_bool(object& a,object& array, object& boolean)
 {
     a.type = ARRAY;
-    a.data.array = new std::vector<object>();
-    a.data.array->reserve(array.data.array->size());
+    a.data.array = new Array();
+//    a.data.array->reserve(array.data.array->size());
 
     for(int i=0;i<array.data.array->size();++i)
     {
@@ -243,8 +243,8 @@ bool array_plus_bool(object& a,object& array, object& boolean)
 bool array_plus_number(object& a,object& array, object& number)
 {
     a.type = ARRAY;
-    a.data.array = new std::vector<object>();
-    a.data.array->reserve(array.data.array->size());
+    a.data.array = new Array();
+//    a.data.array->reserve(array.data.array->size());
 
     for(int i=0;i<array.data.array->size();++i)
     {
@@ -259,8 +259,8 @@ bool array_plus_number(object& a,object& array, object& number)
 bool array_plus_string(object&A,object& array, object& string)
 {
     A.type = ARRAY;
-    A.data.array = new std::vector<object>();
-    A.data.array->reserve(array.data.array->size());
+    A.data.array = new Array();
+//    A.data.array->reserve(array.data.array->size());
     for(int i=0;i<A.data.array->size();++i)
     {
         object newObject;
@@ -272,17 +272,17 @@ bool array_plus_string(object&A,object& array, object& string)
 
 bool array_plus_array(object& a,object& array1, object& array2)
 {
-    a.data.array = new std::vector<object>();
+    a.data.array = new Array();
     int size = 1;
 
     if(array1.data.array->size()>=array2.data.array->size())
     {
-        a.data.array->reserve(array1.data.array->size());
+//        a.data.array->reserve(array1.data.array->size());
         size = array1.data.array->size();
     }
     else
     {
-        a.data.array->reserve(array2.data.array->size());
+//        a.data.array->reserve(array2.data.array->size());
         size = array2.data.array->size();
     }
 
