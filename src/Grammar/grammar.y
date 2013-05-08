@@ -50,8 +50,8 @@
 %left ASSIGN.
 %right BITOR.
 %left FUNCTION_DEC.
-%right COLON.
 %left FUNCTION_CALL.
+%right COLON.
 %left INDEX.
 %left OR.
 %left AND.
