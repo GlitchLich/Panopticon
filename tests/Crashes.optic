@@ -9,6 +9,9 @@
 1. Too much printing
 
 2. Function array access 
+
+3. Guards aren't multi-channel expanding.
+
 //Fixed
 example: 
 testArray x = [ x x*2 [x x*4] x+1 ]
