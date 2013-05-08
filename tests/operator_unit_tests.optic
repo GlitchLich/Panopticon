@@ -73,6 +73,8 @@ arrayWhere = x * z  + [1 2]
 		x = 10
 		z = 11
 
+subvariable + subvariable / [ subvariable * 3.141592654 ]
+
 arrayWhere
 
 //Where
@@ -90,14 +92,49 @@ subFunc x y = ( x + w ) - ( t(x y) - y )
 	where 
 		w = 5
 		t z d = ( z * d ) / 10
+
+subFunc( 13 10 )
+subFunc( [ 13 ] 10 )
 subFunc( 8 120 )
 
 //Dynamic Scoping in action
-subFunc2 x y= t(x y)
+subFunc2 x y = t(x y)
 	where 
 		t y x = x - y
 
 subFunc2( 1 2 )
+subFunc2( [ 1 2 ] 2 )
+subFunc2( [ 3 2 2 ] 2 )
+
+// Arrays in where statement
+subFunc3 x y = t(x y)
+	where 
+		t y x = [ x y ]
+
+subFunc3( 1 2 )
+
+testFunc x y = [ x y ]
+subFunc4 x y = t( x y )
+	where 
+		t y x = testFunc( y x )
+
+subFunc4( 1 2 )
+
+subvariable = x * z
+	where
+		x = 10
+		z = 11
+
+t w z = w - z
+subFunc5 x y = t(x y) * [ 1 2 ]
+subFunc5( 1 2 )
+
+subFunc6 x y = [ 2 ]
+	where 
+		t w = w * 2
+		z = 1
+
+subFunc6( 1 2 )
 
 //Arrays with sub functions crashes
 subFunc3 x y= t(x y)
@@ -113,6 +150,37 @@ subFunc3 x y= t(x y) + [ 1 2 ]
 
 subFunc3( 1 2 )
 	
+
+chain x = x + y + z + q + w
+	where
+		y = 1
+		z = 2
+		q = 3
+		w = 4
+
+chain(3)
+
+
+chain2 x y = p( x )
+	where
+		p x = print( x )
+
+chain2( [ 3  1 ] 2 )
+//Working on where, two different syntaxes:
+//Syntax works, logic not in yet.
+myGuardFunc x y
+	| x+y > 5 	= 6
+	| x+y == 5 	= 5
+	_ 			= 0
+	where	z = 5
+			mySubFunc x2 z3 = ("fuck" + x2) + x3
+myGuardFunc2 x y
+	| x+y > 5 	= 6
+	| x+y == 5 	= 5
+	_ 			= 0
+	where	
+		z = 5
+		mySubFunc x2 z3 = ("fuck" + x2) + x3
 
 //Fibonacci sequence! probably shouldn't go above 16 right now....
 fib i
@@ -289,7 +357,7 @@ superLazyIndexing( valueAtIndex2 myArray 3 )
 //Array functions used for Function Calls
 myFunc x y = x / y
 multiArray = [23 22 [ 0 4 [ 6 7 ] ] 20]
-myFunc(2 multiArray())
+myFunc(2 multiArray)
 myFunc(multiArray[2][2][1] multiArray[2])
 
 //Functions as arguments to Function calls

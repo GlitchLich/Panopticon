@@ -32,11 +32,11 @@ State 1:
           expr ::= * NAME LPAREN RPAREN
           expr ::= * array_index LPAREN RPAREN
           test ::= * case_statement
-          assignment ::= * final_guard_statement
           guard_statement ::= * name_chain LCURL BITOR expr ASSIGN expr DELIMITER
           guard_statement ::= * guard_statement BITOR expr ASSIGN expr DELIMITER
           final_guard_statement ::= * guard_statement BITOR expr ASSIGN expr RCURL
           final_guard_statement ::= * guard_statement WILDCARD ASSIGN expr RCURL
+          assignment ::= * final_guard_statement
           assignment ::= * guard_statement BITOR expr ASSIGN expr DELIMITER final_where_statement
           assignment ::= * guard_statement WILDCARD ASSIGN expr DELIMITER final_where_statement
           case_statement ::= * name_chain ASSIGN CASE expr OF
@@ -108,8 +108,8 @@ State 1:
                     name_chain shift  85
                    array_index shift  92
                 case_statement shift  128
-         final_guard_statement shift  127
                guard_statement shift  91
+         final_guard_statement shift  123
                            map shift  93
                         string shift  153
                          array shift  157
@@ -3163,11 +3163,11 @@ State 48:
           final_where_statement ::= * where_statement name_chain ASSIGN expr RCURL DELIMITER RCURL
 
                          WHERE shift  51
-         final_where_statement shift  123
+         final_where_statement shift  124
                where_statement shift  52
 
 State 49:
-     (21) guard_statement ::= guard_statement BITOR expr ASSIGN expr DELIMITER *
+     (20) guard_statement ::= guard_statement BITOR expr ASSIGN expr DELIMITER *
           assignment ::= guard_statement BITOR expr ASSIGN expr DELIMITER * final_where_statement
           where_statement ::= * WHERE LCURL
           where_statement ::= * WHERE name_chain ASSIGN expr LCURL
@@ -3175,9 +3175,9 @@ State 49:
           final_where_statement ::= * where_statement name_chain ASSIGN expr RCURL DELIMITER RCURL
 
                          WHERE shift  51
-         final_where_statement shift  126
+         final_where_statement shift  127
                where_statement shift  52
-                     {default} reduce 21
+                     {default} reduce 20
 
 State 50:
           where_statement ::= * WHERE LCURL
@@ -3270,7 +3270,7 @@ State 55:
                         MODULO shift  38
                            POW shift  37
                      DELIMITER shift  48
-                         RCURL shift  124
+                         RCURL shift  125
 
 State 56:
           guard_statement ::= guard_statement BITOR expr ASSIGN expr * DELIMITER
@@ -3316,7 +3316,7 @@ State 56:
                         MODULO shift  38
                            POW shift  37
                      DELIMITER shift  49
-                         RCURL shift  125
+                         RCURL shift  126
 
 State 57:
           where_statement ::= where_statement name_chain ASSIGN expr * DELIMITER
@@ -4821,29 +4821,29 @@ State 122:
                      {default} reduce 31
 
 State 123:
+     (23) assignment ::= final_guard_statement *
+
+                     {default} reduce 23
+
+State 124:
      (25) assignment ::= guard_statement WILDCARD ASSIGN expr DELIMITER final_where_statement *
 
                      {default} reduce 25
 
-State 124:
-     (23) final_guard_statement ::= guard_statement WILDCARD ASSIGN expr RCURL *
-
-                     {default} reduce 23
-
 State 125:
-     (22) final_guard_statement ::= guard_statement BITOR expr ASSIGN expr RCURL *
+     (22) final_guard_statement ::= guard_statement WILDCARD ASSIGN expr RCURL *
 
                      {default} reduce 22
 
 State 126:
+     (21) final_guard_statement ::= guard_statement BITOR expr ASSIGN expr RCURL *
+
+                     {default} reduce 21
+
+State 127:
      (24) assignment ::= guard_statement BITOR expr ASSIGN expr DELIMITER final_where_statement *
 
                      {default} reduce 24
-
-State 127:
-     (19) assignment ::= final_guard_statement *
-
-                     {default} reduce 19
 
 State 128:
      (18) test ::= case_statement *
@@ -4891,9 +4891,9 @@ State 136:
                      {default} reduce 30
 
 State 137:
-     (20) guard_statement ::= name_chain LCURL BITOR expr ASSIGN expr DELIMITER *
+     (19) guard_statement ::= name_chain LCURL BITOR expr ASSIGN expr DELIMITER *
 
-                     {default} reduce 20
+                     {default} reduce 19
 
 State 138:
      (10) name_chain ::= name_chain NAME *
@@ -5112,8 +5112,8 @@ Symbols:
    62: stmt_list: LESSTHAN MINUS NOT BITNOT LPAREN LBRAC NAME PRINT NUM STRING BOOLEAN
    63: array_index: NAME
    64: case_statement: NAME
-   65: final_guard_statement: NAME
-   66: guard_statement: NAME
+   65: guard_statement: NAME
+   66: final_guard_statement: NAME
    67: final_where_statement: WHERE
    68: where_statement: WHERE
    69: map: LESSTHAN

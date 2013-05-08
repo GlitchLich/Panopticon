@@ -1,0 +1,21 @@
+//////////////////////
+// Panopticon Crashes
+//////////////////////
+
+// Crashes
+
+
+// Bugs
+1. Too much printing
+
+2. Function array access 
+	
+example: 
+testArray x = [ x 0 1 2 ]
+testArray( 99 )[0]
+
+3. Uninitialized variables crash
+
+example:
+n * m + y
+doom + doom

@@ -186,18 +186,18 @@ static const YYACTIONTYPE yy_action[] = {
  /*    30 */   131,  253,    1,   97,   45,   10,   46,   43,   29,   30,
  /*    40 */    25,   26,   36,   35,   33,   31,   34,   32,   28,   27,
  /*    50 */    44,   42,   40,   39,   38,   37,   44,   42,   40,   39,
- /*    60 */    38,   37,   40,   39,   38,   37,   49,  102,   37,  125,
+ /*    60 */    38,   37,   40,   39,   38,   37,   49,  102,   37,  126,
  /*    70 */   138,  103,   46,   21,   29,   30,   25,   26,   36,   35,
  /*    80 */    33,   31,   34,   32,   28,   27,   44,   42,   40,   39,
  /*    90 */    38,   37,   14,   53,   54,  117,  106,    3,  146,   20,
- /*   100 */   133,  132,   48,  129,   52,  124,  145,    4,   46,   11,
+ /*   100 */   133,  132,   48,  129,   52,  125,  145,    4,   46,   11,
  /*   110 */    29,   30,   25,   26,   36,   35,   33,   31,   34,   32,
  /*   120 */    28,   27,   44,   42,   40,   39,   38,   37,    5,   95,
- /*   130 */   126,   52,   46,  151,   29,   30,   25,   26,   36,   35,
+ /*   130 */   127,   52,   46,  151,   29,   30,   25,   26,   36,   35,
  /*   140 */    33,   31,   34,   32,   28,   27,   44,   42,   40,   39,
  /*   150 */    38,   37,  139,   16,  101,   15,   46,  150,   29,   30,
  /*   160 */    25,   26,   36,   35,   33,   31,   34,   32,   28,   27,
- /*   170 */    44,   42,   40,   39,   38,   37,  123,   52,   19,  100,
+ /*   170 */    44,   42,   40,   39,   38,   37,  124,   52,   19,  100,
  /*   180 */    99,   98,  134,  143,   96,  102,  130,  102,  138,   46,
  /*   190 */   138,   29,   30,   25,   26,   36,   35,   33,   31,   34,
  /*   200 */    32,   28,   27,   44,   42,   40,   39,   38,   37,   12,
@@ -227,7 +227,7 @@ static const YYACTIONTYPE yy_action[] = {
  /*   440 */    30,   25,   26,   36,   35,  254,   31,   34,   32,   28,
  /*   450 */    27,   44,   42,   40,   39,   38,   37,   69,  254,  254,
  /*   460 */   254,  119,  118,  164,  163,  162,  161,   85,  254,   92,
- /*   470 */   128,  127,   91,  254,  254,   93,  254,  153,  254,  157,
+ /*   470 */   128,   91,  123,  254,  254,   93,  254,  153,  254,  157,
  /*   480 */   254,  154,  152,  254,  254,   25,   26,   36,   35,   33,
  /*   490 */    31,   34,   32,   28,   27,   44,   42,   40,   39,   38,
  /*   500 */    37,   26,   36,   35,   33,   31,   34,   32,   28,   27,
@@ -490,7 +490,7 @@ static const YYACTIONTYPE yy_default[] = {
  /*    10 */   252,  252,  252,  252,  252,  252,  252,  252,  252,  252,
  /*    20 */   252,  252,  252,  252,  252,  252,  252,  252,  252,  252,
  /*    30 */   252,  252,  252,  252,  252,  252,  252,  252,  252,  252,
- /*    40 */   252,  252,  252,  252,  252,  252,  252,  205,  252,  189,
+ /*    40 */   252,  252,  252,  252,  252,  252,  252,  205,  252,  188,
  /*    50 */   252,  252,  252,  252,  206,  252,  252,  252,  252,  252,
  /*    60 */   200,  252,  252,  252,  252,  252,  252,  252,  225,  177,
  /*    70 */   204,  203,  239,  238,  246,  245,  233,  232,  237,  236,
@@ -498,8 +498,8 @@ static const YYACTIONTYPE yy_default[] = {
  /*    90 */   180,  252,  249,  209,  252,  252,  252,  252,  252,  252,
  /*   100 */   252,  252,  252,  252,  252,  252,  252,  252,  252,  242,
  /*   110 */   241,  240,  231,  230,  229,  228,  252,  252,  252,  252,
- /*   120 */   251,  250,  199,  193,  191,  190,  192,  187,  186,  201,
- /*   130 */   197,  196,  194,  179,  224,  195,  198,  188,  178,  207,
+ /*   120 */   251,  250,  199,  191,  193,  190,  189,  192,  186,  201,
+ /*   130 */   197,  196,  194,  179,  224,  195,  198,  187,  178,  207,
  /*   140 */   247,  182,  184,  248,  185,  208,  213,  223,  222,  221,
  /*   150 */   220,  219,  218,  217,  216,  211,  210,  212,  209,  183,
  /*   160 */   181,  176,  175,  174,  173,  172,  171,  170,
@@ -611,7 +611,7 @@ static const char *const yyTokenName[] = {
   "id",            "main",          "in",            "start",       
   "test",          "spec",          "assignment",    "top_stmt",    
   "stmt",          "name_chain",    "stmt_list",     "array_index", 
-  "case_statement",  "final_guard_statement",  "guard_statement",  "final_where_statement",
+  "case_statement",  "guard_statement",  "final_guard_statement",  "final_where_statement",
   "where_statement",  "map",           "map_argument_list",  "string",      
   "maybe_empty_map_argument_list",  "array",         "maybe_empty_stmt_list",  "num",         
   "bool",        
@@ -641,11 +641,11 @@ static const char *const yyRuleName[] = {
  /*  16 */ "expr ::= NAME LPAREN RPAREN",
  /*  17 */ "expr ::= array_index LPAREN RPAREN",
  /*  18 */ "test ::= case_statement",
- /*  19 */ "assignment ::= final_guard_statement",
- /*  20 */ "guard_statement ::= name_chain LCURL BITOR expr ASSIGN expr DELIMITER",
- /*  21 */ "guard_statement ::= guard_statement BITOR expr ASSIGN expr DELIMITER",
- /*  22 */ "final_guard_statement ::= guard_statement BITOR expr ASSIGN expr RCURL",
- /*  23 */ "final_guard_statement ::= guard_statement WILDCARD ASSIGN expr RCURL",
+ /*  19 */ "guard_statement ::= name_chain LCURL BITOR expr ASSIGN expr DELIMITER",
+ /*  20 */ "guard_statement ::= guard_statement BITOR expr ASSIGN expr DELIMITER",
+ /*  21 */ "final_guard_statement ::= guard_statement BITOR expr ASSIGN expr RCURL",
+ /*  22 */ "final_guard_statement ::= guard_statement WILDCARD ASSIGN expr RCURL",
+ /*  23 */ "assignment ::= final_guard_statement",
  /*  24 */ "assignment ::= guard_statement BITOR expr ASSIGN expr DELIMITER final_where_statement",
  /*  25 */ "assignment ::= guard_statement WILDCARD ASSIGN expr DELIMITER final_where_statement",
  /*  26 */ "where_statement ::= WHERE LCURL",
@@ -1094,11 +1094,11 @@ static const struct {
   { 51, 3 },
   { 51, 3 },
   { 56, 1 },
-  { 58, 1 },
-  { 66, 7 },
-  { 66, 6 },
+  { 65, 7 },
   { 65, 6 },
-  { 65, 5 },
+  { 66, 6 },
+  { 66, 5 },
+  { 58, 1 },
   { 58, 7 },
   { 58, 6 },
   { 68, 2 },
@@ -1454,8 +1454,61 @@ static void yy_reduce(
 }
 #line 1456 "./src/Grammar/grammar.c"
         break;
-      case 19: /* assignment ::= final_guard_statement */
-#line 302 "./src/Grammar/grammar.y"
+      case 19: /* guard_statement ::= name_chain LCURL BITOR expr ASSIGN expr DELIMITER */
+#line 303 "./src/Grammar/grammar.y"
+{
+    std::cout << "GUARD1" << std::endl;
+    optic::object tree = create_condition_tree(yymsp[-3].minor.yy0,yymsp[-1].minor.yy0);
+    yygotominor.yy0 = create_guard(yymsp[-6].minor.yy0,tree);
+    std::cout << "GUARD2" << std::endl;
+  yy_destructor(yypParser,37,&yymsp[-5].minor);
+  yy_destructor(yypParser,2,&yymsp[-4].minor);
+  yy_destructor(yypParser,1,&yymsp[-2].minor);
+  yy_destructor(yypParser,35,&yymsp[0].minor);
+}
+#line 1470 "./src/Grammar/grammar.c"
+        break;
+      case 20: /* guard_statement ::= guard_statement BITOR expr ASSIGN expr DELIMITER */
+#line 311 "./src/Grammar/grammar.y"
+{
+    std::cout << "GUARD3" << std::endl;
+    add_branch_to_tree(yymsp[-5].minor.yy0,yymsp[-3].minor.yy0,yymsp[-1].minor.yy0);
+    yygotominor.yy0=yymsp[-5].minor.yy0;
+    std::cout << "GUARD4" << std::endl;
+  yy_destructor(yypParser,2,&yymsp[-4].minor);
+  yy_destructor(yypParser,1,&yymsp[-2].minor);
+  yy_destructor(yypParser,35,&yymsp[0].minor);
+}
+#line 1483 "./src/Grammar/grammar.c"
+        break;
+      case 21: /* final_guard_statement ::= guard_statement BITOR expr ASSIGN expr RCURL */
+#line 319 "./src/Grammar/grammar.y"
+{
+    std::cout << "GUARD5" << std::endl;
+    add_branch_to_tree(yymsp[-5].minor.yy0,yymsp[-3].minor.yy0,yymsp[-1].minor.yy0);
+    yygotominor.yy0=yymsp[-5].minor.yy0;
+    std::cout << "GUARD6" << std::endl;
+  yy_destructor(yypParser,2,&yymsp[-4].minor);
+  yy_destructor(yypParser,1,&yymsp[-2].minor);
+  yy_destructor(yypParser,38,&yymsp[0].minor);
+}
+#line 1496 "./src/Grammar/grammar.c"
+        break;
+      case 22: /* final_guard_statement ::= guard_statement WILDCARD ASSIGN expr RCURL */
+#line 327 "./src/Grammar/grammar.y"
+{
+    std::cout << "GUARD7" << std::endl;
+    add_wildcard_to_tree(yymsp[-4].minor.yy0,yymsp[-1].minor.yy0);
+    yygotominor.yy0=yymsp[-4].minor.yy0;
+    std::cout << "GUARD8" << std::endl;
+  yy_destructor(yypParser,39,&yymsp[-3].minor);
+  yy_destructor(yypParser,1,&yymsp[-2].minor);
+  yy_destructor(yypParser,38,&yymsp[0].minor);
+}
+#line 1509 "./src/Grammar/grammar.c"
+        break;
+      case 23: /* assignment ::= final_guard_statement */
+#line 335 "./src/Grammar/grammar.y"
 {
     std::cout << "GUARD11" << std::endl;
     panopticon::object& b = yymsp[0].minor.yy0.data.array->at(0);
@@ -1472,59 +1525,6 @@ static void yy_reduce(
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
         ParseARG_STORE;
     }
-}
-#line 1477 "./src/Grammar/grammar.c"
-        break;
-      case 20: /* guard_statement ::= name_chain LCURL BITOR expr ASSIGN expr DELIMITER */
-#line 322 "./src/Grammar/grammar.y"
-{
-    std::cout << "GUARD1" << std::endl;
-    optic::object tree = create_condition_tree(yymsp[-3].minor.yy0,yymsp[-1].minor.yy0);
-    yygotominor.yy0 = create_guard(yymsp[-6].minor.yy0,tree);
-    std::cout << "GUARD2" << std::endl;
-  yy_destructor(yypParser,37,&yymsp[-5].minor);
-  yy_destructor(yypParser,2,&yymsp[-4].minor);
-  yy_destructor(yypParser,1,&yymsp[-2].minor);
-  yy_destructor(yypParser,35,&yymsp[0].minor);
-}
-#line 1491 "./src/Grammar/grammar.c"
-        break;
-      case 21: /* guard_statement ::= guard_statement BITOR expr ASSIGN expr DELIMITER */
-#line 330 "./src/Grammar/grammar.y"
-{
-    std::cout << "GUARD3" << std::endl;
-    add_branch_to_tree(yymsp[-5].minor.yy0,yymsp[-3].minor.yy0,yymsp[-1].minor.yy0);
-    yygotominor.yy0=yymsp[-5].minor.yy0;
-    std::cout << "GUARD4" << std::endl;
-  yy_destructor(yypParser,2,&yymsp[-4].minor);
-  yy_destructor(yypParser,1,&yymsp[-2].minor);
-  yy_destructor(yypParser,35,&yymsp[0].minor);
-}
-#line 1504 "./src/Grammar/grammar.c"
-        break;
-      case 22: /* final_guard_statement ::= guard_statement BITOR expr ASSIGN expr RCURL */
-#line 338 "./src/Grammar/grammar.y"
-{
-    std::cout << "GUARD5" << std::endl;
-    add_branch_to_tree(yymsp[-5].minor.yy0,yymsp[-3].minor.yy0,yymsp[-1].minor.yy0);
-    yygotominor.yy0=yymsp[-5].minor.yy0;
-    std::cout << "GUARD6" << std::endl;
-  yy_destructor(yypParser,2,&yymsp[-4].minor);
-  yy_destructor(yypParser,1,&yymsp[-2].minor);
-  yy_destructor(yypParser,38,&yymsp[0].minor);
-}
-#line 1517 "./src/Grammar/grammar.c"
-        break;
-      case 23: /* final_guard_statement ::= guard_statement WILDCARD ASSIGN expr RCURL */
-#line 346 "./src/Grammar/grammar.y"
-{
-    std::cout << "GUARD7" << std::endl;
-    add_wildcard_to_tree(yymsp[-4].minor.yy0,yymsp[-1].minor.yy0);
-    yygotominor.yy0=yymsp[-4].minor.yy0;
-    std::cout << "GUARD8" << std::endl;
-  yy_destructor(yypParser,39,&yymsp[-3].minor);
-  yy_destructor(yypParser,1,&yymsp[-2].minor);
-  yy_destructor(yypParser,38,&yymsp[0].minor);
 }
 #line 1530 "./src/Grammar/grammar.c"
         break;
