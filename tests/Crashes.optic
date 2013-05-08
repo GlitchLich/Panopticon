@@ -9,10 +9,14 @@
 1. Too much printing
 
 2. Function array access 
-	
+//Fixed
 example: 
-testArray x = [ x 0 1 2 ]
+testArray x = [ x x*2 [x x*4] x+1 ]
 testArray( 99 )[0]
+testArray( 99 )[1]
+testArray( 99 )[2]
+testArray( 99 )[2][1]
+testArray( 99 )[3]
 
 3. Uninitialized variables crash
 

@@ -1,36 +1,16 @@
 //====================================================
 // 1. Crash
 //====================================================
-This works:
-whereGuard x
-	| x + y > 10	= 10000
-	| x + y == 10	= 10
-	_				= 0
-	where
-		y = 5
-
-Yet this crashes (Why!?) :
-whereGuardz x
-	| x + y < 4 = 0
-	| x + y > 4 = 2
-	_			= 1
-	where
-		y = 1
-
+Non-existent function calls crash
+/
+Strange syntax in a guard statement calls it as a function call and crashes.
 
 //====================================================
 // 2. Crash
 //====================================================
-Crashes on uninitializes variables.
+Crashes on two simultaneously executed uninitializes variables.
 n*m+z
-
-//====================================================
-// 3. additions
-//====================================================
-Unary operators minus BitNot don't work/crash:
-~1
-!true
--3
+n*m+z
 
 //====================================================
 // 4. Feature addition
@@ -38,18 +18,3 @@ Unary operators minus BitNot don't work/crash:
 Indexing arrays from function calls should work.
 testArray x = [ x 0 1 2 ]
 testArray( 99 )[0]
-
-//====================================================
-// 5. Feature addition
-//====================================================
-//Prepend should work with two non-arrays ( creating a new array)
-2:3:4:5
-should produce: [ 2 3 4 5 ]
-//Concat
-[0 1 2 3] ++ [2 3 4]
-
-//Append
-[0 1 2 3] :<< [2 3 4]
-
-
-

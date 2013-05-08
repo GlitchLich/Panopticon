@@ -51,7 +51,8 @@
 %right BITOR.
 %left FUNCTION_DEC.
 %left FUNCTION_CALL.
-%right COLON.
+%right PREPEND.
+%left APPEND.
 %left INDEX.
 %left OR.
 %left AND.
@@ -177,8 +178,8 @@ name_chain(A) ::= NAME(B).
 
 expr(A) ::= NAME(B). [COLON]
 {
-    B.type = optic::UNDECLARED_VARIABLE;
-    A = B;
+    A.type = optic::UNDECLARED_VARIABLE;
+    A.data.string = new optic::String(B.data.string->c_str());
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -191,7 +192,7 @@ expr(A) ::= NAME(B). [COLON]
     A = B;
 }*/
 
-expr(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN. [FUNCTION_CALL]
+function_call(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN. [FUNCTION_CALL]
 {
     if(C.type==optic::STATEMENT_LIST)
     {
@@ -219,7 +220,7 @@ expr(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN. [FUNCTION_CALL]
     }
 }
 
-expr(A) ::= NAME(B) LBRAC RBRAC LPAREN stmt_list(C) RPAREN. [FUNCTION_CALL]
+function_call(A) ::= NAME(B) LBRAC RBRAC LPAREN stmt_list(C) RPAREN. [FUNCTION_CALL]
 {
 /*    std::cout << "B.type = optic::Array_Map_Value_To_Functions" << std::endl;*/
 /*    std::cout << *B.data.string << std::endl;*/
@@ -270,7 +271,7 @@ expr(A) ::= array_index(B) LPAREN stmt_list(C) RPAREN. [FUNCTION_CALL]
 }
 
 
-expr(A) ::= NAME(B) LPAREN RPAREN. [FUNCTION_CALL]
+function_call(A) ::= NAME(B) LPAREN RPAREN. [FUNCTION_CALL]
 {
     B.type = optic::UNDECLARED_VARIABLE;
     A = B;
@@ -281,7 +282,7 @@ expr(A) ::= NAME(B) LPAREN RPAREN. [FUNCTION_CALL]
     }
 }
 
-expr(A) ::= array_index(B) LPAREN RPAREN. [FUNCTION_CALL]
+function_call(A) ::= array_index(B) LPAREN RPAREN. [FUNCTION_CALL]
 {
 /*    B.type = optic::UNDECLARED_VARIABLE;*/
     A = B;
@@ -290,6 +291,11 @@ expr(A) ::= array_index(B) LPAREN RPAREN. [FUNCTION_CALL]
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
         ParseARG_STORE;
     }
+}
+
+expr(A) ::= function_call(B).
+{
+    A = B;
 }
 
 
@@ -500,7 +506,7 @@ assignment(A) ::= name_chain(B) ASSIGN expr(C) LCURL final_where_statement(D). [
 //Statement lists /  Arrays / Maps
 //=================================
 
-test ::= map.
+/*test ::= map.
 
 
 map_argument_list ::= string ASSIGN expr. [COLLECTARRAY]
@@ -519,13 +525,12 @@ map(A) ::= LESSTHAN maybe_empty_map_argument_list(B) GREATERTHAN. [COLLECTARRAY]
     optic::out() << "Map" << std::endl;
     A.type = optic::STRING;
     A.data.string = new optic::String("Map");
-/*    A.type = optic::MAP;*/
 }
 
 expr(A) ::= map(B).
 {
     A = B;
-}
+}*/
 
 stmt_list(A) ::= stmt(B).
 {
@@ -649,14 +654,17 @@ bool(A) ::= BOOLEAN(B).
     A.type = C.type = optic::UNDECLARED_VARIABLE;
 }*/
 
+name_chain(A) ::= name_chain(B) pattern_argument.
+{
+    A = B;
+}
 
-name_chain(A) ::= name_chain(B) COMMA LPAREN NAME(C) COLON NAME(D) LPAREN. [COMMA]
+pattern_argument(A) ::= LPAREN NAME(C) COLON NAME(D) RPAREN.
 {
     std::cout << "PATTERN_ARGUMENT" << std::endl;
     A = C;
-    A.type = C.type = optic::UNDECLARED_VARIABLE;
     A = D;
-    A = B;
+/*    A = B;*/
 }
 
 /*name_chain(A) ::= name_chain(B) pattern_argument. [LBRAC]
@@ -664,10 +672,32 @@ name_chain(A) ::= name_chain(B) COMMA LPAREN NAME(C) COLON NAME(D) LPAREN. [COMM
     A = B;
 }*/
 
-expr(A) ::= expr(B) COLON expr(C). [COLON]
+expr(A) ::= expr(B) PREPEND expr(C).
 {
     std::cout << "PREPEND" << std::endl;
     optic::store_operations(A,B,C,&optic::prepend,false);
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
+
+expr(A) ::= expr(B) APPEND expr(C).
+{
+    std::cout << "APPEND" << std::endl;
+    optic::store_operations(A,B,C,&optic::append,false);
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
+
+expr(A) ::= expr(B) PLUSPLUS expr(C). [APPEND]
+{
+    std::cout << "CONCAT" << std::endl;
+    optic::store_operations(A,B,C,&optic::concat,false);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -817,7 +847,7 @@ expr(A) ::= expr(B) OR expr(C).
 
 expr(A) ::= BITNOT expr(B).
 {
-    bit_not(A,B);
+    store_operations(A,B,&optic::bit_not);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -825,9 +855,9 @@ expr(A) ::= BITNOT expr(B).
     }
 }
 
-expr(A) ::= MINUS expr(B). [UMINUS]
+expr(A) ::= LPAREN MINUS expr(B) RPAREN. [UMINUS]
 {
-    A = B;
+    store_operations(A,B,&panopticon::u_minus);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -837,8 +867,7 @@ expr(A) ::= MINUS expr(B). [UMINUS]
 
 expr(A) ::= NOT expr(B). [UMINUS]
 {
-    A = B;
-    not_value(A,B);
+    store_operations(A,B,&panopticon::not_value);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -879,6 +908,16 @@ expr(A) ::= expr(B) BITAND expr(C).
 expr(A) ::= expr(B) BITXOR expr(C).
 {
     parse_operations(A,B,C,&panopticon::bit_xor);
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
+
+array_index(A) ::= function_call(B) LBRAC expr(C) RBRAC. [INDEX]
+{
+    optic::store_operations(A,B,C,&optic::index,false);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);

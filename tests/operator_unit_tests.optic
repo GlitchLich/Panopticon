@@ -6,38 +6,125 @@
 //Array Slicing? first five elements: a[:5],last five elements, a[5:],
 //every other elements, a[::2], 1 through 3 a[1::3]
 
+//Undeclare Variables throw errors:
+n*m+z
+n*m+z
+
+//================
+//Unary operators
+//================
+
+//Unary Minus
+(-3)
+//this is math in an array:
+[1 -3]
+//this is an array with two numbers:
+[1 (-3)]
+
+//Not
+!true == false
+
+//Bit NOT
+~1
+
 //Prepending
 
-//Raw Prepend
-1:2:3:4:[]
+//Raw Prepend, Right associative, inserts INTO array
+1 >: 2 >: 3 >: 4
+[666] >: [2 3 4]
 
-[]:1:2:3:4:[]
+1 >: 1
+1 >: true
+1 >: "hey"
+1 >: [2 3 4]
 
-[]:[]
+true >: 1
+true >: false
+true >: "hey"
+true >: [2 3 4]
 
-//Concat
-[0 1 2 3] ++ [2 3 4]
+"hey" >: 1
+"hey" >: true
+"hey" >: "hey"
+"hey" >: [2 3 4]
 
-//Append
-[0 1 2 3] <<: [2 3 4]
+[2 3 4] >: 1
+[2 3 4] >: true
+[2 3 4] >: "hey"
+[2 3 4] >: [2 3 4]
 
-prependFunc x array = x : array
+
+//Raw Append, Left associative, inserts INTO array
+1 :< 2 :< 3 :< 4
+[2 3 4] :< [666]
+
+1 :< 1
+1 :< true
+1 :< "hey"
+1 :< [2 3 4]
+
+true :< 1
+true :< false
+true :< "hey"
+true :< [2 3 4]
+
+"hey" :< 1
+"hey" :< true
+"hey" :< "hey"
+"hey" :< [2 3 4]
+
+[2 3 4] :< 1
+[2 3 4] :< true
+[2 3 4] :< "hey"
+[2 3 4] :< [2 3 4]
+
+//Concat, Left associative, puts things at same level
+//When concacting with strings, creates a new string (but Array takes precedence).
+1 ++ 2 ++ 3 ++ 4
+[666] ++ [ 2 3 4 ]
+
+1++1
+1++true
+1++"hey"
+1++[2 3 4]
+
+true++1
+true++false
+true++"hey"
+true++[2 3 4]
+
+"hey"++1
+"hey"++true
+"hey"++"hey"
+"hey"++[2 3 4]
+
+[2 3 4]++1
+[2 3 4]++true
+[2 3 4]++"hey"
+[2 3 4]++[2 3 4]
+
+prependFunc x array = x >: array
 prependFunc(20 [0 1 2 3])
 prependFunc([true false] [0 1 2 3])
 
-prependFunc2 p x y = [ p x ] : y
+prependFunc2 p x y = [ p x ] >: y
 prependFunc2(20 [0 1 2 3] [0 1 2 3] )
 
-prependFunc3 x array = x*2 : array+20
+prependFunc3 x array = x*2 >: array+20
 prependFunc3(20 [0 1 2 3])
 
-prependFunc4 array = array[0] : array
+prependFunc4 array = array[0] >: array
 prependFunc4([0 1 2 3])
 
 simplePrependLoop x a t
-	| t > 0 	= x : simplePrependLoop(x a t-1)
+	| t > 0 	= x >: simplePrependLoop(x a t-1)
 	_			= a
 simplePrependLoop(0 [0 1 2 3] 10)
+
+simpleAppendLoop x a t
+	| t > 0 	= simpleAppendLoop(x a t-1) :< x
+	_			= a
+simpleAppendLoop(0 [0 1 2 3] 10)
 
 //Non Destructive
 pArray = [ 0 1 2 3 ]
@@ -45,20 +132,20 @@ prependFunc("test" pArray)
 pArray
 
 //Still non destructive
-"test2" : pArray
+"test2" >: pArray
 pArray
 
 //Simply rebuilds the list * 2
 //(x:xs) Head and Tail pattern matching 
 //(can use any names you want, x:xs is standard however
-headTailFunc (x:xs) = change : xs
+headTailFunc (x:xs) = change >: headTilFunc(xs)
 	where
 		change = x * 2
 //Head only pattern matching
-headTailFunc (x:_) = x : xs
+headTailFunc2 (x:xs) = x >: xs
 
 //Tail only pattern matching
-headTailFunc (_:xs) = x : xs
+headTailFunc3 (_:xs) = x >: xs
 
 //Where
 subvariable = x * z
@@ -166,6 +253,29 @@ chain2 x y = p( x )
 		p x = print( x )
 
 chain2( [ 3  1 ] 2 )
+
+
+whereGuardz x
+	| x + y > 4 	= 0
+	| x + y == 4 	= 2
+	_				= 1
+	where
+		y = 1
+whereGuardz(2)
+
+
+//Where statements with guard statements
+whereGuard x
+	| x + y > 10	= 10000
+	| x + y == 10	= 10
+	_				= 0
+	where
+		y = 5
+
+whereGuard( 6 )
+
+
+
 //Working on where, two different syntaxes:
 //Syntax works, logic not in yet.
 myGuardFunc x y
@@ -227,30 +337,6 @@ factorial(10)
 factorial(20)
 //Speed Test (though printing doesn't help....)
 factorial(2000)
-
-//Why does this crash!?!?!?!??
-whereGuardz x
-	| x + y < 4 = 0
-	| x + y > 4 = 2
-	_			= 1
-	where
-		y = 1
-
-crashGuard x
-	| x < 4	= 0
-	| x > 4	= 2
-	_ 			= 1
-
-//Where statements with guard statements
-whereGuard x
-	| x + y > 10	= 10000
-	| x + y == 10	= 10
-	_				= 0
-	where
-		y = 5
-
-whereGuard( 6 )
-
 
 //Not working
 myCaseFunc x = 
@@ -315,9 +401,6 @@ num * otherNum
 mybool = true
 myfalsebool = !mybool
 myfalsebool != mybool
-
-//Undeclare Variables throw errors:
-n*m+z
 
 //INDEXING ARRAYS
 myArray = [23 22 0 20+1]

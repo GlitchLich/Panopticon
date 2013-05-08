@@ -294,6 +294,13 @@ void command_line_loop()
             case NUM:
                 t0.data.number = yylval.dval;
                 break;
+            case NAME:
+                t0.data.string = new std::string(yylval.sval);
+                if(yylval.sval!=0)
+                {
+                    delete yylval.sval;
+                }
+                break;
             case STRING:
                 t0.data.string = new std::string(yylval.sval);
                 if(yylval.sval!=0)

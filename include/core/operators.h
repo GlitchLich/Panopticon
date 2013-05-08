@@ -91,15 +91,16 @@ extern bool lore(object&A, const object& B, const object& C);
 extern bool gore(object&A, const object& B, const object& C);
 extern bool value_and(object&A, const object& B, const object& C);
 extern bool value_or(object&A, const object& B, const object& C);
-extern bool not_value(object&A, object& B);
+extern bool not_value(object&A, const object& B);
 extern bool shift_left(object&A, const object& B, const object& C);
 extern bool shift_right(object&A, const object& B, const object& C);
 extern bool bit_and(object&A, const object& B, const object& C);
 extern bool bit_or(object&A, const object& B, const object& C);
-extern bool bit_not(object&A, object& B);
+extern bool bit_not(object&A,const  object& B);
 extern bool bit_xor(object&A, const object& B, const object& C);
 extern bool assign_variable(object&A, const object& B, const object& C);
 extern bool retrieve_variable(object&A, object& B);
+extern bool u_minus(object&A, const object& B);
 
 //NOT DONE
 extern bool plusplus(object&A, const object& B, const object& C);

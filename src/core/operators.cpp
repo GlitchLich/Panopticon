@@ -205,6 +205,9 @@ bool print_array(const object &A, int arrayNum,bool isTree)
         case panopticon::OPERATION:
             out() << " Operator";
             break;
+        case panopticon::UNARY_OPERATION:
+            out() << " Unary_Operator";
+            break;
         case panopticon::NO_EXPANSION_OPERATION:
             out() << " NoExpandOperator";
             break;
@@ -296,6 +299,9 @@ bool print_object(const object &A)
         break;
     case panopticon::OPERATION:
         out() << "Operator" << std::endl;
+        break;
+    case panopticon::UNARY_OPERATION:
+        out() << "Unary_Operator" << std::endl;
         break;
     case panopticon::NO_EXPANSION_OPERATION:
         out() << "NoExpandOperator" << std::endl;
@@ -529,9 +535,6 @@ bool store_operations(object& a,const object& obj1,const object& obj2, operator_
 {
     a.type = OPERATION_TREE;
     a.data.array = new Array();
-    //    print_object(obj1);
-    //    print_object(obj2);
-
     int size = 1;
 
     if(obj1.type==OPERATION_TREE)
@@ -889,6 +892,25 @@ bool call_function(const object &function, const String& name,bool resolve)
 bool serial(object& A,const object& B,const object& C)
 {
     A = C;
+}
+
+bool u_minus(object&A, const object& B)
+{
+    switch(B.type)
+    {
+    case panopticon::NUMBER:
+        A=B;
+        A.data.number*= -1;
+        return true;
+    case panopticon::STRING:
+        out() << "Error: cannot call a unary minus operator on a String." << std::endl;
+        correct_parsing = false;
+        return false;
+    case panopticon::BOOL:
+        out() << "Error: cannot call a unary minus operator on a Boolean." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
 }
 
 bool plus(object& A, const object& B, const object& C)
@@ -1774,7 +1796,7 @@ bool value_or(object& A, const object& B, const object& C)
     }
 }
 
-bool not_value(object& A, object& B)
+bool not_value(object& A, const object& B)
 {
     switch(B.type)
     {
@@ -1912,7 +1934,7 @@ bool shift_right(object& A, const object& B, const object& C)
     }
 }
 
-bool bit_not(object& A, object& B)
+bool bit_not(object& A, const object &B)
 {
     switch(B.type)
     {

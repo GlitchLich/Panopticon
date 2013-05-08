@@ -81,7 +81,9 @@ false     { yylval.bval = 0;return BOOLEAN;}
 "="          { return ASSIGN;}
 "^"          { return POW;}
 "_"          { return WILDCARD;}
-":"          { return COLON;}
+":<"          { return APPEND;}
+">:"          { return PREPEND;}
+":"         {return COLON;}
 [\"][^"]*[\"] {
     col += (int)strlen(yytext);
     yylval.sval=strndup(yytext+1,(int)strlen(yytext)-2);
