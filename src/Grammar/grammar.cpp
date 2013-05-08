@@ -1537,7 +1537,7 @@ static void yy_reduce(
     panopticon::object resolve;
     panopticon::store_operations(resolve, func_body, &panopticon::resolve_guard);
     optic::object combined;
-    panopticon::store_operations(combined,yymsp[0].minor.yy0,func_body);
+    panopticon::store_operations(combined,yymsp[0].minor.yy0,false);
     insure_ready_for_assignment(b,combined);
     panopticon::parse_operations(yygotominor.yy0, b, combined, &panopticon::assign_variable);
     if(!panopticon::correct_parsing)
@@ -1560,7 +1560,7 @@ static void yy_reduce(
     panopticon::object resolve;
     panopticon::store_operations(resolve, func_body, &panopticon::resolve_guard);
     optic::object combined;
-    panopticon::store_operations(combined,yymsp[0].minor.yy0,func_body);
+    panopticon::store_operations(combined,yymsp[0].minor.yy0,false);
     insure_ready_for_assignment(b,combined);
     panopticon::parse_operations(yygotominor.yy0, b, combined, &panopticon::assign_variable);
     if(!panopticon::correct_parsing)
@@ -1590,7 +1590,7 @@ static void yy_reduce(
     std::cout << "Where 1.5" << std::endl;
     insure_ready_for_assignment(yymsp[-3].minor.yy0,yymsp[-1].minor.yy0);
     yymsp[-3].minor.yy0.type = optic::FUNCTION_ARG_NAMES;
-    panopticon::parse_operations(yygotominor.yy0, yymsp[-3].minor.yy0, yymsp[-1].minor.yy0, panopticon::assign_variable);
+    panopticon::store_operations(yygotominor.yy0, yymsp[-3].minor.yy0, yymsp[-1].minor.yy0, panopticon::assign_variable,false);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -1612,7 +1612,7 @@ static void yy_reduce(
     if(yymsp[-4].minor.yy0.type!=optic::NIL)
     {
         optic::object assign;
-        panopticon::parse_operations(assign, yymsp[-3].minor.yy0, yymsp[-1].minor.yy0, panopticon::assign_variable);
+        panopticon::store_operations(assign, yymsp[-3].minor.yy0, yymsp[-1].minor.yy0, panopticon::assign_variable,false);
         optic::store_operations(yygotominor.yy0,yymsp[-4].minor.yy0,assign);
     }
     else
@@ -1638,7 +1638,7 @@ static void yy_reduce(
     if(yymsp[-6].minor.yy0.type!=optic::NIL)
     {
         optic::object assign;
-        panopticon::parse_operations(assign, yymsp[-5].minor.yy0, yymsp[-3].minor.yy0, panopticon::assign_variable);
+        panopticon::store_operations(assign, yymsp[-5].minor.yy0, yymsp[-3].minor.yy0, panopticon::assign_variable,false);
         optic::store_operations(yygotominor.yy0,yymsp[-6].minor.yy0,assign);
     }
     else
@@ -1696,7 +1696,7 @@ static void yy_reduce(
 {
     std::cout << "Where assign" << std::endl;
     panopticon::object body;
-    panopticon::store_operations(body,yymsp[0].minor.yy0,yymsp[-2].minor.yy0);
+    panopticon::store_operations(body,yymsp[0].minor.yy0,yymsp[-2].minor.yy0,false);
     insure_ready_for_assignment(yymsp[-4].minor.yy0,body);
     panopticon::parse_operations(yygotominor.yy0, yymsp[-4].minor.yy0, body, panopticon::assign_variable);
     if(!panopticon::correct_parsing)

@@ -358,7 +358,7 @@ assignment(A) ::= guard_statement(B) BITOR expr(C) ASSIGN expr(D) DELIMITER fina
     panopticon::object resolve;
     panopticon::store_operations(resolve, func_body, &panopticon::resolve_guard);
     optic::object combined;
-    panopticon::store_operations(combined,E,func_body);
+    panopticon::store_operations(combined,E,false);
     insure_ready_for_assignment(b,combined);
     panopticon::parse_operations(A, b, combined, &panopticon::assign_variable);
     if(!panopticon::correct_parsing)
@@ -376,7 +376,7 @@ assignment(A) ::= guard_statement(B) WILDCARD ASSIGN expr(D) DELIMITER final_whe
     panopticon::object resolve;
     panopticon::store_operations(resolve, func_body, &panopticon::resolve_guard);
     optic::object combined;
-    panopticon::store_operations(combined,E,func_body);
+    panopticon::store_operations(combined,E,false);
     insure_ready_for_assignment(b,combined);
     panopticon::parse_operations(A, b, combined, &panopticon::assign_variable);
     if(!panopticon::correct_parsing)
@@ -401,7 +401,7 @@ where_statement(A) ::= WHERE name_chain(B) ASSIGN expr(C) LCURL. [ASSIGN]
     std::cout << "Where 1.5" << std::endl;
     insure_ready_for_assignment(B,C);
     B.type = optic::FUNCTION_ARG_NAMES;
-    panopticon::parse_operations(A, B, C, panopticon::assign_variable);
+    panopticon::store_operations(A, B, C, panopticon::assign_variable,false);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -418,7 +418,7 @@ where_statement(A) ::= where_statement(D) name_chain(B) ASSIGN expr(C) DELIMITER
     if(D.type!=optic::NIL)
     {
         optic::object assign;
-        panopticon::parse_operations(assign, B, C, panopticon::assign_variable);
+        panopticon::store_operations(assign, B, C, panopticon::assign_variable,false);
         optic::store_operations(A,D,assign);
     }
     else
@@ -440,7 +440,7 @@ final_where_statement(A) ::= where_statement(D) name_chain(B) ASSIGN expr(C) RCU
     if(D.type!=optic::NIL)
     {
         optic::object assign;
-        panopticon::parse_operations(assign, B, C, panopticon::assign_variable);
+        panopticon::store_operations(assign, B, C, panopticon::assign_variable,false);
         optic::store_operations(A,D,assign);
     }
     else
@@ -485,7 +485,7 @@ assignment(A) ::= name_chain(B) ASSIGN expr(C) LCURL final_where_statement(D). [
 {
     std::cout << "Where assign" << std::endl;
     panopticon::object body;
-    panopticon::store_operations(body,D,C);
+    panopticon::store_operations(body,D,C,false);
     insure_ready_for_assignment(B,body);
     panopticon::parse_operations(A, B, body, panopticon::assign_variable);
     if(!panopticon::correct_parsing)

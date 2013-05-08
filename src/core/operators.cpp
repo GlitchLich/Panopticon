@@ -459,7 +459,7 @@ bool store_operations(object& a,const object& obj1,unary_operator_function func)
     }
 }
 
-bool store_operations(object& a,const object& obj1,const object& obj2)
+bool store_operations(object& a,const object& obj1,const object& obj2,bool expand)
 {
     a.type = OPERATION_TREE;
     a.data.array = new Array();
@@ -484,9 +484,15 @@ bool store_operations(object& a,const object& obj1,const object& obj2)
         size++;
     }
 
-//    a.data.array->reserve(size);
     object op_func;
-    op_func.type = OPERATION;
+    if(expand)
+    {
+        op_func.type = OPERATION;
+    }
+    else
+    {
+        op_func.type = NO_EXPANSION_OPERATION;
+    }
     op_func.data.operator_func = &serial;
     a.data.array->push_back(op_func);
 
