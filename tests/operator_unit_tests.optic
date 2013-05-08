@@ -83,8 +83,10 @@ subFunc x y = ( x + w ) - ( t(x y) - y )
 	where 
 		w = 5
 		t z d = ( z * d ) / 10
+
 subFunc( 13 10 )
 subFunc( [ 13 ] 10 )
+subFunc( 8 120 )
 
 //Dynamic Scoping in action
 subFunc2 x y = t(x y)

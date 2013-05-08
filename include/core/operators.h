@@ -66,7 +66,7 @@ extern bool resolve_stack_from_parser(const object &operation_tree, bool resolve
 extern bool create_tree(object&a,const object& obj);
 extern bool store_operations(object& a,const object& obj1,unary_operator_function func);
 extern bool store_operations(object& a, const object& obj1, const object& obj2, operator_function func, bool expand = true);
-extern bool store_operations(object& a,const object& obj1,const object& obj2);
+extern bool store_operations(object& a, const object& obj1, const object& obj2, bool expand = true);
 
 extern bool create_function(object&A, const object& B, const object& C);
 extern bool call_function(object& A, const object& B, const object& C);
