@@ -298,25 +298,6 @@ test(A) ::= case_statement(B).
     A=B;
 }
 
-assignment(A) ::= final_guard_statement(B).
-{
-    std::cout << "GUARD11" << std::endl;
-    panopticon::object& b = B.data.array->at(0);
-    panopticon::object& c = B.data.array->at(1);
-
-    panopticon::object resolve;
-    panopticon::store_operations(resolve, c, &panopticon::resolve_guard);
-
-    insure_ready_for_assignment(b,resolve);
-    b.type = optic::FUNCTION_ARG_NAMES;
-    panopticon::parse_operations(A, b, resolve, &panopticon::assign_variable);
-    if(!panopticon::correct_parsing)
-    {
-        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
-        ParseARG_STORE;
-    }
-}
-
 //GUARD STATEMENT BEGINNING
 guard_statement(A) ::= name_chain(B) LCURL BITOR expr(C) ASSIGN expr(D) DELIMITER. [ASSIGN]
 {
@@ -348,6 +329,25 @@ final_guard_statement(A) ::= guard_statement(B) WILDCARD ASSIGN expr(D) RCURL. [
     add_wildcard_to_tree(B,D);
     A=B;
     std::cout << "GUARD8" << std::endl;
+}
+
+assignment(A) ::= final_guard_statement(B).
+{
+    std::cout << "GUARD11" << std::endl;
+    panopticon::object& b = B.data.array->at(0);
+    panopticon::object& c = B.data.array->at(1);
+
+    panopticon::object resolve;
+    panopticon::store_operations(resolve, c, &panopticon::resolve_guard);
+
+    insure_ready_for_assignment(b,resolve);
+    b.type = optic::FUNCTION_ARG_NAMES;
+    panopticon::parse_operations(A, b, resolve, &panopticon::assign_variable);
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
 }
 
 assignment(A) ::= guard_statement(B) BITOR expr(C) ASSIGN expr(D) DELIMITER final_where_statement(E). [ASSIGN]

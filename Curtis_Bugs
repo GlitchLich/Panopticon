@@ -1,0 +1,55 @@
+//====================================================
+// 1. Crash
+//====================================================
+This works:
+whereGuard x
+	| x + y > 10	= 10000
+	| x + y == 10	= 10
+	_				= 0
+	where
+		y = 5
+
+Yet this crashes (Why!?) :
+whereGuardz x
+	| x + y < 4 = 0
+	| x + y > 4 = 2
+	_			= 1
+	where
+		y = 1
+
+
+//====================================================
+// 2. Crash
+//====================================================
+Crashes on uninitializes variables.
+n*m+z
+
+//====================================================
+// 3. additions
+//====================================================
+Unary operators minus BitNot don't work/crash:
+~1
+!true
+-3
+
+//====================================================
+// 4. Feature addition
+//====================================================
+Indexing arrays from function calls should work.
+testArray x = [ x 0 1 2 ]
+testArray( 99 )[0]
+
+//====================================================
+// 5. Feature addition
+//====================================================
+//Prepend should work with two non-arrays ( creating a new array)
+2:3:4:5
+should produce: [ 2 3 4 5 ]
+//Concat
+[0 1 2 3] ++ [2 3 4]
+
+//Append
+[0 1 2 3] :<< [2 3 4]
+
+
+

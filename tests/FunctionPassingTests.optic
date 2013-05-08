@@ -103,7 +103,7 @@ paren( [ 2 ] )
 mul x y = x * y
 mul( 2 3 ) + 1
 
-// Doesn't work
+// WORKS
 mul(
 	2
 	3
@@ -205,4 +205,4 @@ funcRepeater op x t
 	| t > 0 = funcRepeater(op op(x) t-1)
 	_		= x+op(x)
 
-funcReapeter(plusOne,10,5)
+funcReapeter(plusOne 10 5)
