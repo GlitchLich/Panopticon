@@ -358,7 +358,7 @@ assignment(A) ::= guard_statement(B) BITOR expr(C) ASSIGN expr(D) DELIMITER fina
     panopticon::object resolve;
     panopticon::store_operations(resolve, func_body, &panopticon::resolve_guard);
     optic::object combined;
-    panopticon::store_operations(combined,E,false);
+    panopticon::store_operations(combined,E,resolve,false);
     insure_ready_for_assignment(b,combined);
     panopticon::parse_operations(A, b, combined, &panopticon::assign_variable);
     if(!panopticon::correct_parsing)
@@ -376,7 +376,7 @@ assignment(A) ::= guard_statement(B) WILDCARD ASSIGN expr(D) DELIMITER final_whe
     panopticon::object resolve;
     panopticon::store_operations(resolve, func_body, &panopticon::resolve_guard);
     optic::object combined;
-    panopticon::store_operations(combined,E,false);
+    panopticon::store_operations(combined,E,resolve,false);
     insure_ready_for_assignment(b,combined);
     panopticon::parse_operations(A, b, combined, &panopticon::assign_variable);
     if(!panopticon::correct_parsing)
@@ -445,7 +445,7 @@ final_where_statement(A) ::= where_statement(D) name_chain(B) ASSIGN expr(C) RCU
     }
     else
     {
-        panopticon::parse_operations(A, B, C, panopticon::assign_variable);
+        panopticon::store_operations(A, B, C, panopticon::assign_variable,false);
     }
     if(!panopticon::correct_parsing)
     {

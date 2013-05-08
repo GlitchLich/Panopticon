@@ -112,7 +112,7 @@ whereGuard x
 	where
 		y = 5
 
-whereGuard( 20 )
+whereGuard( 5 )
 	
 
 //Fibonacci sequence! probably shouldn't go above 16 right now....
