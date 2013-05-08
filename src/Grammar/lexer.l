@@ -66,7 +66,7 @@ false     { yylval.bval = 0;return BOOLEAN;}
 "<="          {  return LORE;  }
 "!="          {  return NOTEQUALTO;  }
 "<<"          {  return SHIFTL;  }
-">>"          {  return SHIFTR;  }
+">>>"          {  return SHIFTR;  }
 "&&"          {  return AND;  }
 "||"          {  return OR;  }
 "!"          {  return NOT;  }
@@ -84,6 +84,7 @@ false     { yylval.bval = 0;return BOOLEAN;}
 ":<"          { return APPEND;}
 ">:"          { return PREPEND;}
 ":"         {return COLON;}
+">>"       {return COMPOSITION;}
 [\"][^"]*[\"] {
     col += (int)strlen(yytext);
     yylval.sval=strndup(yytext+1,(int)strlen(yytext)-2);

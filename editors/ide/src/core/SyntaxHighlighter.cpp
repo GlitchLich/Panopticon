@@ -55,6 +55,10 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument* parent) :
     rule.pattern = QRegExp("\\~");
     rule.format = style->flowFormat;
     rules.append(rule);
+
+    rule.pattern = QRegExp("\\>\\>");
+    rule.format = style->flowFormat;
+    rules.append(rule);
 }
 
 void SyntaxHighlighter::highlightBlock(const QString &text)

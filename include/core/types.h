@@ -102,7 +102,7 @@ enum Type
     CONDITION_TREE, //26
     CONDITION_BRANCH, //27
     NO_EXPANSION_OPERATION, //28 For those operations that you DON'T want to multichannel expand
-    Array_Map_Value_To_Functions //29 Map a value to an array of functions
+    UNARY_NO_EXPANSION_OPERATION //29 For those unary operations that you don't want to expand.
 };
 
 // Forward declarations

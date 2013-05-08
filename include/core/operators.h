@@ -64,7 +64,7 @@ extern bool array_operator_array(object& a,const object& array1,const object& ar
 extern bool parse_operations(object& a, const object& b, const object& c, operator_function func);
 extern bool resolve_stack_from_parser(const object &operation_tree, bool resolve_entire_stack = false);
 extern bool create_tree(object&a,const object& obj);
-extern bool store_operations(object& a,const object& obj1,unary_operator_function func);
+extern bool store_operations(object& a,const object& obj1,unary_operator_function func,bool expand = true);
 extern bool store_operations(object& a, const object& obj1, const object& obj2, operator_function func, bool expand = true);
 extern bool store_operations(object& a, const object& obj1, const object& obj2, bool expand = true);
 

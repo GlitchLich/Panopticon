@@ -6,7 +6,6 @@ namespace panopticon
 
 extern bool prepend(object& result_A, const object& B, const object& container_C)
 {
-    out() << "Prepend C.type: " << container_C.type;
     if(container_C.type != ARRAY)
     {
         result_A.type = ARRAY;
@@ -23,7 +22,6 @@ extern bool prepend(object& result_A, const object& B, const object& container_C
 
 extern bool append(object& result_A, const object& container_B, const object& object_C)
 {
-    out() << "Prepend C.type: " << container_B.type;
     if(container_B.type != ARRAY)
     {
         result_A.type = ARRAY;

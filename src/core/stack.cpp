@@ -150,7 +150,7 @@ bool evaluate_binary_operator(const object& operator_object, bool expand = true)
 }
 
 
-bool evaluate_unary_operator(const object& operator_object)
+bool evaluate_unary_operator(const object& operator_object,bool expand = true)
 {
     object result, arg;
     bool eval = true;
@@ -165,7 +165,7 @@ bool evaluate_unary_operator(const object& operator_object)
             optic_stack.pop_back();
 
 
-            if(arg.type == ARRAY)
+            if(arg.type == ARRAY && expand)
             {
                 object new_array;
                 new_array.data.array = new Array();
@@ -313,6 +313,10 @@ bool evaluate_top()
 
     case UNARY_OPERATION:
         return evaluate_unary_operator(obj);
+        break;
+
+    case UNARY_NO_EXPANSION_OPERATION:
+        return evaluate_unary_operator(obj,false);
         break;
 
     case OPERATION_TREE:

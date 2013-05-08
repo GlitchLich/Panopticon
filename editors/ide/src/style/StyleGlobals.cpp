@@ -31,7 +31,8 @@ Style::Style()
     singleLineCommentFormat.setForeground(QColor(200, 80, 80));
     stringFormat.setForeground(QColor(25, 180, 125));
     numberFormat.setForeground(QColor(180, 50, 135));
-    flowFormat.setForeground(QColor(100, 255, 200));
+//    flowFormat.setForeground(QColor(100, 255, 200));
+    flowFormat.setForeground(QColor(50, 255, 220));
 
     prrealClearColor = { 0.2, 0.06, 0.15, 1 };
 //    prrealClearColor = { 0.1, 0.1, 0.1125, 1 };

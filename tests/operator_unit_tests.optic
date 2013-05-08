@@ -10,6 +10,74 @@
 n*m+z
 n*m+z
 
+//Composition operator WORKS
+//Takes up same amount of space, but looks waaaaaay clearer IMO
+//Passed expression on the left as the first argument to the func on the right:
+f x = x * 2
+f(2)
+2 >> f
+
+//Chains to other functions:
+g x = x * 4
+g( f( 1 ) )
+f( 1 ) >> g
+f( 1 ) >> g()
+g( f( g( f( g( f([2 3 4 5) ) ) ) ) )
+f([2 3 4 5]) >> g >> f >> g >> f >> g
+
+//Partial application also works :) Inserts into the first argument:
+f2 x y = x * y
+g2 x y = (x * 2) / y
+g2( f2( 2 3 )  10 )
+f2(2 3) >> g2( 10 )
+
+//embedable into other functions as well:
+embededStream x y = x >> y
+embededStream(3 g)
+g(3)
+
+//embedable into other functions as well:
+embededStream2 x y = x >> y(2)
+embededStream2(10 g2)
+g2(10 2)
+
+//Composition operator plus guards plus recursion, interesting patterns
+crossTheStreams x
+	| x < 100 && x > 0	= crossTheStreams(x + 2) - 1 >> crossTheStreams
+	_					= x * 2
+crossTheStreams(1)
+crossTheStreams(50)
+crossTheStreams(95)
+crossTheStreams(96)
+crossTheStreams(97)
+crossTheStreams(98)
+crossTheStreams(99)
+crossTheStreams(100)
+
+//Function Arrays
+// Works
+doubler x = x *2
+zeroOut x = x * 0
+doubleNeg x = x * (-2)
+spreader = [doubler zeroOut doubleNeg]
+spreader[0](1)
+spreader[](0)
+spreader[](2)
+spreader[]([0 1 2 3 4 5 6 7 8 9 10])
+spreader[]([0 1 2 3 4 5 6 7 8 9 10])[0]
+spreader[]([0 1 2 3 4 5 6 7 8 9 10])[1]
+spreader[]([0 1 2 3 4 5 6 7 8 9 10])[2][6]
+spreader[](spreader[](spreader[](24)))
+
+notRight = 10
+notASpreader = [notRight doubleNeg]
+notASpreader[](2)
+
+doubleDoubleNeg x y = [x * (-2) y * (-2)]
+notEnoughArgs = [doubleNeg doubleDoubleNeg]
+notEnoughArgs[](2)
+
+
 //================
 //Unary operators
 //================
@@ -26,6 +94,11 @@ n*m+z
 
 //Bit NOT
 ~1
+
+//with arrays
+![true false true]
+(-[0 1 2 3])
+~[0 1 2 3]
 
 //Prepending
 
@@ -78,6 +151,8 @@ true :< [2 3 4]
 [2 3 4] :< "hey"
 [2 3 4] :< [2 3 4]
 
+printArray = print([0 1 2 3])
+printArray
 //Concat, Left associative, puts things at same level
 //When concacting with strings, creates a new string (but Array takes precedence).
 1 ++ 2 ++ 3 ++ 4
@@ -857,26 +932,26 @@ true <<  [0 [true 2 [3 "hey"] 5 [6 7] ] 8]
 ["e" ["h" "y" ["ey" "he"] "h" ["hey" " "] ] "e"] << "h"
 [1 [1 2 [3 4] 5 [6 7] ] 8] << [1 [1 2 [3 4] 5 [6 7] ] 8]
 
-//>>
-4 >> 4
-2 >> 1
-4 >> true
-4 >> "hey"
-4 >> [1 [true 2 [4 "hey"] 5 [6 7] ] 8]
-4 >> [1 [1 2 [3 6] 5 [6 7] ] 4]
+//>>>
+4 >>> 4
+2 >>> 1
+4 >>> true
+4 >>> "hey"
+4 >>> [1 [true 2 [4 "hey"] 5 [6 7] ] 8]
+4 >>> [1 [1 2 [3 6] 5 [6 7] ] 4]
 
-"hey" >> 4
-"hey" >> true
-"hey" >> "h"
-"hey" >> "hey"
-"hey" >> [0 [1 2 [3 6] 5 [6 7] ] 8]
-"hey" >> ["e" ["h" "y" ["ey" "he"] "h" ["hey" " "] ] "3"]
+"hey" >>> 4
+"hey" >>> true
+"hey" >>> "h"
+"hey" >>> "hey"
+"hey" >>> [0 [1 2 [3 6] 5 [6 7] ] 8]
+"hey" >>> ["e" ["h" "y" ["ey" "he"] "h" ["hey" " "] ] "3"]
 
-true >> 4
-true >> true
-true >> false
-true >> "hey"
-true >>  [0 [true 2 [3 "hey"] 5 [6 7] ] 8]
+true >>> 4
+true >>> true
+true >>> false
+true >>> "hey"
+true >>>  [0 [true 2 [3 "hey"] 5 [6 7] ] 8]
 
 [0 [1 2 [3 4] 5 [6 7] ] 8] << 2
 [0 [true 2 [3 "hey"] 5 [6 7] ] 8] >> false
@@ -979,7 +1054,7 @@ true ^|  [0 [true 2 [3 "hey"] 5 [6 7] ] 8]
 
 //Maps
 < >
-mapTest = <"test" = 4 "other test" = 5 >
+mapTest = Dictionary["test" = 4 "other test" = 5 ]
 mapTest<"test">
 mapTest<"other test">
 

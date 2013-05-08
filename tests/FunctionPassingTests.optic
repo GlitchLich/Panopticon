@@ -16,6 +16,7 @@ printer x = print( x )
 printer( 1 )
 printer( 2 )
 printer( 3 )
+printer( myArray )
 printed x = print([ x ])
 printed( 1 )
 printed( 2 )
@@ -61,6 +62,8 @@ moreshifts = [ shift shift shift ]
 moreshifts[0]( 2 3 )
 moreshifts[]( 2 3 )
 moreshifts[]( [ 2 3 4 5 ] 2 )
+moreshifts[]( [ 2 3 4 5 ] 2 )[0]
+moreshifts[]( [ 2 3 4 5 ] 2 )[0][1]
 
 // Nested Arrays from functions
 nest x = [ [ [ x ] x ] x ]

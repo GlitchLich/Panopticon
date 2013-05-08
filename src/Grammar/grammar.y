@@ -50,6 +50,7 @@
 %left ASSIGN.
 %right BITOR.
 %left FUNCTION_DEC.
+%right COMPOSITION.
 %left FUNCTION_CALL.
 %right PREPEND.
 %left APPEND.
@@ -93,15 +94,10 @@ start ::= spec(A).
     if(
         A.type == optic::NUMBER ||
         A.type == optic::STRING ||
-        A.type == optic::BOOL ||
-        A.type == optic::GUARD
+        A.type == optic::BOOL
         )
     {
         print_object(A);
-    }
-    if( A.type == optic::CODE_BLOCK )
-    {
-        optic::out() << "CODE BLOCK!" << std::endl;
     }
     else
     {
@@ -192,6 +188,35 @@ expr(A) ::= NAME(B). [COLON]
     A = B;
 }*/
 
+expr(A) ::= expr(B) COMPOSITION function_call(C).
+{
+    std::cout << "COMPOSITION!" << std::endl;
+    if(C.type==optic::OPERATION_TREE)
+    {
+        C.data.array->at(2).data.array->push_front(B);
+        A = C;
+    }
+    else
+    {
+        optic::object function_body;
+        function_body.type = optic::FUNCTION_ARG_VALUES;
+        function_body.data.array = new optic::Array();
+        function_body.data.array->push_back(B);
+        C.type = optic::STRING;
+        optic::store_operations(A,C,function_body,optic::call_function);
+    }
+}
+
+expr(A) ::= expr(B) COMPOSITION NAME(C).
+{
+    optic::object function_body;
+    function_body.type = optic::FUNCTION_ARG_VALUES;
+    function_body.data.array = new optic::Array();
+    function_body.data.array->push_back(B);
+    C.type = optic::STRING;
+    optic::store_operations(A,C,function_body,optic::call_function);
+}
+
 function_call(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN. [FUNCTION_CALL]
 {
     if(C.type==optic::STATEMENT_LIST)
@@ -203,7 +228,6 @@ function_call(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN. [FUNCTION_CALL]
         optic::object temp = C;
         C.type = optic::FUNCTION_ARG_VALUES;
         C.data.array = new optic::Array();
-/*        C.data.array->reserve(1);*/
         C.data.array->push_back(temp);
     }
     optic::object b;
@@ -212,7 +236,7 @@ function_call(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN. [FUNCTION_CALL]
     print_object(C);
 
     b.data.string = new optic::String(B.data.string->c_str());
-    optic::parse_operations(A,b,C,optic::call_function);
+    optic::store_operations(A,b,C,optic::call_function);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -610,7 +634,7 @@ expr(A) ::= bool(B).
 //======================
 expr(A) ::= PRINT LPAREN expr(B) RPAREN.
 {
-    optic::store_operations(A,B,&optic::unary_print_object);
+    optic::store_operations(A,B,&optic::unary_print_object,false);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -661,7 +685,6 @@ name_chain(A) ::= name_chain(B) pattern_argument.
 
 pattern_argument(A) ::= LPAREN NAME(C) COLON NAME(D) RPAREN.
 {
-    std::cout << "PATTERN_ARGUMENT" << std::endl;
     A = C;
     A = D;
 /*    A = B;*/
@@ -674,7 +697,6 @@ pattern_argument(A) ::= LPAREN NAME(C) COLON NAME(D) RPAREN.
 
 expr(A) ::= expr(B) PREPEND expr(C).
 {
-    std::cout << "PREPEND" << std::endl;
     optic::store_operations(A,B,C,&optic::prepend,false);
     if(!panopticon::correct_parsing)
     {
@@ -685,7 +707,6 @@ expr(A) ::= expr(B) PREPEND expr(C).
 
 expr(A) ::= expr(B) APPEND expr(C).
 {
-    std::cout << "APPEND" << std::endl;
     optic::store_operations(A,B,C,&optic::append,false);
     if(!panopticon::correct_parsing)
     {
@@ -696,7 +717,6 @@ expr(A) ::= expr(B) APPEND expr(C).
 
 expr(A) ::= expr(B) PLUSPLUS expr(C). [APPEND]
 {
-    std::cout << "CONCAT" << std::endl;
     optic::store_operations(A,B,C,&optic::concat,false);
     if(!panopticon::correct_parsing)
     {
