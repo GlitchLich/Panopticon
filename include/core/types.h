@@ -75,7 +75,7 @@ enum Type
     STRING,//3
     FUNCTION,//4
     ARRAY,//5
-    MAP,//6
+    DICTIONARY,//6
 
 
     //THE FOLLOWING ARE FOR PARSING ONLY,
@@ -119,7 +119,7 @@ struct Nil { };
 typedef double Number;
 //typedef std::vector<object> Array;
 typedef std::deque<object> Array;
-typedef std::unordered_map<std::string, object> Map;
+typedef std::unordered_map<std::string, object> Dictionary;
 typedef std::string String;
 typedef bool Boolean;
 typedef bool (*operator_function) (object &, const object &, const object &);
@@ -134,7 +134,7 @@ union Data
     bool boolean;
     Function* function;
     Array* array;
-    Map* map;
+    Dictionary* dictionary;
     operator_function operator_func;
     unary_operator_function unary_operator_func;
 };
@@ -149,7 +149,7 @@ struct Function
 {
     std::stack<object> stack;
     std::string name;
-    Map heap;
+    Dictionary heap;
     int num_arguments;
     Array arguments;
     object body;

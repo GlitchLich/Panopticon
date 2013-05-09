@@ -18,7 +18,7 @@ Primitive
 Variable
 
 Need:
--Scope! No access to variables outside of scope. There are variables at global scope.
+-Dynamic Scope! 
 -Always pass by value
 -Streams/Patterns
 -Maybe,IO,Networking
@@ -41,8 +41,7 @@ Array:
 [0 1 2 3]
 WE NEED HASKELL LIKE ARRAY FUNCTIONS, i.e.:
 Here, for example, is a definition of an array of the squares of numbers from 1 to 100: 
-
-squares                 =  array (1,100) [(i, i*i) | i <- [1..100]]
+squares =  array (1,100) [(i, i*i) | i <- [1..100]]
 
 Control Structure:
 nthElement :: [a] -> Int -> Maybe a 

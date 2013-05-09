@@ -257,6 +257,7 @@ bool evaluate_function_call()
 
     else */
 
+    std::cout << "EVALUATE FUNCTION CALL!!!!!!!" << std::endl;
     if(optic_stack.back().type == STRING)
     {
         object name = optic_stack.back();
