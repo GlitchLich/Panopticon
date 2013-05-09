@@ -13,20 +13,27 @@ n*m+z
 headTailFunc z (x:xs) = x : xs
 
 guardTest x
-	| x > 4 	= 3
-	| x == 4 	= 2
-	_			= 1
+	| x == 0 	= 0
+	| x == 1 	= [ 1 2 3 ]
+	_			= 10000
 
-guardTest(4)
+guardTest(0)
+guardTest(1)
+guardTest([5 5])
 
-whereGuardz x
-	| x + y > 4 	= 3
-	| x + y == 4 	= 2
-	_				= 1
-	where
-		y = 1
+arrayGuard x
+	| x[0] == 1 							= "Zero!"
+	| x[1] == 1								= "First!"
+	| x[2] == 1								= "Second!"
+	| x[0] == 0 && x[1] == 0 && x[2] == 0 	= ["DEAD" "DEAD" "DEAD"]
+	_										= "NEIN!"
 
-whereGuardz(2)
+arrayGuard([1 1 1])
+arrayGuard([0 1 1])
+arrayGuard([0 0 1])
+arrayGuard([0 0 0])
+arrayGuard([6 6 6])
+arrayGuard([ [1 0 0] [0 1 0] [0 0 1] ])
 
 
 //Composition operator WORKS
@@ -376,25 +383,14 @@ whereGuard x
 	where
 		y = 5
 
-whereGuard( [ 20 10 ] )
+whereGuard( 6 )
 
+arrayGuard x
+	| x[0] == 1	= "First"
+	| x[1] == 1 = "Second"
+	_			= "nope"
 
-
-//Working on where, two different syntaxes:
-//Syntax works, logic not in yet.
-myGuardFunc x y
-	| x+y > 5 	= 6
-	| x+y == 5 	= 5
-	_ 			= 0
-	where	z = 5
-			mySubFunc x2 z3 = ("fuck" + x2) + x3
-myGuardFunc2 x y
-	| x+y > 5 	= 6
-	| x+y == 5 	= 5
-	_ 			= 0
-	where	
-		z = 5
-		mySubFunc x2 z3 = ("fuck" + x2) + x3
+arrayGuard([12 11 2])
 
 //Fibonacci sequence! probably shouldn't go above 16 right now....
 fib i
@@ -1084,9 +1080,18 @@ true ^|  [0 [true 2 [3 "hey"] 5 [6 7] ] 8]
 
 //Maps
 < >
-mapTest = Dictionary["test" = 4 "other test" = 5 ]
-mapTest<"test">
-mapTest<"other test">
+mapTest = ["test" = 4 "other test" = 5 ]
+mapTest["test"]
+mapTest["other test"]
 
+myMap = map( "test" = 4
+			"other test" 5
+			"final test" = 6)
+
+splitter x = x[0]
+splitter([0 1 ])	
+	
+splitter2 x = x[1]
+splitter2([0 1 ])	
 
 

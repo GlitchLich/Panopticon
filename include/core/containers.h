@@ -13,7 +13,7 @@ namespace panopticon
  * @param C Containter being prepeneded.
  * @return
  */
-extern bool prepend(object& result_A, const object& B, const object& container_C);
+bool prepend(object& result_A, const object& B, const object& container_C);
 
 /**
  * @brief prepend
@@ -22,7 +22,7 @@ extern bool prepend(object& result_A, const object& B, const object& container_C
  * @param C Object to append
  * @return
  */
-extern bool append(object& result_A, const object& container_B, const object& object_C);
+bool append(object& result_A, const object& container_B, const object& object_C);
 
 /**
  * @brief concatenation
@@ -31,7 +31,7 @@ extern bool append(object& result_A, const object& container_B, const object& ob
  * @param C Object 2
  * @return
  */
-extern bool concat(object& A, const object& B, const object& C);
+bool concat(object& A, const object& B, const object& C);
 
 
 }

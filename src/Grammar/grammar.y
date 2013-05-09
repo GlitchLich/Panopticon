@@ -356,9 +356,10 @@ assignment(A) ::= final_guard_statement(B).
     panopticon::object& c = B.data.array->at(1);
 
     panopticon::object resolve;
-    panopticon::store_operations(resolve, c, &panopticon::resolve_guard);
+    panopticon::store_operations(resolve, c, &panopticon::resolve_guard,false);
 
-    insure_ready_for_assignment(b,resolve);
+    resolve.type = panopticon::FUNCTION_BODY;
+/*    insure_ready_for_assignment(b,resolve);*/
     b.type = optic::FUNCTION_ARG_NAMES;
     panopticon::parse_operations(A, b, resolve, &panopticon::assign_variable);
     if(!panopticon::correct_parsing)
@@ -374,7 +375,7 @@ assignment(A) ::= guard_statement(B) BITOR expr(C) ASSIGN expr(D) DELIMITER fina
     panopticon::object& b = B.data.array->at(0);
     panopticon::object& func_body = B.data.array->at(1);
     panopticon::object resolve;
-    panopticon::store_operations(resolve, func_body, &panopticon::resolve_guard);
+    panopticon::store_operations(resolve, func_body, &panopticon::resolve_guard,false);
     optic::object combined;
     panopticon::store_operations(combined,E,resolve,false);
     insure_ready_for_assignment(b,combined);
@@ -392,7 +393,7 @@ assignment(A) ::= guard_statement(B) WILDCARD ASSIGN expr(D) DELIMITER final_whe
     panopticon::object& b = B.data.array->at(0);
     panopticon::object& func_body = B.data.array->at(1);
     panopticon::object resolve;
-    panopticon::store_operations(resolve, func_body, &panopticon::resolve_guard);
+    panopticon::store_operations(resolve, func_body, &panopticon::resolve_guard,false);
     optic::object combined;
     panopticon::store_operations(combined,E,resolve,false);
     insure_ready_for_assignment(b,combined);
@@ -690,7 +691,7 @@ assignment(A) ::= NAME(B) maybe_empty_name_chain ASSIGN expr. [COLON]
 
 pattern(A) ::= LPAREN NAME(B) PREPEND NAME(C) RPAREN. [COLON]
 {
-    std::cout << "PATTERN_ARGUMENT" << std::endl;
+/*    std::cout << "PATTERN_ARGUMENT" << std::endl;*/
     B.type = optic::PATTERN;
     C.type = optic::PATTERN;
     A.type = optic::PATTERN;
