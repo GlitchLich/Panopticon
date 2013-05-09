@@ -33,6 +33,7 @@ arrayGuard([0 1 1])
 arrayGuard([0 0 1])
 arrayGuard([0 0 0])
 arrayGuard([6 6 6])
+arrayGuard(2)
 arrayGuard([ [1 0 0] [0 1 0] [0 0 1] ])
 
 
