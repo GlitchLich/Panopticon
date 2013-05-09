@@ -48,6 +48,8 @@
 //Precedence: Top is lowest, bottom is highest
 
 %left ASSIGN.
+%left COLON.
+%left NAME.
 %right BITOR.
 %left FUNCTION_DEC.
 %right COMPOSITION.
@@ -172,7 +174,7 @@ name_chain(A) ::= NAME(B).
     A.type = panopticon::STRING;
 }
 
-expr(A) ::= NAME(B). [COLON]
+expr(A) ::= NAME(B).
 {
     A.type = optic::UNDECLARED_VARIABLE;
     A.data.string = new optic::String(B.data.string->c_str());
@@ -651,30 +653,49 @@ bool(A) ::= BOOLEAN(B).
 //operators
 //=======================
 
-/*spec(A) ::= LPAREN WILDCARD COLON NAME(C) LPAREN. [COMMA]
+/*maybe_empty_name_chain ::= .*/
+maybe_empty_name_chain(A) ::= name_chain(B). [COLON]
+{
+    A.type = optic::ARRAY;
+    A.data.array = new optic::Array();
+    B.type = optic::STRING;
+    A.data.array->push_back(B);
+}
+maybe_empty_name_chain(A) ::= pattern(B). [COLON]
+{
+    A.type = optic::ARRAY;
+    A.data.array = new optic::Array();
+    A.data.array->push_back(B);
+}
+
+/*maybe_empty_name_chain(A) ::= maybe_empty_name_chain(B) name_chain(C). [COLON]
+{
+
+}
+
+maybe_empty_name_chain(A) ::= maybe_empty_name_chain(B) pattern(C). [COLON]
+{
+
+}*/
+
+assignment(A) ::= name_chain(B) maybe_empty_name_chain ASSIGN expr. [COLON]
+{
+    A = B;
+}
+
+assignment(A) ::= NAME(B) maybe_empty_name_chain ASSIGN expr. [COLON]
+{
+    A = B;
+}
+
+pattern(A) ::= LPAREN NAME(B) PREPEND NAME(C) RPAREN. [COLON]
 {
     std::cout << "PATTERN_ARGUMENT" << std::endl;
-    A = B;
-    A = C;
-    A.type = C.type = optic::UNDECLARED_VARIABLE;
-}*/
-
-name_chain(A) ::= name_chain(B) pattern_argument.
-{
-    A = B;
+    B.type = optic::PATTERN;
+    C.type = optic::PATTERN;
+    A.type = optic::PATTERN;
+    A.data.string = new optic::String("PATTERN ARGUMENT!");
 }
-
-pattern_argument(A) ::= LPAREN NAME(C) COLON NAME(D) RPAREN.
-{
-    A = C;
-    A = D;
-/*    A = B;*/
-}
-
-/*name_chain(A) ::= name_chain(B) pattern_argument. [LBRAC]
-{
-    A = B;
-}*/
 
 expr(A) ::= expr(B) PREPEND expr(C).
 {

@@ -52,7 +52,8 @@ false     { yylval.bval = 0;return BOOLEAN;}
     yylval.sval=strndup(yytext,(int)strlen(yytext));
     return NAME;
 }
-[+]+[+]           {  return PLUSPLUS; }
+[+]+[+]          {  return PLUSPLUS; }
+"::"          {  return PLUSPLUS; }
 "+"           {  return PLUS; }
 "-"           {  return MINUS; }
 "*"           {  return TIMES; }
@@ -81,9 +82,9 @@ false     { yylval.bval = 0;return BOOLEAN;}
 "="          { return ASSIGN;}
 "^"          { return POW;}
 "_"          { return WILDCARD;}
-":<"          { return APPEND;}
-">:"          { return PREPEND;}
-":"         {return COLON;}
+"<:"          { return APPEND;}
+":>"          { return PREPEND;}
+":"         {return PREPEND;}
 ">>"       {return COMPOSITION;}
 [\"][^"]*[\"] {
     col += (int)strlen(yytext);

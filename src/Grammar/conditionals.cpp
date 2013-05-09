@@ -23,40 +23,18 @@ bool resolve_guard(object& A, const object &condition_tree)
         A.type = VOID;
         return false;
     }
-    const Array* conditions = condition_tree.data.array->at(0).data.array;
-    const Array* operations = condition_tree.data.array->at(1).data.array;
 
-    if(conditions->size()!=operations->size())
-    {
-        out() << "Error: Mismtached condition and expression sizes in guard." << std::endl;
-        correct_parsing = false;
-        A.type = VOID;
-        return false;
-    }
 
-    for(int i=0;i<conditions->size();++i)
+    for(int i=0;i<condition_tree.data.array->size();++i)
     {
-        optic_stack.push_back(conditions->at(i));
+        optic_stack.push_back(condition_tree.data.array->at(i));
         evaluate_top();
-        const object& condition = optic_stack.back();
+        object result = copy_object(optic_stack.back());
         optic_stack.pop_back();
-        if(condition.type==BOOL)
+        if(result.type!=FAILED_CONDITION)
         {
-            if(condition.data.boolean)
-            {
-                optic_stack.push_back(operations->at(i));
-                evaluate_top();
-                A = optic_stack.back();
-                optic_stack.pop_back();
-                return true;
-            }
-        }
-        else
-        {
-            out() << "Error: Non-boolean found in Guard condition statement." << std::endl;
-            correct_parsing = false;
-            A.type = VOID;
-            return false;
+            A = result;
+            return true;
         }
     }
     out() << "Error: No suitable guard conditions found" << std::endl;
@@ -68,7 +46,7 @@ bool resolve_guard(object& A, const object &condition_tree)
 /**
  * @brief create_guard
  * @param function_call_name_and_args The name of the function that the guard resides in.
- * @param condition_tree The CONDITION_TREE to execute in the guard, An Array containing to Arrays
+ * @param condition_tree The CONDITION_TREE to execute in the guard, An Array containing two Arrays
  * @return
  */
 object create_guard(object &function_call_name_and_args, object &condition_tree)
@@ -77,9 +55,12 @@ object create_guard(object &function_call_name_and_args, object &condition_tree)
     guard.type = GUARD;
     guard.data.array = new Array();
     //2 branches, 1 for the function name/args, one for the condition_tree
-//    guard.data.array->reserve(2);
+    //    guard.data.array->reserve(2);
     guard.data.array->push_back(function_call_name_and_args);
+
     guard.data.array->push_back(condition_tree);
+
+
 
     return guard;
 }
@@ -92,24 +73,13 @@ object create_guard(object &function_call_name_and_args, object &condition_tree)
  */
 object create_condition_tree(const object &condition, const object &operation)
 {
+    object conditional_function;
+    store_operations(conditional_function,condition,operation,&conditional_function_call);
+
     object tree;
     tree.type = CONDITION_TREE;
     tree.data.array = new Array();
-    //two dimensional array with two branches, one side for conditions, one side for operations
-//    tree.data.array->reserve(2);
-
-    object condition_branch;
-    condition_branch.type = CONDITION_BRANCH;
-    condition_branch.data.array = new Array();
-    condition_branch.data.array->push_back(condition);
-    tree.data.array->push_back(condition_branch);
-
-    object operation_branch;
-    operation_branch.type = CONDITION_BRANCH;
-    operation_branch.data.array = new Array();
-    operation_branch.data.array->push_back(operation);
-    tree.data.array->push_back(operation_branch);
-
+    tree.data.array->push_back(conditional_function);
     return tree;
 }
 
@@ -121,8 +91,9 @@ object create_condition_tree(const object &condition, const object &operation)
  */
 void add_branch_to_tree(object &tree, const object &condition, const object &operation)
 {
-    tree.data.array->at(1).data.array->at(0).data.array->push_back(condition);
-    tree.data.array->at(1).data.array->at(1).data.array->push_back(operation);
+    object conditional_function;
+    store_operations(conditional_function,condition,operation,&conditional_function_call);
+    tree.data.array->push_back(conditional_function);
 }
 
 void add_wildcard_to_tree(object &tree, const object &operation)
@@ -132,8 +103,63 @@ void add_wildcard_to_tree(object &tree, const object &operation)
     wild_card.type = BOOL;
     wild_card.data.boolean = true;
 
-    tree.data.array->at(1).data.array->at(0).data.array->push_back(wild_card);
-    tree.data.array->at(1).data.array->at(1).data.array->push_back(operation);
+    object conditional_function;
+    store_operations(conditional_function,wild_card,operation,&conditional_function_call);
+    tree.data.array->push_back(conditional_function);
+}
+
+bool conditional_function_call(object& result_A,const object& conditional_B,const object& operation_tree_C)
+{
+    if(conditional_B.type==BOOL)
+    {
+        if(conditional_B.data.boolean)
+        {
+            optic_stack.push_back(operation_tree_C);
+            evaluate_top();
+            result_A = optic_stack.back();
+            optic_stack.pop_back();
+            return true;
+        }
+    }
+    else if(conditional_B.type == OPERATION_TREE)
+    {
+        optic_stack.push_back(conditional_B);
+        evaluate_top();
+
+        const object& result_B = optic_stack.back();
+        optic_stack.pop_back();
+        if(result_B.type == BOOL)
+        {
+            //resolve here
+            if(result_B.data.boolean)
+            {
+                optic_stack.push_back(operation_tree_C);
+                evaluate_top();
+                result_A = optic_stack.back();
+                optic_stack.pop_back();
+                return true;
+            }
+            else
+            {
+                result_A.type = FAILED_CONDITION;
+                return true;
+            }
+        }
+        else
+        {
+            out() << "Error: Non-boolean found in Guard condition statement." << std::endl;
+            correct_parsing = false;
+            result_A.type = VOID;
+            return false;
+        }
+    }
+    else
+    {
+        out() << "Error: Non-boolean found in Guard condition statement." << std::endl;
+        correct_parsing = false;
+        result_A.type = VOID;
+        return false;
+    }
 }
 
 }
