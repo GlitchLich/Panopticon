@@ -186,7 +186,6 @@ bool evaluate_unary_operator(const object& operator_object,bool expand = true)
             arg = optic_stack.back();
             optic_stack.pop_back();
 
-
             if(arg.type == ARRAY && expand)
             {
                 object new_array;

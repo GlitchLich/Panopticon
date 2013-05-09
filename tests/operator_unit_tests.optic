@@ -23,7 +23,10 @@ g( f( 1 ) )
 f( 1 ) >> g
 f( 1 ) >> g()
 g( f( g( f( g( f([2 3 4 5]) ) ) ) ) )
-f([2 3 4 5]) >> g >> f >> g >> f >> g
+f([2 3 4 5]) >> g >> f >> g >> f >> g >> f
+
+h x y = x * y
+
 
 //Partial application also works :) Inserts into the first argument:
 f2 x y = x * y
@@ -53,6 +56,7 @@ crossTheStreams(97)
 crossTheStreams(98)
 crossTheStreams(99)
 crossTheStreams(100)
+crossTheStreams([100 100])
 
 //Function Arrays
 // Works
