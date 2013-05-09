@@ -143,8 +143,13 @@ bool conditional_function_call(object& result_A,const object& conditional_B,cons
         {
             optic_stack.push_back(operation_tree_C);
             evaluate_top();
-            result_A = optic_stack.back();
+            result_A = copy_object(optic_stack.back());
             optic_stack.pop_back();
+            return true;
+        }
+        else
+        {
+            result_A.type = FAILED_CONDITION;
             return true;
         }
     }
@@ -162,7 +167,7 @@ bool conditional_function_call(object& result_A,const object& conditional_B,cons
             {
                 optic_stack.push_back(operation_tree_C);
                 evaluate_top();
-                result_A = optic_stack.back();
+                result_A = copy_object(optic_stack.back());
                 optic_stack.pop_back();
                 return true;
             }
