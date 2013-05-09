@@ -29,39 +29,25 @@ bool resolve_guard(object& A, const object &condition_tree)
         return false;
     }
 
-    optic_stack.push_back(condition_tree.data.array->at(0));
-    evaluate_top();
-    const object& result = optic_stack.back();
-    optic_stack.pop_back();
-    std::cout << "GUARD RESULT TYPE: " << result.type;
-    if(result.type!=FAILED_CONDITION)
+    for(int i=0;i<condition_tree.data.array->size();++i)
     {
-        A = copy_object(result);
-        return true;
-    }
-    else if(result.type==FAILED_CONDITION)
-    {
-        object bool_func;
-        bool_func.type = OPERATION;
-        bool_func.data.operator_func = evaluate_guard;
+        optic_stack.push_back(condition_tree.data.array->at(i));
+        evaluate_top();
+        const object& result = optic_stack.back();
+        optic_stack.pop_back();
 
-        for(int i=1;i<condition_tree.data.array->size();++i)
+        if(result.type==ERROR)
         {
-            optic_stack.push_back(condition_tree.data.array->at(i));
-            evaluate_top();
-            const object& result = optic_stack.back();
-            optic_stack.pop_back();
-
-            if(result.type!=FAILED_CONDITION)
-            {
-                A = copy_object(result);
-                return true;
-            }
+            correct_parsing = false;
+            A.type = VOID;
+            return false;
         }
-    }
-    else if(result.type==ARRAY)
-    {
-        //some recursive scheme
+        else if(result.type!=FAILED_CONDITION)
+        {
+            A = copy_object(result);
+            optic_stack.push_back(A);
+            return true;
+        }
     }
 
     out() << "Error: No suitable guard conditions found" << std::endl;
@@ -84,10 +70,7 @@ object create_guard(object &function_call_name_and_args, object &condition_tree)
     //2 branches, 1 for the function name/args, one for the condition_tree
     //    guard.data.array->reserve(2);
     guard.data.array->push_back(function_call_name_and_args);
-
     guard.data.array->push_back(condition_tree);
-
-
 
     return guard;
 }
@@ -101,8 +84,7 @@ object create_guard(object &function_call_name_and_args, object &condition_tree)
 object create_condition_tree(const object &condition, const object &operation)
 {
     object conditional_function;
-    store_operations(conditional_function,condition,operation,&conditional_function_call);
-
+    store_operations(conditional_function,condition,operation,&conditional_function_call,false);
     object tree;
     tree.type = CONDITION_TREE;
     tree.data.array = new Array();
@@ -119,8 +101,8 @@ object create_condition_tree(const object &condition, const object &operation)
 void add_branch_to_tree(object &tree, const object &condition, const object &operation)
 {
     object conditional_function;
-    store_operations(conditional_function,condition,operation,&conditional_function_call);
-    tree.data.array->push_back(conditional_function);
+    store_operations(conditional_function,condition,operation,&conditional_function_call,false);
+    tree.data.array->at(1).data.array->push_back(conditional_function);
 }
 
 void add_wildcard_to_tree(object &tree, const object &operation)
@@ -131,15 +113,21 @@ void add_wildcard_to_tree(object &tree, const object &operation)
     wild_card.data.boolean = true;
 
     object conditional_function;
-    store_operations(conditional_function,wild_card,operation,&conditional_function_call);
-    tree.data.array->push_back(conditional_function);
+    store_operations(conditional_function,wild_card,operation,&conditional_function_call,false);
+    tree.data.array->at(1).data.array->push_back(conditional_function);
 }
 
 bool conditional_function_call(object& result_A,const object& conditional_B,const object& operation_tree_C)
 {
-    if(conditional_B.type==BOOL)
+    optic_stack.push_back(conditional_B);
+    evaluate_top();
+
+    const object& result_B = optic_stack.back();
+    optic_stack.pop_back();
+    if(result_B.type == BOOL)
     {
-        if(conditional_B.data.boolean)
+        //resolve here
+        if(result_B.data.boolean)
         {
             optic_stack.push_back(operation_tree_C);
             evaluate_top();
@@ -153,43 +141,19 @@ bool conditional_function_call(object& result_A,const object& conditional_B,cons
             return true;
         }
     }
-    else if(conditional_B.type == OPERATION_TREE)
+    else if(result_B.type == ARRAY)
     {
-        optic_stack.push_back(conditional_B);
-        evaluate_top();
-
-        const object& result_B = optic_stack.back();
-        optic_stack.pop_back();
-        if(result_B.type == BOOL)
-        {
-            //resolve here
-            if(result_B.data.boolean)
-            {
-                optic_stack.push_back(operation_tree_C);
-                evaluate_top();
-                result_A = copy_object(optic_stack.back());
-                optic_stack.pop_back();
-                return true;
-            }
-            else
-            {
-                result_A.type = FAILED_CONDITION;
-                return true;
-            }
-        }
-        else
-        {
-            out() << "Error: Non-boolean found in Guard condition statement." << std::endl;
-            correct_parsing = false;
-            result_A.type = VOID;
-            return false;
-        }
+        out() << "Error: Non-boolean found in Guard condition statement." << std::endl;
+        out() << "Object is of type ARRAY, consider using map function. See Help for details." << std::endl;
+        correct_parsing = false;
+        result_A.type = ERROR;
+        return false;
     }
     else
     {
         out() << "Error: Non-boolean found in Guard condition statement." << std::endl;
         correct_parsing = false;
-        result_A.type = VOID;
+        result_A.type = ERROR;
         return false;
     }
 }

@@ -438,24 +438,31 @@ bool dictionary_keys(object& keys, const object& dict)
     return true;
 }
 
-bool dictionary_values(object& keys, const object& dict)
+bool dictionary_values(object& values, const object& dict)
 {
-    keys.type = ARRAY;
-    Array* key_array = new Array();
+    values.type = ARRAY;
+    Array* value_array = new Array();
     Dictionary::iterator iter = dict.data.dictionary->begin();
 
     while(iter != dict.data.dictionary->end())
     {
-        key_array->push_back(iter->second);
+        value_array->push_back(iter->second);
         ++iter;
     }
 
-    keys.data.array = key_array;
+    values.data.array = value_array;
     return true;
 }
 
 bool dictionary_lookup(object& value, const object& dict, const object& key)
 {
+    if(key.type != STRING)
+    {
+        out() << "Dictionary key must be a String." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+
     Dictionary::iterator find = dict.data.dictionary->find(*key.data.string);
     if(find != dict.data.dictionary->end())
         value = find->second;
@@ -467,6 +474,13 @@ bool dictionary_lookup(object& value, const object& dict, const object& key)
 
 bool dictionary_contains(object &boolean, const object &dict, const object &key)
 {
+    if(key.type != STRING)
+    {
+        out() << "Dictionary key must be a String." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+
     boolean.type = BOOL;
     boolean.data.boolean = dict.data.dictionary->find(*key.data.string) != dict.data.dictionary->end();
     return true;

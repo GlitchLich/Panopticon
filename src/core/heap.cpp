@@ -21,7 +21,7 @@ void init_heap()
     dynamic_scope_pointer = global_scope.begin();
 }
 
-void push_scope(Dictionary *scope)
+void push_scope(Dictionary* scope)
 {
     global_scope.push_back(scope);
     current_scope = scope;

@@ -54,7 +54,7 @@ bool create_dictionary(object& dict);
 bool delete_dictionary(object& dict);
 bool print_dictionary(const object& dict);
 bool dictionary_keys(object& keys, const object& dict); // Returns array of keys
-bool dictionary_values(object& keys, const object& dict); // returns array of values
+bool dictionary_values(object& values, const object& dict); // returns array of values
 bool dictionary_lookup(object& value, const object& dict, const object& key);
 bool dictionary_contains(object &boolean, const object &dict, const object &key);
 
