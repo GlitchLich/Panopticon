@@ -10,6 +10,8 @@
 n*m+z
 n*m+z
 
+headTailFunc z (x:xs) = x : xs
+
 //Composition operator WORKS
 //Takes up same amount of space, but looks waaaaaay clearer IMO
 //Pass expression on the left as the first argument to the func on the right:
@@ -22,14 +24,14 @@ g x = x * 4
 g( f( 1 ) )
 f( 1 ) >> g
 f( 1 ) >> g()
-g( f( g( f( g( f([2 3 4 5) ) ) ) ) )
-f([2 3 4 5]) >> g >> f >> g >> f >> g
+g( f( g( f( g( f([2 3 4 5]) ) ) ) ) )
+[2 3 4 5] >> f >> g >> f >> g >> f >> g
 
 //Partial application also works :) Inserts into the first argument:
 f2 x y = x * y
 g2 x y = (x * 2) / y
-g2( f2( 2 3 )  10 )
-f2(2 3) >> g2( 10 )
+g2( f2( 2 3 ) * 4 10 )
+2 >> f( 3 ) * 4 >> g2( 10 )
 
 //embedable into other functions as well:
 embededStream x y = x >> y
@@ -56,7 +58,7 @@ crossTheStreams(100)
 
 //Function Arrays
 // Works
-doubler x = x *2
+doubler x = x * 2
 zeroOut x = x * 0
 doubleNeg x = x * (-2)
 spreader = [doubler zeroOut doubleNeg]
@@ -103,98 +105,108 @@ notEnoughArgs[](2)
 //Prepending
 
 //Raw Prepend, Right associative, inserts INTO array
-1 >: 2 >: 3 >: 4
-[666] >: [2 3 4]
+1:>2:>3:>4
+//or
+1:2:3:4
+[666] : [2 3 4]
 
-1 >: 1
-1 >: true
-1 >: "hey"
-1 >: [2 3 4]
+myArray = [ 2 3 4 5 ]
+47 : myArray[0]
 
-true >: 1
-true >: false
-true >: "hey"
-true >: [2 3 4]
+1 : 1
+1 : true
+1 : "hey"
+1 : [2 3 4]
 
-"hey" >: 1
-"hey" >: true
-"hey" >: "hey"
-"hey" >: [2 3 4]
+true : 1
+true : false
+true : "hey"
+true : [2 3 4]
 
-[2 3 4] >: 1
-[2 3 4] >: true
-[2 3 4] >: "hey"
-[2 3 4] >: [2 3 4]
+"hey" : 1
+"hey" : true
+"hey" : "hey"
+"hey" : [2 3 4]
+
+[2 3 4] : 1
+[2 3 4] : true
+[2 3 4] : "hey"
+[2 3 4] : [2 3 4]
 
 
 //Raw Append, Left associative, inserts INTO array
-1 :< 2 :< 3 :< 4
-[2 3 4] :< [666]
+1 <: 2 <: 3 <: 4
+[2 3 4] <: [666]
 
-1 :< 1
-1 :< true
-1 :< "hey"
-1 :< [2 3 4]
+1 <: 1
+1 <: true
+1 <: "hey"
+1 <: [2 3 4]
 
-true :< 1
-true :< false
-true :< "hey"
-true :< [2 3 4]
+true <: 1
+true <: false
+true <: "hey"
+true <: [2 3 4]
 
-"hey" :< 1
-"hey" :< true
-"hey" :< "hey"
-"hey" :< [2 3 4]
+"hey" <: 1
+"hey" <: true
+"hey" <: "hey"
+"hey" <: [2 3 4]
 
-[2 3 4] :< 1
-[2 3 4] :< true
-[2 3 4] :< "hey"
-[2 3 4] :< [2 3 4]
+[2 3 4] <: 1
+[2 3 4] <: true
+[2 3 4] <: "hey"
+[2 3 4] <: [2 3 4]
 
 printArray = print([0 1 2 3])
 printArray
 //Concat, Left associative, puts things at same level
 //When concacting with strings, creates a new string (but Array takes precedence).
-1 ++ 2 ++ 3 ++ 4
-[666] ++ [ 2 3 4 ]
+1::2::3::4
+[666] :: [ 2 3 4 ]
+//or
+[666] ++ [2 3 4]
 
-1++1
-1++true
-1++"hey"
-1++[2 3 4]
+1::1
+1::true
+1::"hey"
+1::[2 3 4]
 
-true++1
-true++false
-true++"hey"
-true++[2 3 4]
+true::1
+true::false
+true::"hey"
+true::[2 3 4]
 
-"hey"++1
-"hey"++true
-"hey"++"hey"
-"hey"++[2 3 4]
+"hey"::1
+"hey"::true
+"hey"::"hey"
+"hey"::[2 3 4]
 
-[2 3 4]++1
-[2 3 4]++true
-[2 3 4]++"hey"
-[2 3 4]++[2 3 4]
+[2 3 4]::1
+[2 3 4]::true
+[2 3 4]::"hey"
+[2 3 4]::[2 3 4]
 
-prependFunc x array = x >: array
+prependFunc x array = x : array
 prependFunc(20 [0 1 2 3])
 prependFunc([true false] [0 1 2 3])
 
-prependFunc2 p x y = [ p x ] >: y
+prependFunc2 p x y = [ p x ] : y
 prependFunc2(20 [0 1 2 3] [0 1 2 3] )
 
-prependFunc3 x array = x*2 >: array+20
+prependFunc3 x array = x*2 :> array+20
 prependFunc3(20 [0 1 2 3])
 
-prependFunc4 array = array[0] >: array
+prependFunc4 array = array[0] :> array
 prependFunc4([0 1 2 3])
 
+appendFunc array = array <: array[0]
+appendFunc([0 1 2 3])
+
 simplePrependLoop x a t
-	| t > 0 	= x >: simplePrependLoop(x a t-1)
+	| t > 0 	= x : simplePrependLoop(x a t-1)
 	_			= a
-simplePrependLoop(0 [0 1 2 3] 10)
+simplePrependLoop(0 [0 1 2 3] 3)
 
 simpleAppendLoop x a t
 	| t > 0 	= simpleAppendLoop(x a t-1) :< x
@@ -207,20 +219,20 @@ prependFunc("test" pArray)
 pArray
 
 //Still non destructive
-"test2" >: pArray
+"test2" : pArray
 pArray
 
 //Simply rebuilds the list * 2
 //(x:xs) Head and Tail pattern matching 
 //(can use any names you want, x:xs is standard however
-headTailFunc (x:xs) = change >: headTilFunc(xs)
+headTailFunc (x:xs) = change : headTilFunc(xs)
 	where
 		change = x * 2
 //Head only pattern matching
-headTailFunc2 (x:xs) = x >: xs
+headTailFunc2 (x:xs) = x : xs
 
 //Tail only pattern matching
-headTailFunc3 (_:xs) = x >: xs
+headTailFunc3 (_:xs) = x : xs
 
 //Where
 subvariable = x * z
@@ -331,7 +343,7 @@ chain2( [ 3  1 ] 2 )
 
 
 whereGuardz x
-	| x + y > 4 	= 0
+	| x + y > 4 	= [0 1 2 3] * 3
 	| x + y == 4 	= 2
 	_				= 1
 	where

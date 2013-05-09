@@ -102,7 +102,11 @@ enum Type
     CONDITION_TREE, //26
     CONDITION_BRANCH, //27
     NO_EXPANSION_OPERATION, //28 For those operations that you DON'T want to multichannel expand
-    UNARY_NO_EXPANSION_OPERATION //29 For those unary operations that you don't want to expand.
+    UNARY_NO_EXPANSION_OPERATION, //29 For those unary operations that you don't want to expand.
+    PATTERN, //30 for pattern matching
+    HEAD, //For Arrays/List sorting/construction
+    TAIL, //For Arrays/List sorting/construction
+    FAILED_CONDITION //Condition test failed
 };
 
 // Forward declarations
