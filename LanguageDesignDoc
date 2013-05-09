@@ -18,7 +18,7 @@ Primitive
 Variable
 
 Need:
--Scope! No access to variables outside of scope. There are variables at global scope.
+-Dynamic Scope! 
 -Always pass by value
 -Streams/Patterns
 -Maybe,IO,Networking

@@ -7,6 +7,11 @@
 namespace panopticon
 {
 
+bool evaluate_guard(object& A, const object& boolean, const object& true_func)
+{
+
+}
+
 /**
  * @brief resolve_guard
  * @param A The result. Either an operation tree if one condition is true, or void.

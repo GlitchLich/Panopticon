@@ -9,9 +9,9 @@ namespace panopticon
 
 heap_t global_scope;
 heap_t::iterator dynamic_scope_pointer;
-Map initial_scope;
-Map::iterator scope_pointer;
-Map* current_scope;
+Dictionary initial_scope;
+Dictionary::iterator scope_pointer;
+Dictionary* current_scope;
 
 void init_heap()
 {
@@ -21,7 +21,7 @@ void init_heap()
     dynamic_scope_pointer = global_scope.begin();
 }
 
-void push_scope(Map* scope)
+void push_scope(Dictionary* scope)
 {
     global_scope.push_back(scope);
     current_scope = scope;

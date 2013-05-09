@@ -89,6 +89,7 @@ crossTheStreams(97)
 crossTheStreams(98)
 crossTheStreams(99)
 crossTheStreams(100)
+crossTheStreams([100 100])
 
 //Function Arrays
 // Works

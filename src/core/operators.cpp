@@ -138,6 +138,9 @@ bool delete_array(object& a)
         case ARRAY:
             delete_array(b);
             break;
+        case DICTIONARY:
+            delete_dictionary(b);
+            break;
         }
     }
     delete a.data.array;
@@ -260,6 +263,9 @@ bool print_object(const object &A)
     case panopticon::ARRAY:
         panopticon::print_array(A);
         break;
+    case panopticon::DICTIONARY:
+        print_dictionary(A);
+        break;
     case panopticon::VARIABLE:
     case panopticon::UNDECLARED_VARIABLE:
 
@@ -315,6 +321,169 @@ bool unary_print_object(object &A, const object &B)
 {
     A = copy_object(B);
     print_object(B);
+}
+
+bool create_dictionary(object& dict)
+{
+    dict.data.dictionary = new Dictionary();
+    dict.type = DICTIONARY;
+    return true;
+}
+
+bool delete_dictionary(object& dict)
+{
+    Dictionary::iterator iter = dict.data.dictionary->begin();
+
+    while(iter != dict.data.dictionary->end())
+    {
+        panopticon::object& value = iter->second;
+
+        switch(value.type)
+        {
+        case STRING:
+            delete value.data.string;
+            break;
+
+        case OPERATION_TREE:
+        case ARRAY:
+            delete_array(value);
+
+        case DICTIONARY:
+            delete_dictionary(value);
+            break;
+
+        default:
+            break;
+        }
+
+        ++iter;
+    }
+
+    dict.data.dictionary->clear();
+    delete dict.data.dictionary;
+    return true;
+}
+
+bool print_dictionary(const object& dict)
+{
+    Dictionary::iterator iter = dict.data.dictionary->begin();
+
+    out() << "{ ";
+
+    while(iter != dict.data.dictionary->end())
+    {
+        out() << "\"" << iter->first << "\" : ";
+
+        panopticon::object& value = iter->second;
+
+        switch(value.type)
+        {
+        case STRING:
+            out() << value.data.string;
+            break;
+
+        case NUMBER:
+            out() << value.data.number;
+            break;
+
+        case BOOL:
+            out() << value.data.boolean;
+            break;
+
+        case OPERATION_TREE:
+        case ARRAY:
+            print_array(value);
+
+        case DICTIONARY:
+            print_dictionary(value);
+            break;
+
+        case FUNCTION:
+            out() << "Function";
+            break;
+
+        case NIL:
+            out() << "Nil";
+            break;
+
+        default:
+            break;
+        }
+
+        out() << " ";
+
+        ++iter;
+    }
+
+    out() << "}" << std::endl;
+    return true;
+}
+
+bool dictionary_keys(object& keys, const object& dict)
+{
+    keys.type = ARRAY;
+    Array* key_array = new Array();
+    Dictionary::iterator iter = dict.data.dictionary->begin();
+
+    while(iter != dict.data.dictionary->end())
+    {
+        object key;
+        key.type = STRING;
+        key.data.string = new String(iter->first);
+        key_array->push_back(key);
+        ++iter;
+    }
+
+    keys.data.array = key_array;
+    return true;
+}
+
+bool dictionary_values(object& values, const object& dict)
+{
+    values.type = ARRAY;
+    Array* value_array = new Array();
+    Dictionary::iterator iter = dict.data.dictionary->begin();
+
+    while(iter != dict.data.dictionary->end())
+    {
+        value_array->push_back(iter->second);
+        ++iter;
+    }
+
+    values.data.array = value_array;
+    return true;
+}
+
+bool dictionary_lookup(object& value, const object& dict, const object& key)
+{
+    if(key.type != STRING)
+    {
+        out() << "Dictionary key must be a String." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+
+    Dictionary::iterator find = dict.data.dictionary->find(*key.data.string);
+    if(find != dict.data.dictionary->end())
+        value = find->second;
+    else
+        value.type = NIL;
+
+    return true;
+}
+
+bool dictionary_contains(object &boolean, const object &dict, const object &key)
+{
+    if(key.type != STRING)
+    {
+        out() << "Dictionary key must be a String." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+
+    boolean.type = BOOL;
+    boolean.data.boolean = dict.data.dictionary->find(*key.data.string) != dict.data.dictionary->end();
+    return true;
 }
 
 bool concatenate_arrays(object &a,object b, object c)
@@ -735,7 +904,7 @@ bool call_function(object& A, const object& B, const object& C)
     }
 
     std::string function_name = function.data.function->name;
-    Map context;
+    Dictionary context;
     context.insert(std::make_pair(function_name, function));
 
     if(function.data.function->arguments.size() > 1) // if it has any arguments

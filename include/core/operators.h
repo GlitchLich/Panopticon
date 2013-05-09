@@ -43,66 +43,75 @@ namespace panopticon
 
 
 //GENERAL operations
-extern object copy_object(const object &original);
-extern bool delete_object(object& obj);
-extern bool print_object(const object& A);
-extern object convert_to_string( object& original);
-extern object create_void_tree();
+object copy_object(const object &original);
+bool delete_object(object& obj);
+bool print_object(const object& A);
+object convert_to_string( object& original);
+object create_void_tree();
 
-//extern object de_tree(object& obj);
-extern bool concatenate_arrays(object &a, object b, object c);
-extern bool create_array(object &a);
-extern bool print_array(const object &A, int arrayNum=0, bool isTree=false);
-extern bool delete_array(object& a);
-extern bool unary_print_object(object &A, const object &B);
+// Dictionaries
+bool create_dictionary(object& dict);
+bool delete_dictionary(object& dict);
+bool print_dictionary(const object& dict);
+bool dictionary_keys(object& keys, const object& dict); // Returns array of keys
+bool dictionary_values(object& values, const object& dict); // returns array of values
+bool dictionary_lookup(object& value, const object& dict, const object& key);
+bool dictionary_contains(object &boolean, const object &dict, const object &key);
 
-extern bool object_operator_array(object &a,const object &obj, const object& array, operator_function func);
-extern bool array_operator_object(object &a,const object &array,const object& obj, operator_function func);
-extern bool recursive_apply(object &a,const object &obj1,const object& obj2, operator_function func);
-extern bool object_operator_object(object& a, object& b, object& c, operator_function func);
-extern bool array_operator_array(object& a,const object& array1,const object& array2, operator_function func);
-extern bool parse_operations(object& a, const object& b, const object& c, operator_function func);
-extern bool resolve_stack_from_parser(const object &operation_tree, bool resolve_entire_stack = false);
-extern bool create_tree(object&a,const object& obj);
-extern bool store_operations(object& a,const object& obj1,unary_operator_function func,bool expand = true);
-extern bool store_operations(object& a, const object& obj1, const object& obj2, operator_function func, bool expand = true);
-extern bool store_operations(object& a, const object& obj1, const object& obj2, bool expand = true);
+//object de_tree(object& obj);
+bool concatenate_arrays(object &a, object b, object c);
+bool create_array(object &a);
+bool print_array(const object &A, int arrayNum=0, bool isTree=false);
+bool delete_array(object& a);
+bool unary_print_object(object &A, const object &B);
 
-extern bool create_function(object&A, const object& B, const object& C);
-extern bool call_function(object& A, const object& B, const object& C);
-extern bool call_function_array(object& A, const object& B, const object& C);
-extern bool resolve_function_array(object& A, const object& B);
-extern bool handle_stack(object &A, Function* function);
+bool object_operator_array(object &a,const object &obj, const object& array, operator_function func);
+bool array_operator_object(object &a,const object &array,const object& obj, operator_function func);
+bool recursive_apply(object &a,const object &obj1,const object& obj2, operator_function func);
+bool object_operator_object(object& a, object& b, object& c, operator_function func);
+bool array_operator_array(object& a,const object& array1,const object& array2, operator_function func);
+bool parse_operations(object& a, const object& b, const object& c, operator_function func);
+bool resolve_stack_from_parser(const object &operation_tree, bool resolve_entire_stack = false);
+bool create_tree(object&a,const object& obj);
+bool store_operations(object& a,const object& obj1,unary_operator_function func,bool expand = true);
+bool store_operations(object& a, const object& obj1, const object& obj2, operator_function func, bool expand = true);
+bool store_operations(object& a, const object& obj1, const object& obj2, bool expand = true);
+
+bool create_function(object&A, const object& B, const object& C);
+bool call_function(object& A, const object& B, const object& C);
+bool call_function_array(object& A, const object& B, const object& C);
+bool resolve_function_array(object& A, const object& B);
+bool handle_stack(object &A, Function* function);
 
 // Operators
-extern bool serial(object& A, const object &B, const object &C);
-extern bool plus(object&A, const object& B, const object& C);
-extern bool minus(object&A, const object& B, const object& C);
-extern bool divide(object&A, const object& B, const object& C);
-extern bool multiply(object&A, const object& B, const object& C);
-extern bool modulo(object&A, const object& B, const object& C);
-extern bool value_pow(object&A, const object& B, const object& C);
-extern bool equal_to(object&A, const object& B, const object& C);
-extern bool not_equal_to(object&A, const object& B, const object& C);
-extern bool less_than(object&A, const object& B, const object& C);
-extern bool greater_than(object&A, const object& B, const object& C);
-extern bool lore(object&A, const object& B, const object& C);
-extern bool gore(object&A, const object& B, const object& C);
-extern bool value_and(object&A, const object& B, const object& C);
-extern bool value_or(object&A, const object& B, const object& C);
-extern bool not_value(object&A, const object& B);
-extern bool shift_left(object&A, const object& B, const object& C);
-extern bool shift_right(object&A, const object& B, const object& C);
-extern bool bit_and(object&A, const object& B, const object& C);
-extern bool bit_or(object&A, const object& B, const object& C);
-extern bool bit_not(object&A,const  object& B);
-extern bool bit_xor(object&A, const object& B, const object& C);
-extern bool assign_variable(object&A, const object& B, const object& C);
-extern bool retrieve_variable(object&A, object& B);
-extern bool u_minus(object&A, const object& B);
+bool serial(object& A, const object &B, const object &C);
+bool plus(object&A, const object& B, const object& C);
+bool minus(object&A, const object& B, const object& C);
+bool divide(object&A, const object& B, const object& C);
+bool multiply(object&A, const object& B, const object& C);
+bool modulo(object&A, const object& B, const object& C);
+bool value_pow(object&A, const object& B, const object& C);
+bool equal_to(object&A, const object& B, const object& C);
+bool not_equal_to(object&A, const object& B, const object& C);
+bool less_than(object&A, const object& B, const object& C);
+bool greater_than(object&A, const object& B, const object& C);
+bool lore(object&A, const object& B, const object& C);
+bool gore(object&A, const object& B, const object& C);
+bool value_and(object&A, const object& B, const object& C);
+bool value_or(object&A, const object& B, const object& C);
+bool not_value(object&A, const object& B);
+bool shift_left(object&A, const object& B, const object& C);
+bool shift_right(object&A, const object& B, const object& C);
+bool bit_and(object&A, const object& B, const object& C);
+bool bit_or(object&A, const object& B, const object& C);
+bool bit_not(object&A,const  object& B);
+bool bit_xor(object&A, const object& B, const object& C);
+bool assign_variable(object&A, const object& B, const object& C);
+bool retrieve_variable(object&A, object& B);
+bool u_minus(object&A, const object& B);
 
 //NOT DONE
-extern bool plusplus(object&A, const object& B, const object& C);
-extern bool index(object&A, const object& B, const object& C);
+bool plusplus(object&A, const object& B, const object& C);
+bool index(object&A, const object& B, const object& C);
 }
 #endif // OPERATORS_H

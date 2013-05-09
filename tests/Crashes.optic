@@ -2,11 +2,40 @@
 // Panopticon Crashes
 //////////////////////
 
+0:1:2:3:4:
+::0::1::2::3::4
+
+rt_someFunc()
+rt|someFunc()
+rt/someFunc()
+rt~someFunc()
+rt#someFunc()
+rt,someFunc()
+rt\someFunc()
+rt&someFunc()
+rr<>someFunc()
+rt#someFunc( 1 2 3 )
+rt~someOtherFunc( 1 2 3)
+<rt>someFunc(1 2 3)
+[rt]someFunc( 1 2 3)
+(rt someFunc( 1 2 3 ))
+{rt someFunc( 1 2 3 )}
+|rt someFunc( 1 2 3 )|
 // Crashes
 
 
 // Bugs
 1. Guards aren't multi-channel expanding.
+
+
+crossTheStreams x
+	| x < 100 && x > 0	= crossTheStreams(x + 2) - 1 >> crossTheStreams
+	_					= x * 2
+
+crossTheStreams(1)
+crossTheStreams(91)
+crossTheStreams([91 91])
+
 
 2. Double uninitialized variables crash
 
