@@ -40,8 +40,6 @@ bool resolve_guard(object& A, const object &condition_tree)
         evaluate_top();
         const object& condition = optic_stack.back();
         optic_stack.pop_back();
-        out() << "Condition: ";
-        print_object(condition);
         if(condition.type==BOOL)
         {
             if(condition.data.boolean)
@@ -112,11 +110,6 @@ object create_condition_tree(const object &condition, const object &operation)
     operation_branch.data.array->push_back(operation);
     tree.data.array->push_back(operation_branch);
 
-    out() << "Condition: ";
-    print_object(condition);
-    out() << "Operation: ";
-    print_object(operation);
-
     return tree;
 }
 
@@ -130,11 +123,6 @@ void add_branch_to_tree(object &tree, const object &condition, const object &ope
 {
     tree.data.array->at(1).data.array->at(0).data.array->push_back(condition);
     tree.data.array->at(1).data.array->at(1).data.array->push_back(operation);
-
-    out() << "Condition: ";
-    print_object(condition);
-    out() << "Operation: ";
-    print_object(operation);
 }
 
 void add_wildcard_to_tree(object &tree, const object &operation)
@@ -146,11 +134,6 @@ void add_wildcard_to_tree(object &tree, const object &operation)
 
     tree.data.array->at(1).data.array->at(0).data.array->push_back(wild_card);
     tree.data.array->at(1).data.array->at(1).data.array->push_back(operation);
-
-//    out() << "Condition: ";
-//    print_object(wild_card);
-//    out() << "Operation: ";
-//    print_object(operation);
 }
 
 }

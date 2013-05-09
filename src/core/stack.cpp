@@ -74,11 +74,18 @@ bool evaluate_binary_operator(const object& operator_object, bool expand = true)
                     optic_stack.push_back(copy_object(arg2.data.array->at(i % arg2.data.array->size())));
                     optic_stack.push_back(copy_object(arg1.data.array->at(i % arg1.data.array->size())));
                     optic_stack.push_back(operator_object);
-                    evaluate_top();
-                    // delete_object(larger_array->data.array->at(i));
-                    // (*new_array.data.array)[i] = optic_stack.back();
-                    new_array.data.array->push_back(optic_stack.back());
-                    optic_stack.pop_back();
+
+                    if(evaluate_top())
+                    {
+                        new_array.data.array->push_back(optic_stack.back());
+                        optic_stack.pop_back();
+                    }
+
+                    else
+                    {
+                        clear_stack();
+                        return false;
+                    }
                 }
 
                 result = new_array;
@@ -95,11 +102,19 @@ bool evaluate_binary_operator(const object& operator_object, bool expand = true)
                     optic_stack.push_back(copy_object(arg2));
                     optic_stack.push_back(copy_object(arg1.data.array->at(i)));
                     optic_stack.push_back(operator_object);
-                    evaluate_top();
-                    // delete_object(arg1.data.array->at(i));
-                    // (*arg1.data.array)[i] = optic_stack.back();
-                    new_array.data.array->push_back(optic_stack.back());
-                    optic_stack.pop_back();
+
+                    if(evaluate_top())
+                    {
+                        new_array.data.array->push_back(optic_stack.back());
+                        optic_stack.pop_back();
+                    }
+
+                    else
+                    {
+                        clear_stack();
+                        return false;
+                    }
+
                 }
 
                 result = new_array;
@@ -116,11 +131,18 @@ bool evaluate_binary_operator(const object& operator_object, bool expand = true)
                     optic_stack.push_back(copy_object(arg2.data.array->at(i)));
                     optic_stack.push_back(copy_object(arg1));
                     optic_stack.push_back(operator_object);
-                    evaluate_top();
-                    // delete_object(arg2.data.array->at(i));
-                    // (*arg2.data.array)[i] = optic_stack.back();
-                    new_array.data.array->push_back(optic_stack.back());
-                    optic_stack.pop_back();
+
+                    if(evaluate_top())
+                    {
+                        new_array.data.array->push_back(optic_stack.back());
+                        optic_stack.pop_back();
+                    }
+
+                    else
+                    {
+                        clear_stack();
+                        return false;
+                    }
                 }
 
                 result = new_array;
@@ -175,11 +197,13 @@ bool evaluate_unary_operator(const object& operator_object,bool expand = true)
                 {
                     optic_stack.push_back(copy_object(arg.data.array->at(i)));
                     optic_stack.push_back(operator_object);
-                    evaluate_top();
-                    // delete_object(arg.data.array->at(i));
-                    // (*arg.data.array)[i] = optic_stack.back();
-                    new_array.data.array->push_back(optic_stack.back());
-                    optic_stack.pop_back();
+
+                    if(evaluate_top())
+                    {
+                        new_array.data.array->push_back(optic_stack.back());
+                        optic_stack.pop_back();
+                    }
+
                 }
 
                 result = new_array;
@@ -280,7 +304,12 @@ bool evaluate_variable(const object& variable_name)
 bool evaluate_assignment()
 {
     object result;
-    evaluate_top();
+
+    if(!evaluate_top())
+    {
+        clear_stack();
+        return false;
+    }
 
     if(set_variable(result.data.string, optic_stack.back()) == OK)
     {
@@ -298,6 +327,13 @@ bool evaluate_assignment()
 
 bool evaluate_top()
 {
+    if(!optic_stack.size())
+    {
+        out() << "Instruction stack is empty, cannot evaluate expression." << std::endl;
+        clear_stack();
+        return false;
+    }
+
     object obj = optic_stack.back();
     optic_stack.pop_back();
 
@@ -308,7 +344,7 @@ bool evaluate_top()
         break;
 
     case NO_EXPANSION_OPERATION:
-        return evaluate_binary_operator(obj,false);
+        return evaluate_binary_operator(obj, false);
         break;
 
     case UNARY_OPERATION:
@@ -316,7 +352,7 @@ bool evaluate_top()
         break;
 
     case UNARY_NO_EXPANSION_OPERATION:
-        return evaluate_unary_operator(obj,false);
+        return evaluate_unary_operator(obj, false);
         break;
 
     case OPERATION_TREE:

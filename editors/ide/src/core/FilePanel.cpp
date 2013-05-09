@@ -24,7 +24,6 @@ FilePanel::FilePanel(QWidget *parent) :
     setAllowedAreas(Qt::LeftToolBarArea | Qt::BottomToolBarArea | Qt::TopToolBarArea);
     setFloatable(false);
     setMovable(false);
-    setLayout(new QVBoxLayout());
 }
 
 void FilePanel::addEditBuffer(unsigned int buffer)

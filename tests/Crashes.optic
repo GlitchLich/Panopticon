@@ -6,13 +6,18 @@
 
 
 // Bugs
-1. Too much printing
+1. Guards aren't multi-channel expanding.
 
-2. Function array access 
+2. Double uninitialized variables crash
 
-3. Guards aren't multi-channel expanding.
+example (execute together):
+n * m + y n * m + y
+n + y y
+z + z n
 
 //Fixed
+Fixed too much printing
+Function array access 
 example: 
 testArray x = [ x x*2 [x x*4] x+1 ]
 testArray( 99 )[0]
@@ -20,9 +25,3 @@ testArray( 99 )[1]
 testArray( 99 )[2]
 testArray( 99 )[2][1]
 testArray( 99 )[3]
-
-3. Uninitialized variables crash
-
-example:
-n * m + y
-doom + doom
