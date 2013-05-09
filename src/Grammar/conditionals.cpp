@@ -24,19 +24,37 @@ bool resolve_guard(object& A, const object &condition_tree)
         return false;
     }
 
-
-    for(int i=0;i<condition_tree.data.array->size();++i)
+    optic_stack.push_back(condition_tree.data.array->at(0));
+    evaluate_top();
+    const object& result = optic_stack.back();
+    optic_stack.pop_back();
+    std::cout << "GUARD RESULT TYPE: " << result.type;
+    if(result.type!=FAILED_CONDITION)
     {
-        optic_stack.push_back(condition_tree.data.array->at(i));
-        evaluate_top();
-        object result = copy_object(optic_stack.back());
-        optic_stack.pop_back();
-        if(result.type!=FAILED_CONDITION)
+        A = copy_object(result);
+        return true;
+    }
+    else if(result.type==FAILED_CONDITION)
+    {
+        for(int i=1;i<condition_tree.data.array->size();++i)
         {
-            A = result;
-            return true;
+            optic_stack.push_back(condition_tree.data.array->at(i));
+            evaluate_top();
+            const object& result = optic_stack.back();
+            optic_stack.pop_back();
+
+            if(result.type!=FAILED_CONDITION)
+            {
+                A = copy_object(result);
+                return true;
+            }
         }
     }
+    else if(result.type==ARRAY)
+    {
+        //some recursive scheme
+    }
+
     out() << "Error: No suitable guard conditions found" << std::endl;
     correct_parsing = false;
     A.type = VOID;
