@@ -80,7 +80,6 @@ object create_condition_tree(const object &condition, const object &operation)
     tree.type = CONDITION_TREE;
     tree.data.array = new Array();
     tree.data.array->push_back(conditional_function);
-
     return tree;
 }
 

@@ -17,7 +17,7 @@ headTailFunc z (x:xs) = x : xs
 //Pass expression on the left as the first argument to the func on the right:
 f x = x * 2
 f(2)
-2 >> f
+7 >> f
 
 //Chains to other functions:
 g x = x * 4
@@ -422,6 +422,7 @@ factorial(1)
 factorial(5)
 factorial(10)
 factorial(20)
+factorial(200)
 //Speed Test (though printing doesn't help....)
 factorial(2000)
 

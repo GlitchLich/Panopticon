@@ -16,7 +16,6 @@ bool number_plus(object&A,const object& B,const object& C)
     case NUMBER:
         A.type = NUMBER;
         A.data.number = B.data.number + C.data.number;
-        std::cout << B.data.number << " + " << C.data.number << " = " << A.data.number << std::endl;
         break;
     case STRING:
         num_plus_string(A,B,C);

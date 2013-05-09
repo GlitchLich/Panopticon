@@ -131,8 +131,8 @@ ten = 10
 // ten is lazy evaluated
 mul( ten ten ) 
 
-// WORKS
-thirty = three() * 10
+// WORKS, Lazy evaluation
+thirty = three * 10
 three = 3
 thirty
 

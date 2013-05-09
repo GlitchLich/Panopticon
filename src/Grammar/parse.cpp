@@ -139,9 +139,6 @@ void init()
 {
 
     t0.data.number=0;
-    std::cout << "Size of token: " << sizeof(t0) << std::endl;
-    std::cout << "Enter an expression like 3+5 <return>" << std::endl;
-    std::cout << "  Terminate with ^D" << std::endl;
     init_heap();
 }
 
@@ -220,14 +217,10 @@ bool exec(std::string string, std::string& output)
         }
         string = string.append("\n\n");
         calculate_white_space(string);
-        //        mutate_text_for_parsing(string);
 
-        //        std::cout << "Parsing: " << string << std::endl;
         bufferstate = yy_scan_string(string.c_str());
-        //        yy_scan_string(string.c_str());
         while( (yv=yylex()) != 0)
         {
-            //            std::cout << " yylex() " << yv << " yylval.dval " << yylval.dval << std::endl;
             switch(yv)
             {
             case NUM:
@@ -254,6 +247,7 @@ bool exec(std::string string, std::string& output)
             output.append(stream_out.str());
             return true;
         }
+
         else
         {
             out() << "at line: " << bufferstate->yy_bs_lineno << ", column: " << bufferstate->yy_bs_lineno << std::endl;
@@ -288,7 +282,6 @@ void command_line_loop()
         // on EOF yylex will return 0
         while( (yv=yylex()) != 0)
         {
-            //            std::cout << " yylex() " << yv << " yylval.dval " << yylval.dval << std::endl;
             switch(yv)
             {
             case NUM:
@@ -332,11 +325,11 @@ unsigned int white_count(std::string& line,int start,int stop) {
     bool firstChar = false;
     for(int i=start;i<stop;++i)
     {
-        //        std::cout << line.at(i);
         if(line.at(i) == ' ' && !firstChar)
         {
             count++;
         }
+
         else if(line.at(i) != '\n')
         {
             firstChar = true;
@@ -404,8 +397,6 @@ void calculate_white_space(std::string& line) {
         }
     }
 
-    std::cout << "Result: " << std::endl;
-    std::cout << string;
     string.swap(line);
 }
 

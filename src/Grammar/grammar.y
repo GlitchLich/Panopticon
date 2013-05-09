@@ -192,7 +192,6 @@ expr(A) ::= NAME(B).
 
 expr(A) ::= expr(B) COMPOSITION function_call(C).
 {
-    std::cout << "COMPOSITION!" << std::endl;
     if(C.type==optic::OPERATION_TREE)
     {
         C.data.array->at(2).data.array->push_front(B);
@@ -234,8 +233,6 @@ function_call(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN. [FUNCTION_CALL]
     }
     optic::object b;
     b.type = optic::STRING;
-    optic::out() << "FUNCTION_CALL B.data.string " << *B.data.string << "arguments: " << std::endl;
-    print_object(C);
 
     b.data.string = new optic::String(B.data.string->c_str());
     optic::store_operations(A,b,C,optic::call_function);
@@ -248,8 +245,6 @@ function_call(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN. [FUNCTION_CALL]
 
 function_call(A) ::= NAME(B) LBRAC RBRAC LPAREN stmt_list(C) RPAREN. [FUNCTION_CALL]
 {
-/*    std::cout << "B.type = optic::Array_Map_Value_To_Functions" << std::endl;*/
-/*    std::cout << *B.data.string << std::endl;*/
     if(C.type==optic::STATEMENT_LIST)
     {
             C.type = optic::FUNCTION_ARG_VALUES;
@@ -333,39 +328,30 @@ test(A) ::= case_statement(B).
 //GUARD STATEMENT BEGINNING
 guard_statement(A) ::= name_chain(B) LCURL BITOR expr(C) ASSIGN expr(D) DELIMITER. [ASSIGN]
 {
-    std::cout << "GUARD1" << std::endl;
     optic::object tree = create_condition_tree(C,D);
     A = create_guard(B,tree);
-    std::cout << "GUARD2" << std::endl;
 }
 
 guard_statement(A) ::= guard_statement(B) BITOR expr(C) ASSIGN expr(D) DELIMITER. [ASSIGN]
 {
-    std::cout << "GUARD3" << std::endl;
     add_branch_to_tree(B,C,D);
     A=B;
-    std::cout << "GUARD4" << std::endl;
 }
 
 final_guard_statement(A) ::= guard_statement(B) BITOR expr(C) ASSIGN expr(D) RCURL. [ASSIGN]
 {
-    std::cout << "GUARD5" << std::endl;
     add_branch_to_tree(B,C,D);
     A=B;
-    std::cout << "GUARD6" << std::endl;
 }
 
 final_guard_statement(A) ::= guard_statement(B) WILDCARD ASSIGN expr(D) RCURL. [ASSIGN]
 {
-    std::cout << "GUARD7" << std::endl;
     add_wildcard_to_tree(B,D);
     A=B;
-    std::cout << "GUARD8" << std::endl;
 }
 
 assignment(A) ::= final_guard_statement(B).
 {
-    std::cout << "GUARD11" << std::endl;
     panopticon::object& b = B.data.array->at(0);
     panopticon::object& c = B.data.array->at(1);
 
@@ -425,12 +411,10 @@ assignment(A) ::= guard_statement(B) WILDCARD ASSIGN expr(D) DELIMITER final_whe
 where_statement(A) ::= WHERE LCURL. [ASSIGN]
 {
     A.type = optic::NIL;
-    std::cout << "Where 1" << std::endl;
 }
 
 where_statement(A) ::= WHERE name_chain(B) ASSIGN expr(C) LCURL. [ASSIGN]
 {
-    std::cout << "Where 1.5" << std::endl;
     insure_ready_for_assignment(B,C);
     B.type = optic::FUNCTION_ARG_NAMES;
     panopticon::store_operations(A, B, C, panopticon::assign_variable,false);
@@ -443,7 +427,6 @@ where_statement(A) ::= WHERE name_chain(B) ASSIGN expr(C) LCURL. [ASSIGN]
 
 where_statement(A) ::= where_statement(D) name_chain(B) ASSIGN expr(C) DELIMITER. [ASSIGN]
 {
-    std::cout << "Where 2" << std::endl;
     insure_ready_for_assignment(B,C);
     B.type = optic::FUNCTION_ARG_NAMES;
 
@@ -466,7 +449,6 @@ where_statement(A) ::= where_statement(D) name_chain(B) ASSIGN expr(C) DELIMITER
 
 final_where_statement(A) ::= where_statement(D) name_chain(B) ASSIGN expr(C) RCURL DELIMITER RCURL. [ASSIGN]
 {
-    std::cout << "Where 3" << std::endl;
     insure_ready_for_assignment(B,C);
     B.type = optic::FUNCTION_ARG_NAMES;
     if(D.type!=optic::NIL)
@@ -515,7 +497,6 @@ assignment(A) ::= name_chain(B) ASSIGN expr(C). [ASSIGN]
 //Assignment with where
 assignment(A) ::= name_chain(B) ASSIGN expr(C) LCURL final_where_statement(D). [ASSIGN]
 {
-    std::cout << "Where assign" << std::endl;
     panopticon::object body;
     panopticon::store_operations(body,D,C,false);
     insure_ready_for_assignment(B,body);

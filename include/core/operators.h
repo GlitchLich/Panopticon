@@ -72,7 +72,6 @@ extern bool create_function(object&A, const object& B, const object& C);
 extern bool call_function(object& A, const object& B, const object& C);
 extern bool call_function_array(object& A, const object& B, const object& C);
 extern bool resolve_function_array(object& A, const object& B);
-// extern bool call_function(const object& function, const String &name, bool resolve = true); DON'T USE THIS, IT's BROKEN
 extern bool handle_stack(object &A, Function* function);
 
 // Operators
