@@ -8,7 +8,7 @@ QGraphicsView {
 }
 
 QToolBar {
-    background: #330F26;
+    background: #19191C;
 }
 
 QToolButton {

@@ -11,6 +11,9 @@ ten = 10
 print(test( 10 ))
 ten
 
+myDict::Dragon
+myDict = { Dragon = 4 Turtles = true Octopi = "are cool" Array = [0 1 2 3 4] }
+
 //Horizontal construction sans n00b training wheels
 notANoob = 
 	"Dragon" = 4 "Turtles" = true "Octopi" = "are cool" "Array" = [0 1 2 3 4]
