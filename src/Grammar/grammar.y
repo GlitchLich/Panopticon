@@ -510,40 +510,78 @@ assignment(A) ::= name_chain(B) ASSIGN expr(C) LCURL final_where_statement(D). [
 }
 
 
-//=================================
-//Statement lists /  Arrays / Maps
-//=================================
+//===========================================
+//Statement lists /  Arrays / Dictionaries
+//===========================================
 
-/*test ::= map.
+dict_argument_list(A) ::= STRING(B) ASSIGN expr(C). [COLLECTARRAY]
+{
+    A.type = optic::DICTIONARY;
+    A.data.dictionary = new optic::Dictionary();
+    A.data.dictionary->insert(std::make_pair(*optic::copy_object(B).data.string, C));
+}
+
+dict_argument_list(A) ::= dict_argument_list(B) STRING(C) ASSIGN expr(D). [COLLECTARRAY]
+{
+    A = B;
+    A.data.dictionary->insert(std::make_pair(*optic::copy_object(C).data.string, D));
+}
+
+vertical_dict_list(A) ::= STRING(B) ASSIGN expr(C) DELIMITER. [COLLECTARRAY]
+{
+    A.type = optic::DICTIONARY;
+    A.data.dictionary = new optic::Dictionary();
+    A.data.dictionary->insert(std::make_pair(*optic::copy_object(B).data.string, C));
+}
+
+vertical_dict_list(A) ::= vertical_dict_list(B) STRING(C) ASSIGN expr(D) DELIMITER. [COLLECTARRAY]
+{
+    A = B;
+    A.data.dictionary->insert(std::make_pair(*optic::copy_object(C).data.string, D));
+}
+
+final_vertical_dict_list(A) ::= vertical_dict_list(B) STRING(C) ASSIGN expr(D). [COLLECTARRAY]
+{
+    A = B;
+    A.data.dictionary->insert(std::make_pair(*optic::copy_object(C).data.string, D));
+}
 
 
-map_argument_list ::= string ASSIGN expr. [COLLECTARRAY]
-map_argument_list ::= map_argument_list string ASSIGN expr. [COLLECTARRAY]
-maybe_empty_map_argument_list ::= . [COLLECTARRAY]
-maybe_empty_map_argument_list ::= map_argument_list. [COLLECTARRAY]
-
-expr(A) ::= NAME(B) LESSTHAN string GREATERTHAN. [INDEX]
+expr(A) ::= dictionary(B).
 {
     A = B;
 }
 
-map(A) ::= LESSTHAN maybe_empty_map_argument_list(B) GREATERTHAN. [COLLECTARRAY]
+dictionary(A) ::= LCURL LCURL final_vertical_dict_list(B) RCURL DELIMITER RCURL.
 {
     A = B;
-    optic::out() << "Map" << std::endl;
-    A.type = optic::STRING;
-    A.data.string = new optic::String("Map");
 }
 
-expr(A) ::= map(B).
+dictionary(A) ::= LCURL final_vertical_dict_list(B) RCURL.
 {
     A = B;
-}*/
+}
+
+dictionary(A) ::= LCURL dict_argument_list(B) RCURL.
+{
+    A = B;
+}
+
+expr(A) ::= NAME(B) LCURL STRING(C) RCURL. [INDEX]
+{
+    B.type = optic::UNDECLARED_VARIABLE;
+    C.type = optic::STRING;
+    store_operations(A,B,C,&optic::dictionary_lookup);
+    if (!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
 
 stmt_list(A) ::= stmt(B).
 {
     A = B;
-
 }
 
 stmt_list(A) ::= stmt_list(B) stmt(C). [COLLECTARRAY]
