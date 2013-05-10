@@ -366,9 +366,11 @@ bool delete_dictionary(object& dict)
 
 bool print_dictionary(const object& dict)
 {
+    std::cout << "PRINT DICTIONARY" << std::endl;
+
     Dictionary::iterator iter = dict.data.dictionary->begin();
 
-    out() << "{ ";
+    out() << "{ " << std::endl;
 
     while(iter != dict.data.dictionary->end())
     {
@@ -395,7 +397,8 @@ bool print_dictionary(const object& dict)
             print_array(value);
 
         case DICTIONARY:
-            print_dictionary(value);
+            // print_dictionary(value);
+            std::cout << "PRINT DICTIONARY INSIDE DICTIONARY" << std::endl;
             break;
 
         case FUNCTION:
@@ -942,8 +945,6 @@ bool call_function(object& A, const object& B, const object& C)
     }
 
     std::string function_name = function.data.function->name;
-    std::cout << "FUNCTION NAME ";
-    std::cout << function_name << std::endl;
     Dictionary context;
     context.insert(std::make_pair(function_name, function));
 

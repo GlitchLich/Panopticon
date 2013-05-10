@@ -289,6 +289,7 @@ bool evaluate_variable(const object& variable_name)
             }
         }
 
+        std::cout << "GET VARIABLE" << std::endl;
         optic_stack.push_back(result);
         return true;
     }
