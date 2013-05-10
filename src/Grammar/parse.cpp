@@ -339,38 +339,27 @@ unsigned int white_count(std::string& line,int start,int stop) {
 }
 
 
-bool should_replace(const std::string& string,int insert)
+bool should_replace(const std::string& string,int insert,int indent)
 {
-    if(string.size()<insert+6)
+    if(string.size()<insert+indent)
     {
         return false;
     }
-    //    std::cout << "REPLACEMENT TEST: " << string.substr(insert+1,insert+5) << std::endl;
+    std::cout << "REPLACEMENT TEST: " << string.substr(insert,insert+indent+1) << std::endl;
+
     if(string.at(insert)!='\n')
     {
         return false;
     }
-    if(string.at(insert+1)!=' ')
+    for(int i=1;i<=indent;++i)
     {
-        return false;
+        if(string.at(insert+indent)!=' ')
+        {
+            return false;
+        }
     }
-    if(string.at(insert+2)!=' ')
-    {
-        return false;
-    }
-    if(string.at(insert+3)!=' ')
-    {
-        return false;
-    }
-    if(string.at(insert+4)!=' ')
-    {
-        return false;
-    }
-    if(string.at(insert+5)!=' ')
-    {
-        return false;
-    }
-    if(string.at(insert+6)!='}')
+
+    if(string.at(insert+indent+1)!='}')
     {
         return false;
     }
@@ -437,7 +426,8 @@ void calculate_white_space(std::string& line) {
                     while (indent < indent_stack[level]) {
                         --level ;
 
-                        if(!should_replace(string,insert))
+                        std::cout << "INDENT LEVEL!: " << indent << std::endl;
+                        if(!should_replace(string,insert,indent))
                         {
                             string.insert(insert,"};");
                             insert++;
@@ -445,19 +435,14 @@ void calculate_white_space(std::string& line) {
                         }
                         else
                         {
-                            //                            std::cout << "REPLACE!" << std::endl;
-                            string.replace(string.begin()+insert,string.begin()+insert+7,"};      ");
-                            insert++;
+                            std::cout << "REPLACE!" << std::endl;
+                            string.replace(string.begin()+insert,string.begin()+insert+2+indent,"};");
+                            for(int i=0;i<indent;++i)
+                            {
+                                string.insert(insert+2," ");
+                            }
+//                            insert++;
                             blanked = true;
-
-                            //                            indent_stack[level]
-                            //                            --level;
-                            //                            insert++;
-                            //                            insert-=5;
-                            //                            string.replace(insert+1,insert+1,";");
-                            //                            string.replace(insert+1,insert+1,";");
-                            //                            string.replace(insert+7,insert+7,";");
-                            //                            insert-=1;
                         }
                     }
                 }
