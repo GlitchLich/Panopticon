@@ -828,17 +828,19 @@ bool create_function(object &A, const object &B, const object &C)
         {
             function->arguments.push_back(copy_object(B.data.array->at(i)));
         }
+
+        function->name = std::string(*B.data.array->at(0).data.string);
     }
 
     else if(B.type == STRING)
     {
         function->num_arguments = 0;
         function->arguments.push_back(B);
+        function->name = std::string(*B.data.string);
     }
 
     function->body = C;
     function->body.type = OPERATION_TREE;
-    function->name = B.data.string->c_str();
     A.data.function = function;
 }
 
@@ -904,6 +906,8 @@ bool call_function(object& A, const object& B, const object& C)
     }
 
     std::string function_name = function.data.function->name;
+    std::cout << "FUNCTION NAME ";
+    std::cout << function_name << std::endl;
     Dictionary context;
     context.insert(std::make_pair(function_name, function));
 
