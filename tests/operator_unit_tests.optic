@@ -200,30 +200,30 @@ printArray = print([0 1 2 3])
 printArray
 //Concat, Left associative, puts things at same level
 //When concacting with strings, creates a new string (but Array takes precedence).
-1::2::3::4
-[666] :: [ 2 3 4 ]
+1++2++3++4
+[666] ++ [ 2 3 4 ]
 //or
 [666] ++ [2 3 4]
 
-1::1
-1::true
-1::"hey"
-1::[2 3 4]
+1++1
+1++true
+1++"hey"
+1++[2 3 4]
 
-true::1
-true::false
-true::"hey"
-true::[2 3 4]
+true++1
+true++false
+true++"hey"
+true++[2 3 4]
 
-"hey"::1
-"hey"::true
-"hey"::"hey"
-"hey"::[2 3 4]
+"hey"++1
+"hey"++true
+"hey"++"hey"
+"hey"++[2 3 4]
 
-[2 3 4]::1
-[2 3 4]::true
-[2 3 4]::"hey"
-[2 3 4]::[2 3 4]
+[2 3 4]++1
+[2 3 4]++true
+[2 3 4]++"hey"
+[2 3 4]++[2 3 4]
 
 prependFunc x array = x : array
 prependFunc(20 [0 1 2 3])
