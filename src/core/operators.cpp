@@ -243,7 +243,8 @@ bool print_object(const object &A)
     {
     case panopticon::FUNCTION:
         // -1 arguments because it counts itself as an argument internally
-        out() << "Function with " << (A.data.function->num_arguments - 1) << " arguments and " << A.data.function->body.data.array->size() << " body objects" << std::endl;
+        out() << "A Function" << std::endl;
+        break;
     case panopticon::NUMBER:
         out() << A.data.number << std::endl;
         break;
@@ -313,6 +314,10 @@ bool print_object(const object &A)
         break;
     case panopticon::NO_EXPANSION_OPERATION:
         out() << "NoExpandOperator" << std::endl;
+        break;
+
+    case NIL:
+        out() << "Nil" << std::endl;
         break;
     }
 }
@@ -2356,7 +2361,7 @@ bool assign_variable(object& A, const object& B, const object& C)
         correct_parsing = false;
     }
 
-    A.type = VOID; // prevent return to stack
+    //A.type = VOID; // prevent return to stack
 }
 
 bool retrieve_variable(object &A, object &B)
