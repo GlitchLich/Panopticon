@@ -54,6 +54,23 @@ nullVar{"Dragon"}
 notADict = 5
 notADict{"Dragon"}
 
+lookThatShitUp x y = dict{x} + array[y]
+	where
+		dict =
+			"zero" 	= 0
+			"one" 	= 1
+			"two"	= 2
+			"three"	= 3
+			"four"	= 4
+		array = [
+			"ten"
+			"eleven"
+			"twelve"
+			"thirteen"
+			"fourteen"
+		]
+			
+
 
 //Stacked Dictionaries don't work right now...
 //Should this work?
