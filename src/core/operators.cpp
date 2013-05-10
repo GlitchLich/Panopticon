@@ -458,17 +458,53 @@ bool dictionary_lookup(object& value, const object& dict, const object& key)
 {
     if(key.type != STRING)
     {
-        out() << "Dictionary key must be a String." << std::endl;
+        out() << "Error: Dictionary key must be a String." << std::endl;
         correct_parsing = false;
         return false;
     }
 
+    //If the object is a string, attempt to fetch it.
+    if(dict.type == STRING||dict.type == UNDECLARED_VARIABLE)
+    {
+        std::cout << "UV" << std::endl;
+        object result;
+        if(get_variable(dict.data.string,&result)==OK)
+        {
+            if(result.type==DICTIONARY)
+            {
+                return dictionary_lookup(value,result,key);
+            }
+            else
+            {
+                value.type = NIL;
+                out() << "Error: Cannot call a Dictionary lookup on a non-Dictionary object." << std::endl;
+                out() << "Object with Dictionary lookup called on it: " << dict.data.string->c_str() << std::endl;
+                correct_parsing = false;
+                return false;
+            }
+        }
+        else
+        {
+            value.type = NIL;
+            out() << "Error: the variable \'" << dict.data.string->c_str() << "\'' has not been declared." << std::endl;
+            correct_parsing = false;
+            return false;
+        }
+
+    }
+
     Dictionary::iterator find = dict.data.dictionary->find(*key.data.string);
     if(find != dict.data.dictionary->end())
-        value = find->second;
+    {
+        value = copy_object(find->second);
+    }
     else
+    {
         value.type = NIL;
-
+        out() << "No object found with key \'" << *key.data.string << "\'." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
     return true;
 }
 

@@ -45,8 +45,8 @@
 #define OF                             45
 #define LET                            46
 #define IN                             47
-#define PRINT                          48
-#define NUM                            49
-#define STRING                         50
+#define STRING                         48
+#define PRINT                          49
+#define NUM                            50
 #define BOOLEAN                        51
 #define OPENQUOTEERROR                 52

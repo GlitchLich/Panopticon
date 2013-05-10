@@ -1,0 +1,70 @@
+//Dictionary Tests!
+
+//Horizontal construction
+myDict = { "Dragon" = 4 "Turtles" = true "Octopi" = "are cool" "Array" = [0 1 2 3 4] }
+
+//Horizontal construction sans n00b training wheels
+notANoob = 
+	"Dragon" = 4 "Turtles" = true "Octopi" = "are cool" "Array" = [0 1 2 3 4]
+
+myDict{"Dragon"}
+myDict{"Turtles"}
+myDict{"Octopi"}
+myDict{"Array"}
+//vs
+notANoob{"Dragon"}
+notANoob{"Turtles"}
+notANoob{"Octopi"}
+notANoob{"Array"}
+
+//Vertical construction
+vertDict = {
+	"Treble" 	= 0
+	"Mid" 		= 0.3
+	"Bass"		= 11
+}
+
+//Vertical construction sans n00b training wheels
+coolDict =
+	"Treble" 	= 0
+	"Mid" 		= 0.3
+	"Bass"		= 11
+
+vertDict{"Treble"}
+vertDict{"Mid"}
+vertDict{"Bass"}
+//vs
+coolDict{"Treble"}
+coolDict{"Mid"}
+coolDict{"Bass"}
+
+//Printing is off, but this is theoretically working.
+myDict{"Dragon"} + 4
+myDict{"Turtles"} == true
+myDict{"Octopi"} + ", fuck yeah"
+//Pringint works for this, this IS working.
+myDict{"Array"} <: 666 <: (-666)
+
+//Correct Error throwing:
+//Wrong index:
+myDict{"No index"}
+//Null variable
+nullVar{"Dragon"}
+//THIS CRASHES, Don't know why....
+notADict = 5
+notADict{"Dragon"}
+
+
+//Stacked Dictionaries don't work right now...
+//Should this work?
+level1 = 
+	"level2" = 
+		"level3" = 
+			"level4" = false
+
+//This does
+level1 = { "level2" = { "level3" = { "level4" = { "level5" = false } } } }
+
+//However indexing isn't recursive yet, Crashes.
+level1{"level2"}{"level3"}{"level4"}{"level5"}
+
