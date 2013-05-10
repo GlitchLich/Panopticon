@@ -217,7 +217,7 @@ bool exec(std::string string, std::string& output)
         }
         string = string.append("\n\n");
         calculate_white_space(string);
-//        std::cout << string << std::endl;
+        std::cout << string << std::endl;
         bufferstate = yy_scan_string(string.c_str());
         while( (yv=yylex()) != 0)
         {
@@ -339,6 +339,45 @@ unsigned int white_count(std::string& line,int start,int stop) {
 }
 
 
+bool should_replace(const std::string& string,int insert)
+{
+    if(string.size()<insert+6)
+    {
+        return false;
+    }
+    //    std::cout << "REPLACEMENT TEST: " << string.substr(insert+1,insert+5) << std::endl;
+    if(string.at(insert)!='\n')
+    {
+        return false;
+    }
+    if(string.at(insert+1)!=' ')
+    {
+        return false;
+    }
+    if(string.at(insert+2)!=' ')
+    {
+        return false;
+    }
+    if(string.at(insert+3)!=' ')
+    {
+        return false;
+    }
+    if(string.at(insert+4)!=' ')
+    {
+        return false;
+    }
+    if(string.at(insert+5)!=' ')
+    {
+        return false;
+    }
+    if(string.at(insert+6)!='}')
+    {
+        return false;
+    }
+
+    return true;
+}
+
 void calculate_white_space(std::string& line) {
     int previous_break = 0;
     int size = line.size();
@@ -347,6 +386,7 @@ void calculate_white_space(std::string& line) {
     int insert = -1;
     int insert_add = 0;
     nesting = 0;
+    bool blanked = false;
     for(int i=0;i<size;++i)
     {
         insert_add++;
@@ -361,6 +401,15 @@ void calculate_white_space(std::string& line) {
         }
         else if(line.at(i)=='\n'||line.at(i)=='\r'||line.at(i)=='\0')
         {
+            if(blanked)
+            {
+                blanked = false;
+                previous_break = i;
+                insert+=insert_add;
+                insert_add = 0;
+                assert(level >= 0);
+                continue;
+            }
             if (nesting==0)
             {
 
@@ -375,8 +424,11 @@ void calculate_white_space(std::string& line) {
                     first = 0;
                 }
                 else if (indent > indent_stack[level]) {
-                    string.insert(insert,"{");
-                    insert++;
+                    if(string.at(insert-1)!='{')
+                    {
+                        string.insert(insert,"{");
+                        insert++;
+                    }
                     assert(level+1 < MAX_DEPTH);
                     indent_stack[++level] = indent;
                 }
@@ -384,9 +436,29 @@ void calculate_white_space(std::string& line) {
                 {
                     while (indent < indent_stack[level]) {
                         --level ;
-                        string.insert(insert,"};");
-                        insert++;
-                        insert++;
+
+                        if(!should_replace(string,insert))
+                        {
+                            string.insert(insert,"};");
+                            insert++;
+                            insert++;
+                        }
+                        else
+                        {
+                            //                            std::cout << "REPLACE!" << std::endl;
+                            string.replace(string.begin()+insert,string.begin()+insert+7,"};      ");
+                            insert++;
+                            blanked = true;
+
+                            //                            indent_stack[level]
+                            //                            --level;
+                            //                            insert++;
+                            //                            insert-=5;
+                            //                            string.replace(insert+1,insert+1,";");
+                            //                            string.replace(insert+1,insert+1,";");
+                            //                            string.replace(insert+7,insert+7,";");
+                            //                            insert-=1;
+                        }
                     }
                 }
             }

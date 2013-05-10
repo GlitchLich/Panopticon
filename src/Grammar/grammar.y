@@ -243,13 +243,10 @@ function_call(A) ::= NAME(B) LBRAC RBRAC LPAREN stmt_list(C) RPAREN. [FUNCTION_C
         optic::object temp = C;
         C.type = optic::FUNCTION_ARG_VALUES;
         C.data.array = new optic::Array();
-/*        C.data.array->reserve(1);*/
         C.data.array->push_back(temp);
     }
 
-/*    optic::object b;*/
     B.type = optic::VARIABLE;
-/*    b.data.string = new optic::String(B.data.string->c_str());*/
     optic::parse_operations(A,B,C,optic::call_function);
     if(!panopticon::correct_parsing)
     {
@@ -269,7 +266,6 @@ expr(A) ::= array_index(B) LPAREN stmt_list(C) RPAREN. [FUNCTION_CALL]
         optic::object temp = C;
         C.type = optic::FUNCTION_ARG_VALUES;
         C.data.array = new optic::Array();
-/*        C.data.array->reserve(1);*/
         C.data.array->push_back(temp);
     }
     optic::parse_operations(A,B,C,optic::call_function);
@@ -294,7 +290,6 @@ function_call(A) ::= NAME(B) LPAREN RPAREN. [FUNCTION_CALL]
 
 function_call(A) ::= array_index(B) LPAREN RPAREN. [FUNCTION_CALL]
 {
-/*    B.type = optic::UNDECLARED_VARIABLE;*/
     A = B;
     if(!panopticon::correct_parsing)
     {
@@ -505,40 +500,52 @@ assignment(A) ::= name_chain(B) ASSIGN expr(C) LCURL final_where_statement(D). [
 
 dict_argument_list(A) ::= STRING(B) ASSIGN expr(C). [COLLECTARRAY]
 {
-    A.type = optic::DICTIONARY;
-    A.data.dictionary = new optic::Dictionary();
-    A.data.dictionary->insert(std::make_pair(*optic::copy_object(B).data.string, C));
+    A.type = optic::ARRAY;
+    A.data.array = new optic::Array();
+    A.data.array->push_back(B);
+    A.data.array->push_back(C);
 }
 
 dict_argument_list(A) ::= dict_argument_list(B) STRING(C) ASSIGN expr(D). [COLLECTARRAY]
 {
     A = B;
-    A.data.dictionary->insert(std::make_pair(*optic::copy_object(C).data.string, D));
+    A.data.array->push_back(C);
+    A.data.array->push_back(D);
 }
 
 vertical_dict_list(A) ::= STRING(B) ASSIGN expr(C) DELIMITER. [COLLECTARRAY]
 {
-    A.type = optic::DICTIONARY;
-    A.data.dictionary = new optic::Dictionary();
-    A.data.dictionary->insert(std::make_pair(*optic::copy_object(B).data.string, C));
+    A.type = optic::ARRAY;
+    A.data.array = new optic::Array();
+    A.data.array->push_back(B);
+    A.data.array->push_back(C);
 }
 
 vertical_dict_list(A) ::= vertical_dict_list(B) STRING(C) ASSIGN expr(D) DELIMITER. [COLLECTARRAY]
 {
     A = B;
-    A.data.dictionary->insert(std::make_pair(*optic::copy_object(C).data.string, D));
+    A.data.array->push_back(C);
+    A.data.array->push_back(D);
 }
 
 final_vertical_dict_list(A) ::= vertical_dict_list(B) STRING(C) ASSIGN expr(D). [COLLECTARRAY]
 {
     A = B;
-    A.data.dictionary->insert(std::make_pair(*optic::copy_object(C).data.string, D));
+    A.data.array->push_back(C);
+    A.data.array->push_back(D);
 }
 
 
 expr(A) ::= dictionary(B).
 {
-    A = B;
+    A.type = optic::DICTIONARY;
+    A.data.dictionary = new optic::Dictionary();
+    for(int i=0;i<B.data.array->size()-1;i+=2)
+    {
+        A.data.dictionary->insert(
+            std::make_pair(*B.data.array->at(i).data.string,B.data.array->at(i+1))
+        );
+    }
 }
 
 dictionary(A) ::= LCURL LCURL final_vertical_dict_list(B) RCURL DELIMITER RCURL.
@@ -566,6 +573,56 @@ expr(A) ::= NAME(B) LCURL STRING(C) RCURL. [INDEX]
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
         ParseARG_STORE;
     }
+}
+
+vert_stmt_list(A) ::= stmt(B) DELIMITER.
+{
+    A = B;
+}
+
+vert_stmt_list(A) ::= vert_stmt_list(B) stmt(C) DELIMITER. [COLLECTARRAY]
+{
+    A.type = panopticon::STATEMENT_LIST;
+    if(B.type!=panopticon::STATEMENT_LIST)
+    {
+        panopticon::create_array(A);
+        A.data.array->push_back(B);
+        A.data.array->push_back(C);
+    }
+    else
+    {
+        A.data.array = B.data.array;
+        A.data.array->push_back(C);
+    }
+}
+
+final_vert_stmt_list(A) ::= vert_stmt_list(B) stmt(C). [COLLECTARRAY]
+{
+    A.type = panopticon::STATEMENT_LIST;
+    if(B.type!=panopticon::STATEMENT_LIST)
+    {
+        panopticon::create_array(A);
+        A.data.array->push_back(B);
+        A.data.array->push_back(C);
+    }
+    else
+    {
+        A.data.array = B.data.array;
+        A.data.array->push_back(C);
+    }
+}
+
+
+
+vertical_array(A) ::= LBRAC LCURL final_vert_stmt_list(B) RCURL DELIMITER RBRAC. [COLLECTARRAY]
+{
+    A = B;
+    A.type = optic::ARRAY;
+}
+
+array(A) ::= vertical_array(B).
+{
+    A = B;
 }
 
 stmt_list(A) ::= stmt(B).
