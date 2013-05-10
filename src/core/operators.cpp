@@ -243,7 +243,8 @@ bool print_object(const object &A)
     {
     case panopticon::FUNCTION:
         // -1 arguments because it counts itself as an argument internally
-        out() << "Function with " << (A.data.function->num_arguments - 1) << " arguments and " << A.data.function->body.data.array->size() << " body objects" << std::endl;
+        out() << "A Function" << std::endl;
+        break;
     case panopticon::NUMBER:
         out() << A.data.number << std::endl;
         break;
@@ -314,6 +315,10 @@ bool print_object(const object &A)
     case panopticon::NO_EXPANSION_OPERATION:
         out() << "NoExpandOperator" << std::endl;
         break;
+
+    case NIL:
+        out() << "Nil" << std::endl;
+        break;
     }
 }
 
@@ -366,9 +371,11 @@ bool delete_dictionary(object& dict)
 
 bool print_dictionary(const object& dict)
 {
+    std::cout << "PRINT DICTIONARY" << std::endl;
+
     Dictionary::iterator iter = dict.data.dictionary->begin();
 
-    out() << "{ ";
+    out() << "{ " << std::endl;
 
     while(iter != dict.data.dictionary->end())
     {
@@ -395,7 +402,8 @@ bool print_dictionary(const object& dict)
             print_array(value);
 
         case DICTIONARY:
-            print_dictionary(value);
+            // print_dictionary(value);
+            std::cout << "PRINT DICTIONARY INSIDE DICTIONARY" << std::endl;
             break;
 
         case FUNCTION:
@@ -864,17 +872,19 @@ bool create_function(object &A, const object &B, const object &C)
         {
             function->arguments.push_back(copy_object(B.data.array->at(i)));
         }
+
+        function->name = std::string(*B.data.array->at(0).data.string);
     }
 
     else if(B.type == STRING)
     {
         function->num_arguments = 0;
         function->arguments.push_back(B);
+        function->name = std::string(*B.data.string);
     }
 
     function->body = C;
     function->body.type = OPERATION_TREE;
-    function->name = B.data.string->c_str();
     A.data.function = function;
 }
 
@@ -2351,7 +2361,7 @@ bool assign_variable(object& A, const object& B, const object& C)
         correct_parsing = false;
     }
 
-    A.type = VOID; // prevent return to stack
+    //A.type = VOID; // prevent return to stack
 }
 
 bool retrieve_variable(object &A, object &B)
