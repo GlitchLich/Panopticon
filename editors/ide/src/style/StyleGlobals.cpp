@@ -34,8 +34,8 @@ Style::Style()
 //    flowFormat.setForeground(QColor(100, 255, 200));
     flowFormat.setForeground(QColor(50, 255, 220));
 
-    prrealClearColor = { 0.2, 0.06, 0.15, 1 };
-//    prrealClearColor = { 0.1, 0.1, 0.1125, 1 };
+//    prrealClearColor = { 0.2, 0.06, 0.15, 1 };
+    prrealClearColor = { 0.1, 0.1, 0.1125, 1 };
     prclearColor.setRgbF(prrealClearColor.r, prrealClearColor.g, prrealClearColor.b, prrealClearColor.a);
 }
 

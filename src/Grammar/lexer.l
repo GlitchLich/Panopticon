@@ -53,7 +53,7 @@ false     { yylval.bval = 0;return BOOLEAN;}
     return NAME;
 }
 [+]+[+]          {  return PLUSPLUS; }
-"::"          {  return PLUSPLUS; }
+"::"          {  return COLONCOLON; }
 "+"           {  return PLUS; }
 "-"           {  return MINUS; }
 "*"           {  return TIMES; }

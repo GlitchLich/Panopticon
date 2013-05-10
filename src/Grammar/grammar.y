@@ -498,7 +498,7 @@ assignment(A) ::= name_chain(B) ASSIGN expr(C) LCURL final_where_statement(D). [
 //Statement lists /  Arrays / Dictionaries
 //===========================================
 
-dict_argument_list(A) ::= STRING(B) ASSIGN expr(C). [COLLECTARRAY]
+dict_argument_list(A) ::= NAME(B) ASSIGN expr(C). [COLLECTARRAY]
 {
     A.type = optic::ARRAY;
     A.data.array = new optic::Array();
@@ -506,14 +506,14 @@ dict_argument_list(A) ::= STRING(B) ASSIGN expr(C). [COLLECTARRAY]
     A.data.array->push_back(C);
 }
 
-dict_argument_list(A) ::= dict_argument_list(B) STRING(C) ASSIGN expr(D). [COLLECTARRAY]
+dict_argument_list(A) ::= dict_argument_list(B) NAME(C) ASSIGN expr(D). [COLLECTARRAY]
 {
     A = B;
     A.data.array->push_back(C);
     A.data.array->push_back(D);
 }
 
-vertical_dict_list(A) ::= STRING(B) ASSIGN expr(C) DELIMITER. [COLLECTARRAY]
+vertical_dict_list(A) ::= NAME(B) ASSIGN expr(C) DELIMITER. [COLLECTARRAY]
 {
     A.type = optic::ARRAY;
     A.data.array = new optic::Array();
@@ -521,14 +521,14 @@ vertical_dict_list(A) ::= STRING(B) ASSIGN expr(C) DELIMITER. [COLLECTARRAY]
     A.data.array->push_back(C);
 }
 
-vertical_dict_list(A) ::= vertical_dict_list(B) STRING(C) ASSIGN expr(D) DELIMITER. [COLLECTARRAY]
+vertical_dict_list(A) ::= vertical_dict_list(B) NAME(C) ASSIGN expr(D) DELIMITER. [COLLECTARRAY]
 {
     A = B;
     A.data.array->push_back(C);
     A.data.array->push_back(D);
 }
 
-final_vertical_dict_list(A) ::= vertical_dict_list(B) STRING(C) ASSIGN expr(D). [COLLECTARRAY]
+final_vertical_dict_list(A) ::= vertical_dict_list(B) NAME(C) ASSIGN expr(D). [COLLECTARRAY]
 {
     A = B;
     A.data.array->push_back(C);
@@ -574,6 +574,19 @@ expr(A) ::= NAME(B) LCURL STRING(C) RCURL. [INDEX]
         ParseARG_STORE;
     }
 }
+
+expr(A) ::= NAME(B) COLONCOLON NAME(C). [INDEX]
+{
+    B.type = optic::UNDECLARED_VARIABLE;
+    C.type = optic::STRING;
+    store_operations(A,B,C,&optic::dictionary_lookup);
+    if (!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
+
 
 vert_stmt_list(A) ::= stmt(B) DELIMITER.
 {

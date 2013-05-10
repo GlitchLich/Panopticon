@@ -217,7 +217,7 @@ bool exec(std::string string, std::string& output)
         }
         string = string.append("\n\n");
         calculate_white_space(string);
-        std::cout << string << std::endl;
+//        std::cout << string << std::endl;
         bufferstate = yy_scan_string(string.c_str());
         while( (yv=yylex()) != 0)
         {
@@ -413,11 +413,11 @@ void calculate_white_space(std::string& line) {
                     first = 0;
                 }
                 else if (indent > indent_stack[level]) {
-                    if(string.at(insert-1)!='{')
-                    {
+//                    if(string.at(insert-1)!='{')
+//                    {
                         string.insert(insert,"{");
                         insert++;
-                    }
+//                    }
                     assert(level+1 < MAX_DEPTH);
                     indent_stack[++level] = indent;
                 }
@@ -427,23 +427,22 @@ void calculate_white_space(std::string& line) {
                         --level ;
 
                         std::cout << "INDENT LEVEL!: " << indent << std::endl;
-                        if(!should_replace(string,insert,indent))
-                        {
+//                        if(!should_replace(string,insert,indent))
+//                        {
                             string.insert(insert,"};");
                             insert++;
                             insert++;
-                        }
-                        else
-                        {
-                            std::cout << "REPLACE!" << std::endl;
-                            string.replace(string.begin()+insert,string.begin()+insert+2+indent,"};");
-                            for(int i=0;i<indent;++i)
-                            {
-                                string.insert(insert+2," ");
-                            }
-//                            insert++;
-                            blanked = true;
-                        }
+//                        }
+//                        else
+//                        {
+//                            std::cout << "REPLACE!" << std::endl;
+//                            string.replace(string.begin()+insert,string.begin()+insert+2+indent,"};");
+//                            for(int i=0;i<indent;++i)
+//                            {
+//                                string.insert(insert+2," ");
+//                            }
+//                            blanked = true;
+//                        }
                     }
                 }
             }
