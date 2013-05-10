@@ -371,8 +371,6 @@ bool delete_dictionary(object& dict)
 
 bool print_dictionary(const object& dict)
 {
-    std::cout << "PRINT DICTIONARY" << std::endl;
-
     Dictionary::iterator iter = dict.data.dictionary->begin();
 
     out() << "{ " << std::endl;
@@ -400,10 +398,10 @@ bool print_dictionary(const object& dict)
         case OPERATION_TREE:
         case ARRAY:
             print_array(value);
+            break;
 
         case DICTIONARY:
-            // print_dictionary(value);
-            std::cout << "PRINT DICTIONARY INSIDE DICTIONARY" << std::endl;
+            print_dictionary(value);
             break;
 
         case FUNCTION:
