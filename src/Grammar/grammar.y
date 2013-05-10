@@ -93,18 +93,7 @@ in ::= in test DELIMITER.
 
 start ::= spec(A).
 {
-    if(
-        A.type == optic::NUMBER ||
-        A.type == optic::STRING ||
-        A.type == optic::BOOL
-        )
-    {
-        print_object(A);
-    }
-    else
-    {
-        optic::resolve_stack_from_parser(A, true);
-    }
+    optic::resolve_stack_from_parser(A, true);
 }
 
 spec(A) ::= assignment(B).
