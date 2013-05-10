@@ -1,15 +1,15 @@
 //Dictionary Tests!
 
 //Horizontal construction
-myDict = { "Dragon" = 4 "Turtles" = true "Octopi" = "are cool" "Array" = [0 1 2 3 4] }
-print(myDict)
-myDict
+myDict = { Dragon = 4 Turtles = true Octopi = "are cool" Array = [0 1 2 3 4] }
 
-test x = 10
-test
-ten = 10
-print(test( 10 ))
-ten
+//Vertical Construction
+myDict = { 
+	Dragon = 4 
+	Turtles = true 
+	Octopi = "are cool" 
+	Array = [0 1 2 3 4] 
+}
 
 myDict::Dragon
 myDict = { Dragon = 4 Turtles = true Octopi = "are cool" Array = [0 1 2 3 4] }
@@ -18,43 +18,29 @@ myDict = { Dragon = 4 Turtles = true Octopi = "are cool" Array = [0 1 2 3 4] }
 notANoob = 
 	"Dragon" = 4 "Turtles" = true "Octopi" = "are cool" "Array" = [0 1 2 3 4]
 
-myDict{"Dragon"}
-myDict{"Turtles"}
-myDict{"Octopi"}
-myDict{"Array"}
-//vs
-notANoob{"Dragon"}
-notANoob{"Turtles"}
-notANoob{"Octopi"}
-notANoob{"Array"}
+myDict::Turtles
+myDict::Octopi
+myDict::Array
 
-//Vertical construction
+//Alternate look up, can be used with vars:
+myDict{"Array"}
+
 vertDict = {
-	"Treble" 	= 0
-	"Mid" 		= 0.3
-	"Bass"		= 11
+	Treble 	= 0
+	Mid 	= 0.3
+	Bass	= 11
 }
 
-//Vertical construction sans n00b training wheels
-coolDict =
-	"Treble" 	= 0
-	"Mid" 		= 0.3
-	"Bass"		= 11
-
-vertDict{"Treble"}
-vertDict{"Mid"}
-vertDict{"Bass"}
-//vs
-coolDict{"Treble"}
-coolDict{"Mid"}
-coolDict{"Bass"}
+vertDict::Treble
+vertDict::Mid
+vertDict::Bass
 
 //Printing is off, but this is theoretically working.
-myDict{"Dragon"} + 4
-myDict{"Turtles"} == true
-myDict{"Octopi"} + ", fuck yeah"
+myDict::Dragon + 4
+myDict::Turtles == true
+myDict::Octopi + ", fuck yeah"
 //Pringint works for this, this IS working.
-myDict{"Array"} <: 666 <: (-666)
+myDict::Array <: 666 <: (-666)
 
 //Correct Error throwing:
 //Wrong index:
@@ -67,12 +53,13 @@ notADict{"Dragon"}
 
 lookThatShitUp x y = dict{x} + array[y]
 	where
-		dict =
+		dict = {
 			"zero" 	= 0
 			"one" 	= 1
 			"two"	= 2
 			"three"	= 3
 			"four"	= 4
+		}
 		array = [
 			"ten"
 			"eleven"
@@ -81,8 +68,6 @@ lookThatShitUp x y = dict{x} + array[y]
 			"fourteen"
 		]
 			
-
-
 //Stacked Dictionaries don't work right now...
 //Should this work?
 level1 = 

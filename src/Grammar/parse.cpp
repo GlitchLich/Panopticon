@@ -339,6 +339,34 @@ unsigned int white_count(std::string& line,int start,int stop) {
 }
 
 
+bool should_replace(const std::string& string,int insert,int indent)
+{
+    if(string.size()<insert+indent)
+    {
+        return false;
+    }
+    std::cout << "REPLACEMENT TEST: " << string.substr(insert,insert+indent+1) << std::endl;
+
+    if(string.at(insert)!='\n')
+    {
+        return false;
+    }
+    for(int i=1;i<=indent;++i)
+    {
+        if(string.at(insert+indent)!=' ')
+        {
+            return false;
+        }
+    }
+
+    if(string.at(insert+indent+1)!='}')
+    {
+        return false;
+    }
+
+    return true;
+}
+
 void calculate_white_space(std::string& line) {
     int previous_break = 0;
     int size = line.size();
@@ -347,6 +375,7 @@ void calculate_white_space(std::string& line) {
     int insert = -1;
     int insert_add = 0;
     nesting = 0;
+    bool blanked = false;
     for(int i=0;i<size;++i)
     {
         insert_add++;
@@ -361,6 +390,15 @@ void calculate_white_space(std::string& line) {
         }
         else if(line.at(i)=='\n'||line.at(i)=='\r'||line.at(i)=='\0')
         {
+            if(blanked)
+            {
+                blanked = false;
+                previous_break = i;
+                insert+=insert_add;
+                insert_add = 0;
+                assert(level >= 0);
+                continue;
+            }
             if (nesting==0)
             {
 
@@ -375,8 +413,11 @@ void calculate_white_space(std::string& line) {
                     first = 0;
                 }
                 else if (indent > indent_stack[level]) {
-                    string.insert(insert,"{");
-                    insert++;
+//                    if(string.at(insert-1)!='{')
+//                    {
+                        string.insert(insert,"{");
+                        insert++;
+//                    }
                     assert(level+1 < MAX_DEPTH);
                     indent_stack[++level] = indent;
                 }
@@ -384,9 +425,24 @@ void calculate_white_space(std::string& line) {
                 {
                     while (indent < indent_stack[level]) {
                         --level ;
-                        string.insert(insert,"};");
-                        insert++;
-                        insert++;
+
+                        std::cout << "INDENT LEVEL!: " << indent << std::endl;
+//                        if(!should_replace(string,insert,indent))
+//                        {
+                            string.insert(insert,"};");
+                            insert++;
+                            insert++;
+//                        }
+//                        else
+//                        {
+//                            std::cout << "REPLACE!" << std::endl;
+//                            string.replace(string.begin()+insert,string.begin()+insert+2+indent,"};");
+//                            for(int i=0;i<indent;++i)
+//                            {
+//                                string.insert(insert+2," ");
+//                            }
+//                            blanked = true;
+//                        }
                     }
                 }
             }

@@ -39,9 +39,16 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument* parent) :
     rule.format = style->stringFormat;
     rules.append(rule);
 
-
     rule.pattern = QRegExp("\\b((\\d+(\\.\\d+)?([eE][-+]?\\d+)?))");
     rule.format = style->numberFormat;
+    rules.append(rule);
+
+    rule.pattern = QRegExp("[^\n]*\\:\\:");
+    rule.format = style->numberFormat;
+    rules.append(rule);
+
+    rule.pattern = QRegExp("\\:\\:");
+    rule.format = style->keywordFormat;
     rules.append(rule);
 
     rule.pattern = QRegExp("\\~\\>*");
