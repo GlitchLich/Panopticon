@@ -22,6 +22,7 @@
 #include "../../include/core/errors.h"
 #include "../../include/core/heap.h"
 #include "include/core/stack.h"
+#include "core/Memory.h"
 
 #undef STRING
 #undef NUM
@@ -32,8 +33,8 @@
 
     void token_destructor(Token t)
     {
-/*    panopticon::out() << "In token_destructor t.expr= " << t.expr << std::endl;*/
-/*    panopticon::out() << "In token_destructor t.n= " << t.n << std::endl;*/
+        std::cout << "token_destructor()" << std::endl;
+        mem_free(t);
     }
 }
 
@@ -152,8 +153,9 @@ name_chain(A) ::= name_chain(B) NAME(C).
         A.data.array->push_back(newObject2);
         //A.scope = optic::get_scope();
     }
-    delete_object(B);
-    delete_object(C);
+
+    // delete_object(B);
+    // delete_object(C);
 }
 
 name_chain(A) ::= NAME(B).
@@ -598,7 +600,7 @@ vert_stmt_list(A) ::= vert_stmt_list(B) stmt(C) DELIMITER. [COLLECTARRAY]
     A.type = panopticon::STATEMENT_LIST;
     if(B.type!=panopticon::STATEMENT_LIST)
     {
-        panopticon::create_array(A);
+        A = mem_alloc(optic::ARRAY);
         A.data.array->push_back(B);
         A.data.array->push_back(C);
     }
@@ -614,7 +616,7 @@ final_vert_stmt_list(A) ::= vert_stmt_list(B) stmt(C). [COLLECTARRAY]
     A.type = panopticon::STATEMENT_LIST;
     if(B.type!=panopticon::STATEMENT_LIST)
     {
-        panopticon::create_array(A);
+        A = mem_alloc(optic::STATEMENT_LIST);
         A.data.array->push_back(B);
         A.data.array->push_back(C);
     }
@@ -648,7 +650,7 @@ stmt_list(A) ::= stmt_list(B) stmt(C). [COLLECTARRAY]
     A.type = panopticon::STATEMENT_LIST;
     if(B.type!=panopticon::STATEMENT_LIST)
     {
-        panopticon::create_array(A);
+        A = mem_alloc(optic::STATEMENT_LIST);
         A.data.array->push_back(B);
         A.data.array->push_back(C);
     }
@@ -672,8 +674,7 @@ array(A) ::= LBRAC maybe_empty_stmt_list(B) RBRAC. [COLLECTARRAY]
 
 maybe_empty_stmt_list(A) ::= .
 {
-    A.type = panopticon::STATEMENT_LIST;
-    panopticon::create_array(A);
+    A = mem_alloc(optic::STATEMENT_LIST);
 }
 
 maybe_empty_stmt_list(A) ::= stmt_list(B).
@@ -681,7 +682,7 @@ maybe_empty_stmt_list(A) ::= stmt_list(B).
     A.type = panopticon::STATEMENT_LIST;
     if(B.type!=panopticon::STATEMENT_LIST)
     {
-        panopticon::create_array(A);
+        A = mem_alloc(optic::STATEMENT_LIST);
         A.data.array->push_back(B);
     }
     else

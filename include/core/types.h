@@ -152,7 +152,8 @@ struct object
     Type type;
     Data data;
 
-    object();/*
+    /*
+    object();
     object(Type type);
     object(const object& obj);
     ~object();
@@ -162,7 +163,7 @@ struct object
 
 struct Function
 {
-    std::string name;
+    String name;
     Dictionary heap;
     int num_arguments;
     Array arguments;

@@ -25,6 +25,7 @@
 
 namespace panopticon
 {
+
 /*
 object::object() : type(NIL)
 {

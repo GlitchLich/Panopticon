@@ -17,14 +17,13 @@ void gc_delete(object& obj); // forward declaration
 
 void gc_delete_array(Array* array)
 {
-    /*
     Array::iterator iter = array->begin();
 
     while(iter != array->end())
     {
-        gc_delete(*iter);
+        mem_free(*iter);
         ++iter;
-    }*/
+    }
 
     array->clear();
     delete array;
@@ -36,14 +35,26 @@ void gc_delete_array(Array* array)
 
 void gc_delete_array(Array& array)
 {
-    /*
     Array::iterator iter = array.begin();
 
     while(iter != array.end())
     {
-        gc_delete(*iter);
+        mem_free(*iter);
         ++iter;
-    }*/
+    }
+
+    array.clear();
+}
+
+void mem_free_array(Array& array)
+{
+    Array::iterator iter = array.begin();
+
+    while(iter != array.end())
+    {
+        mem_free(*iter);
+        ++iter;
+    }
 
     array.clear();
 }
@@ -52,12 +63,11 @@ void gc_delete_dictionary(Dictionary* dictionary)
 {
     Dictionary::iterator iter = dictionary->begin();
 
-    /*
     while(iter != dictionary->end())
     {
-        gc_delete(iter->second);
+        mem_free(iter->second);
         ++iter;
-    }*/
+    }
 
     dictionary->clear();
     delete dictionary;
@@ -69,14 +79,26 @@ void gc_delete_dictionary(Dictionary* dictionary)
 
 void gc_delete_dictionary(Dictionary& dictionary)
 {
-    /*
     Dictionary::iterator iter = dictionary.begin();
 
     while(iter != dictionary.end())
     {
-        gc_delete(iter->second);
+        mem_free(iter->second);
         ++iter;
-    }*/
+    }
+
+    dictionary.clear();
+}
+
+void mem_free_dictionary(Dictionary& dictionary)
+{
+    Dictionary::iterator iter = dictionary.begin();
+
+    while(iter != dictionary.end())
+    {
+        mem_free(iter->second);
+        ++iter;
+    }
 
     dictionary.clear();
 }
@@ -84,7 +106,7 @@ void gc_delete_dictionary(Dictionary& dictionary)
 void gc_delete_function(Function* function)
 {
     gc_delete_array(function->arguments);
-    gc_delete(function->body);
+    mem_free(function->body);
     gc_delete_dictionary(function->heap);
 
     delete function;
@@ -104,6 +126,7 @@ void gc_delete_string(String* string)
 
 void gc_delete(object& obj)
 {
+    std::cout << "gc_delete obj.type = " << obj.type << std::endl;
     switch(obj.type)
     {
     case NIL:
@@ -163,6 +186,7 @@ void gc_delete(object& obj)
     case PRIMITIVE:
         break;
     case CONDITION_TREE:
+        gc_delete_array(obj.data.array);
         break;
     case CONDITION_BRANCH:
         break;
@@ -183,7 +207,6 @@ void gc_delete(object& obj)
 
 void gc_free_all()
 {
-    /*
     int i = 0;
     collecting = true;
 
@@ -197,11 +220,12 @@ void gc_free_all()
     if(gc_count != 0)
     {
         std::cerr << "Warning: some memory may not be collectable by the garbage collector, there may be possible memory leaks." << std::endl;
+        std::cout << "gc_count: " << gc_count << std::endl;
         gc_count = 0; // If dealloc_queue.size == 0 then gc_count should be 0 as well. If it is not, then likely we've missed something
     }
 
-    std::cout << "Garbage Collector freed: " << i << "objects." << std::endl;
-    collecting = false;*/
+    std::cout << "Garbage Collector freed: " << i << " objects." << std::endl;
+    collecting = false;
 }
 
 void gc_sweep()
@@ -291,6 +315,8 @@ object mem_alloc(Type type)
     case PRIMITIVE:
         break;
     case CONDITION_TREE:
+        ++gc_count;
+        obj.data.array = new Array();
         break;
     case CONDITION_BRANCH:
         break;
@@ -314,6 +340,7 @@ object mem_alloc(Type type)
 
 void mem_free(object obj)
 {
+    std::cout << "mem_free" << std::endl;
     dealloc_queue.push_back(obj);
 }
 
@@ -434,7 +461,7 @@ object mem_copy(const object &obj)
         new_object.data.number = obj.data.number;
         break;
     case STATEMENT_LIST:
-        new_object.data.array = obj.data.array;
+        new_object.data.array = copy_array(obj.data.array);
         break;
     case VARIABLE:
         ++gc_count;
@@ -445,7 +472,7 @@ object mem_copy(const object &obj)
         new_object.data.string = new String(*obj.data.string);
         break;
     case OPERATION_TREE:
-        new_object.data.array = obj.data.array;
+        new_object.data.array = copy_array(obj.data.array);
         break;
     case OPERATION:
         new_object.data.operator_func = obj.data.operator_func;
@@ -475,6 +502,7 @@ object mem_copy(const object &obj)
     case PRIMITIVE: // Not implemented yet
         break;
     case CONDITION_TREE:
+        new_object.data.array = copy_array(obj.data.array);
         break;
     case CONDITION_BRANCH:
         break;

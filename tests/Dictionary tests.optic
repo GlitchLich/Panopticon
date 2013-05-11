@@ -11,7 +11,7 @@ myDict = {
 	Array = [0 1 2 3 4] 
 }
 
-a s r t y  u myDict::Dragon
+myDict::Dragon
 myDict = { Dragon = 4 Turtles = true Octopi = "are cool" Array = [0 1 2 3 4] }
 
 //Horizontal construction sans n00b training wheels

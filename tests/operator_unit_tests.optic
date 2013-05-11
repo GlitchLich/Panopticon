@@ -10,8 +10,10 @@
 n*m+z
 n*m+z
 
-[0 1 2 3]
-
+a = [0 1 2 3]
+a + 1
+axe x = x
+axe(7)
 recursion x t = recursion(x t-1)
 
 recursion(12)

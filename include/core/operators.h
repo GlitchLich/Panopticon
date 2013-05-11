@@ -43,32 +43,30 @@ namespace panopticon
 
 
 //GENERAL operations
-object copy_object(const object &original);
-bool delete_object(object& obj);
+// object copy_object(const object &original);
+// bool delete_object(object& obj);
 bool print_object(const object& A);
 object convert_to_string( object& original);
 object create_void_tree();
 
 // Dictionaries
-bool create_dictionary(object& dict);
-bool delete_dictionary(object& dict);
+// bool create_dictionary(object& dict);
+// bool delete_dictionary(object& dict);
 bool print_dictionary(const object& dict);
-bool dictionary_keys(object& keys, const object& dict); // Returns array of keys
-bool dictionary_values(object& values, const object& dict); // returns array of values
 bool dictionary_lookup(object& value, const object& dict, const object& key);
 bool dictionary_contains(object &boolean, const object &dict, const object &key);
 
 //object de_tree(object& obj);
-bool concatenate_arrays(object &a, object b, object c);
-bool create_array(object &a);
+// bool concatenate_arrays(object &a, object b, object c);
+// bool create_array(object &a);
 bool print_array(const object &A, int arrayNum=0, bool isTree=false);
-bool delete_array(object& a);
+// bool delete_array(object& a);
 bool unary_print_object(object &A, const object &B);
 
 bool object_operator_array(object &a,const object &obj, const object& array, operator_function func);
 bool array_operator_object(object &a,const object &array,const object& obj, operator_function func);
 bool recursive_apply(object &a,const object &obj1,const object& obj2, operator_function func);
-bool object_operator_object(object& a, object& b, object& c, operator_function func);
+// bool object_operator_object(object& a, object& b, object& c, operator_function func);
 bool array_operator_array(object& a,const object& array1,const object& array2, operator_function func);
 bool parse_operations(object& a, const object& b, const object& c, operator_function func);
 bool resolve_stack_from_parser(const object &operation_tree, bool resolve_entire_stack = false);
