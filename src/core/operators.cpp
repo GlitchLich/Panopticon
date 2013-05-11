@@ -237,6 +237,39 @@ bool print_array(const object &A, int arrayNum,bool isTree)
     }
 }
 
+bool print_variable(const object& A)
+{
+    object result;
+    if(get_variable(A.data.string,&result) == OK)
+    {
+        if(result.type==FUNCTION)
+        {
+            if(result.data.function->arguments.size() == 1)
+            {
+                object arguments; // empty, won't be used by call_function so no need to initialize
+                call_function(result, A, arguments);
+                out() << *A.data.string << ": " << print_object(result);
+            }
+
+            else
+            {
+                out() << "Function: " << *A.data.string << std::endl;
+                out() << "with arguments: " << result.data.function->arguments.size() << std::endl;
+            }
+        }
+        else
+        {
+            out() << *A.data.string << ": " << print_object(result);
+        }
+
+    }
+
+    else
+    {
+        out() << "Undeclared Variable: " << *A.data.string << std::endl;
+    }
+}
+
 bool print_object(const object &A)
 {
     switch(A.type)
@@ -270,36 +303,7 @@ bool print_object(const object &A)
     case panopticon::VARIABLE:
     case panopticon::UNDECLARED_VARIABLE:
 
-        object result;
-        if(get_variable(A.data.string,&result) == OK)
-        {
-            if(result.type==FUNCTION)
-            {
-                if(result.data.function->arguments.size() == 1)
-                {
-                    object arguments; // empty, won't be used by call_function so no need to initialize
-                    call_function(result, A, arguments);
-                    out() << *A.data.string << ": " << print_object(result);
-                }
-
-                else
-                {
-                    out() << "Function: " << *A.data.string << std::endl;
-                    out() << "with arguments: " << result.data.function->arguments.size() << std::endl;
-                }
-            }
-            else
-            {
-                out() << *A.data.string << ": " << print_object(result);
-            }
-
-        }
-
-        else
-        {
-            out() << "Undeclared Variable: " << *A.data.string << std::endl;
-        }
-
+        print_variable(A);
         break;
 
     case panopticon::OPERATION_TREE:

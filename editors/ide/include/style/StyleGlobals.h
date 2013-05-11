@@ -37,6 +37,7 @@ public:
     QTextCharFormat printErrorFormat;
     QTextCharFormat keywordFormat;
     QTextCharFormat singleLineCommentFormat;
+    QTextCharFormat booleanFormat;
     QTextCharFormat stringFormat;
     QTextCharFormat functionFormat;
     QTextCharFormat numberFormat;

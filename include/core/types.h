@@ -88,25 +88,21 @@ enum Type
     OPERATION,//12
     UNARY_OPERATION, // 13
     ASSIGNMENT,//14
-    COMPUTE,//15
-    LOCAL_VARIABLE_INDEX,//16
-    FUNCTION_DEC,//17
-    GUARD,//18
-    FUNCTION_CALL,//19
-    FUNCTION_BODY, //20 Used to prevent further parsing by the stack, enables lazy evaluation
-    FUNCTION_ARG_NAMES, // 21 Used to pass argument names to functions for composition
-    FUNCTION_ARG_VALUES, // 22 Used to pass argument values to functions for calling
-    VOID, // 23, Use to prevent return on the stack
-    CODE_BLOCK, //24 Denotes several expression in a row
-    PRIMITIVE, // 25
-    CONDITION_TREE, //26
-    CONDITION_BRANCH, //27
-    NO_EXPANSION_OPERATION, //28 For those operations that you DON'T want to multichannel expand
-    UNARY_NO_EXPANSION_OPERATION, //29 For those unary operations that you don't want to expand.
-    PATTERN, //30 for pattern matching
-    HEAD, //31 For Arrays/List sorting/construction
-    TAIL, //32 For Arrays/List sorting/construction
-    FAILED_CONDITION //33 Condition test failed
+    GUARD,//15
+    FUNCTION_BODY, //16 Used to prevent further parsing by the stack, enables lazy evaluation
+    FUNCTION_ARG_NAMES, // 17 Used to pass argument names to functions for composition
+    FUNCTION_ARG_VALUES, // 18 Used to pass argument values to functions for calling
+    VOID, // 19, Use to prevent return on the stack
+    CODE_BLOCK, //20 Denotes several expression in a row
+    PRIMITIVE, // 21
+    CONDITION_TREE, //22
+    CONDITION_BRANCH, //23
+    NO_EXPANSION_OPERATION, //24 For those operations that you DON'T want to multichannel expand
+    UNARY_NO_EXPANSION_OPERATION, //25 For those unary operations that you don't want to expand.
+    PATTERN, //26 for pattern matching
+    HEAD, //27 For Arrays/List sorting/construction
+    TAIL, //28 For Arrays/List sorting/construction
+    FAILED_CONDITION //29 Condition test failed
 };
 
 // Forward declarations
@@ -139,15 +135,33 @@ union Data
     unary_operator_function unary_operator_func;
 };
 
+union DataC11 // C++11
+{
+    Number number;
+    String string;
+    bool boolean;
+    Function* function;
+    Array* array;
+    Dictionary* dictionary;
+    operator_function operator_func;
+    unary_operator_function unary_operator_func;
+};
+
 struct object
 {
-    int type;
+    Type type;
     Data data;
+
+    object();/*
+    object(Type type);
+    object(const object& obj);
+    ~object();
+
+    object& operator=(const object& obj);*/
 };
 
 struct Function
 {
-    std::stack<object> stack;
     std::string name;
     Dictionary heap;
     int num_arguments;

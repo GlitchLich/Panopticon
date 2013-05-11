@@ -21,8 +21,40 @@
 */
 
 #include "core/types.h"
+#include "core/Memory.h"
 
 namespace panopticon
 {
+/*
+object::object() : type(NIL)
+{
+    data.number = 0;
+}
+
+object::object(Type type) : type(type)
+{
+    data = mem_alloc(type).data;
+}
+
+object::object(const object& obj)
+{
+    mem_free(*this);
+    data = mem_copy(obj).data;
+    type = obj.type;
+}
+
+object::~object()
+{
+    mem_free(*this);
+}
+
+object& object::operator=(const object& obj)
+{
+    mem_free(*this);
+    data = mem_copy(obj).data;
+    type = obj.type;
+
+    return *this;
+}*/
 
 } // panopticon namespace

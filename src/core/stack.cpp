@@ -5,6 +5,7 @@
 #include "include/core/panopticon.h"
 #include "include/core/heap.h"
 #include "include/Grammar/parse.h"
+#include "core/Memory.h"
 
 namespace panopticon
 {
@@ -231,46 +232,6 @@ bool evaluate_unary_operator(const object& operator_object,bool expand = true)
     }
 }
 
-bool evaluate_function_dec()
-{
-    object arguments = optic_stack.back();
-    optic_stack.pop_back();
-    object body = optic_stack.back();
-    body.type = OPERATION_TREE;
-    optic_stack.pop_back();
-    object function;
-    create_function(function, arguments, body);
-    optic_stack.push_back(function);
-    return true;
-}
-
-bool evaluate_function_call()
-{
-    /* DOESN'T WORK
-    if(optic_stack.back().type == FUNCTION)
-    {
-        object function = optic_stack.back();
-        optic_stack.pop_back();
-        call_function(function, __LAMBDA__);
-        optic_stack.push_back(global_state);
-    }
-
-    else */
-
-    std::cout << "EVALUATE FUNCTION CALL!!!!!!!" << std::endl;
-    if(optic_stack.back().type == STRING)
-    {
-        object name = optic_stack.back();
-        optic_stack.pop_back();
-        object arguments = optic_stack.back();
-        optic_stack.pop_back();
-        return call_function(name, name, arguments);
-    }
-
-    clear_stack();
-    return false;
-}
-
 bool evaluate_variable(const object& variable_name)
 {
     object result;
@@ -370,14 +331,6 @@ bool evaluate_top()
         return evaluate_assignment();
         break;
 
-    case FUNCTION_DEC:
-        return evaluate_function_dec();
-        break;
-
-    case FUNCTION_CALL:
-        return evaluate_function_call();
-        break;
-
     case VOID: // don't return
         break;
 
@@ -404,6 +357,8 @@ void evaluate_stack()
             optic_stack.pop_back();
         }
     }
+
+    gc_free_all(); // Now's a good time to collect the garbage because the stack is empty and nothing is happening
 
     if(global_state.type != VOID)
     {
