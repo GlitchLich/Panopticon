@@ -10,14 +10,29 @@
 n*m+z
 n*m+z
 
-[0 1 2 3]
+whereTest x = x + y * z	
+	where 
+		y = x * 10 
+		z = y * 0.125
+
+whereTest( [ 12 13 ] )
+
+hellYeah x = x + y("!!!")
+	where
+		y z = "Hell yeah"+z
+
+hellYeah("ok")
+
+//Just like a dict, so you can even do this:
+hellYeah x = x + y("!!!")
+	where { y z = "Hell yeah"+z }
+
+illegalExprTest x = x + y 3 * 3
+illegalExprTest2 = x + y 3 * 3
 
 recursion x t = recursion(x t-1)
 
 recursion(12)
-
-
-
 
 headTailFunc z (x:xs) = x : xs
 
@@ -42,6 +57,7 @@ arrayGuard([0 1 1])
 arrayGuard([0 0 1])
 arrayGuard([0 0 0])
 arrayGuard([6 6 6])
+//Throws correct errors:
 arrayGuard(2)
 arrayGuard([ [1 0 0] [0 1 0] [0 0 1] ])
 
@@ -276,7 +292,7 @@ headTailFunc3 (_:xs) = x : xs
 subvariable = x * z
 	where
 		z = x+1
-		x = 10+1
+		x = 10+1 
 		
 subvariable + [1 2]
 
@@ -386,7 +402,8 @@ whereGuardz x
 	_				= 1
 	where
 		y = 1
-whereGuardz(2)
+
+whereGuardz(4)
 
 
 //Where statements with guard statements

@@ -106,7 +106,8 @@ enum Type
     PATTERN, //30 for pattern matching
     HEAD, //31 For Arrays/List sorting/construction
     TAIL, //32 For Arrays/List sorting/construction
-    FAILED_CONDITION //33 Condition test failed
+    FAILED_CONDITION, //33 Condition test failed
+    WHERE_TREE //34
 };
 
 // Forward declarations

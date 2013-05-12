@@ -142,27 +142,6 @@ void init()
     init_heap();
 }
 
-void mutate_text_for_parsing(std::string& string)
-{
-    int whitespacecount=0;
-    int string_length = string.size();
-    for(int i=0;i<string_length-1;++i)
-    {
-        //        if(string.at(i)=='\n' && string.at(i+1)=='\t')
-        //        {
-        //            std::cout << "TAB!" << std::endl;
-        //            whitespacecount++;
-        //            if(whitespacecount==3)
-        //            {
-        //                stringSize-=3;
-        //                string.replace(i-2,3,"_TAB");
-        //                whitespacecount = 0;
-        //            }
-        //        }
-
-    }
-}
-
 bool exec(std::string string, std::string& output)
 {
     correct_parsing = true;
@@ -217,7 +196,7 @@ bool exec(std::string string, std::string& output)
         }
         string = string.append("\n\n");
         calculate_white_space(string);
-//        std::cout << string << std::endl;
+        std::cout << string << std::endl;
         bufferstate = yy_scan_string(string.c_str());
         while( (yv=yylex()) != 0)
         {
@@ -315,10 +294,6 @@ void command_line_loop()
 }
 
 //Significant whitespace
-void string_whitespace_check(std::string &line, int start)
-{
-
-}
 
 unsigned int white_count(std::string& line,int start,int stop) {
     unsigned int count = 0;
@@ -367,7 +342,98 @@ bool should_replace(const std::string& string,int insert,int indent)
     return true;
 }
 
+void strip_whitespace_before_breaks(std::string& string)
+{
+    int size = string.size();
+    int last_character = 0;
+    for(int i=0;i<size;++i)
+    {
+        if(string.at(i)!=' ')
+        {
+            if(string.at(i)=='\n')
+            {
+                if(i==string.size()-1)
+                {
+                    return;
+                }
+                int num_erased = (i)-(last_character+1);
+                if(num_erased>0)
+                {
+                    string.erase(string.begin()+last_character+1,string.begin()+i);
+                    i-=num_erased;
+                    size-=num_erased;
+                    last_character-=num_erased;
+                }
+            }
+            else
+            {
+                last_character = i;
+            }
+        }
+    }
+}
+
+void collapse_braces_after_linebreaks(std::string& string)
+{
+    int size = string.size();
+    int last_linebreak = 0;
+    int last_character = 0;
+    for(int i=0;i<size;++i)
+    {
+        if(string.at(i)!=' '||string.at(i)!='\n')
+        {
+            last_character = i;
+        }
+        if(string.at(i)=='\n')
+        {
+            last_linebreak = i;
+        }
+        else if(string.at(i)=='}')
+        {
+            if(last_linebreak>last_character)
+            {
+                int num_erased = (i+1)-(last_linebreak+1);
+                std::cout << "num_erased: " << num_erased << std::endl;
+                std::cout << "i: " << i << std::endl;
+                if(num_erased>0)
+                {
+                    //                string.insert(i,";");
+                    string.erase(string.begin()+last_linebreak+1,string.begin()+i+1);
+                    i-=(num_erased);
+                    size-=(num_erased);
+                    last_linebreak-=(num_erased);
+                }
+            }
+        }
+    }
+}
+
+void stip_final_whitespace(std::string& line)
+{
+    int num_erase = 0;
+    for(int i=line.size()-1;i>0;i-=1)
+    {
+        if(line.at(i)==' ')
+        {
+            num_erase++;
+        }
+        else
+        {
+            break;
+        }
+    }
+    if(num_erase>0)
+    {
+        num_erase-=1;
+        line.erase(line.end() - num_erase,line.end());
+    }
+}
+
+//FIX THIS SHIT
 void calculate_white_space(std::string& line) {
+    //    stip_final_whitespace(line);
+    //    strip_whitespace_before_breaks(line);
+    //    collapse_braces_after_linebreaks(line);
     int previous_break = 0;
     int size = line.size();
     std::string string;
@@ -407,17 +473,22 @@ void calculate_white_space(std::string& line) {
                 if (indent == indent_stack[level]) {
                     if (!first)
                     {
-                        string.insert(insert,";");
-                        insert++;
+                        string.replace(insert,1,";");
+//                        string.insert(insert,";");
+//                        insert++;
+                        //                        size++;
                     }
                     first = 0;
                 }
                 else if (indent > indent_stack[level]) {
-//                    if(string.at(insert-1)!='{')
-//                    {
-                        string.insert(insert,"{");
-                        insert++;
-//                    }
+                    //                    if(string.at(insert-1)!='{')
+                    //                    {
+                    string.replace(insert,1," {");
+                    insert++;
+//                                            string.insert(insert,"{");
+//                                            insert++;
+                    //                        size++;
+                    //                    }
                     assert(level+1 < MAX_DEPTH);
                     indent_stack[++level] = indent;
                 }
@@ -426,23 +497,38 @@ void calculate_white_space(std::string& line) {
                     while (indent < indent_stack[level]) {
                         --level ;
 
-                        std::cout << "INDENT LEVEL!: " << indent << std::endl;
-//                        if(!should_replace(string,insert,indent))
-//                        {
-                            string.insert(insert,"};");
-                            insert++;
-                            insert++;
-//                        }
-//                        else
-//                        {
-//                            std::cout << "REPLACE!" << std::endl;
-//                            string.replace(string.begin()+insert,string.begin()+insert+2+indent,"};");
-//                            for(int i=0;i<indent;++i)
-//                            {
-//                                string.insert(insert+2," ");
-//                            }
-//                            blanked = true;
-//                        }
+                        //                        std::cout << "INDENT LEVEL!: " << indent << std::endl;
+                        //                        if(!should_replace(string,insert,indent))
+                        //                        {
+                        string.replace(insert,1," }  ");
+//                        string.insert(insert-1," ");
+                        insert++;
+                        insert++;
+                        insert++;
+//                        insert++;
+//                        string.insert(insert," }; ");
+//                        insert++;
+//                        insert++;
+//                        insert++;
+//                        insert++;
+
+                        //                            size++;
+                        //                            size++;
+                        //                        }
+                        //                        else
+                        //                        {
+                        //                            std::cout << "REPLACE!" << std::endl;
+                        //                            std::string replacement("};");
+                        //                            for(int i=0;i<indent+1;++i)
+                        //                            {
+                        //                                replacement.append(" ");
+                        //                            }
+                        //                            string.replace(string.begin()+insert,string.begin()+insert+2+indent,replacement);
+                        //                            string.insert(insert,";");
+                        //                            insert++;
+                        //                            size++;
+                        //                            blanked = true;
+                        //                        }
                     }
                 }
             }
@@ -452,7 +538,29 @@ void calculate_white_space(std::string& line) {
             assert(level >= 0);
         }
     }
-
+    for(int i = string.size()-1;i>0;i-=1)
+    {
+        if(string.at(i)==';')
+        {
+            break;
+        }
+        else if(string.at(i)==' '||string.at(i)=='\n')
+        {
+            //next
+        }
+        else
+        {
+            if(i>=string.size()-1)
+            {
+                string.append(";");
+            }
+            else
+            {
+                string.insert(i+1,";");
+            }
+            break;
+        }
+    }
     string.swap(line);
 }
 
