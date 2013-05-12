@@ -22,6 +22,8 @@ void shallow_mem_free_array(Array* array, std::string type); // type is used onl
 object mem_alloc(Type type);
 void mem_free(object obj); // not immediate, just scheduled
 object mem_copy(const object& obj); // Deep copy an object
+object mem_string_alloc(Type type, const char* string);
+object mem_string_alloc(const char* string);
 
 } // panopticon namespace
 

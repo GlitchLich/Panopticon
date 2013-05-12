@@ -16,6 +16,7 @@
 //#include "../include/Grammar/lexer.h"
 #include "../include/core/heap.h"
 #include <algorithm>
+#include "../../include/core/Memory.h"
 
 /**
  * We have to declare these here - they're not  in any header files
@@ -196,7 +197,7 @@ bool exec(std::string string, std::string& output)
         }
         string = string.append("\n\n");
         calculate_white_space(string);
-//        std::cout << string << std::endl;
+        std::cout << string << std::endl;
         bufferstate = yy_scan_string(string.c_str());
         while( (yv=yylex()) != 0)
         {
@@ -206,8 +207,14 @@ bool exec(std::string string, std::string& output)
                 t0.data.number = yylval.dval;
                 break;
             case NAME:
+                t0 = panopticon::mem_string_alloc(panopticon::UNDECLARED_VARIABLE,yylval.sval);
+                if(yylval.sval!=0)
+                {
+                    delete yylval.sval;
+                }
+                break;
             case STRING:
-                t0.data.string = new std::string(yylval.sval);
+                t0 = panopticon::mem_string_alloc(yylval.sval);
                 if(yylval.sval!=0)
                 {
                     delete yylval.sval;
@@ -267,14 +274,14 @@ void command_line_loop()
                 t0.data.number = yylval.dval;
                 break;
             case NAME:
-                t0.data.string = new std::string(yylval.sval);
+                t0 = panopticon::mem_string_alloc(panopticon::UNDECLARED_VARIABLE,yylval.sval);
                 if(yylval.sval!=0)
                 {
                     delete yylval.sval;
                 }
                 break;
             case STRING:
-                t0.data.string = new std::string(yylval.sval);
+                t0 = panopticon::mem_string_alloc(yylval.sval);
                 if(yylval.sval!=0)
                 {
                     delete yylval.sval;

@@ -85,19 +85,30 @@ void decrement_function()
 
 void gc_delete(object& obj); // forward declaration
 
-void gc_delete_array(Array* array)
+bool gc_delete_array(Array* array)
 {
-    Array::iterator iter = array->begin();
-
-    while(iter != array->end())
+    if(array)
     {
-        mem_free(*iter);
-        ++iter;
+        Array::iterator iter = array->begin();
+
+        while(iter != array->end())
+        {
+            mem_free(*iter);
+            ++iter;
+        }
+
+        array->clear();
+        delete array;
+        array = 0;
+
+        return true;
     }
 
-    array->clear();
-    delete array;
-    array = 0;
+    else
+    {
+        std::cerr << "Attempted to gc_delete_array on a null pointer." << std::endl;
+        return false;
+    }
 }
 
 void gc_delete_array(Array& array)
@@ -128,25 +139,41 @@ void mem_free_array(Array& array)
 
 void shallow_mem_free_array(Array* array, std::string type)
 {
-    delete array;
-    array = 0;
-    decrement_array(type);
+    if(array)
+    {
+        delete array;
+        array = 0;
+        decrement_array(type);
+    }
+
+    else
+    {
+        std::cerr << "Attempted to shallo_mem_free_array on a null pointer." << std::endl;
+    }
 }
 
 void gc_delete_dictionary(Dictionary* dictionary)
 {
-    Dictionary::iterator iter = dictionary->begin();
-
-    while(iter != dictionary->end())
+    if(dictionary)
     {
-        mem_free(iter->second);
-        ++iter;
+        Dictionary::iterator iter = dictionary->begin();
+
+        while(iter != dictionary->end())
+        {
+            mem_free(iter->second);
+            ++iter;
+        }
+
+        dictionary->clear();
+        delete dictionary;
+        dictionary = 0;
+        decrement_dictionary();
     }
 
-    dictionary->clear();
-    delete dictionary;
-    dictionary = 0;
-    decrement_dictionary();
+    else
+    {
+        std::cerr << "Attempted to gc_delete_dictionary on a null pointer." << std::endl;
+    }
 }
 
 void gc_delete_dictionary(Dictionary& dictionary)
@@ -177,20 +204,36 @@ void mem_free_dictionary(Dictionary& dictionary)
 
 void gc_delete_function(Function* function)
 {
-    gc_delete_array(function->arguments);
-    mem_free(function->body);
-    gc_delete_dictionary(function->heap);
+    if(function)
+    {
+        gc_delete_array(function->arguments);
+        mem_free(function->body);
+        gc_delete_dictionary(function->heap);
 
-    delete function;
-    function = 0;
-    decrement_function();
+        delete function;
+        function = 0;
+        decrement_function();
+    }
+
+    else
+    {
+        std::cerr << "Attempted to gc_delete_function on a null pointer." << std::endl;
+    }
 }
 
 void gc_delete_string(String* string)
 {
-    delete string;
-    string = 0;
-    decrement_string();
+    if(string)
+    {
+        delete string;
+        string = 0;
+        decrement_string();
+    }
+
+    else
+    {
+        std::cerr << "Attempted to gc_delete_string on a null pointer." << std::endl;
+    }
 }
 
 void gc_delete(object& obj)
@@ -211,8 +254,8 @@ void gc_delete(object& obj)
         gc_delete_function(obj.data.function);
         break;
     case ARRAY:
-        decrement_array("ARRAY");
-        gc_delete_array(obj.data.array);
+        if(gc_delete_array(obj.data.array))
+            decrement_array("ARRAY");
         break;
     case DICTIONARY:
         gc_delete_dictionary(obj.data.dictionary);
@@ -220,8 +263,8 @@ void gc_delete(object& obj)
     case ERROR:
         break;
     case STATEMENT_LIST:
-        decrement_array("STATEMENT_LIST");
-        gc_delete_array(obj.data.array);
+        if(gc_delete_array(obj.data.array))
+            decrement_array("STATEMENT_LIST");
         break;
     case VARIABLE:
         gc_delete_string(obj.data.string);
@@ -230,8 +273,8 @@ void gc_delete(object& obj)
         gc_delete_string(obj.data.string);
         break;
     case OPERATION_TREE:
-        decrement_array("OPERATION_TREE");
-        gc_delete_array(obj.data.array);
+        if(gc_delete_array(obj.data.array))
+            decrement_array("OPERATION_TREE");
         break;
     case OPERATION:
         break;
@@ -240,20 +283,20 @@ void gc_delete(object& obj)
     case ASSIGNMENT:
         break;
     case GUARD:
-        decrement_array("GUARD");
-        gc_delete_array(obj.data.array);
+        if(gc_delete_array(obj.data.array))
+            decrement_array("GUARD");
         break;
     case FUNCTION_BODY:
-        decrement_array("FUNCTION_BODY");
-        gc_delete_array(obj.data.array);
+        if(gc_delete_array(obj.data.array))
+            decrement_array("FUNCTION_BODY");
         break;
     case FUNCTION_ARG_NAMES:
-        decrement_array("FUNCTION_ARG_NAMES");
-        gc_delete_array(obj.data.array);
+        if(gc_delete_array(obj.data.array))
+            decrement_array("FUNCTION_ARG_NAMES");
         break;
     case FUNCTION_ARG_VALUES:
-        decrement_array("FUNCTION_ARG_VALUES");
-        gc_delete_array(obj.data.array);
+        if(gc_delete_array(obj.data.array))
+            decrement_array("FUNCTION_ARG_VALUES");
         break;
     case VOID:
         break;
@@ -262,8 +305,8 @@ void gc_delete(object& obj)
     case PRIMITIVE:
         break;
     case CONDITION_TREE:
-        decrement_array("CONDITION_TREE");
-        gc_delete_array(obj.data.array);
+        if(gc_delete_array(obj.data.array))
+            decrement_array("CONDITION_TREE");
         break;
     case CONDITION_BRANCH:
         break;
@@ -311,6 +354,24 @@ void gc_sweep()
     {
         gc_free_all();
     }
+}
+
+object mem_string_alloc(const char* string)
+{
+    object obj;
+    obj.type = STRING;
+    obj.data.string = new String(string);
+    increment_string();
+    return obj;
+}
+
+object mem_string_alloc(Type type, const char* string)
+{
+    object obj;
+    obj.type = type;
+    obj.data.string = new String(string);
+    increment_string();
+    return obj;
 }
 
 object mem_alloc(Type type)

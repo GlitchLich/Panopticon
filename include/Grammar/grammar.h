@@ -46,9 +46,9 @@
 #define OF                             46
 #define LET                            47
 #define IN                             48
-#define STRING                         49
-#define COLONCOLON                     50
-#define PRINT                          51
-#define NUM                            52
+#define COLONCOLON                     49
+#define PRINT                          50
+#define NUM                            51
+#define STRING                         52
 #define BOOLEAN                        53
 #define OPENQUOTEERROR                 54
