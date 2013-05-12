@@ -9,13 +9,16 @@
 //Undeclare Variables throw errors:
 n*m+z
 n*m+z
-
+1
+(-1)
+[ 0 1 2 3 ]
 a = [0 1 2 3]
-a + 1
+a + [ 0 1 2 3 4 ]
 axe x = x
 axe(7)
 recursion x t = recursion(x t-1)
-
+ten = 10
+ten
 recursion(12)
 
 

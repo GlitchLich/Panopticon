@@ -269,6 +269,8 @@ bool print_variable(const object& A)
     {
         out() << "Undeclared Variable: " << *A.data.string << std::endl;
     }
+
+    mem_free(result);
 }
 
 bool print_object(const object &A)
@@ -330,7 +332,7 @@ bool print_object(const object &A)
 
 bool unary_print_object(object &A, const object &B)
 {
-    A = mem_copy(B);
+    // A = mem_copy(B);
     print_object(B);
 }
 /*
@@ -450,7 +452,9 @@ bool dictionary_lookup(object& value, const object& dict, const object& key)
         {
             if(result.type == DICTIONARY)
             {
-                return dictionary_lookup(value, result, key);
+                bool success =  dictionary_lookup(value, result, key);
+                mem_free(result);
+                return success;
             }
 
             else

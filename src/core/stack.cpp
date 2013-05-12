@@ -89,6 +89,8 @@ bool evaluate_binary_operator(const object& operator_object, bool expand = true)
 
                     else
                     {
+                        mem_free(arg1);
+                        mem_free(arg2);
                         clear_stack();
                         return false;
                     }
@@ -117,6 +119,8 @@ bool evaluate_binary_operator(const object& operator_object, bool expand = true)
 
                     else
                     {
+                        mem_free(arg1);
+                        mem_free(arg2);
                         clear_stack();
                         return false;
                     }
@@ -146,6 +150,8 @@ bool evaluate_binary_operator(const object& operator_object, bool expand = true)
 
                     else
                     {
+                        mem_free(arg1);
+                        mem_free(arg2);
                         clear_stack();
                         return false;
                     }
@@ -165,6 +171,8 @@ bool evaluate_binary_operator(const object& operator_object, bool expand = true)
             operator_object.data.operator_func(result, arg1, arg2);
         }
 
+        mem_free(arg1);
+        mem_free(arg2);
         optic_stack.push_back(result);
         return true;
     }
@@ -219,6 +227,7 @@ bool evaluate_unary_operator(const object& operator_object,bool expand = true)
                 operator_object.data.unary_operator_func(result, arg);
             }
 
+            mem_free(arg);
             optic_stack.push_back(result);
             return true;
         }
@@ -231,6 +240,7 @@ bool evaluate_unary_operator(const object& operator_object,bool expand = true)
 
     if(!eval)
     {
+        mem_free(arg);
         out() << "Missing argument for unary operator" << std::endl;
         clear_stack();
         return false;
@@ -375,6 +385,7 @@ void evaluate_stack()
     {
         out() << "optic: ";
         print_object(global_state);
+        mem_free(global_state);
     }
 
     gc_free_all(); // Now's a good time to collect the garbage because the stack is empty and nothing is happening

@@ -29,8 +29,7 @@ void gc_delete_array(Array* array)
     delete array;
     array = 0;
 
-    if(gc_count)
-        --gc_count;
+    --gc_count;
 }
 
 void gc_delete_array(Array& array)
@@ -73,8 +72,7 @@ void gc_delete_dictionary(Dictionary* dictionary)
     delete dictionary;
     dictionary = 0;
 
-    if(gc_count)
-        --gc_count;
+    --gc_count;
 }
 
 void gc_delete_dictionary(Dictionary& dictionary)
@@ -111,17 +109,14 @@ void gc_delete_function(Function* function)
 
     delete function;
     function = 0;
-    if(gc_count)
-        --gc_count;
+    --gc_count;
 }
 
 void gc_delete_string(String* string)
 {
     delete string;
     string = 0;
-
-    if(gc_count)
-        --gc_count;
+    --gc_count;
 }
 
 void gc_delete(object& obj)
@@ -221,7 +216,7 @@ void gc_free_all()
     {
         std::cerr << "Warning: some memory may not be collectable by the garbage collector, there may be possible memory leaks." << std::endl;
         std::cout << "gc_count: " << gc_count << std::endl;
-        gc_count = 0; // If dealloc_queue.size == 0 then gc_count should be 0 as well. If it is not, then likely we've missed something
+        // gc_count = 0; // If dealloc_queue.size == 0 then gc_count should be 0 as well. If it is not, then likely we've missed something
     }
 
     std::cout << "Garbage Collector freed: " << i << " objects." << std::endl;
@@ -230,7 +225,7 @@ void gc_free_all()
 
 void gc_sweep()
 {
-    if((dealloc_queue.size() > MAX_GC_OBJECTS || gc_count > MAX_GC_OBJECTS) && !collecting)
+    if((dealloc_queue.size() > MAX_GC_OBJECTS) && !collecting)
     {
         gc_free_all();
     }
