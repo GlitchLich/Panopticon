@@ -504,6 +504,27 @@ bool dictionary_contains(object &boolean, const object &dict, const object &key)
     return true;
 }
 
+bool dictionary_insert(object& dictionary_A,const object& string_B, const object& object_C)
+{
+    object boolean;
+    dictionary_contains(boolean,dictionary_A,string_B);
+    if(!boolean.data.boolean)
+    {
+        dictionary_A.data.dictionary->insert(
+                    std::make_pair(
+                        *string_B.data.string,
+                        object_C
+                        )
+                    );
+    }
+    else
+    {
+        out() << "Error:  Cannot insert key: " << *string_B.data.string << "into dictionary because this key already exists." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+}
+
 /*
 bool concatenate_arrays(object &a,object b, object c)
 {

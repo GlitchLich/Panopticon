@@ -582,17 +582,17 @@ expr(A) ::= dict(B).
             insure_ready_for_assignment(B.data.array->at(i),B.data.array->at(i+1));
 
             optic::object result;
-            panopticon::parse_operations(
-                result,
-                B.data.array->at(i),
-                B.data.array->at(i+1),
-                panopticon::assign_variable
-            );
-
+/*            panopticon::store_operations(*/
+/*                result,*/
+/*                B.data.array->at(i),*/
+/*                B.data.array->at(i+1),*/
+/*                panopticon::assign_variable*/
+/*            );*/
+            optic::create_function(result,B.data.array->at(i),B.data.array->at(i+1));
             A.data.dictionary->insert(
                 std::make_pair(
                     *B.data.array->at(i).data.array->at(0).data.string,
-                    B.data.array->at(i+1)
+                    result
                     )
             );
         }

@@ -2065,17 +2065,17 @@ static void yy_reduce(
             insure_ready_for_assignment(yymsp[0].minor.yy0.data.array->at(i),yymsp[0].minor.yy0.data.array->at(i+1));
 
             optic::object result;
-            panopticon::parse_operations(
-                result,
-                yymsp[0].minor.yy0.data.array->at(i),
-                yymsp[0].minor.yy0.data.array->at(i+1),
-                panopticon::assign_variable
-            );
-
+/*            panopticon::store_operations(*/
+/*                result,*/
+/*                yymsp[0].minor.yy0.data.array->at(i),*/
+/*                yymsp[0].minor.yy0.data.array->at(i+1),*/
+/*                panopticon::assign_variable*/
+/*            );*/
+            optic::create_function(result,yymsp[0].minor.yy0.data.array->at(i),yymsp[0].minor.yy0.data.array->at(i+1));
             yygotominor.yy0.data.dictionary->insert(
                 std::make_pair(
                     *yymsp[0].minor.yy0.data.array->at(i).data.array->at(0).data.string,
-                    yymsp[0].minor.yy0.data.array->at(i+1)
+                    result
                     )
             );
         }

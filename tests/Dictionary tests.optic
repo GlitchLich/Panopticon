@@ -30,8 +30,8 @@ myDict::Octopi
 myDict::Array
 myDict::Dragon
 
-//can do functions!
-myDict::dictFunc(4 5)
+//Dictionaries can do functions too!
+myDict::dictFunc(13 28)
 
 //Nested Dictionaries
 myDict::Dragon::test
@@ -42,14 +42,16 @@ myDict::nullTest
 //Alternate look up, can be used with vars:
 myDict{"Array"}
 
-vertDict =
-	Treble 	= 0
-	Mid 	= 0.3
-	Bass	= 11
 
-vertDict::Treble
-vertDict::Mid
-vertDict::Bass
+//Functions in Dictionaries
+//Doesn't work right now, need to work on this!
+functionary = dict
+	func  x = ( x + y ) * 10
+		where
+			y = x + 2
+	func2 x = ( x + y ) * (-20)
+		where
+			y = x - 2
 
 //Printing is off, but this is theoretically working.
 myDict::Dragon + 4
@@ -67,7 +69,7 @@ nullVar{"Dragon"}
 notADict = 5
 notADict{"Dragon"}
 
-lookThatShitUp x y = a[y]
+lookThatShitUp x y = d{x} * a[y]
 	where
 		d = dict
 			zero 	= 0
@@ -76,12 +78,14 @@ lookThatShitUp x y = a[y]
 			three	= 3
 			four	= 4
 		a = [
-			"ten"
-			"eleven"
-			"twelve"
-			"thirteen"
-			"fourteen"
+			10
+			11
+			12
+			13
+			14
 		]
+
+lookThatShitUp(
 
 //Horizontal nesting
 level1 = dict { level2 = dict { level3 = dict { level4 = dict { level5 = false } } } }
