@@ -833,18 +833,29 @@ bool object_operator_object(object& a, object& b, object& c, operator_function f
 
 bool resolve_stack_from_parser(const object& operation_tree, bool resolve_entire_stack)
 {
-    object copy_tree = mem_copy(operation_tree);
-
     if(operation_tree.type == OPERATION_TREE)
     {
+        Array* tree;
+
+        if(!resolve_entire_stack)
+        {
+            object copy_tree = mem_copy(operation_tree);
+            tree = copy_tree.data.array;
+        }
+
+        else
+        {
+            tree = operation_tree.data.array;
+        }
+
         if(operation_tree.data.array->size() > 1)
         {
-            std::reverse_copy(copy_tree.data.array->begin(), copy_tree.data.array->end(), std::inserter(optic_stack, optic_stack.end()));
+            std::reverse_copy(tree->begin(), tree->end(), std::inserter(optic_stack, optic_stack.end()));
         }
 
         else if(operation_tree.data.array->size() == 1)
         {
-            optic_stack.push_back(mem_copy(copy_tree.data.array->at(0)));
+            optic_stack.push_back(tree->at(0));
         }
 
         else
@@ -852,15 +863,19 @@ bool resolve_stack_from_parser(const object& operation_tree, bool resolve_entire
             out() << "Error: No operations to put on the stack." << std::endl;
             correct_parsing = false;
         }
+
+        if(resolve_entire_stack)
+        {
+            evaluate_stack();
+        }
+
+        else
+        {
+            // Free the Array* we created but not the actual contents because they will get freed on the stack
+            shallow_mem_free_array(tree, "OPERATION_TREE");
+            evaluate_top();
+        }
     }
-
-    // Free the Array* we created but not the actual contents because they will get freed on the stack
-    shallow_mem_free_array(copy_tree.data.array, "OPERATION_TREE");
-
-    if(resolve_entire_stack)
-        evaluate_stack();
-    else
-        evaluate_top();
 }
 
 bool parse_operations(object& a, const object& b, const object& c, operator_function func)
