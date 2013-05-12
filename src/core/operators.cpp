@@ -679,13 +679,13 @@ bool store_operations(object& a, const object& obj1, unary_operator_function fun
     {
         for(int i = 0; i < obj1.data.array->size(); ++i)
         {
-            a.data.array->push_back(mem_copy(obj1.data.array->at(i)));
+            a.data.array->push_back(obj1.data.array->at(i));
         }
     }
 
     else
     {
-        a.data.array->push_back(mem_copy(obj1));
+        a.data.array->push_back(obj1);
     }
 }
 
@@ -733,26 +733,26 @@ bool store_operations(object& a, const object& obj1, const object& obj2, bool ex
     {
         for(int i = 0; i < obj1.data.array->size(); ++i)
         {
-            a.data.array->push_back(mem_copy(obj1.data.array->at(i)));
+            a.data.array->push_back(obj1.data.array->at(i));
         }
     }
 
     else
     {
-        a.data.array->push_back(mem_copy(obj1));
+        a.data.array->push_back(obj1);
     }
 
     if(obj2.type == OPERATION_TREE)
     {
         for(int i = 0; i < obj2.data.array->size(); ++i)
         {
-            a.data.array->push_back(mem_copy(obj2.data.array->at(i)));
+            a.data.array->push_back(obj2.data.array->at(i));
         }
     }
 
     else
     {
-        a.data.array->push_back(mem_copy(obj2));
+        a.data.array->push_back(obj2);
     }
 }
 
@@ -800,26 +800,26 @@ bool store_operations(object& a, const object& obj1, const object& obj2, operato
     {
         for(int i = 0; i < obj1.data.array->size(); ++i)
         {
-            a.data.array->push_back(mem_copy(obj1.data.array->at(i)));
+            a.data.array->push_back(obj1.data.array->at(i));
         }
     }
 
     else
     {
-        a.data.array->push_back(mem_copy(obj1));
+        a.data.array->push_back(obj1);
     }
 
     if(obj2.type == OPERATION_TREE)
     {
         for(int i = 0; i < obj2.data.array->size(); ++i)
         {
-            a.data.array->push_back(mem_copy(obj2.data.array->at(i)));
+            a.data.array->push_back(obj2.data.array->at(i));
         }
     }
 
     else
     {
-        a.data.array->push_back(mem_copy(obj2));
+        a.data.array->push_back(obj2);
     }
 }
 
