@@ -34,7 +34,8 @@
     void token_destructor(Token t)
     {
         std::cout << "token_destructor()" << std::endl;
-        mem_free(t);
+        //TO DO: Do we need to free the tokens or not? I don't think so...
+/*        mem_free(t);*/
     }
 }
 
@@ -145,12 +146,9 @@ name_chain(A) ::= name_chain(B) NAME(C).
             A.data.array->push_back(newObject);
         }*/
 
-        //TO DO: Change all string allocations, and remove all unncessary allocations in general.
         A = B;
-        optic::object newObject2;
-        newObject2.type = optic::mem_alloc(optic::STRING);
-        newObject2.data.string = C.data.string;
-        A.data.array->push_back(newObject2);
+        C.type = optic::STRING;
+        A.data.array->push_back(C);
     }
 
     // delete_object(B);
@@ -159,15 +157,14 @@ name_chain(A) ::= name_chain(B) NAME(C).
 
 name_chain(A) ::= NAME(B).
 {
-    A = optic::mem_alloc(optic::STRING);
-    A.data.string = B.data.string->c_str();
-    A.type = panopticon::STRING;
+    A = B;
+    A.type = optic::STRING;
 }
 
 expr(A) ::= NAME(B).
 {
-    A = optic::mem_alloc(optic::FUNCTION_ARG_VALUES);
-    A.data.string = B.data.string;
+    A = B;
+    A.type = optic::UNDECLARED_VARIABLE;
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -184,8 +181,7 @@ expr(A) ::= expr(B) COMPOSITION function_call(C).
     }
     else
     {
-        optic::object function_body;
-        function_boday = optic::mem_alloc(optic::FUNCTION_ARG_VALUES);
+        optic::object function_body = optic::mem_alloc(optic::FUNCTION_ARG_VALUES);
         function_body.data.array->push_back(B);
         C.type = optic::STRING;
         optic::store_operations(A,C,function_body,optic::call_function);
@@ -194,8 +190,7 @@ expr(A) ::= expr(B) COMPOSITION function_call(C).
 
 expr(A) ::= expr(B) COMPOSITION NAME(C).
 {
-    optic::object function_body;
-    function_body.type = optic::mem_alloc(optic::UNDECLARED_VARIABLE);
+    optic::object function_body = optic::mem_alloc(optic::FUNCTION_ARG_VALUES);;
     function_body.data.array->push_back(B);
     C.type = optic::STRING;
     optic::store_operations(A,C,function_body,optic::call_function);
@@ -210,7 +205,7 @@ function_call(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN. [FUNCTION_CALL]
     else
     {
         optic::object temp = C;
-        C.type = optic::mem_alloc(optic::FUNCTION_ARG_VALUES);
+        C = optic::mem_alloc(optic::FUNCTION_ARG_VALUES);
         C.data.array->push_back(temp);
     }
     optic::object b;
@@ -233,7 +228,7 @@ function_call(A) ::= NAME(B) LBRAC RBRAC LPAREN stmt_list(C) RPAREN. [FUNCTION_C
     else
     {
         optic::object temp = C;
-        C.type = optic::mem_alloc(optic::FUNCTION_ARG_VALUES);
+        C = optic::mem_alloc(optic::FUNCTION_ARG_VALUES);
         C.data.array->push_back(temp);
     }
 
@@ -255,7 +250,7 @@ expr(A) ::= array_index(B) LPAREN stmt_list(C) RPAREN. [FUNCTION_CALL]
     else
     {
         optic::object temp = C;
-        C.type = optic::mem_alloc(optic::FUNCTION_ARG_VALUES);
+        C = optic::mem_alloc(optic::FUNCTION_ARG_VALUES);
         C.data.array->push_back(temp);
     }
     optic::parse_operations(A,B,C,optic::call_function);
@@ -345,7 +340,6 @@ assignment(A) ::= final_guard_statement(B).
 assignment(A) ::= name_chain(B) ASSIGN expr(C). [ASSIGN]
 {
     insure_ready_for_assignment(B,C);
-    B.type = optic::FUNCTION_ARG_NAMES;
     panopticon::parse_operations(A, B, C, panopticon::assign_variable);
     if(!panopticon::correct_parsing)
     {
@@ -360,7 +354,7 @@ assignment(A) ::= name_chain(B) ASSIGN expr(C). [ASSIGN]
 //==================
 horizontal_assignment_list(A) ::= name_chain(B) ASSIGN expr(C).
 {
-    A.type = optic::mem_alloc(optic::ARRAY);
+    A = optic::mem_alloc(optic::ARRAY);
     A.data.array->push_back(B);
     A.data.array->push_back(C);
 }
@@ -374,7 +368,7 @@ horizontal_assignment_list(A) ::= assignment_list(B) name_chain(C) ASSIGN expr(D
 
 vertical_assignment_list(A) ::= name_chain(B) ASSIGN expr(C) DELIMITER.
 {
-    A.type = optic::mem_alloc(optic::ARRAY);
+    A = optic::mem_alloc(optic::ARRAY);
     A.data.array->push_back(B);
     A.data.array->push_back(C);
 }
@@ -514,7 +508,6 @@ test ::= LET IN.
 /*expr(A) ::= LET NAME ASSIGN expr IN expr.
 {
     A.type = optic::STRING;
-    A.data.string = new optic::String("Let");
 }*/
 
 //===========================================
@@ -553,7 +546,7 @@ dict(A) ::= LCURL LCURL assignment_list(B) RCURL RCURL.
 
 expr(A) ::= dict(B).
 {
-    A.type = optic::mem_alloc(optic::DICTIONARY);
+    A = optic::mem_alloc(optic::DICTIONARY);
     for(int i=0;i<B.data.array->size()-1;i+=2)
     {
         if(
@@ -598,10 +591,6 @@ expr(A) ::= dict(B).
 //LOOKUP
 expr(A) ::= NAME(B) LCURL NAME(C) RCURL.
 {
-    B.type = optic::UNDECLARED_VARIABLE;
-    C.type = optic::UNDECLARED_VARIABLE;
-/*    optic::object result;*/
-/*    store_operations(C,result,optic::get_variable);*/
     store_operations(A,B,C,&optic::dictionary_lookup);
     if (!panopticon::correct_parsing)
     {
@@ -612,8 +601,6 @@ expr(A) ::= NAME(B) LCURL NAME(C) RCURL.
 
 expr(A) ::= NAME(B) LCURL string(C) RCURL.
 {
-    B.type = optic::UNDECLARED_VARIABLE;
-    C.type = optic::STRING;
     store_operations(A,B,C,&optic::dictionary_lookup);
     if (!panopticon::correct_parsing)
     {
@@ -654,7 +641,7 @@ function_call(A) ::= name_space(B) LPAREN stmt_list(C) RPAREN. [FUNCTION_CALL]
     else
     {
         optic::object temp = C;
-        C.type = optic::mem_alloc(optic::FUNCTION_ARG_VALUES);
+        C = optic::mem_alloc(optic::FUNCTION_ARG_VALUES);
         C.data.array->push_back(temp);
     }
     optic::parse_operations(A,B,C,optic::call_function);
@@ -675,11 +662,10 @@ function_call(A) ::= name_space(B) LBRAC RBRAC LPAREN stmt_list(C) RPAREN. [FUNC
     else
     {
         optic::object temp = C;
-        C.type = optic::mem_alloc(optic::FUNCTION_ARG_VALUES);
+        C = optic::mem_alloc(optic::FUNCTION_ARG_VALUES);
         C.data.array->push_back(temp);
     }
 
-/*    B.type = optic::VARIABLE;*/
     optic::parse_operations(A,B,C,optic::call_function);
     if(!panopticon::correct_parsing)
     {
@@ -859,8 +845,6 @@ bool(A) ::= BOOLEAN(B).
 /*maybe_empty_name_chain ::= .*/
 maybe_empty_name_chain(A) ::= name_chain(B). [COLON]
 {
-/*    A.type = optic::ARRAY;*/
-/*    A.data.array = new optic::Array();*/
     A = optic::mem_alloc(optic::ARRAY);
     B.type = optic::STRING;
     A.data.array->push_back(B);
@@ -888,7 +872,6 @@ pattern(A) ::= LPAREN NAME(B) PREPEND NAME(C) RPAREN. [COLON]
     C.type = optic::PATTERN;
     A.type = optic::PATTERN;
 
-/*    A.data.string = new optic::String("PATTERN ARGUMENT!");*/
 }
 
 expr(A) ::= expr(B) PREPEND expr(C).

@@ -274,14 +274,14 @@ void command_line_loop()
                 t0.data.number = yylval.dval;
                 break;
             case NAME:
-                t0.data.string = new std::string(yylval.sval);
+                t0 = panopticon::mem_string_alloc(panopticon::UNDECLARED_VARIABLE,yylval.sval);
                 if(yylval.sval!=0)
                 {
                     delete yylval.sval;
                 }
                 break;
             case STRING:
-                t0.data.string = new std::string(yylval.sval);
+                t0 = panopticon::mem_string_alloc(yylval.sval);
                 if(yylval.sval!=0)
                 {
                     delete yylval.sval;

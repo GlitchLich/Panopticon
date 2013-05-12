@@ -19,6 +19,7 @@ extern bool insure_ready_for_assignment(panopticon::object& B, panopticon::objec
         C = mem_alloc(panopticon::FUNCTION_BODY);
         C.data.array->push_back(temp);
     }
+    C.type = FUNCTION_BODY;
 
     if(B.type!=panopticon::ARRAY)
     {
@@ -26,6 +27,7 @@ extern bool insure_ready_for_assignment(panopticon::object& B, panopticon::objec
         B = mem_alloc(panopticon::FUNCTION_ARG_NAMES);
         B.data.array->push_back(temp);
     }
+    B.type = FUNCTION_ARG_NAMES;
 }
 
 }

@@ -4,3 +4,33 @@
 a = [ 0 1 2 3 ]
 f x = x * 2
 f(2)
+
+"test"
+test = "test"
+// Crashes consistently
+test
+
+//Regular functions DON'T crash:
+regularWhere x = x * y
+	where
+		y = 20
+
+regularWhere( 13.3 )
+
+//Where crashes consistently:
+hellYeah x = x + y("!!!")
+	where
+		y z = "Hell yeah"+z
+
+//CRASH
+hellYeah("ok")
+
+//Guard Statements with arrays crash consistently:
+guardTest x
+	| x == 0 	= 0
+	| x == 1 	= [ 1 2 3 ]
+	_			= 10000
+
+//CRASH
+guardTest(1)
+guardTest(2)

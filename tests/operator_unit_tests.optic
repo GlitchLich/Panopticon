@@ -13,6 +13,9 @@ n*m+z
 1
 (-1)
 [ 0 1 2 3 ]
+"test"
+
+"test"+"test"
 
 whereTest x = x + y * z	
 	where 
