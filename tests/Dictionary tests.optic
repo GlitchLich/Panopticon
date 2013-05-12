@@ -5,13 +5,21 @@
 myDict = { Turtles = true Octopi = "are cool" Array = [0 1 2 3 4] dictFunc x y = x + y Dragon = { test = 4 } }
 
 //Vertical Construction, with nested dictionaries
-myDict =             
+myDict =          
 	Turtles = true 
 	Octopi = "are cool" 
 	Array = [0 1 2 3 4]
 	dictFunc x y = x + y
 	Dragon = 
 		test = 4
+		dictFunc x y = x + y
+		dictFunc2 x y = x - y
+		dictFunc3 x y = myDict::Dragon::dictFunc(x y) * myDict::Dragon::dictFunc2(x y)
+		funcArray = [ 
+			myDict::Dragon::dictFunc 
+			myDict::Dragon::dictFunc2 
+			myDict::Dragon::dictFunc3 
+		]
 
 //with keyword
 myDict = dict { Turtles = true Octopi = "are cool" Array = [0 1 2 3 4] dictFunc x y = x + y Dragon = dict { test = 4 } }
@@ -24,23 +32,38 @@ myDict = dict
 	dictFunc x y = x + y
 	Dragon = dict 
 		test = 4
+		dictFunc x y = x + y
+		dictFunc2 x y = x - y
+		dictFunc3 x y = myDict::Dragon::dictFunc(x y) * myDict::Dragon::dictFunc2(x y)
+		funcArray = [ 
+			myDict::Dragon::dictFunc 
+			myDict::Dragon::dictFunc2 
+			myDict::Dragon::dictFunc3 
+		]
 
 myDict::Turtles == true
 myDict::Octopi
 myDict::Array
 myDict::Dragon
 
-//Dictionaries can do functions too!
-myDict::dictFunc(13 28)
-
 //Nested Dictionaries
 myDict::Dragon::test
+
+//Dictionaries can do functions too!
+myDict::Dragon::dictFunc(13 28)
+myDict::Dragon::dictFunc2(13 28)
+myDict::Dragon::dictFunc3(13 28)
+//Dictionary stored Array Functors!
+myDict::Dragon::funcArray[](13 28)
+myDict::Dragon::funcArray[](myDict::Array myDict::Array+2)
 
 //Throws correct errors
 myDict::nullTest
 
 //Alternate look up, can be used with vars:
 myDict{"Array"}
+stringVar = "Array"
+myDict{stringVar}
 
 
 //Functions in Dictionaries
@@ -52,6 +75,10 @@ functionary = dict
 	func2 x = ( x + y ) * (-20)
 		where
 			y = x - 2
+	guardFunc x min max
+		| x < min	= min
+		| x > max	= max
+		_			= x
 
 //Printing is off, but this is theoretically working.
 myDict::Dragon + 4

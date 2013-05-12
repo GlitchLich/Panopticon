@@ -313,6 +313,24 @@ void gc_sweep()
     }
 }
 
+object mem_string_alloc(const char* string)
+{
+    object obj;
+    obj.type = STRING;
+    obj.data.string = new String(string);
+    increment_string();
+    return obj;
+}
+
+object mem_string_alloc(Type type, const char* string)
+{
+    object obj;
+    obj.type = type;
+    obj.data.string = new String(string);
+    increment_string();
+    return obj;
+}
+
 object mem_alloc(Type type)
 {
     object obj;

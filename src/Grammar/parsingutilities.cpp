@@ -1,5 +1,6 @@
 #include "../include/Grammar/parsingutilities.h"
 #include "../include/core/types.h"
+#include "../include/core/Memory.h"
 
 namespace panopticon {
 
@@ -15,19 +16,16 @@ extern bool insure_ready_for_assignment(panopticon::object& B, panopticon::objec
     )
     {
         panopticon::object temp = C;
-        C.data.array = new panopticon::Array();
-//        C.data.array->reserve(1);
+        C = mem_alloc(panopticon::FUNCTION_BODY);
         C.data.array->push_back(temp);
     }
-    C.type = panopticon::FUNCTION_BODY;
+
     if(B.type!=panopticon::ARRAY)
     {
         panopticon::object temp = B;
-        B.data.array = new panopticon::Array();
-//        B.data.array->reserve(1);
+        B = mem_alloc(panopticon::FUNCTION_ARG_NAMES);
         B.data.array->push_back(temp);
     }
-    B.type=panopticon::FUNCTION_ARG_NAMES;
 }
 
 }
