@@ -959,7 +959,7 @@ bool call_function(object& A, const object& B, const object& C)
         for(int i = 1; i < function.data.function->num_arguments && optic_stack.size() > 0; ++i)
         {
             evaluate_top();
-            String arg_name = *function.data.function->arguments.at(i).data.string;
+            String arg_name = function.data.function->arguments.at(i).data.string->c_str();
             context.insert(std::make_pair(arg_name, optic_stack.back())); // optimization: insert into map without copy because nothing else is pointing to it
             optic_stack.pop_back();
         }
