@@ -1,5 +1,6 @@
 // Memory Leak Tests
 1
+1 + 1
 [ 0 1 2 3 ]
 a = [ 0 1 2 3 ]
 f x = x * 2
