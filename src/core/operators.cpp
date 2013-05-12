@@ -634,13 +634,15 @@ bool create_tree(object&a, const object& obj)
 {
     if(obj.type == OPERATION_TREE)
     {
-        a = mem_copy(obj);
+//        a = mem_copy(obj);
+        a = obj;
     }
 
     else
     {
         a = mem_alloc(OPERATION_TREE);
-        a.data.array->push_back(mem_copy(obj));
+//        a.data.array->push_back(mem_copy(obj));
+        a.data.array->push_back(obj);
     }
 }
 
