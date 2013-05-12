@@ -49,7 +49,10 @@
 //Precedence: Top is lowest, bottom is highest
 
 %left ASSIGN.
+%left LCURL RCURL.
 %left COLON.
+%left DICT.
+%left WHERE.
 %left NAME.
 %right BITOR.
 %left FUNCTION_DEC.
@@ -71,7 +74,6 @@
 %left LPAREN RPAREN LBRAC RBRAC.
 %left COMMA.
 %left COLLECTARRAY.
-
 
 /*%left ASSIGN.*/
 
@@ -113,7 +115,7 @@ top_stmt(A) ::= stmt(B).
     A=B;
 
 }
-/*top_stmt ::= conditional.*/
+
 stmt(A) ::= expr(B).
 {
     A = B;
@@ -139,7 +141,6 @@ name_chain(A) ::= name_chain(B) NAME(C).
     {
         A.type = optic::ARRAY;
         A.data.array = new optic::Array();
-/*        A.data.array->reserve(B.data.array->size()+1);*/
         for(int i=0;i<B.data.array->size();++i)
         {
             optic::object newObject;
@@ -151,7 +152,6 @@ name_chain(A) ::= name_chain(B) NAME(C).
         newObject2.type = optic::STRING;
         newObject2.data.string = new panopticon::String(C.data.string->c_str());
         A.data.array->push_back(newObject2);
-        //A.scope = optic::get_scope();
     }
 
     // delete_object(B);
@@ -175,11 +175,6 @@ expr(A) ::= NAME(B).
         ParseARG_STORE;
     }
 }
-
-/*expr(A) ::= function_call(B).
-{
-    A = B;
-}*/
 
 expr(A) ::= expr(B) COMPOSITION function_call(C).
 {
@@ -345,7 +340,6 @@ assignment(A) ::= final_guard_statement(B).
     panopticon::store_operations(resolve, c, &panopticon::resolve_guard,false);
 
     resolve.type = panopticon::FUNCTION_BODY;
-/*    insure_ready_for_assignment(b,resolve);*/
     b.type = optic::FUNCTION_ARG_NAMES;
     panopticon::parse_operations(A, b, resolve, &panopticon::assign_variable);
     if(!panopticon::correct_parsing)
@@ -354,120 +348,6 @@ assignment(A) ::= final_guard_statement(B).
         ParseARG_STORE;
     }
 }
-
-assignment(A) ::= guard_statement(B) BITOR expr(C) ASSIGN expr(D) DELIMITER final_where_statement(E). [ASSIGN]
-{
-    add_branch_to_tree(B,C,D);
-    panopticon::object& b = B.data.array->at(0);
-    panopticon::object& func_body = B.data.array->at(1);
-    panopticon::object resolve;
-    panopticon::store_operations(resolve, func_body, &panopticon::resolve_guard,false);
-    optic::object combined;
-    panopticon::store_operations(combined,E,resolve,false);
-    insure_ready_for_assignment(b,combined);
-    panopticon::parse_operations(A, b, combined, &panopticon::assign_variable);
-    if(!panopticon::correct_parsing)
-    {
-        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
-        ParseARG_STORE;
-    }
-}
-
-assignment(A) ::= guard_statement(B) WILDCARD ASSIGN expr(D) DELIMITER final_where_statement(E). [ASSIGN]
-{
-    add_wildcard_to_tree(B,D);
-    panopticon::object& b = B.data.array->at(0);
-    panopticon::object& func_body = B.data.array->at(1);
-    panopticon::object resolve;
-    panopticon::store_operations(resolve, func_body, &panopticon::resolve_guard,false);
-    optic::object combined;
-    panopticon::store_operations(combined,E,resolve,false);
-    insure_ready_for_assignment(b,combined);
-    panopticon::parse_operations(A, b, combined, &panopticon::assign_variable);
-    if(!panopticon::correct_parsing)
-    {
-        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
-        ParseARG_STORE;
-    }
-}
-
-//==================
-//Where
-//==================
-
-where_statement(A) ::= WHERE LCURL. [ASSIGN]
-{
-    A.type = optic::NIL;
-}
-
-where_statement(A) ::= WHERE name_chain(B) ASSIGN expr(C) LCURL. [ASSIGN]
-{
-    insure_ready_for_assignment(B,C);
-    B.type = optic::FUNCTION_ARG_NAMES;
-    panopticon::store_operations(A, B, C, panopticon::assign_variable,false);
-    if(!panopticon::correct_parsing)
-    {
-        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
-        ParseARG_STORE;
-    }
-}
-
-where_statement(A) ::= where_statement(D) name_chain(B) ASSIGN expr(C) DELIMITER. [ASSIGN]
-{
-    insure_ready_for_assignment(B,C);
-    B.type = optic::FUNCTION_ARG_NAMES;
-
-    if(D.type!=optic::NIL)
-    {
-        optic::object assign;
-        panopticon::store_operations(assign, B, C, panopticon::assign_variable,false);
-        optic::store_operations(A,D,assign);
-    }
-    else
-    {
-        panopticon::parse_operations(A, B, C, panopticon::assign_variable);
-    }
-    if(!panopticon::correct_parsing)
-    {
-        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
-        ParseARG_STORE;
-    }
-}
-
-final_where_statement(A) ::= where_statement(D) name_chain(B) ASSIGN expr(C) RCURL DELIMITER RCURL. [ASSIGN]
-{
-    insure_ready_for_assignment(B,C);
-    B.type = optic::FUNCTION_ARG_NAMES;
-    if(D.type!=optic::NIL)
-    {
-        optic::object assign;
-        panopticon::store_operations(assign, B, C, panopticon::assign_variable,false);
-        optic::store_operations(A,D,assign);
-    }
-    else
-    {
-        panopticon::store_operations(A, B, C, panopticon::assign_variable,false);
-    }
-    if(!panopticon::correct_parsing)
-    {
-        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
-        ParseARG_STORE;
-    }
-}
-
-case_statement(A) ::= name_chain(B) ASSIGN CASE expr OF. [ASSIGN]
-{
-    A=B;
-    A.type = optic::GUARD;
-}
-
-test ::= LET IN.
-
-/*expr(A) ::= LET NAME ASSIGN expr IN expr.
-{
-    A.type = optic::STRING;
-    A.data.string = new optic::String("Let");
-}*/
 
 assignment(A) ::= name_chain(B) ASSIGN expr(C). [ASSIGN]
 {
@@ -481,8 +361,101 @@ assignment(A) ::= name_chain(B) ASSIGN expr(C). [ASSIGN]
     }
 }
 
-//Assignment with where
-assignment(A) ::= name_chain(B) ASSIGN expr(C) LCURL final_where_statement(D). [ASSIGN]
+
+//==================
+//Where
+//==================
+horizontal_assignment_list(A) ::= name_chain(B) ASSIGN expr(C).
+{
+    A.type = optic::ARRAY;
+    A.data.array = new optic::Array();
+    A.data.array->push_back(B);
+    A.data.array->push_back(C);
+}
+
+horizontal_assignment_list(A) ::= assignment_list(B) name_chain(C) ASSIGN expr(D).
+{
+    A = B;
+    A.data.array->push_back(C);
+    A.data.array->push_back(D);
+}
+
+vertical_assignment_list(A) ::= name_chain(B) ASSIGN expr(C) DELIMITER.
+{
+    A.type = optic::ARRAY;
+    A.data.array = new optic::Array();
+    A.data.array->push_back(B);
+    A.data.array->push_back(C);
+}
+
+vertical_assignment_list(A) ::= vertical_assignment_list(B) name_chain(C) ASSIGN expr(D) DELIMITER.
+{
+    A = B;
+    A.data.array->push_back(C);
+    A.data.array->push_back(D);
+}
+
+final_vertical_assignment_list(A) ::= vertical_assignment_list(B) name_chain(C) ASSIGN expr(D).
+{
+    A = B;
+    A.data.array->push_back(C);
+    A.data.array->push_back(D);
+}
+
+assignment_list(A) ::= vertical_assignment_list(B).
+{
+    A = B;
+}
+
+assignment_list(A) ::= final_vertical_assignment_list(B).
+{
+    A = B;
+}
+
+assignment_list(A) ::=  horizontal_assignment_list(B).
+{
+    A = B;
+}
+
+where(A) ::= WHERE LCURL assignment_list(B) RCURL. [DICT]
+{
+    A = B;
+    optic::object serial_result;
+    optic::object result;
+    optic::object previous_result;
+    for(int i=0;i<B.data.array->size(); i+=2)
+    {
+        insure_ready_for_assignment(
+            B.data.array->at(i),
+            B.data.array->at(i+1)
+        );
+        panopticon::store_operations(
+            result,
+            B.data.array->at(i),
+            B.data.array->at(i+1),
+            panopticon::assign_variable,
+            false
+        );
+        optic::store_operations(serial_result,previous_result,result);
+        previous_result = serial_result;
+    }
+    A = serial_result;
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
+
+assignment ::= name_chain ASSIGN expr expr.
+{
+    optic::out() << "Error: Cannot declare two statements in a single assignment." << std::endl;
+    optic::correct_parsing = false;
+    while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+    ParseARG_STORE;
+}
+
+assignment(A) ::= name_chain(B) ASSIGN expr(C) LCURL where(D) RCURL.
 {
     panopticon::object body;
     panopticon::store_operations(body,D,C,false);
@@ -495,76 +468,144 @@ assignment(A) ::= name_chain(B) ASSIGN expr(C) LCURL final_where_statement(D). [
     }
 }
 
+assignment(A) ::= guard_statement(B) BITOR expr(C) ASSIGN expr(D) DELIMITER where(E) RCURL. [ASSIGN]
+{
+    add_branch_to_tree(B,C,D);
+    panopticon::object& b = B.data.array->at(0);
+    panopticon::object& func_body = B.data.array->at(1);
+    panopticon::object resolve;
+    panopticon::store_operations(resolve, func_body, &panopticon::resolve_guard,false);
+
+    panopticon::object combined;
+    panopticon::store_operations(combined,E,resolve,false);
+    insure_ready_for_assignment(B,combined);
+    panopticon::store_operations(A, B, combined, panopticon::assign_variable);
+
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
+
+assignment(A) ::= guard_statement(B) WILDCARD ASSIGN expr(D) DELIMITER where(E) RCURL. [ASSIGN]
+{
+    add_wildcard_to_tree(B,D);
+    panopticon::object& b = B.data.array->at(0);
+    panopticon::object& func_body = B.data.array->at(1);
+    panopticon::object resolve;
+    panopticon::store_operations(resolve, func_body, &panopticon::resolve_guard,false);
+
+    optic::object combined;
+    panopticon::store_operations(combined,E,resolve,false);
+    insure_ready_for_assignment(b,combined);
+    panopticon::parse_operations(A, b, combined, &panopticon::assign_variable);
+
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
+
+//====================================================================
+//Case / Let / In
+//====================================================================
+
+case_statement(A) ::= CASE expr OF. [ASSIGN]
+{
+/*    A=B;*/
+    A.type = optic::GUARD;
+}
+
+test ::= LET IN.
+
+/*expr(A) ::= LET NAME ASSIGN expr IN expr.
+{
+    A.type = optic::STRING;
+    A.data.string = new optic::String("Let");
+}*/
 
 //===========================================
-//Statement lists /  Arrays / Dictionaries
+//Dictionaries
 //===========================================
 
-dict_argument_list(A) ::= NAME(B) ASSIGN expr(C). [COLLECTARRAY]
-{
-    A.type = optic::ARRAY;
-    A.data.array = new optic::Array();
-    A.data.array->push_back(B);
-    A.data.array->push_back(C);
-}
-
-dict_argument_list(A) ::= dict_argument_list(B) NAME(C) ASSIGN expr(D). [COLLECTARRAY]
+dict(A) ::= DICT LCURL assignment_list(B) RCURL.
 {
     A = B;
-    A.data.array->push_back(C);
-    A.data.array->push_back(D);
 }
 
-vertical_dict_list(A) ::= NAME(B) ASSIGN expr(C) DELIMITER. [COLLECTARRAY]
-{
-    A.type = optic::ARRAY;
-    A.data.array = new optic::Array();
-    A.data.array->push_back(B);
-    A.data.array->push_back(C);
-}
-
-vertical_dict_list(A) ::= vertical_dict_list(B) NAME(C) ASSIGN expr(D) DELIMITER. [COLLECTARRAY]
+dict(A) ::= LCURL DICT LCURL assignment_list(B) RCURL DELIMITER RCURL.
 {
     A = B;
-    A.data.array->push_back(C);
-    A.data.array->push_back(D);
 }
 
-final_vertical_dict_list(A) ::= vertical_dict_list(B) NAME(C) ASSIGN expr(D). [COLLECTARRAY]
+dict(A) ::= LCURL DICT LCURL assignment_list(B) RCURL RCURL.
 {
     A = B;
-    A.data.array->push_back(C);
-    A.data.array->push_back(D);
 }
 
+dict(A) ::= LCURL assignment_list(B) RCURL.
+{
+    A = B;
+}
 
-expr(A) ::= dictionary(B).
+dict(A) ::= LCURL LCURL assignment_list(B) RCURL DELIMITER RCURL.
+{
+    A = B;
+}
+
+dict(A) ::= LCURL LCURL assignment_list(B) RCURL RCURL.
+{
+    A = B;
+}
+
+expr(A) ::= dict(B).
 {
     A.type = optic::DICTIONARY;
     A.data.dictionary = new optic::Dictionary();
     for(int i=0;i<B.data.array->size()-1;i+=2)
     {
-        A.data.dictionary->insert(
-            std::make_pair(*B.data.array->at(i).data.string,B.data.array->at(i+1))
-        );
+        if(
+            B.data.array->at(i).type != optic::ARRAY
+        )
+        {
+            A.data.dictionary->insert(
+                std::make_pair(
+                    *B.data.array->at(i).data.string,
+                    B.data.array->at(i+1)
+                    )
+            );
+        }
+        else
+        {
+            insure_ready_for_assignment(B.data.array->at(i),B.data.array->at(i+1));
+
+            optic::object result;
+            panopticon::parse_operations(
+                result,
+                B.data.array->at(i),
+                B.data.array->at(i+1),
+                panopticon::assign_variable
+            );
+
+            A.data.dictionary->insert(
+                std::make_pair(
+                    *B.data.array->at(i).data.array->at(0).data.string,
+                    B.data.array->at(i+1)
+                    )
+            );
+        }
+    }
+
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
     }
 }
 
-dictionary(A) ::= LCURL LCURL final_vertical_dict_list(B) RCURL DELIMITER RCURL.
-{
-    A = B;
-}
-
-dictionary(A) ::= LCURL final_vertical_dict_list(B) RCURL.
-{
-    A = B;
-}
-
-dictionary(A) ::= LCURL dict_argument_list(B) RCURL.
-{
-    A = B;
-}
-
+//LOOKUP
 expr(A) ::= NAME(B) LCURL STRING(C) RCURL. [INDEX]
 {
     B.type = optic::UNDECLARED_VARIABLE;
@@ -577,7 +618,7 @@ expr(A) ::= NAME(B) LCURL STRING(C) RCURL. [INDEX]
     }
 }
 
-expr(A) ::= NAME(B) COLONCOLON NAME(C). [INDEX]
+name_space(A) ::= NAME(B) COLONCOLON NAME(C). [INDEX]
 {
     B.type = optic::UNDECLARED_VARIABLE;
     C.type = optic::STRING;
@@ -589,7 +630,46 @@ expr(A) ::= NAME(B) COLONCOLON NAME(C). [INDEX]
     }
 }
 
+name_space(A) ::= name_space(B) COLONCOLON NAME(C). [INDEX]
+{
+    C.type = optic::STRING;
+    store_operations(A,B,C,&optic::dictionary_lookup);
+    if (!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
 
+function_call(A) ::= name_space(B) LPAREN stmt_list(C) RPAREN. [FUNCTION_CALL]
+{
+    if(C.type==optic::STATEMENT_LIST)
+    {
+            C.type = optic::FUNCTION_ARG_VALUES;
+    }
+    else
+    {
+        optic::object temp = C;
+        C.type = optic::FUNCTION_ARG_VALUES;
+        C.data.array = new optic::Array();
+        C.data.array->push_back(temp);
+    }
+    optic::parse_operations(A,B,C,optic::call_function);
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
+
+expr(A) ::= name_space(B).
+{
+    A = B;
+}
+
+//===========================================
+//Statement lists /  Arrays
+//===========================================
 vert_stmt_list(A) ::= stmt(B) DELIMITER.
 {
     A = B;
@@ -629,7 +709,7 @@ final_vert_stmt_list(A) ::= vert_stmt_list(B) stmt(C). [COLLECTARRAY]
 
 
 
-vertical_array(A) ::= LBRAC LCURL final_vert_stmt_list(B) RCURL DELIMITER RBRAC. [COLLECTARRAY]
+vertical_array(A) ::= LBRAC LCURL final_vert_stmt_list(B) RCURL RBRAC. [COLLECTARRAY]
 {
     A = B;
     A.type = optic::ARRAY;
@@ -766,16 +846,6 @@ maybe_empty_name_chain(A) ::= pattern(B). [COLON]
     A.data.array = new optic::Array();
     A.data.array->push_back(B);
 }
-
-/*maybe_empty_name_chain(A) ::= maybe_empty_name_chain(B) name_chain(C). [COLON]
-{
-
-}
-
-maybe_empty_name_chain(A) ::= maybe_empty_name_chain(B) pattern(C). [COLON]
-{
-
-}*/
 
 assignment(A) ::= name_chain(B) maybe_empty_name_chain ASSIGN expr. [COLON]
 {

@@ -2,8 +2,7 @@
 #include "ide/include/core/ide.h"
 #include "ide/include/core/Session.h"
 #include "ide/include/style/StyleGlobals.h"
-#include "include/core/heap.h"
-#include "include/core/Memory.h"
+#include "include/core/panopticon.h"
 
 namespace panopticon
 {
@@ -55,8 +54,6 @@ int main(int argc, char* argv[])
 
 
     int result = app.exec();
-
-    panopticon::clear_heap();
-    panopticon::gc_free_all();
+    panopticon::shutdown();
     return result;
 }

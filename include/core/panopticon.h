@@ -40,6 +40,8 @@
 
 namespace panopticon {
 
+void shutdown(); // CALL THIS ON SHUTDOWN TO CLEAN UP!
+
 /*
 ** state manipulation
 */

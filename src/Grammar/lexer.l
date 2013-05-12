@@ -43,6 +43,7 @@ false     { yylval.bval = 0;return BOOLEAN;}
 "let"         { return LET;}
 "in"         { return IN;}
 "where"         { return WHERE;}
+"dict"  { return DICT; }
 "print"    {return PRINT;}
 [ \t]   {
         col += (int) strlen(yytext);

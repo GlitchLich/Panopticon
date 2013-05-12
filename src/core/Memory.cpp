@@ -6,12 +6,82 @@
 namespace panopticon
 {
 std::deque<object> dealloc_queue;
+int num_arrays = 0;
+int num_strings = 0;
+int num_dictionaries = 0;
+int num_functions = 0;
 bool collecting = false;
 // gc_count accounts for the number of allocated objects
 // It is only incremented when the "new" keyword is used on an object
 // It is only decremened when the "delete" keyword is used on an object
 // If everything works correctly they should mirror
 unsigned int gc_count = 0;
+
+void gc_report()
+{
+    std::cout << "==========================================================" << std::endl;
+    std::cout << "Leaked Arrays: " << num_arrays << std::endl;
+    std::cout << "Leaked Strings: " << num_strings << std::endl;
+    std::cout << "Leaked Dictionaries: " << num_dictionaries << std::endl;
+    std::cout << "Leaked Functions: " << num_functions << std::endl;
+    std::cout << "==========================================================" << std::endl;
+}
+
+void increment_array(std::string type)
+{
+    ++gc_count;
+    ++num_arrays;
+    std::cout << "new Array(" << type << ")" << std::endl;
+}
+
+void increment_string()
+{
+    ++gc_count;
+    ++num_strings;
+    std::cout << "new String()" << std::endl;
+}
+
+void increment_dictionary()
+{
+    ++gc_count;
+    ++num_dictionaries;
+    std::cout << "new Dictionary()" << std::endl;
+}
+
+void increment_function()
+{
+    ++gc_count;
+    ++num_functions;
+    std::cout << "new Function()" << std::endl;
+}
+
+void decrement_array(std::string type)
+{
+    --gc_count;
+    --num_arrays;
+    std::cout << "delete Array(" << type << ")" << std::endl;
+}
+
+void decrement_string()
+{
+    --gc_count;
+    --num_strings;
+    std::cout << "delete String" << std::endl;
+}
+
+void decrement_dictionary()
+{
+    --gc_count;
+    --num_dictionaries;
+    std::cout << "delete Dictionary" << std::endl;
+}
+
+void decrement_function()
+{
+    --gc_count;
+    --num_functions;
+    std::cout << "delete Function" << std::endl;
+}
 
 void gc_delete(object& obj); // forward declaration
 
@@ -28,8 +98,6 @@ void gc_delete_array(Array* array)
     array->clear();
     delete array;
     array = 0;
-
-    --gc_count;
 }
 
 void gc_delete_array(Array& array)
@@ -58,6 +126,13 @@ void mem_free_array(Array& array)
     array.clear();
 }
 
+void shallow_mem_free_array(Array* array, std::string type)
+{
+    delete array;
+    array = 0;
+    decrement_array(type);
+}
+
 void gc_delete_dictionary(Dictionary* dictionary)
 {
     Dictionary::iterator iter = dictionary->begin();
@@ -71,8 +146,7 @@ void gc_delete_dictionary(Dictionary* dictionary)
     dictionary->clear();
     delete dictionary;
     dictionary = 0;
-
-    --gc_count;
+    decrement_dictionary();
 }
 
 void gc_delete_dictionary(Dictionary& dictionary)
@@ -109,14 +183,14 @@ void gc_delete_function(Function* function)
 
     delete function;
     function = 0;
-    --gc_count;
+    decrement_function();
 }
 
 void gc_delete_string(String* string)
 {
     delete string;
     string = 0;
-    --gc_count;
+    decrement_string();
 }
 
 void gc_delete(object& obj)
@@ -137,6 +211,7 @@ void gc_delete(object& obj)
         gc_delete_function(obj.data.function);
         break;
     case ARRAY:
+        decrement_array("ARRAY");
         gc_delete_array(obj.data.array);
         break;
     case DICTIONARY:
@@ -145,6 +220,7 @@ void gc_delete(object& obj)
     case ERROR:
         break;
     case STATEMENT_LIST:
+        decrement_array("STATEMENT_LIST");
         gc_delete_array(obj.data.array);
         break;
     case VARIABLE:
@@ -154,6 +230,7 @@ void gc_delete(object& obj)
         gc_delete_string(obj.data.string);
         break;
     case OPERATION_TREE:
+        decrement_array("OPERATION_TREE");
         gc_delete_array(obj.data.array);
         break;
     case OPERATION:
@@ -163,15 +240,19 @@ void gc_delete(object& obj)
     case ASSIGNMENT:
         break;
     case GUARD:
+        decrement_array("GUARD");
         gc_delete_array(obj.data.array);
         break;
     case FUNCTION_BODY:
+        decrement_array("FUNCTION_BODY");
         gc_delete_array(obj.data.array);
         break;
     case FUNCTION_ARG_NAMES:
+        decrement_array("FUNCTION_ARG_NAMES");
         gc_delete_array(obj.data.array);
         break;
     case FUNCTION_ARG_VALUES:
+        decrement_array("FUNCTION_ARG_VALUES");
         gc_delete_array(obj.data.array);
         break;
     case VOID:
@@ -181,6 +262,7 @@ void gc_delete(object& obj)
     case PRIMITIVE:
         break;
     case CONDITION_TREE:
+        decrement_array("CONDITION_TREE");
         gc_delete_array(obj.data.array);
         break;
     case CONDITION_BRANCH:
@@ -248,37 +330,37 @@ object mem_alloc(Type type)
         obj.data.number = 0;
         break;
     case STRING:
-        ++gc_count;
+        increment_string();
         obj.data.string = new String();
         break;
     case FUNCTION:
-        ++gc_count;
+        increment_function();
         obj.data.function = new Function();
         break;
     case ARRAY:
-        ++gc_count;
+        increment_array("ARRAY");
         obj.data.array = new Array();
         break;
     case DICTIONARY:
-        ++gc_count;
+        increment_dictionary();
         obj.data.dictionary = new Dictionary();
         break;
     case ERROR:
         break;
     case STATEMENT_LIST:
-        ++gc_count;
+        increment_array("STATEMENT_LIST");
         obj.data.array = new Array();
         break;
     case VARIABLE:
-        ++gc_count;
+        increment_string();
         obj.data.string = new String();
         break;
     case UNDECLARED_VARIABLE:
-        ++gc_count;
+        increment_string();
         obj.data.string = new String();
         break;
     case OPERATION_TREE:
-        ++gc_count;
+        increment_array("OPERATION_TREE");
         obj.data.array = new Array();
         break;
     case OPERATION:
@@ -288,19 +370,19 @@ object mem_alloc(Type type)
     case ASSIGNMENT:
         break;
     case GUARD:
-        ++gc_count;
+        increment_array("GUARD");
         obj.data.array = new Array();
         break;
     case FUNCTION_BODY:
-        ++gc_count;
+        increment_array("FUNCTION_BODY");
         obj.data.array = new Array();
         break;
     case FUNCTION_ARG_NAMES:
-        ++gc_count;
+        increment_array("FUNCTION_ARG_NAMES");
         obj.data.array = new Array();
         break;
     case FUNCTION_ARG_VALUES:
-        ++gc_count;
+        increment_array("FUNCTION_ARG_VALUES");
         obj.data.array = new Array();
         break;
     case VOID:
@@ -310,7 +392,7 @@ object mem_alloc(Type type)
     case PRIMITIVE:
         break;
     case CONDITION_TREE:
-        ++gc_count;
+        increment_array("CONDITION_TREE");
         obj.data.array = new Array();
         break;
     case CONDITION_BRANCH:
@@ -341,7 +423,6 @@ void mem_free(object obj)
 
 Array* copy_array(Array* array)
 {
-    ++gc_count;
     Array* new_array =  new Array();
     Array::iterator iter = array->begin();
 
@@ -390,7 +471,7 @@ Dictionary copy_dictionary(const Dictionary& dictionary)
 
 Dictionary* copy_dictionary(Dictionary* dictionary)
 {
-    ++gc_count;
+    increment_dictionary();
     Dictionary* new_dictionary =  new Dictionary();
     Dictionary::iterator iter = dictionary->begin();
 
@@ -412,7 +493,7 @@ Dictionary* copy_dictionary(Dictionary* dictionary)
 
 Function* copy_function(const Function* function)
 {
-    ++gc_count;
+    increment_function();
     Function* new_function = new Function();
     new_function->arguments = copy_array(function->arguments);
     new_function->body = mem_copy(function->body);
@@ -440,13 +521,14 @@ object mem_copy(const object &obj)
         new_object.data.number = obj.data.number;
         break;
     case STRING:
-        ++gc_count;
+        increment_string();
         new_object.data.string = new String(*obj.data.string);
         break;
     case FUNCTION:
         new_object.data.function = copy_function(obj.data.function);
         break;
     case ARRAY:
+        increment_array("ARRAY");
         new_object.data.array = copy_array(obj.data.array);
         break;
     case DICTIONARY:
@@ -456,17 +538,19 @@ object mem_copy(const object &obj)
         new_object.data.number = obj.data.number;
         break;
     case STATEMENT_LIST:
+        increment_array("STATEMENT_LIST");
         new_object.data.array = copy_array(obj.data.array);
         break;
     case VARIABLE:
-        ++gc_count;
+        increment_string();
         new_object.data.string = new String(*obj.data.string);
         break;
     case UNDECLARED_VARIABLE:
-        ++gc_count;
+        increment_string();
         new_object.data.string = new String(*obj.data.string);
         break;
     case OPERATION_TREE:
+        increment_array("OPERATION_TREE");
         new_object.data.array = copy_array(obj.data.array);
         break;
     case OPERATION:
@@ -479,15 +563,19 @@ object mem_copy(const object &obj)
         new_object.data.operator_func = obj.data.operator_func;
         break;
     case GUARD:
+        increment_array("GUARD");
         new_object.data.array = copy_array(obj.data.array);
         break;
     case FUNCTION_BODY:
+        increment_array("FUNCTION_BODY");
         new_object.data.array = copy_array(obj.data.array);
         break;
     case FUNCTION_ARG_NAMES:
+        increment_array("FUNCTION_ARG_NAMES");
         new_object.data.array = copy_array(obj.data.array);
         break;
     case FUNCTION_ARG_VALUES:
+        increment_array("FUNCTION_ARG_VALUES");
         new_object.data.array = copy_array(obj.data.array);
         break;
     case VOID: // don't copy
@@ -497,6 +585,7 @@ object mem_copy(const object &obj)
     case PRIMITIVE: // Not implemented yet
         break;
     case CONDITION_TREE:
+        increment_array("CONDITION_TREE");
         new_object.data.array = copy_array(obj.data.array);
         break;
     case CONDITION_BRANCH:

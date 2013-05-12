@@ -1,35 +1,51 @@
 //Dictionary Tests!
+//FOUR different syntaxes, Horziontal vs Vertical, keyworded dict vs none
 
 //Horizontal construction
-myDict = { Dragon = 4 Turtles = true Octopi = "are cool" Array = [0 1 2 3 4] }
+myDict = { Turtles = true Octopi = "are cool" Array = [0 1 2 3 4] dictFunc x y = x + y Dragon = { test = 4 } }
 
-//Vertical Construction
-myDict = { 
-	Dragon = 4 
+//Vertical Construction, with nested dictionaries
+myDict =             
 	Turtles = true 
 	Octopi = "are cool" 
-	Array = [0 1 2 3 4] 
-}
+	Array = [0 1 2 3 4]
+	dictFunc x y = x + y
+	Dragon = 
+		test = 4
 
-myDict::Dragon
-myDict = { Dragon = 4 Turtles = true Octopi = "are cool" Array = [0 1 2 3 4] }
+//with keyword
+myDict = dict { Turtles = true Octopi = "are cool" Array = [0 1 2 3 4] dictFunc x y = x + y Dragon = dict { test = 4 } }
 
-//Horizontal construction sans n00b training wheels
-notANoob = 
-	"Dragon" = 4 "Turtles" = true "Octopi" = "are cool" "Array" = [0 1 2 3 4]
+//with keyword
+myDict = dict          
+	Turtles = true 
+	Octopi = "are cool" 
+	Array = [0 1 2 3 4]
+	dictFunc x y = x + y
+	Dragon = dict 
+		test = 4
 
-myDict::Turtles
+myDict::Turtles == true
 myDict::Octopi
 myDict::Array
+myDict::Dragon
+
+//can do functions!
+myDict::dictFunc(4 5)
+
+//Nested Dictionaries
+myDict::Dragon::test
+
+//Throws correct errors
+myDict::nullTest
 
 //Alternate look up, can be used with vars:
 myDict{"Array"}
 
-vertDict = {
+vertDict =
 	Treble 	= 0
 	Mid 	= 0.3
 	Bass	= 11
-}
 
 vertDict::Treble
 vertDict::Mid
@@ -51,33 +67,35 @@ nullVar{"Dragon"}
 notADict = 5
 notADict{"Dragon"}
 
-lookThatShitUp x y = dict{x} + array[y]
+lookThatShitUp x y = a[y]
 	where
-		dict = {
-			"zero" 	= 0
-			"one" 	= 1
-			"two"	= 2
-			"three"	= 3
-			"four"	= 4
-		}
-		array = [
+		d = dict
+			zero 	= 0
+			one		= 1
+			two		= 2
+			three	= 3
+			four	= 4
+		a = [
 			"ten"
 			"eleven"
 			"twelve"
 			"thirteen"
 			"fourteen"
 		]
+
+//Horizontal nesting
+level1 = dict { level2 = dict { level3 = dict { level4 = dict { level5 = false } } } }
 			
-//Stacked Dictionaries don't work right now...
-//Should this work?
-level1 = 
-	"level2" = 
-		"level3" = 
-			"level4" = false
+//Vertical nesting
+level1 = dict
+	level2 = dict
+		level3 = dict
+			level4 = dict
+				level5 = true
 
-//This does
-level1 = { "level2" = { "level3" = { "level4" = { "level5" = false } } } }
-
-//However indexing isn't recursive yet, Crashes.
-level1{"level2"}{"level3"}{"level4"}{"level5"}
+level1
+level1::level2
+level1::level2::level3
+level1::level2::level3::level4
+level1::level2::level3::level4::level5
 

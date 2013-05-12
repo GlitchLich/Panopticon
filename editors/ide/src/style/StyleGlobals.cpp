@@ -29,7 +29,7 @@ Style::Style()
     keywordFormat.setForeground(QColor(25, 125, 200));
     keywordFormat.setFontWeight(QFont::Bold);
     singleLineCommentFormat.setForeground(QColor(175, 80, 80));
-    booleanFormat.setForeground(QColor(255, 50, 80));
+    booleanFormat.setForeground(QColor(190, 40, 60));
     booleanFormat.setFontWeight(QFont::Bold);
     stringFormat.setForeground(QColor(25, 180, 125));
     numberFormat.setForeground(QColor(180, 50, 135));

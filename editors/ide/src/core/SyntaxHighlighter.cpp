@@ -13,7 +13,7 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument* parent) :
 
     QStringList keywordPatterns;
     keywordPatterns << "\\blet\\b" << "\\bswitch\\b"
-                    << "\\bif\\b" << "\\bthen\\b" << "\\belse\\b"
+                    << "\\bif\\b" << "\\bthen\\b" << "\\belse\\b" << "\\bdict\\b"
                     << "\\bcase\\b" << "\\bof\\b" << "\\bwhere\\b" << "\\bin\\b"
                     << "\\[" << "\\]" << "\\(" << "\\)" << "\\_" << "\\{" << "\\}"
                     << "\\:" << "\\|" << "\\." << "\\\\";
@@ -50,7 +50,7 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument* parent) :
     rule.format = style->numberFormat;
     rules.append(rule);
 
-    rule.pattern = QRegExp("[^\n]*\\:\\:");
+    rule.pattern = QRegExp("[A-Za-z0-9]*\\:\\:");
     rule.format = style->numberFormat;
     rules.append(rule);
 
