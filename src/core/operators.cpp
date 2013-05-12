@@ -864,17 +864,13 @@ bool resolve_stack_from_parser(const object& operation_tree, bool resolve_entire
             correct_parsing = false;
         }
 
-        if(resolve_entire_stack)
-        {
-            evaluate_stack();
-        }
+        // Free the Array* we created but not the actual contents because they will get freed on the stack
+        shallow_mem_free_array(tree, "OPERATION_TREE");
 
+        if(resolve_entire_stack)
+            evaluate_stack();
         else
-        {
-            // Free the Array* we created but not the actual contents because they will get freed on the stack
-            shallow_mem_free_array(tree, "OPERATION_TREE");
             evaluate_top();
-        }
     }
 }
 
