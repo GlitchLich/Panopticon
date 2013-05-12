@@ -10,6 +10,10 @@
 n*m+z
 n*m+z
 
+1
+(-1)
+[ 0 1 2 3 ]
+
 whereTest x = x + y * z	
 	where 
 		y = x * 10 
@@ -18,10 +22,15 @@ whereTest x = x + y * z
 whereTest( [ 12 13 ] )
 
 a = [0 1 2 3]
-a + 1
+a + [ 0 1 2 3 4 ]
 axe x = x
 axe(7)
 recursion x t = recursion(x t-1)
+
+ten = 10
+ten
+recursion(12)
+
 
 hellYeah x = x + y("!!!")
 	where

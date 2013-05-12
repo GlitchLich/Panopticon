@@ -20,7 +20,17 @@
     along with Panopticon.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "include/core/heap.h"
+#include "include/core/Memory.h"
+
 namespace panopticon
 {
+
+void shutdown()
+{
+    panopticon::clear_heap();
+    panopticon::gc_free_all();
+    panopticon::gc_report();
+}
 
 } // panopticon namespace

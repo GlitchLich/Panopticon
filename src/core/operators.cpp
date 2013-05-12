@@ -240,7 +240,7 @@ bool print_array(const object &A, int arrayNum,bool isTree)
 
 bool print_variable(const object& A)
 {
-    object result;
+    object result = mem_alloc(NIL);
     if(get_variable(A.data.string,&result) == OK)
     {
         if(result.type==FUNCTION)
@@ -269,6 +269,8 @@ bool print_variable(const object& A)
     {
         out() << "Undeclared Variable: " << *A.data.string << std::endl;
     }
+
+    mem_free(result);
 }
 
 bool print_object(const object &A)
@@ -330,7 +332,7 @@ bool print_object(const object &A)
 
 bool unary_print_object(object &A, const object &B)
 {
-    A = mem_copy(B);
+    // A = mem_copy(B);
     print_object(B);
 }
 /*
@@ -450,7 +452,9 @@ bool dictionary_lookup(object& value, const object& dict, const object& key)
         {
             if(result.type == DICTIONARY)
             {
-                return dictionary_lookup(value, result, key);
+                bool success =  dictionary_lookup(value, result, key);
+                mem_free(result);
+                return success;
             }
 
             else
@@ -840,7 +844,7 @@ bool resolve_stack_from_parser(const object& operation_tree, bool resolve_entire
 
         else if(operation_tree.data.array->size() == 1)
         {
-            optic_stack.push_back(copy_tree.data.array->at(0));
+            optic_stack.push_back(mem_copy(copy_tree.data.array->at(0)));
         }
 
         else
@@ -849,6 +853,9 @@ bool resolve_stack_from_parser(const object& operation_tree, bool resolve_entire
             correct_parsing = false;
         }
     }
+
+    // Free the Array* we created but not the actual contents because they will get freed on the stack
+    shallow_mem_free_array(copy_tree.data.array, "OPERATION_TREE");
 
     if(resolve_entire_stack)
         evaluate_stack();
