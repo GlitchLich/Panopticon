@@ -2,6 +2,8 @@
 #include "ide/include/core/ide.h"
 #include "ide/include/core/Session.h"
 #include "ide/include/style/StyleGlobals.h"
+#include "include/core/heap.h"
+#include "include/core/Memory.h"
 
 namespace panopticon
 {
@@ -51,25 +53,10 @@ int main(int argc, char* argv[])
     panopticon::ide::MainWindow mainWindow;
     panopticon::ide::MAIN_WINDOW = &mainWindow;
 
-    /*
-    QGuiApplication app(argc,argv);
-    QQuickView view;
-    view.setResizeMode(QQuickView::SizeRootObjectToView);
-    view.connect(view.engine(), SIGNAL(quit()), &app, SLOT(quit()));
-    QUrl ideQml(QUrl::fromLocalFile(app.applicationDirPath() + "/resources/ide/qml/PanopticonIDE.qml"));
-    view.setSource(ideQml);
 
-    if(QGuiApplication::platformName() == QLatin1String("qnx") ||
-          QGuiApplication::platformName() == QLatin1String("eglfs"))
-    {
-        view.setResizeMode(QQuickView::SizeRootObjectToView);
-        view.showFullScreen();
-    }
+    int result = app.exec();
 
-    else
-    {
-        view.showMaximized();
-    }*/
-
-    return app.exec();
+    panopticon::clear_heap();
+    panopticon::gc_free_all();
+    return result;
 }

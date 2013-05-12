@@ -12,7 +12,7 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument* parent) :
     Rule rule;
 
     QStringList keywordPatterns;
-    keywordPatterns << "\\btrue\\b" << "\\bfalse\\b" << "\\blet\\b" << "\\bswitch\\b"
+    keywordPatterns << "\\blet\\b" << "\\bswitch\\b"
                     << "\\bif\\b" << "\\bthen\\b" << "\\belse\\b" << "\\bdict\\b"
                     << "\\bcase\\b" << "\\bof\\b" << "\\bwhere\\b" << "\\bin\\b"
                     << "\\[" << "\\]" << "\\(" << "\\)" << "\\_" << "\\{" << "\\}"
@@ -28,6 +28,14 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument* parent) :
 
     rule.pattern = QRegExp("//[^\n]*");
     rule.format = style->singleLineCommentFormat;
+    rules.append(rule);
+
+    rule.pattern = QRegExp("\\btrue\\b");
+    rule.format = style->booleanFormat;
+    rules.append(rule);
+
+    rule.pattern = QRegExp("\\bfalse\\b");
+    rule.format = style->booleanFormat;
     rules.append(rule);
 
     rule.pattern = QRegExp("\".*\"");

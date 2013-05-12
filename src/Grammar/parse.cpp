@@ -196,7 +196,7 @@ bool exec(std::string string, std::string& output)
         }
         string = string.append("\n\n");
         calculate_white_space(string);
-        std::cout << string << std::endl;
+//        std::cout << string << std::endl;
         bufferstate = yy_scan_string(string.c_str());
         while( (yv=yylex()) != 0)
         {

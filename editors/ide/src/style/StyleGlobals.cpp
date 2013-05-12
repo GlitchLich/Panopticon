@@ -28,7 +28,9 @@ Style::Style()
     printErrorFormat.setFontWeight(QFont::Bold);
     keywordFormat.setForeground(QColor(25, 125, 200));
     keywordFormat.setFontWeight(QFont::Bold);
-    singleLineCommentFormat.setForeground(QColor(200, 80, 80));
+    singleLineCommentFormat.setForeground(QColor(175, 80, 80));
+    booleanFormat.setForeground(QColor(190, 40, 60));
+    booleanFormat.setFontWeight(QFont::Bold);
     stringFormat.setForeground(QColor(25, 180, 125));
     numberFormat.setForeground(QColor(180, 50, 135));
 //    flowFormat.setForeground(QColor(100, 255, 200));

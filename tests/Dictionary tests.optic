@@ -14,13 +14,14 @@ myDict =
 		test = 4
 
 //with keyword
-myDict = dict { Dragon = dict { test = 4 } Turtles = true Octopi = "are cool" Array = [0 1 2 3 4] }
+myDict = dict { Turtles = true Octopi = "are cool" Array = [0 1 2 3 4] dictFunc x y = x + y Dragon = dict { test = 4 } }
 
 //with keyword
 myDict = dict          
 	Turtles = true 
 	Octopi = "are cool" 
 	Array = [0 1 2 3 4]
+	dictFunc x y = x + y
 	Dragon = dict 
 		test = 4
 
@@ -28,9 +29,14 @@ myDict::Turtles == true
 myDict::Octopi
 myDict::Array
 myDict::Dragon
+
+//can do functions!
+myDict::dictFunc(4 5)
+
 //Nested Dictionaries
 myDict::Dragon::test
 
+//Throws correct errors
 myDict::nullTest
 
 //Alternate look up, can be used with vars:

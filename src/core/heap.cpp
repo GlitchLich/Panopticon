@@ -3,6 +3,7 @@
 
 #include "../../include/core/heap.h"
 #include "include/core/operators.h"
+#include "core/Memory.h"
 
 namespace panopticon
 {
@@ -19,6 +20,15 @@ void init_heap()
     current_scope = &initial_scope;
     scope_pointer = current_scope->end();
     dynamic_scope_pointer = global_scope.begin();
+}
+
+void clear_heap()
+{
+    while(global_scope.size())
+    {
+        mem_free_dictionary(*global_scope.back());
+        global_scope.pop_back();
+    }
 }
 
 void push_scope(Dictionary* scope)
@@ -48,7 +58,7 @@ RESULT get_variable(std::string* variable_name, object* result)
         // If it does assign the results and return OK
         if(scope_pointer != (*dynamic_scope_pointer)->end())
         {
-            *result = scope_pointer->second;
+            *result = mem_copy(scope_pointer->second);
             return OK;
         }
     }
@@ -63,7 +73,7 @@ RESULT set_variable(std::string* variable_name, const object& value)
     scope_pointer = current_scope->find(*variable_name);
     if(scope_pointer == current_scope->end())
     {
-        current_scope->insert(std::make_pair(*variable_name, value));
+        current_scope->insert(std::make_pair(*variable_name, mem_copy(value)));
         return OK;
     }
 

@@ -17,6 +17,12 @@ whereTest x = x + y * z
 
 whereTest( [ 12 13 ] )
 
+a = [0 1 2 3]
+a + 1
+axe x = x
+axe(7)
+recursion x t = recursion(x t-1)
+
 hellYeah x = x + y("!!!")
 	where
 		y z = "Hell yeah"+z
@@ -43,6 +49,7 @@ guardTest x
 
 guardTest(0)
 guardTest(1)
+//Will throw an error since there's an array in the guard statement.
 guardTest([5 5])
 
 arrayGuard x

@@ -30,6 +30,7 @@
 #include "include/Grammar/divide.h"
 #include "include/core/function.h"
 #include "include/core/stack.h"
+#include "core/Memory.h"
 
 #include <algorithm>
 
@@ -43,6 +44,7 @@ namespace panopticon
 //==================
 //GENERAL
 //==================
+/*
 object copy_object(const object& original)
 {
     object copy;
@@ -73,15 +75,13 @@ object copy_object(const object& original)
     }
 
     return copy;
-}
+}*/
 
 object create_void_tree()
 {
-    object void_tree;
-    void_tree.type = OPERATION_TREE;
+    object void_tree = mem_alloc(OPERATION_TREE);
     object v;
     v.type = VOID;
-    void_tree.data.array = new Array();
     void_tree.data.array->push_back(v);
     return void_tree;
 }
@@ -120,6 +120,7 @@ object create_void_tree()
 //    return new_object;
 //}
 
+/*
 bool delete_array(object& a)
 {
     for(int i=0;i<a.data.array->size();++i)
@@ -163,7 +164,7 @@ bool delete_object(object& obj)
         break;
     }
 }
-
+*/
 bool print_array(const object &A, int arrayNum,bool isTree)
 {
     if(arrayNum!=0)
@@ -237,8 +238,42 @@ bool print_array(const object &A, int arrayNum,bool isTree)
     }
 }
 
+bool print_variable(const object& A)
+{
+    object result;
+    if(get_variable(A.data.string,&result) == OK)
+    {
+        if(result.type==FUNCTION)
+        {
+            if(result.data.function->arguments.size() == 1)
+            {
+                object arguments; // empty, won't be used by call_function so no need to initialize
+                call_function(result, A, arguments);
+                out() << *A.data.string << ": " << print_object(result);
+            }
+
+            else
+            {
+                out() << "Function: " << *A.data.string << std::endl;
+                out() << "with arguments: " << result.data.function->arguments.size() << std::endl;
+            }
+        }
+        else
+        {
+            out() << *A.data.string << ": " << print_object(result);
+        }
+
+    }
+
+    else
+    {
+        out() << "Undeclared Variable: " << *A.data.string << std::endl;
+    }
+}
+
 bool print_object(const object &A)
 {
+    std::cout << "print_object.type: " << A.type << std::endl;
     switch(A.type)
     {
     case panopticon::FUNCTION:
@@ -270,36 +305,7 @@ bool print_object(const object &A)
     case panopticon::VARIABLE:
     case panopticon::UNDECLARED_VARIABLE:
 
-        object result;
-        if(get_variable(A.data.string,&result) == OK)
-        {
-            if(result.type==FUNCTION)
-            {
-                if(result.data.function->arguments.size() == 1)
-                {
-                    object arguments; // empty, won't be used by call_function so no need to initialize
-                    call_function(result, A, arguments);
-                    out() << *A.data.string << ": " << print_object(result);
-                }
-
-                else
-                {
-                    out() << "Function: " << *A.data.string << std::endl;
-                    out() << "with arguments: " << result.data.function->arguments.size() << std::endl;
-                }
-            }
-            else
-            {
-                out() << *A.data.string << ": " << print_object(result);
-            }
-
-        }
-
-        else
-        {
-            out() << "Undeclared Variable: " << *A.data.string << std::endl;
-        }
-
+        print_variable(A);
         break;
 
     case panopticon::OPERATION_TREE:
@@ -324,10 +330,10 @@ bool print_object(const object &A)
 
 bool unary_print_object(object &A, const object &B)
 {
-    A = copy_object(B);
+    A = mem_copy(B);
     print_object(B);
 }
-
+/*
 bool create_dictionary(object& dict)
 {
     dict.data.dictionary = new Dictionary();
@@ -367,7 +373,7 @@ bool delete_dictionary(object& dict)
     dict.data.dictionary->clear();
     delete dict.data.dictionary;
     return true;
-}
+}*/
 
 bool print_dictionary(const object& dict)
 {
@@ -425,41 +431,6 @@ bool print_dictionary(const object& dict)
     return true;
 }
 
-bool dictionary_keys(object& keys, const object& dict)
-{
-    keys.type = ARRAY;
-    Array* key_array = new Array();
-    Dictionary::iterator iter = dict.data.dictionary->begin();
-
-    while(iter != dict.data.dictionary->end())
-    {
-        object key;
-        key.type = STRING;
-        key.data.string = new String(iter->first);
-        key_array->push_back(key);
-        ++iter;
-    }
-
-    keys.data.array = key_array;
-    return true;
-}
-
-bool dictionary_values(object& values, const object& dict)
-{
-    values.type = ARRAY;
-    Array* value_array = new Array();
-    Dictionary::iterator iter = dict.data.dictionary->begin();
-
-    while(iter != dict.data.dictionary->end())
-    {
-        value_array->push_back(iter->second);
-        ++iter;
-    }
-
-    values.data.array = value_array;
-    return true;
-}
-
 bool dictionary_lookup(object& value, const object& dict, const object& key)
 {
     if(key.type != STRING)
@@ -470,16 +441,18 @@ bool dictionary_lookup(object& value, const object& dict, const object& key)
     }
 
     //If the object is a string, attempt to fetch it.
-    if(dict.type == STRING||dict.type == UNDECLARED_VARIABLE)
+    if(dict.type == STRING || dict.type == UNDECLARED_VARIABLE)
     {
         std::cout << "UV" << std::endl;
         object result;
-        if(get_variable(dict.data.string,&result)==OK)
+
+        if(get_variable(dict.data.string, &result) == OK)
         {
-            if(result.type==DICTIONARY)
+            if(result.type == DICTIONARY)
             {
-                return dictionary_lookup(value,result,key);
+                return dictionary_lookup(value, result, key);
             }
+
             else
             {
                 value.type = NIL;
@@ -489,6 +462,7 @@ bool dictionary_lookup(object& value, const object& dict, const object& key)
                 return false;
             }
         }
+
         else
         {
             value.type = NIL;
@@ -502,8 +476,9 @@ bool dictionary_lookup(object& value, const object& dict, const object& key)
     Dictionary::iterator find = dict.data.dictionary->find(*key.data.string);
     if(find != dict.data.dictionary->end())
     {
-        value = copy_object(find->second);
+        value = mem_copy(find->second);
     }
+
     else
     {
         value.type = NIL;
@@ -511,6 +486,7 @@ bool dictionary_lookup(object& value, const object& dict, const object& key)
         correct_parsing = false;
         return false;
     }
+
     return true;
 }
 
@@ -528,6 +504,7 @@ bool dictionary_contains(object &boolean, const object &dict, const object &key)
     return true;
 }
 
+/*
 bool concatenate_arrays(object &a,object b, object c)
 {
     //    a.data.array->reserve(b.data.array->size() + c.data.array->size());
@@ -540,13 +517,13 @@ bool concatenate_arrays(object &a,object b, object c)
             a.data.array->push_back(d);
             break;
         case STRING:
-            a.data.array->push_back(copy_object(d));
+            a.data.array->push_back(mem_copy(d));
             break;
         case BOOL:
             a.data.array->push_back(d);
             break;
         case ARRAY:
-            a.data.array->push_back(copy_object(d));
+            a.data.array->push_back(mem_copy(d));
             break;
         }
     }
@@ -560,28 +537,26 @@ bool concatenate_arrays(object &a,object b, object c)
             a.data.array->push_back(d);
             break;
         case STRING:
-            a.data.array->push_back(copy_object(d));
+            a.data.array->push_back(mem_copy(d));
             break;
         case BOOL:
             a.data.array->push_back(d);
             break;
         case ARRAY:
-            a.data.array->push_back(copy_object(d));
+            a.data.array->push_back(mem_copy(d));
             break;
         }
     }
 }
 
-
 bool create_array(object &a)
 {
     a.data.array = new Array();
-}
+}*/
 
 bool object_operator_array(object& a,const object& obj,const object& array, operator_function func)
 {
-    a.type = panopticon::ARRAY;
-    a.data.array = new Array();
+    a = mem_alloc(ARRAY);
     //    a.data.array->reserve(array.data.array->size());
 
     for(int i=0;i<array.data.array->size();++i)
@@ -594,8 +569,7 @@ bool object_operator_array(object& a,const object& obj,const object& array, oper
 
 bool array_operator_object(object& a,const object& array,const object& obj, operator_function func)
 {
-    a.type = panopticon::ARRAY;
-    a.data.array = new Array();
+    a = mem_alloc(ARRAY);
     //    a.data.array->reserve(array.data.array->size());
 
     for(int i=0;i<array.data.array->size();++i)
@@ -631,83 +605,86 @@ bool array_operator_array(object& a,const object& array1,const object& array2, o
     }
 }
 
-bool create_tree(object&a,const object& obj)
+bool create_tree(object&a, const object& obj)
 {
-    a.type = OPERATION_TREE;
-    a.data.array = new Array();
-    if(obj.type==OPERATION_TREE)
+    if(obj.type == OPERATION_TREE)
     {
-        a = obj;
+        a = mem_copy(obj);
     }
+
     else
     {
-        a.data.array->push_back(obj);
+        a = mem_alloc(OPERATION_TREE);
+        a.data.array->push_back(mem_copy(obj));
     }
-
 }
 
-bool store_operations(object& a,const object& obj1,unary_operator_function func,bool expand)
+bool store_operations(object& a, const object& obj1, unary_operator_function func, bool expand)
 {
-    a.type = OPERATION_TREE;
-    a.data.array = new Array();
+    a = mem_alloc(OPERATION_TREE);
 
     int size = 1;
 
-    if(obj1.type==OPERATION_TREE)
+    if(obj1.type == OPERATION_TREE)
     {
-        size+=obj1.data.array->size();
+        size += obj1.data.array->size();
     }
+
     else
     {
         size++;
     }
 
-    //    a.data.array->reserve(size);
     object op_func;
+
     if(expand)
     {
         op_func.type = UNARY_OPERATION;
     }
+
     else
     {
         op_func.type = UNARY_NO_EXPANSION_OPERATION;
     }
+
     op_func.data.unary_operator_func = func;
     a.data.array->push_back(op_func);
 
-    if(obj1.type==OPERATION_TREE)
+    if(obj1.type == OPERATION_TREE)
     {
-        for(int i=0;i<obj1.data.array->size();++i)
+        for(int i = 0; i < obj1.data.array->size(); ++i)
         {
-            a.data.array->push_back(obj1.data.array->at(i));
+            a.data.array->push_back(mem_copy(obj1.data.array->at(i)));
         }
     }
+
     else
     {
-        a.data.array->push_back(obj1);
+        a.data.array->push_back(mem_copy(obj1));
     }
 }
 
-bool store_operations(object& a,const object& obj1,const object& obj2,bool expand)
+bool store_operations(object& a, const object& obj1, const object& obj2, bool expand)
 {
-    a.type = OPERATION_TREE;
-    a.data.array = new Array();
+    a = mem_alloc(OPERATION_TREE);
 
     int size = 0;
 
-    if(obj1.type==OPERATION_TREE)
+    if(obj1.type == OPERATION_TREE)
     {
-        size+=obj1.data.array->size();
+        size += obj1.data.array->size();
     }
+
     else
     {
         size++;
     }
 
-    if(obj2.type==OPERATION_TREE)
+    if(obj2.type == OPERATION_TREE)
     {
-        size+=obj2.data.array->size();
+        size += obj2.data.array->size();
     }
+
     else
     {
         size++;
@@ -718,119 +695,131 @@ bool store_operations(object& a,const object& obj1,const object& obj2,bool expan
     {
         op_func.type = OPERATION;
     }
+
     else
     {
         op_func.type = NO_EXPANSION_OPERATION;
     }
+
     op_func.data.operator_func = &serial;
     a.data.array->push_back(op_func);
 
-    if(obj1.type==OPERATION_TREE)
+    if(obj1.type == OPERATION_TREE)
     {
-        for(int i=0;i<obj1.data.array->size();++i)
+        for(int i = 0; i < obj1.data.array->size(); ++i)
         {
-            a.data.array->push_back(obj1.data.array->at(i));
+            a.data.array->push_back(mem_copy(obj1.data.array->at(i)));
         }
-    }
-    else
-    {
-        a.data.array->push_back(obj1);
     }
 
-    if(obj2.type==OPERATION_TREE)
-    {
-        for(int i=0;i<obj2.data.array->size();++i)
-        {
-            a.data.array->push_back(obj2.data.array->at(i));
-        }
-    }
     else
     {
-        a.data.array->push_back(obj2);
+        a.data.array->push_back(mem_copy(obj1));
+    }
+
+    if(obj2.type == OPERATION_TREE)
+    {
+        for(int i = 0; i < obj2.data.array->size(); ++i)
+        {
+            a.data.array->push_back(mem_copy(obj2.data.array->at(i)));
+        }
+    }
+
+    else
+    {
+        a.data.array->push_back(mem_copy(obj2));
     }
 }
 
-bool store_operations(object& a,const object& obj1,const object& obj2, operator_function func, bool expand)
+bool store_operations(object& a, const object& obj1, const object& obj2, operator_function func, bool expand)
 {
-    a.type = OPERATION_TREE;
-    a.data.array = new Array();
+    a = mem_alloc(OPERATION_TREE);
+
     int size = 1;
 
-    if(obj1.type==OPERATION_TREE)
+    if(obj1.type == OPERATION_TREE)
     {
-        size+=obj1.data.array->size();
+        size += obj1.data.array->size();
     }
+
     else
     {
         size++;
     }
 
-    if(obj2.type==OPERATION_TREE)
+    if(obj2.type == OPERATION_TREE)
     {
-        size+=obj2.data.array->size();
+        size += obj2.data.array->size();
     }
+
     else
     {
         size++;
     }
 
-    //    a.data.array->reserve(size);
     object op_func;
     if(expand)
     {
         op_func.type = OPERATION;
     }
+
     else
     {
         op_func.type = NO_EXPANSION_OPERATION;
     }
+
     op_func.data.operator_func = func;
     a.data.array->push_back(op_func);
 
-    if(obj1.type==OPERATION_TREE)
+    if(obj1.type == OPERATION_TREE)
     {
-        for(int i=0;i<obj1.data.array->size();++i)
+        for(int i = 0; i < obj1.data.array->size(); ++i)
         {
-            a.data.array->push_back(obj1.data.array->at(i));
+            a.data.array->push_back(mem_copy(obj1.data.array->at(i)));
         }
-    }
-    else
-    {
-        a.data.array->push_back(obj1);
     }
 
-    if(obj2.type==OPERATION_TREE)
-    {
-        for(int i=0;i<obj2.data.array->size();++i)
-        {
-            a.data.array->push_back(obj2.data.array->at(i));
-        }
-    }
     else
     {
-        a.data.array->push_back(obj2);
+        a.data.array->push_back(mem_copy(obj1));
+    }
+
+    if(obj2.type == OPERATION_TREE)
+    {
+        for(int i = 0; i < obj2.data.array->size(); ++i)
+        {
+            a.data.array->push_back(mem_copy(obj2.data.array->at(i)));
+        }
+    }
+
+    else
+    {
+        a.data.array->push_back(mem_copy(obj2));
     }
 }
 
+/*
 bool object_operator_object(object& a, object& b, object& c, operator_function func)
 {
     func(a, b, c);
-    delete_object(b);
-    delete_object(c);
-}
+    // mem_free(b);
+    // mem_free(c);
+}*/
 
 bool resolve_stack_from_parser(const object& operation_tree, bool resolve_entire_stack)
 {
+    object copy_tree = mem_copy(operation_tree);
+
     if(operation_tree.type == OPERATION_TREE)
     {
         if(operation_tree.data.array->size() > 1)
         {
-            std::reverse_copy(operation_tree.data.array->begin(), operation_tree.data.array->end(), std::inserter(optic_stack, optic_stack.end()));
+            std::reverse_copy(copy_tree.data.array->begin(), copy_tree.data.array->end(), std::inserter(optic_stack, optic_stack.end()));
         }
 
         else if(operation_tree.data.array->size() == 1)
         {
-            optic_stack.push_back(operation_tree.data.array->at(0));
+            optic_stack.push_back(copy_tree.data.array->at(0));
         }
 
         else
@@ -860,15 +849,15 @@ bool parse_operations(object& a, const object& b, const object& c, operator_func
  */
 bool create_function(object &A, const object &B, const object &C)
 {
-    A.type = FUNCTION;
-    Function* function = new Function;
+    A = mem_alloc(FUNCTION);
+    Function* function = A.data.function;
 
     if(B.type == FUNCTION_ARG_NAMES)
     {
         function->num_arguments = B.data.array->size();
         for(int i = 0; i < function->num_arguments; ++i)
         {
-            function->arguments.push_back(copy_object(B.data.array->at(i)));
+            function->arguments.push_back(mem_copy(B.data.array->at(i)));
         }
 
         function->name = std::string(*B.data.array->at(0).data.string);
@@ -877,25 +866,24 @@ bool create_function(object &A, const object &B, const object &C)
     else if(B.type == STRING)
     {
         function->num_arguments = 0;
-        function->arguments.push_back(B);
+        function->arguments.push_back(mem_copy(B));
         function->name = std::string(*B.data.string);
     }
 
-    function->body = C;
+    function->body = mem_copy(C);
     function->body.type = OPERATION_TREE;
-    A.data.function = function;
 }
 
 bool call_function_array(object& A, const object& B, const object& C)
 {
-    optic_stack.push_back(C);
-    optic_stack.push_back(B);
+    optic_stack.push_back(mem_copy(C));
+    optic_stack.push_back(mem_copy(B));
     object call;
     call.type = OPERATION;
     call.data.operator_func = call_function;
     optic_stack.push_back(call);
     evaluate_top();
-    A = optic_stack.back();
+    A = optic_stack.back(); // optimization: skip copy/free because nothing else will reference it
     optic_stack.pop_back();
 }
 
@@ -936,7 +924,7 @@ bool call_function(object& A, const object& B, const object& C)
         break;
 
     case FUNCTION:
-        function = B;
+        function = mem_copy(B);
         break;
 
     default:
@@ -949,7 +937,7 @@ bool call_function(object& A, const object& B, const object& C)
 
     std::string function_name = function.data.function->name;
     Dictionary context;
-    context.insert(std::make_pair(function_name, function));
+    context.insert(std::make_pair(function_name, mem_copy(function)));
 
     if(function.data.function->arguments.size() > 1) // if it has any arguments
     {
@@ -957,8 +945,7 @@ bool call_function(object& A, const object& B, const object& C)
         // we use arguments.size() - 2 because we don't want to count the function name which is included in the arguments array
         for(int i = function.data.function->arguments.size() - 2; i >= 0; --i)
         {
-            object arg = C.data.array->at(i);
-            optic_stack.push_back(arg);
+            optic_stack.push_back(mem_copy(C.data.array->at(i)));
         }
 
         // Collect the the results and map them to the local scope
@@ -966,7 +953,7 @@ bool call_function(object& A, const object& B, const object& C)
         {
             evaluate_top();
             String arg_name = *function.data.function->arguments.at(i).data.string;
-            context.insert(std::make_pair(arg_name, optic_stack.back()));
+            context.insert(std::make_pair(arg_name, optic_stack.back())); // optimization: insert into map without copy because nothing else is pointing to it
             optic_stack.pop_back();
         }
     }
@@ -976,25 +963,26 @@ bool call_function(object& A, const object& B, const object& C)
 
     if(optic_stack.back().type == ARRAY)
     {
-        object parse_array;
-        parse_array.type = UNARY_OPERATION;
+        object parse_array = mem_alloc(UNARY_OPERATION);
         parse_array.data.unary_operator_func = resolve_function_array;
-        optic_stack.push_back(parse_array);
+        optic_stack.push_back(parse_array); // optimization: No need for mem_copy, UNARY_OPERATION doesn't allocate memory
         evaluate_top();
     }
 
-    A = optic_stack.back();
+    A = optic_stack.back(); // Move, no need to copy/free
     optic_stack.pop_back();
 
-    pop_scope();
+    pop_scope(); // frees dictionary memory as well
+    mem_free_dictionary(context);
+    mem_free(function);
     return true;
 }
 
-extern bool resolve_function_array(object& A, const object& B)
+bool resolve_function_array(object& A, const object& B)
 {
     if(B.type != FUNCTION)
     {
-        optic_stack.push_back(B);
+        optic_stack.push_back(mem_copy(B));
         evaluate_top();
         A = optic_stack.back();
         optic_stack.pop_back();
@@ -1002,7 +990,7 @@ extern bool resolve_function_array(object& A, const object& B)
 
     else
     {
-        A = B;
+        A = mem_copy(B);
     }
 }
 
@@ -2252,7 +2240,7 @@ bool index(object& A, const object& B, const object& C)
         case NUMBER:
             if(C.data.number<B.data.array->size())
             {
-                A = copy_object(B.data.array->at(C.data.number));
+                A = mem_copy(B.data.array->at(C.data.number));
                 optic_stack.push_back(A);
                 evaluate_top();
                 A = optic_stack.back();
@@ -2285,12 +2273,12 @@ bool index(object& A, const object& B, const object& C)
             break;
         case UNDECLARED_VARIABLE:
             get_variable(C.data.string,&result);
-            index(A,B,copy_object(result));
+            index(A,B,mem_copy(result));
             break;
         case OPERATION_TREE:
             optic_stack.push_back(C);
             evaluate_top();
-            result = copy_object(optic_stack.back());
+            result = mem_copy(optic_stack.back());
             optic_stack.pop_back();
             index(A,B,result);
             break;
@@ -2385,11 +2373,12 @@ bool print(object& A, const object& B)
 
 object convert_to_string( object& original)
 {
-    object newObject;
-    newObject.type = STRING;
+    object newObject = mem_alloc(STRING);
+
     std::stringstream ss;
     ss << original.data.number;
-    newObject.data.string = new String(ss.str());
+
+    newObject.data.string->append(ss.str());
     return newObject;
 }
 

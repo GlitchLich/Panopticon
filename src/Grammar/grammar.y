@@ -22,6 +22,7 @@
 #include "../../include/core/errors.h"
 #include "../../include/core/heap.h"
 #include "include/core/stack.h"
+#include "core/Memory.h"
 
 #undef STRING
 #undef NUM
@@ -32,8 +33,8 @@
 
     void token_destructor(Token t)
     {
-/*    panopticon::out() << "In token_destructor t.expr= " << t.expr << std::endl;*/
-/*    panopticon::out() << "In token_destructor t.n= " << t.n << std::endl;*/
+        std::cout << "token_destructor()" << std::endl;
+        mem_free(t);
     }
 }
 
@@ -50,7 +51,6 @@
 %left ASSIGN.
 %left LCURL RCURL.
 %left COLON.
-%left DICTIONARY.
 %left DICT.
 %left WHERE.
 %left NAME.
@@ -153,8 +153,9 @@ name_chain(A) ::= name_chain(B) NAME(C).
         newObject2.data.string = new panopticon::String(C.data.string->c_str());
         A.data.array->push_back(newObject2);
     }
-    delete_object(B);
-    delete_object(C);
+
+    // delete_object(B);
+    // delete_object(C);
 }
 
 name_chain(A) ::= NAME(B).
@@ -561,7 +562,7 @@ dict(A) ::= LCURL LCURL assignment_list(B) RCURL RCURL.
 
 expr(A) ::= dict(B).
 {
-    A.type = DICTIONARY;
+    A.type = optic::DICTIONARY;
     A.data.dictionary = new optic::Dictionary();
     for(int i=0;i<B.data.array->size()-1;i+=2)
     {
@@ -569,7 +570,6 @@ expr(A) ::= dict(B).
             B.data.array->at(i).type != optic::ARRAY
         )
         {
-            std::cout << *B.data.array->at(i).data.string << std::endl;
             A.data.dictionary->insert(
                 std::make_pair(
                     *B.data.array->at(i).data.string,
@@ -577,6 +577,31 @@ expr(A) ::= dict(B).
                     )
             );
         }
+        else
+        {
+            insure_ready_for_assignment(B.data.array->at(i),B.data.array->at(i+1));
+
+            optic::object result;
+            panopticon::parse_operations(
+                result,
+                B.data.array->at(i),
+                B.data.array->at(i+1),
+                panopticon::assign_variable
+            );
+
+            A.data.dictionary->insert(
+                std::make_pair(
+                    *B.data.array->at(i).data.array->at(0).data.string,
+                    B.data.array->at(i+1)
+                    )
+            );
+        }
+    }
+
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
     }
 }
 
@@ -616,6 +641,27 @@ name_space(A) ::= name_space(B) COLONCOLON NAME(C). [INDEX]
     }
 }
 
+function_call(A) ::= name_space(B) LPAREN stmt_list(C) RPAREN. [FUNCTION_CALL]
+{
+    if(C.type==optic::STATEMENT_LIST)
+    {
+            C.type = optic::FUNCTION_ARG_VALUES;
+    }
+    else
+    {
+        optic::object temp = C;
+        C.type = optic::FUNCTION_ARG_VALUES;
+        C.data.array = new optic::Array();
+        C.data.array->push_back(temp);
+    }
+    optic::parse_operations(A,B,C,optic::call_function);
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
+
 expr(A) ::= name_space(B).
 {
     A = B;
@@ -634,7 +680,7 @@ vert_stmt_list(A) ::= vert_stmt_list(B) stmt(C) DELIMITER. [COLLECTARRAY]
     A.type = panopticon::STATEMENT_LIST;
     if(B.type!=panopticon::STATEMENT_LIST)
     {
-        panopticon::create_array(A);
+        A = mem_alloc(optic::ARRAY);
         A.data.array->push_back(B);
         A.data.array->push_back(C);
     }
@@ -650,7 +696,7 @@ final_vert_stmt_list(A) ::= vert_stmt_list(B) stmt(C). [COLLECTARRAY]
     A.type = panopticon::STATEMENT_LIST;
     if(B.type!=panopticon::STATEMENT_LIST)
     {
-        panopticon::create_array(A);
+        A = mem_alloc(optic::STATEMENT_LIST);
         A.data.array->push_back(B);
         A.data.array->push_back(C);
     }
@@ -684,7 +730,7 @@ stmt_list(A) ::= stmt_list(B) stmt(C). [COLLECTARRAY]
     A.type = panopticon::STATEMENT_LIST;
     if(B.type!=panopticon::STATEMENT_LIST)
     {
-        panopticon::create_array(A);
+        A = mem_alloc(optic::STATEMENT_LIST);
         A.data.array->push_back(B);
         A.data.array->push_back(C);
     }
@@ -708,8 +754,7 @@ array(A) ::= LBRAC maybe_empty_stmt_list(B) RBRAC. [COLLECTARRAY]
 
 maybe_empty_stmt_list(A) ::= .
 {
-    A.type = panopticon::STATEMENT_LIST;
-    panopticon::create_array(A);
+    A = mem_alloc(optic::STATEMENT_LIST);
 }
 
 maybe_empty_stmt_list(A) ::= stmt_list(B).
@@ -717,7 +762,7 @@ maybe_empty_stmt_list(A) ::= stmt_list(B).
     A.type = panopticon::STATEMENT_LIST;
     if(B.type!=panopticon::STATEMENT_LIST)
     {
-        panopticon::create_array(A);
+        A = mem_alloc(optic::STATEMENT_LIST);
         A.data.array->push_back(B);
     }
     else
@@ -801,16 +846,6 @@ maybe_empty_name_chain(A) ::= pattern(B). [COLON]
     A.data.array = new optic::Array();
     A.data.array->push_back(B);
 }
-
-/*maybe_empty_name_chain(A) ::= maybe_empty_name_chain(B) name_chain(C). [COLON]
-{
-
-}
-
-maybe_empty_name_chain(A) ::= maybe_empty_name_chain(B) pattern(C). [COLON]
-{
-
-}*/
 
 assignment(A) ::= name_chain(B) maybe_empty_name_chain ASSIGN expr. [COLON]
 {
