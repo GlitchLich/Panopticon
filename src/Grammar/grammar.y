@@ -787,17 +787,20 @@ maybe_empty_stmt_list(A) ::= stmt_list(B).
 
 expr(A) ::= num(B).
 {
-    create_tree(A,B);
+    A = B;
+/*    create_tree(A,B);*/
 }
 
 expr(A) ::= string(B).
 {
-   create_tree(A,B);
+    A = B;
+/*   create_tree(A,B);*/
 }
 
 expr(A) ::= bool(B).
 {
-    create_tree(A,B);
+    A = B;
+/*    create_tree(A,B);*/
 }
 
 
