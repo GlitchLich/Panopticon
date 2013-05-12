@@ -2,13 +2,14 @@
 //FOUR different syntaxes, Horziontal vs Vertical, keyworded dict vs none
 
 //Horizontal construction
-myDict = { Dragon = { test = 4 } Turtles = true Octopi = "are cool" Array = [0 1 2 3 4] }
+myDict = { Turtles = true Octopi = "are cool" Array = [0 1 2 3 4] dictFunc x y = x + y Dragon = { test = 4 } }
 
 //Vertical Construction, with nested dictionaries
 myDict =             
 	Turtles = true 
 	Octopi = "are cool" 
 	Array = [0 1 2 3 4]
+	dictFunc x y = x + y
 	Dragon = 
 		test = 4
 
@@ -60,15 +61,15 @@ nullVar{"Dragon"}
 notADict = 5
 notADict{"Dragon"}
 
-lookThatShitUp x y = array[y]
+lookThatShitUp x y = a[y]
 	where
-		myDict = dict
+		d = dict
 			zero 	= 0
 			one		= 1
 			two		= 2
 			three	= 3
 			four	= 4
-		array = [
+		a = [
 			"ten"
 			"eleven"
 			"twelve"

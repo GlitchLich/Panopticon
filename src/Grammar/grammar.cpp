@@ -1935,7 +1935,7 @@ static void yy_reduce(
       case 41: /* case_statement ::= CASE expr OF */
 #line 515 "./src/Grammar/grammar.y"
 {
-    yygotominor.yy0=B;
+/*    yygotominor.yy0=B;*/
     yygotominor.yy0.type = optic::GUARD;
   yy_destructor(yypParser,46,&yymsp[-2].minor);
   yy_destructor(yypParser,47,&yymsp[0].minor);

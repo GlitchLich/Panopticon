@@ -513,7 +513,7 @@ assignment(A) ::= guard_statement(B) WILDCARD ASSIGN expr(D) DELIMITER where(E) 
 
 case_statement(A) ::= CASE expr OF. [ASSIGN]
 {
-    A=B;
+/*    A=B;*/
     A.type = optic::GUARD;
 }
 
