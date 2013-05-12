@@ -5,6 +5,50 @@ a = [ 0 1 2 3 ]
 f x = x * 2
 f(2)
 
+guardTest x
+       | x == 0         = 0
+       | x == 1         = [ 1 2 3 ]
+       _                = 10000
+
+guardTest(1)
+
+regularWhere x = x * y
+       where
+               y = 20
+
+regularWhere( 13.3 )
+
+string x = "String " + x
+string(2)
+
+print("Hello World")
+"Hello" + 1
+numberGuard x
+	| x > 0 = 1
+	_ 		= 0
+
+numberGuard(10)
+numberGuard(0)
+numberGuard((-1))
+
+funcGuard x
+	| x(10) > 0 = 1
+	_			= 0
+
+func x = x * 0.1
+funcGuard(func)
+func2 x = x * (-1)
+funcGuard(func2)
+
+
+
+// Crashing right now
+stringGuard x
+	| x > 0 = "Doom!"
+	_ 		= "Less than doom."
+
+stringGuard(10)
+
 "test"
 test = "test"
 // Crashes consistently

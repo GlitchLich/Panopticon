@@ -679,13 +679,13 @@ bool store_operations(object& a, const object& obj1, unary_operator_function fun
     {
         for(int i = 0; i < obj1.data.array->size(); ++i)
         {
-            a.data.array->push_back(mem_copy(obj1.data.array->at(i)));
+            a.data.array->push_back(obj1.data.array->at(i));
         }
     }
 
     else
     {
-        a.data.array->push_back(mem_copy(obj1));
+        a.data.array->push_back(obj1);
     }
 }
 
@@ -733,26 +733,26 @@ bool store_operations(object& a, const object& obj1, const object& obj2, bool ex
     {
         for(int i = 0; i < obj1.data.array->size(); ++i)
         {
-            a.data.array->push_back(mem_copy(obj1.data.array->at(i)));
+            a.data.array->push_back(obj1.data.array->at(i));
         }
     }
 
     else
     {
-        a.data.array->push_back(mem_copy(obj1));
+        a.data.array->push_back(obj1);
     }
 
     if(obj2.type == OPERATION_TREE)
     {
         for(int i = 0; i < obj2.data.array->size(); ++i)
         {
-            a.data.array->push_back(mem_copy(obj2.data.array->at(i)));
+            a.data.array->push_back(obj2.data.array->at(i));
         }
     }
 
     else
     {
-        a.data.array->push_back(mem_copy(obj2));
+        a.data.array->push_back(obj2);
     }
 }
 
@@ -800,26 +800,26 @@ bool store_operations(object& a, const object& obj1, const object& obj2, operato
     {
         for(int i = 0; i < obj1.data.array->size(); ++i)
         {
-            a.data.array->push_back(mem_copy(obj1.data.array->at(i)));
+            a.data.array->push_back(obj1.data.array->at(i));
         }
     }
 
     else
     {
-        a.data.array->push_back(mem_copy(obj1));
+        a.data.array->push_back(obj1);
     }
 
     if(obj2.type == OPERATION_TREE)
     {
         for(int i = 0; i < obj2.data.array->size(); ++i)
         {
-            a.data.array->push_back(mem_copy(obj2.data.array->at(i)));
+            a.data.array->push_back(obj2.data.array->at(i));
         }
     }
 
     else
     {
-        a.data.array->push_back(mem_copy(obj2));
+        a.data.array->push_back(obj2);
     }
 }
 
@@ -980,7 +980,7 @@ bool call_function(object& A, const object& B, const object& C)
         for(int i = 1; i < function.data.function->num_arguments && optic_stack.size() > 0; ++i)
         {
             evaluate_top();
-            String arg_name = *function.data.function->arguments.at(i).data.string;
+            String arg_name = function.data.function->arguments.at(i).data.string->c_str();
             context.insert(std::make_pair(arg_name, optic_stack.back())); // optimization: insert into map without copy because nothing else is pointing to it
             optic_stack.pop_back();
         }
