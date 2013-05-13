@@ -986,7 +986,7 @@ bool call_function(object& A, const object& B, const object& C)
 
     std::string function_name = function.data.function->name;
     Dictionary context;
-    context.insert(std::make_pair(function_name, mem_copy(function)));
+    context.insert(std::make_pair(function_name, function));
 
     if(function.data.function->arguments.size() > 1) // if it has any arguments
     {
@@ -1022,6 +1022,7 @@ bool call_function(object& A, const object& B, const object& C)
     optic_stack.pop_back();
 
     pop_scope(); // frees dictionary memory as well
+    context.erase(function_name);
     mem_free_dictionary(context);
     mem_free(function);
     return true;

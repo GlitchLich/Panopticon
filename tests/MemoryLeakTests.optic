@@ -3,7 +3,7 @@
 //===========================
 // Total Report:
 // No Leaks: 16
-// Leaks: 6b
+// Leaks: 6
 // Negative Leaks: 0
 // Crashes: 3
 //===========================
@@ -37,7 +37,7 @@ f(2)
 
 array x = [ x x x x x x x ]
 array(10)
-array(array("Ten"))
+array([ array("Ten") array(9) ])
 
 hello x = x + " World."
 hello("Hello")
