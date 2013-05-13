@@ -28,10 +28,10 @@ bool create_dictionary(object& result_A, const object& B)
         }
         else
         {
-            insure_ready_for_assignment(B.data.array->at(i),B.data.array->at(i+1));
             optic::object result;
             object arg_copy = mem_copy(B.data.array->at(i));
             object body_copy = mem_copy(B.data.array->at(i+1));
+            insure_ready_for_assignment(arg_copy,body_copy);
             optic::store_operations(result,arg_copy,body_copy,create_function);
             optic_stack.push_back(result);
             evaluate_top();
@@ -41,7 +41,8 @@ bool create_dictionary(object& result_A, const object& B)
                             mem_copy(optic_stack.back())
                             )
                         );
-            optic_stack.pop_back();
+//            optic_stack.pop_back();
+//            mem_free(arg_copy);
         }
     }
     optic_stack.push_back(result_A);

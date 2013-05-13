@@ -82,9 +82,10 @@ myDict::test2
 myDict::test3
 //This simply doesn't do anything
 myDict::test4 + myDict::test
+//No Leaks
 myDict::innerDict::nested
 
-//Declaring Functions in Dictionaries: Leaks
+//Declaring Functions in Dictionaries: No Leaks
 functionary = { func x = x + 1 }
 //Using Function in Dictionaries: Crash
 functionary::func(10)

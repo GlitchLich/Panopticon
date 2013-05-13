@@ -150,22 +150,10 @@ name_chain(A) ::= name_chain(B) NAME(C).
     }
     else
     {
-        /*A = optic::mem_alloc(optic::ARRAY);
-        for(int i=0;i<B.data.array->size();++i)
-        {
-            optic::object newObject;
-            newObject.type = optic::mem_alloc(optic::STRING);
-            newObject.data.string = B.data.array->at(i).data.string;
-            A.data.array->push_back(newObject);
-        }*/
-
         A = B;
         C.type = optic::STRING;
         A.data.array->push_back(C);
     }
-
-    // delete_object(B);
-    // delete_object(C);
 }
 
 name_chain(A) ::= NAME(B).
@@ -573,21 +561,6 @@ expr(A) ::= dict(B).
         ParseARG_STORE;
     }
 }
-
-/*expr(A) ::= NAME(B) ASSIGN final_dict(C).
-{
-    std::cout << "expr(A) ::= NAME(B) ASSIGN final_dict(C)" << std::endl;
-    insure_ready_for_assignment(B,C);
-    optic::optic_stack.push_back(C);
-    optic::evaluate_top();
-    optic::store_operations(A, B, optic::mem_copy(optic::optic_stack.back()), panopticon::assign_variable);
-    optic::optic_stack.pop_back();
-    if(!panopticon::correct_parsing)
-    {
-        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
-        ParseARG_STORE;
-    }
-}*/
 
 //LOOKUP
 expr(A) ::= NAME(B) LCURL NAME(C) RCURL.
