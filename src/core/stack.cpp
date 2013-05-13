@@ -70,9 +70,7 @@ bool evaluate_binary_operator(const object& operator_object, bool expand = true)
         {
             if(arg1.type == ARRAY && arg2.type == ARRAY)
             {
-                object new_array;
-                new_array.data.array = new Array();
-                new_array.type = ARRAY;
+                object new_array = mem_alloc(ARRAY);
                 unsigned int num_iterations = arg1.data.array->size() > arg2.data.array->size() ? arg1.data.array->size() : arg2.data.array->size();
 
                 for(unsigned int i = 0; i < num_iterations; ++i)
@@ -101,9 +99,7 @@ bool evaluate_binary_operator(const object& operator_object, bool expand = true)
 
             else if(arg1.type == ARRAY)
             {
-                object new_array;
-                new_array.data.array = new Array();
-                new_array.type = ARRAY;
+                object new_array = mem_alloc(ARRAY);
 
                 for(int i = 0; i < arg1.data.array->size(); ++i)
                 {
@@ -132,9 +128,7 @@ bool evaluate_binary_operator(const object& operator_object, bool expand = true)
 
             else if(arg2.type == ARRAY)
             {
-                object new_array;
-                new_array.data.array = new Array();
-                new_array.type = ARRAY;
+                object new_array = mem_alloc(ARRAY);
 
                 for(int i = 0; i < arg2.data.array->size(); ++i)
                 {
@@ -202,9 +196,7 @@ bool evaluate_unary_operator(const object& operator_object,bool expand = true)
 
             if(arg.type == ARRAY && expand)
             {
-                object new_array;
-                new_array.data.array = new Array();
-                new_array.type = ARRAY;
+                object new_array = mem_alloc(ARRAY);
 
                 for(int i = 0; i < arg.data.array->size(); ++i)
                 {

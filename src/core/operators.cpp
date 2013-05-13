@@ -683,6 +683,7 @@ bool store_operations(object& a, const object& obj1, unary_operator_function fun
         {
             a.data.array->push_back(obj1.data.array->at(i));
         }
+        shallow_mem_free_array(obj1.data.array,"OPERATION_TREE");
     }
 
     else
@@ -737,6 +738,7 @@ bool store_operations(object& a, const object& obj1, const object& obj2, bool ex
         {
             a.data.array->push_back(obj1.data.array->at(i));
         }
+        shallow_mem_free_array(obj1.data.array,"OPERATION_TREE");
     }
 
     else
@@ -750,6 +752,7 @@ bool store_operations(object& a, const object& obj1, const object& obj2, bool ex
         {
             a.data.array->push_back(obj2.data.array->at(i));
         }
+        shallow_mem_free_array(obj2.data.array,"OPERATION_TREE");
     }
 
     else
@@ -804,6 +807,7 @@ bool store_operations(object& a, const object& obj1, const object& obj2, operato
         {
             a.data.array->push_back(obj1.data.array->at(i));
         }
+        shallow_mem_free_array(obj1.data.array,"OPERATION_TREE");
     }
 
     else
@@ -817,6 +821,7 @@ bool store_operations(object& a, const object& obj1, const object& obj2, operato
         {
             a.data.array->push_back(obj2.data.array->at(i));
         }
+        shallow_mem_free_array(obj2.data.array,"OPERATION_TREE");
     }
 
     else
@@ -878,10 +883,10 @@ bool resolve_stack_from_parser(const object& operation_tree, bool resolve_entire
     }
 }
 
-bool parse_operations(object& a, const object& b, const object& c, operator_function func)
-{
-    store_operations(a, b, c, func);
-}
+//bool parse_operations(object& a, const object& b, const object& c, operator_function func)
+//{
+//    store_operations(a, b, c, func);
+//}
 
 /**
  * @brief create_function

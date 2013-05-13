@@ -1,5 +1,6 @@
 #include "../../include/Grammar/plus.h"
 #include "../../include/core/operators.h"
+#include "core/Memory.h"
 #include <iostream>
 
 namespace panopticon
@@ -119,14 +120,16 @@ bool bool_plus_string(object &a,const object b, const object c)
     try
     {
         a.type = STRING;
+
         if(b.data.boolean)
         {
-            a.data.string = new String("true");
+            a = mem_string_alloc("true");
         }
         else
         {
-            a.data.string = new String("false");
+            a = mem_string_alloc("false");
         }
+
         a.data.string->append(" ");
         a.data.string->append(*c.data.string);
     }
@@ -142,8 +145,7 @@ bool bool_plus_string(object &a,const object b, const object c)
 
 bool string_plus_bool(object &a,const object b, const object c)
 {
-    a.type = STRING;
-    a.data.string = new String(*b.data.string);
+    a = mem_string_alloc(b.data.string->c_str());
     try
     {
         a.data.string->append(" ");
@@ -167,10 +169,9 @@ bool string_plus_bool(object &a,const object b, const object c)
 
 bool num_plus_string(object &a,const object b, const object c)
 {
-    a.type = STRING;
     std::stringstream ss;
     ss << b.data.number;
-    a.data.string = new String(ss.str());
+    a = mem_string_alloc(ss.str().c_str());
     try
     {
         a.data.string->append(" ");
@@ -188,8 +189,7 @@ bool num_plus_string(object &a,const object b, const object c)
 
 bool string_plus_num(object &a,const object b, const object c)
 {
-    a.type = panopticon::STRING;
-    a.data.string = new String(*b.data.string);
+    a = mem_string_alloc(b.data.string->c_str());
     std::stringstream ss;
     ss << c.data.number;
     try
@@ -208,8 +208,7 @@ bool string_plus_num(object &a,const object b, const object c)
 
 bool string_plus_string(object &a,const object b, const object c)
 {
-    a.type = STRING;
-    a.data.string = new String(*b.data.string);
+    a = mem_string_alloc(b.data.string->c_str());
     try
     {
         a.data.string->append(" ");
@@ -228,8 +227,7 @@ bool string_plus_string(object &a,const object b, const object c)
 //arrays
 bool array_plus_bool(object& a,object& array, object& boolean)
 {
-    a.type = ARRAY;
-    a.data.array = new Array();
+    a = mem_alloc(ARRAY);
 //    a.data.array->reserve(array.data.array->size());
 
     for(int i=0;i<array.data.array->size();++i)
@@ -241,8 +239,7 @@ bool array_plus_bool(object& a,object& array, object& boolean)
 
 bool array_plus_number(object& a,object& array, object& number)
 {
-    a.type = ARRAY;
-    a.data.array = new Array();
+    a = mem_alloc(ARRAY);
 //    a.data.array->reserve(array.data.array->size());
 
     for(int i=0;i<array.data.array->size();++i)
@@ -257,8 +254,7 @@ bool array_plus_number(object& a,object& array, object& number)
 
 bool array_plus_string(object&A,object& array, object& string)
 {
-    A.type = ARRAY;
-    A.data.array = new Array();
+    A = mem_alloc(ARRAY);
 //    A.data.array->reserve(array.data.array->size());
     for(int i=0;i<A.data.array->size();++i)
     {
@@ -271,7 +267,7 @@ bool array_plus_string(object&A,object& array, object& string)
 
 bool array_plus_array(object& a,object& array1, object& array2)
 {
-    a.data.array = new Array();
+    a = mem_alloc(ARRAY);
     int size = 1;
 
     if(array1.data.array->size()>=array2.data.array->size())

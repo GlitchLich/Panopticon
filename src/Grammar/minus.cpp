@@ -1,5 +1,7 @@
 #include "../../include/Grammar/minus.h"
 #include "../../include/core/operators.h"
+#include "core/Memory.h"
+
 namespace panopticon
 {
 
@@ -90,8 +92,8 @@ bool array_minus(object&A, const object& B, const object& C)
 
 bool string_minus_string(object &a, const object &b, const object &c)
 {
-    a.type = STRING;
-    a.data.string = new String(*b.data.string);
+    a = mem_string_alloc(b.data.string->c_str());
+
     try
     {
         while(true)
@@ -119,8 +121,7 @@ bool string_minus_string(object &a, const object &b, const object &c)
 
 bool number_minus_array(object& a, const object &number, const object &array)
 {
-    a.type = ARRAY;
-    a.data.array = new Array();
+    a = mem_alloc(ARRAY);
 //    a.data.array->reserve(array.data.array->size());
 
     for(int i=0;i<array.data.array->size();++i)
@@ -135,8 +136,7 @@ bool number_minus_array(object& a, const object &number, const object &array)
 
 bool array_minus_number(object& a,object& array, object& number)
 {
-    a.type = ARRAY;
-    a.data.array = new Array();
+    a = mem_alloc(ARRAY);
 //    a.data.array->reserve(array.data.array->size());
 
     for(int i=0;i<array.data.array->size();++i)
@@ -151,8 +151,7 @@ bool array_minus_number(object& a,object& array, object& number)
 
 bool array_minus_string(object& a,object& array, object& string)
 {
-    a.type = ARRAY;
-    a.data.array = new Array();
+    a = mem_alloc(ARRAY);
 //    a.data.array->reserve(array.data.array->size());
 
     for(int i=0;i<array.data.array->size();++i)
@@ -166,8 +165,7 @@ bool array_minus_string(object& a,object& array, object& string)
 
 bool string_minus_array(object& a, const object &string, const object &array)
 {
-    a.type = ARRAY;
-    a.data.array = new Array();
+    a = mem_alloc(ARRAY);
 //    a.data.array->reserve(array.data.array->size());
 
     for(int i=0;i<array.data.array->size();++i)
@@ -182,7 +180,7 @@ bool string_minus_array(object& a, const object &string, const object &array)
 
 bool array_minus_array(object& a,object& array1, object& array2)
 {
-    a.data.array = new Array();
+    a = mem_alloc(ARRAY);
     int size = 1;
 
     if(array1.data.array->size()>=array2.data.array->size())

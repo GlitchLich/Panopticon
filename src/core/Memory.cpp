@@ -15,7 +15,7 @@ bool collecting = false;
 // It is only incremented when the "new" keyword is used on an object
 // It is only decremened when the "delete" keyword is used on an object
 // If everything works correctly they should mirror
-unsigned int gc_count = 0;
+int gc_count = 0;
 
 void gc_report()
 {
@@ -332,6 +332,7 @@ void gc_free_all()
 
     while(dealloc_queue.size())
     {
+//        std::cout << "dealloc_queue.size: " << dealloc_queue.size() << std::endl;
         gc_delete(dealloc_queue.front());
         dealloc_queue.pop_front();
         ++i;

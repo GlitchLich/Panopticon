@@ -97,7 +97,18 @@ in ::= in test DELIMITER.
 
 start ::= spec(A).
 {
-    optic::resolve_stack_from_parser(A, true);
+    std::cout << "Object of type: " << A.type << " hit the stack!" << std::endl;
+    if(A.type!=optic::OPERATION_TREE)
+    {
+        optic::object a = mem_alloc(optic::OPERATION_TREE);
+        a.data.array->push_back(A);
+        optic::resolve_stack_from_parser(a, true);
+    }
+    else
+    {
+        optic::resolve_stack_from_parser(A, true);
+/*        optic::resolve_stack_from_parser(flatten_tree(A), true);*/
+    }
 }
 
 spec(A) ::= assignment(B).
@@ -233,7 +244,7 @@ function_call(A) ::= NAME(B) LBRAC RBRAC LPAREN stmt_list(C) RPAREN. [FUNCTION_C
     }
 
     B.type = optic::VARIABLE;
-    optic::parse_operations(A,B,C,optic::call_function);
+    optic::store_operations(A,B,C,optic::call_function);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -253,7 +264,7 @@ expr(A) ::= array_index(B) LPAREN stmt_list(C) RPAREN. [FUNCTION_CALL]
         C = optic::mem_alloc(optic::FUNCTION_ARG_VALUES);
         C.data.array->push_back(temp);
     }
-    optic::parse_operations(A,B,C,optic::call_function);
+    optic::store_operations(A,B,C,optic::call_function);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -329,7 +340,7 @@ assignment(A) ::= final_guard_statement(B).
 
     resolve.type = panopticon::FUNCTION_BODY;
     b.type = optic::FUNCTION_ARG_NAMES;
-    panopticon::parse_operations(A, b, resolve, &panopticon::assign_variable);
+    panopticon::store_operations(A, b, resolve, &panopticon::assign_variable);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -340,7 +351,7 @@ assignment(A) ::= final_guard_statement(B).
 assignment(A) ::= name_chain(B) ASSIGN expr(C). [ASSIGN]
 {
     insure_ready_for_assignment(B,C);
-    panopticon::parse_operations(A, B, C, panopticon::assign_variable);
+    panopticon::store_operations(A, B, C, panopticon::assign_variable);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -445,7 +456,7 @@ assignment(A) ::= name_chain(B) ASSIGN expr(C) LCURL where(D) RCURL.
     panopticon::object body;
     panopticon::store_operations(body,D,C,false);
     insure_ready_for_assignment(B,body);
-    panopticon::parse_operations(A, B, body, panopticon::assign_variable);
+    panopticon::store_operations(A, B, body, panopticon::assign_variable);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -484,7 +495,7 @@ assignment(A) ::= guard_statement(B) WILDCARD ASSIGN expr(D) DELIMITER where(E) 
     optic::object combined;
     panopticon::store_operations(combined,E,resolve,false);
     insure_ready_for_assignment(b,combined);
-    panopticon::parse_operations(A, b, combined, &panopticon::assign_variable);
+    panopticon::store_operations(A, b, combined, &panopticon::assign_variable);
 
     if(!panopticon::correct_parsing)
     {
@@ -644,7 +655,7 @@ function_call(A) ::= name_space(B) LPAREN stmt_list(C) RPAREN. [FUNCTION_CALL]
         C = optic::mem_alloc(optic::FUNCTION_ARG_VALUES);
         C.data.array->push_back(temp);
     }
-    optic::parse_operations(A,B,C,optic::call_function);
+    optic::store_operations(A,B,C,optic::call_function);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -666,7 +677,7 @@ function_call(A) ::= name_space(B) LBRAC RBRAC LPAREN stmt_list(C) RPAREN. [FUNC
         C.data.array->push_back(temp);
     }
 
-    optic::parse_operations(A,B,C,optic::call_function);
+    optic::store_operations(A,B,C,optic::call_function);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -727,7 +738,13 @@ vertical_array(A) ::= LBRAC LCURL final_vert_stmt_list(B) RCURL RBRAC. [COLLECTA
 
 array(A) ::= vertical_array(B).
 {
-    A = B;
+    create_tree(A,B);
+}
+
+array(A) ::= LBRAC maybe_empty_stmt_list(B) RBRAC. [COLLECTARRAY]
+{
+    B.type = optic::ARRAY;
+    create_tree(A,B);
 }
 
 stmt_list(A) ::= stmt(B).
@@ -754,12 +771,6 @@ stmt_list(A) ::= stmt_list(B) stmt(C). [COLLECTARRAY]
 expr(A) ::= array(B).
 {
     A = B;
-}
-
-array(A) ::= LBRAC maybe_empty_stmt_list(B) RBRAC. [COLLECTARRAY]
-{
-    A = B;
-    A.type = optic::ARRAY;
 }
 
 maybe_empty_stmt_list(A) ::= .
@@ -909,7 +920,7 @@ expr(A) ::= expr(B) PLUSPLUS expr(C). [APPEND]
 
 expr(A) ::= expr(B) PLUS expr(C).
 {
-    parse_operations(A,B,C,&panopticon::plus);
+    store_operations(A,B,C,&panopticon::plus);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -919,7 +930,7 @@ expr(A) ::= expr(B) PLUS expr(C).
 
 expr(A) ::= expr(B) MINUS expr(C).
 {
-    parse_operations(A,B,C,&panopticon::minus);
+    store_operations(A,B,C,&panopticon::minus);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -929,7 +940,7 @@ expr(A) ::= expr(B) MINUS expr(C).
 
 expr(A) ::= expr(B) DIVIDE expr(C).
 {
-    parse_operations(A,B,C,&panopticon::divide);
+    store_operations(A,B,C,&panopticon::divide);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -939,7 +950,7 @@ expr(A) ::= expr(B) DIVIDE expr(C).
 
 expr(A) ::= expr(B) TIMES expr(C).
 {
-    parse_operations(A,B,C,&panopticon::multiply);
+    store_operations(A,B,C,&panopticon::multiply);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -949,7 +960,7 @@ expr(A) ::= expr(B) TIMES expr(C).
 
 expr(A) ::= expr(B) MODULO expr(C).
 {
-    parse_operations(A,B,C,&panopticon::modulo);
+    store_operations(A,B,C,&panopticon::modulo);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -959,7 +970,7 @@ expr(A) ::= expr(B) MODULO expr(C).
 
 expr(A) ::= expr(B) POW expr(C).
 {
-    parse_operations(A,B,C,&panopticon::value_pow);
+    store_operations(A,B,C,&panopticon::value_pow);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -969,7 +980,7 @@ expr(A) ::= expr(B) POW expr(C).
 
 expr(A) ::= expr(B) EQUALTO expr(C).
 {
-    parse_operations(A,B,C,&panopticon::equal_to);
+    store_operations(A,B,C,&panopticon::equal_to);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -979,7 +990,7 @@ expr(A) ::= expr(B) EQUALTO expr(C).
 
 expr(A) ::= expr(B) NOTEQUALTO expr(C).
 {
-    parse_operations(A,B,C,&panopticon::not_equal_to);
+    store_operations(A,B,C,&panopticon::not_equal_to);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -989,7 +1000,7 @@ expr(A) ::= expr(B) NOTEQUALTO expr(C).
 
 expr(A) ::= expr(B) LESSTHAN expr(C).
 {
-    parse_operations(A,B,C,&panopticon::less_than);
+    store_operations(A,B,C,&panopticon::less_than);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -999,7 +1010,7 @@ expr(A) ::= expr(B) LESSTHAN expr(C).
 
 expr(A) ::= expr(B) GREATERTHAN expr(C).
 {
-    parse_operations(A,B,C,&panopticon::greater_than);
+    store_operations(A,B,C,&panopticon::greater_than);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -1009,7 +1020,7 @@ expr(A) ::= expr(B) GREATERTHAN expr(C).
 
 expr(A) ::= expr(B) LORE expr(C).
 {
-    parse_operations(A,B,C,&panopticon::lore);
+    store_operations(A,B,C,&panopticon::lore);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -1019,7 +1030,7 @@ expr(A) ::= expr(B) LORE expr(C).
 
 expr(A) ::= expr(B) GORE expr(C).
 {
-    parse_operations(A,B,C,&panopticon::gore);
+    store_operations(A,B,C,&panopticon::gore);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -1029,7 +1040,7 @@ expr(A) ::= expr(B) GORE expr(C).
 
 expr(A) ::= expr(B) AND expr(C).
 {
-    parse_operations(A,B,C,&panopticon::value_and);
+    store_operations(A,B,C,&panopticon::value_and);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -1039,7 +1050,7 @@ expr(A) ::= expr(B) AND expr(C).
 
 expr(A) ::= expr(B) OR expr(C).
 {
-    parse_operations(A,B,C,&panopticon::value_or);
+    store_operations(A,B,C,&panopticon::value_or);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -1079,7 +1090,7 @@ expr(A) ::= NOT expr(B). [UMINUS]
 
 expr(A) ::= expr(B) SHIFTL expr(C).
 {
-    parse_operations(A,B,C,&panopticon::shift_left);
+    store_operations(A,B,C,&panopticon::shift_left);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -1089,7 +1100,7 @@ expr(A) ::= expr(B) SHIFTL expr(C).
 
 expr(A) ::= expr(B) SHIFTR expr(C).
 {
-    parse_operations(A,B,C,&panopticon::shift_right);
+    store_operations(A,B,C,&panopticon::shift_right);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -1099,7 +1110,7 @@ expr(A) ::= expr(B) SHIFTR expr(C).
 
 expr(A) ::= expr(B) BITAND expr(C).
 {
-    parse_operations(A,B,C,&panopticon::bit_and);
+    store_operations(A,B,C,&panopticon::bit_and);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -1109,7 +1120,7 @@ expr(A) ::= expr(B) BITAND expr(C).
 
 expr(A) ::= expr(B) BITXOR expr(C).
 {
-    parse_operations(A,B,C,&panopticon::bit_xor);
+    store_operations(A,B,C,&panopticon::bit_xor);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
