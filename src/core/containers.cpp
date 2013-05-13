@@ -10,6 +10,7 @@ namespace panopticon
 
 bool create_dictionary(object& result_A, const object& B)
 {
+//    std::cout << "CREATING A DICTIONARY!!!!!!!!!!!!!!!!!!!" << std::endl;
     result_A = optic::mem_alloc(optic::DICTIONARY);
     for(int i=0;i<B.data.array->size()-1;i+=2)
     {
@@ -29,7 +30,9 @@ bool create_dictionary(object& result_A, const object& B)
         {
             insure_ready_for_assignment(B.data.array->at(i),B.data.array->at(i+1));
             optic::object result;
-            optic::store_operations(result,B.data.array->at(i),B.data.array->at(i+1),create_function);
+            object arg_copy = mem_copy(B.data.array->at(i));
+            object body_copy = mem_copy(B.data.array->at(i+1));
+            optic::store_operations(result,arg_copy,body_copy,create_function);
             optic_stack.push_back(result);
             evaluate_top();
             result_A.data.dictionary->insert(
@@ -39,9 +42,9 @@ bool create_dictionary(object& result_A, const object& B)
                             )
                         );
             optic_stack.pop_back();
-
         }
     }
+    optic_stack.push_back(result_A);
     //    optic::shallow_mem_free_array(B.data.array,"ARRAY");
 }
 

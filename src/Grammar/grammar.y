@@ -97,7 +97,9 @@ in ::= in test DELIMITER.
 
 start ::= spec(A).
 {
-    std::cout << "Object of type: " << A.type << " hit the stack!" << std::endl;
+/*    std::cout << "Object of type: " << A.type << " hit the stack!" << std::endl;*/
+/*    optic::out() << "Object at end of parser: ";*/
+/*    print_object(A);*/
     if(A.type!=optic::OPERATION_TREE)
     {
         optic::object a = mem_alloc(optic::OPERATION_TREE);
@@ -435,7 +437,7 @@ where(A) ::= WHERE LCURL assignment_list(B) RCURL. [DICT]
         optic::store_operations(serial_result,previous_result,result);
         previous_result = serial_result;
     }
-    optic::shallow_mem_free_array(B.data.array,"ARRAY");
+    optic::shallow_mem_free_array(B.data.array,optic::ARRAY);
     A = serial_result;
     if(!panopticon::correct_parsing)
     {
@@ -558,13 +560,34 @@ dict(A) ::= LCURL LCURL assignment_list(B) RCURL RCURL.
 
 expr(A) ::= dict(B).
 {
-    optic::store_operations(A,B,optic::create_dictionary);
+    optic::object dict;
+    optic::store_operations(dict,B,&optic::create_dictionary,false);
+
+    optic::optic_stack.push_back(dict);
+    optic::evaluate_top();
+    A = optic::mem_copy(optic::optic_stack.back());
+    optic::optic_stack.pop_back();
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
         ParseARG_STORE;
     }
 }
+
+/*expr(A) ::= NAME(B) ASSIGN final_dict(C).
+{
+    std::cout << "expr(A) ::= NAME(B) ASSIGN final_dict(C)" << std::endl;
+    insure_ready_for_assignment(B,C);
+    optic::optic_stack.push_back(C);
+    optic::evaluate_top();
+    optic::store_operations(A, B, optic::mem_copy(optic::optic_stack.back()), panopticon::assign_variable);
+    optic::optic_stack.pop_back();
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}*/
 
 //LOOKUP
 expr(A) ::= NAME(B) LCURL NAME(C) RCURL.

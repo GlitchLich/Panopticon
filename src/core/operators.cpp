@@ -684,7 +684,7 @@ bool store_operations(object& a, const object& obj1, unary_operator_function fun
         {
             a.data.array->push_back(obj1.data.array->at(i));
         }
-        shallow_mem_free_array(obj1.data.array,"OPERATION_TREE");
+        shallow_mem_free_array(obj1.data.array, obj1.type);
     }
 
     else
@@ -741,7 +741,7 @@ bool store_operations(object& a, const object& obj1, const object& obj2, bool ex
         {
             a.data.array->push_back(obj1.data.array->at(i));
         }
-        shallow_mem_free_array(obj1.data.array,"OPERATION_TREE");
+        shallow_mem_free_array(obj1.data.array, obj1.type);
     }
 
     else
@@ -755,7 +755,7 @@ bool store_operations(object& a, const object& obj1, const object& obj2, bool ex
         {
             a.data.array->push_back(obj2.data.array->at(i));
         }
-        shallow_mem_free_array(obj2.data.array,"OPERATION_TREE");
+        shallow_mem_free_array(obj2.data.array, obj2.type);
     }
 
     else
@@ -811,7 +811,7 @@ bool store_operations(object& a, const object& obj1, const object& obj2, operato
         {
             a.data.array->push_back(obj1.data.array->at(i));
         }
-        shallow_mem_free_array(obj1.data.array,"OPERATION_TREE");
+        shallow_mem_free_array(obj1.data.array, obj1.type);
     }
 
     else
@@ -825,7 +825,7 @@ bool store_operations(object& a, const object& obj1, const object& obj2, operato
         {
             a.data.array->push_back(obj2.data.array->at(i));
         }
-        shallow_mem_free_array(obj2.data.array,"OPERATION_TREE");
+        shallow_mem_free_array(obj2.data.array, obj2.type);
     }
 
     else
@@ -879,7 +879,7 @@ bool resolve_stack_from_parser(const object& operation_tree, bool resolve_entire
         }
 
         // Free the Array* we created but not the actual contents because they will get freed on the stack
-        shallow_mem_free_array(tree, "OPERATION_TREE");
+        shallow_mem_free_array(tree, OPERATION_TREE);
 
         if(resolve_entire_stack)
             evaluate_stack();

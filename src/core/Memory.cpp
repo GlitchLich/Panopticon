@@ -7,6 +7,14 @@ namespace panopticon
 {
 std::deque<object> dealloc_queue;
 int num_arrays = 0;
+int num_ARRAY = 0;
+int num_STATEMENT_LIST = 0;
+int num_OPERATION_TREE = 0;
+int num_GUARD = 0;
+int num_FUNCTION_BODY = 0;
+int num_FUNCTION_ARG_NAMES = 0;
+int num_FUNCTION_ARG_VALUES = 0;
+int num_CONDITION_TREE = 0;
 int num_strings = 0;
 int num_dictionaries = 0;
 int num_functions = 0;
@@ -21,17 +29,54 @@ void gc_report()
 {
     std::cout << "==========================================================" << std::endl;
     std::cout << "Leaked Arrays: " << num_arrays << std::endl;
+    std::cout << "    Array Types:" << std::endl;
+    std::cout << "    Leaked ARRAYS: " << num_ARRAY << std::endl;
+    std::cout << "    Leaked STATEMENT_LISTS: " << num_STATEMENT_LIST << std::endl;
+    std::cout << "    Leaked OPERATION_TREES: " << num_OPERATION_TREE << std::endl;
+    std::cout << "    Leaked GUARDS: " << num_GUARD << std::endl;
+    std::cout << "    Leaked FUNCTION_BODYS: " << num_FUNCTION_BODY << std::endl;
+    std::cout << "    Leaked FUNCTION_ARG_NAMES: " << num_FUNCTION_ARG_NAMES << std::endl;
+    std::cout << "    Leaked FUNCTION_ARG_VALUES: " << num_FUNCTION_ARG_VALUES << std::endl;
+    std::cout << "    Leaked CONDITION_TREES: " << num_CONDITION_TREE << std::endl;
     std::cout << "Leaked Strings: " << num_strings << std::endl;
     std::cout << "Leaked Dictionaries: " << num_dictionaries << std::endl;
     std::cout << "Leaked Functions: " << num_functions << std::endl;
     std::cout << "==========================================================" << std::endl;
 }
 
-void increment_array(std::string type)
+void increment_array(Type type)
 {
     ++gc_count;
     ++num_arrays;
-    std::cout << "new Array(" << type << ")" << std::endl;
+    std::cout << "new Array(" << type_string(type) << ")" << std::endl;
+
+    switch(type)
+    {
+    case ARRAY:
+        ++num_ARRAY;
+        break;
+    case STATEMENT_LIST:
+        ++num_STATEMENT_LIST;
+        break;
+    case OPERATION_TREE:
+        ++num_OPERATION_TREE;
+        break;
+    case GUARD:
+        ++num_GUARD;
+        break;
+    case FUNCTION_BODY:
+        ++num_FUNCTION_BODY;
+        break;
+    case FUNCTION_ARG_NAMES:
+        ++num_FUNCTION_ARG_NAMES;
+        break;
+    case FUNCTION_ARG_VALUES:
+        ++num_FUNCTION_ARG_VALUES;
+        break;
+    case CONDITION_TREE:
+        ++num_CONDITION_TREE;
+        break;
+    }
 }
 
 void increment_string()
@@ -55,11 +100,39 @@ void increment_function()
     std::cout << "new Function()" << std::endl;
 }
 
-void decrement_array(std::string type)
+void decrement_array(Type type)
 {
     --gc_count;
     --num_arrays;
-    std::cout << "delete Array(" << type << ")" << std::endl;
+    std::cout << "delete Array(" << type_string(type) << ")" << std::endl;
+
+    switch(type)
+    {
+    case ARRAY:
+        --num_ARRAY;
+        break;
+    case STATEMENT_LIST:
+        --num_STATEMENT_LIST;
+        break;
+    case OPERATION_TREE:
+        --num_OPERATION_TREE;
+        break;
+    case GUARD:
+        --num_GUARD;
+        break;
+    case FUNCTION_BODY:
+        --num_FUNCTION_BODY;
+        break;
+    case FUNCTION_ARG_NAMES:
+        --num_FUNCTION_ARG_NAMES;
+        break;
+    case FUNCTION_ARG_VALUES:
+        --num_FUNCTION_ARG_VALUES;
+        break;
+    case CONDITION_TREE:
+        --num_CONDITION_TREE;
+        break;
+    }
 }
 
 void decrement_string()
@@ -137,7 +210,7 @@ void mem_free_array(Array& array)
     array.clear();
 }
 
-void shallow_mem_free_array(Array* array, std::string type)
+void shallow_mem_free_array(Array* array, Type type)
 {
     if(array)
     {
@@ -256,7 +329,7 @@ void gc_delete(object& obj)
         break;
     case ARRAY:
         if(gc_delete_array(obj.data.array))
-            decrement_array("ARRAY");
+            decrement_array(ARRAY);
         break;
     case DICTIONARY:
         gc_delete_dictionary(obj.data.dictionary);
@@ -265,7 +338,7 @@ void gc_delete(object& obj)
         break;
     case STATEMENT_LIST:
         if(gc_delete_array(obj.data.array))
-            decrement_array("STATEMENT_LIST");
+            decrement_array(STATEMENT_LIST);
         break;
     case VARIABLE:
         gc_delete_string(obj.data.string);
@@ -275,7 +348,7 @@ void gc_delete(object& obj)
         break;
     case OPERATION_TREE:
         if(gc_delete_array(obj.data.array))
-            decrement_array("OPERATION_TREE");
+            decrement_array(OPERATION_TREE);
         break;
     case OPERATION:
         break;
@@ -285,19 +358,19 @@ void gc_delete(object& obj)
         break;
     case GUARD:
         if(gc_delete_array(obj.data.array))
-            decrement_array("GUARD");
+            decrement_array(GUARD);
         break;
     case FUNCTION_BODY:
         if(gc_delete_array(obj.data.array))
-            decrement_array("FUNCTION_BODY");
+            decrement_array(FUNCTION_BODY);
         break;
     case FUNCTION_ARG_NAMES:
         if(gc_delete_array(obj.data.array))
-            decrement_array("FUNCTION_ARG_NAMES");
+            decrement_array(FUNCTION_ARG_NAMES);
         break;
     case FUNCTION_ARG_VALUES:
         if(gc_delete_array(obj.data.array))
-            decrement_array("FUNCTION_ARG_VALUES");
+            decrement_array(FUNCTION_ARG_VALUES);
         break;
     case VOID:
         break;
@@ -307,7 +380,7 @@ void gc_delete(object& obj)
         break;
     case CONDITION_TREE:
         if(gc_delete_array(obj.data.array))
-            decrement_array("CONDITION_TREE");
+            decrement_array(CONDITION_TREE);
         break;
     case CONDITION_BRANCH:
         break;
@@ -401,7 +474,7 @@ object mem_alloc(Type type)
         obj.data.function = new Function();
         break;
     case ARRAY:
-        increment_array("ARRAY");
+        increment_array(ARRAY);
         obj.data.array = new Array();
         break;
     case DICTIONARY:
@@ -411,7 +484,7 @@ object mem_alloc(Type type)
     case ERROR:
         break;
     case STATEMENT_LIST:
-        increment_array("STATEMENT_LIST");
+        increment_array(STATEMENT_LIST);
         obj.data.array = new Array();
         break;
     case VARIABLE:
@@ -423,7 +496,7 @@ object mem_alloc(Type type)
         obj.data.string = new String();
         break;
     case OPERATION_TREE:
-        increment_array("OPERATION_TREE");
+        increment_array(OPERATION_TREE);
         obj.data.array = new Array();
         break;
     case OPERATION:
@@ -433,19 +506,19 @@ object mem_alloc(Type type)
     case ASSIGNMENT:
         break;
     case GUARD:
-        increment_array("GUARD");
+        increment_array(GUARD);
         obj.data.array = new Array();
         break;
     case FUNCTION_BODY:
-        increment_array("FUNCTION_BODY");
+        increment_array(FUNCTION_BODY);
         obj.data.array = new Array();
         break;
     case FUNCTION_ARG_NAMES:
-        increment_array("FUNCTION_ARG_NAMES");
+        increment_array(FUNCTION_ARG_NAMES);
         obj.data.array = new Array();
         break;
     case FUNCTION_ARG_VALUES:
-        increment_array("FUNCTION_ARG_VALUES");
+        increment_array(FUNCTION_ARG_VALUES);
         obj.data.array = new Array();
         break;
     case VOID:
@@ -455,7 +528,7 @@ object mem_alloc(Type type)
     case PRIMITIVE:
         break;
     case CONDITION_TREE:
-        increment_array("CONDITION_TREE");
+        increment_array(CONDITION_TREE);
         obj.data.array = new Array();
         break;
     case CONDITION_BRANCH:
@@ -591,7 +664,7 @@ object mem_copy(const object &obj)
         new_object.data.function = copy_function(obj.data.function);
         break;
     case ARRAY:
-        increment_array("ARRAY");
+        increment_array(ARRAY);
         new_object.data.array = copy_array(obj.data.array);
         break;
     case DICTIONARY:
@@ -601,7 +674,7 @@ object mem_copy(const object &obj)
         new_object.data.number = obj.data.number;
         break;
     case STATEMENT_LIST:
-        increment_array("STATEMENT_LIST");
+        increment_array(STATEMENT_LIST);
         new_object.data.array = copy_array(obj.data.array);
         break;
     case VARIABLE:
@@ -613,7 +686,7 @@ object mem_copy(const object &obj)
         new_object.data.string = new String(*obj.data.string);
         break;
     case OPERATION_TREE:
-        increment_array("OPERATION_TREE");
+        increment_array(OPERATION_TREE);
         new_object.data.array = copy_array(obj.data.array);
         break;
     case OPERATION:
@@ -626,19 +699,19 @@ object mem_copy(const object &obj)
         new_object.data.operator_func = obj.data.operator_func;
         break;
     case GUARD:
-        increment_array("GUARD");
+        increment_array(GUARD);
         new_object.data.array = copy_array(obj.data.array);
         break;
     case FUNCTION_BODY:
-        increment_array("FUNCTION_BODY");
+        increment_array(FUNCTION_BODY);
         new_object.data.array = copy_array(obj.data.array);
         break;
     case FUNCTION_ARG_NAMES:
-        increment_array("FUNCTION_ARG_NAMES");
+        increment_array(FUNCTION_ARG_NAMES);
         new_object.data.array = copy_array(obj.data.array);
         break;
     case FUNCTION_ARG_VALUES:
-        increment_array("FUNCTION_ARG_VALUES");
+        increment_array(FUNCTION_ARG_VALUES);
         new_object.data.array = copy_array(obj.data.array);
         break;
     case VOID: // don't copy
@@ -648,7 +721,7 @@ object mem_copy(const object &obj)
     case PRIMITIVE: // Not implemented yet
         break;
     case CONDITION_TREE:
-        increment_array("CONDITION_TREE");
+        increment_array(CONDITION_TREE);
         new_object.data.array = copy_array(obj.data.array);
         break;
     case CONDITION_BRANCH:

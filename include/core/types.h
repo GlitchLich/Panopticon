@@ -106,6 +106,8 @@ enum Type
     WHERE_TREE  //30
 };
 
+std::string type_string(Type type);
+
 // Forward declarations
 struct Function;
 struct object;
@@ -152,14 +154,6 @@ struct object
 {
     Type type;
     Data data;
-
-    /*
-    object();
-    object(Type type);
-    object(const object& obj);
-    ~object();
-
-    object& operator=(const object& obj);*/
 };
 
 struct Function
