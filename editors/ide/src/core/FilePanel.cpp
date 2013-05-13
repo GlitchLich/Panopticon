@@ -34,7 +34,7 @@ void FilePanel::addEditBuffer(unsigned int buffer)
     panelEntry->setProperty("id", buffer);
     panelEntry->setCheckable(true);
     panelEntry->setChecked(true);
-    panelEntry->setMaximumWidth(100);
+    panelEntry->setMaximumWidth(150);
     panelEntry->connect(panelEntry, SIGNAL(clicked()), this, SLOT(fileButtonPressed()));
     fileButtons[buffer] = panelEntry;
 
