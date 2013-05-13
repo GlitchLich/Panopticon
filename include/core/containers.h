@@ -6,6 +6,8 @@
 namespace panopticon
 {
 
+bool create_dictionary(object& result_A, const object& B);
+
 /**
  * @brief prepend
  * @param A Result

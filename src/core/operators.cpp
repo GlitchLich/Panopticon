@@ -646,6 +646,7 @@ bool create_tree(object&a, const object& obj)
     }
 }
 
+//Unary
 bool store_operations(object& a, const object& obj1, unary_operator_function func, bool expand)
 {
     a = mem_alloc(OPERATION_TREE);
@@ -692,6 +693,7 @@ bool store_operations(object& a, const object& obj1, unary_operator_function fun
     }
 }
 
+//Serial
 bool store_operations(object& a, const object& obj1, const object& obj2, bool expand)
 {
     a = mem_alloc(OPERATION_TREE);
@@ -734,6 +736,7 @@ bool store_operations(object& a, const object& obj1, const object& obj2, bool ex
 
     if(obj1.type == OPERATION_TREE)
     {
+        //TO DO: std::copy instead?
         for(int i = 0; i < obj1.data.array->size(); ++i)
         {
             a.data.array->push_back(obj1.data.array->at(i));
@@ -761,6 +764,7 @@ bool store_operations(object& a, const object& obj1, const object& obj2, bool ex
     }
 }
 
+//Binary
 bool store_operations(object& a, const object& obj1, const object& obj2, operator_function func, bool expand)
 {
     a = mem_alloc(OPERATION_TREE);
@@ -829,6 +833,7 @@ bool store_operations(object& a, const object& obj1, const object& obj2, operato
         a.data.array->push_back(obj2);
     }
 }
+
 
 /*
 bool object_operator_object(object& a, object& b, object& c, operator_function func)

@@ -76,6 +76,7 @@ bool store_operations(object& a,const object& obj1,unary_operator_function func,
 bool store_operations(object& a, const object& obj1, const object& obj2, operator_function func, bool expand = true);
 bool store_operations(object& a, const object& obj1, const object& obj2, bool expand = true);
 
+
 bool create_function(object&A, const object& B, const object& C);
 bool call_function(object& A, const object& B, const object& C);
 bool call_function_array(object& A, const object& B, const object& C);

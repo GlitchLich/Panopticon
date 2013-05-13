@@ -1,11 +1,51 @@
 #include "../../include/core/containers.h"
 #include "../../include/Grammar/parse.h"
 #include "core/Memory.h"
+#include "../../include/core/stack.h"
+#include "../../include/Grammar/parsingutilities.h"
+#include "../../include/core/operators.h"
 
 namespace panopticon
 {
 
-extern bool prepend(object& result_A, const object& B, const object& container_C)
+bool create_dictionary(object& result_A, const object& B)
+{
+    result_A = optic::mem_alloc(optic::DICTIONARY);
+    for(int i=0;i<B.data.array->size()-1;i+=2)
+    {
+        if(
+                B.data.array->at(i).type != optic::ARRAY
+                )
+        {
+            result_A.data.dictionary->insert(
+                        std::make_pair(
+                            std::string(*B.data.array->at(i).data.string),
+                            mem_copy(B.data.array->at(i+1))
+                            )
+                        );
+//            optic::mem_free(B.data.array->at(i));
+        }
+        else
+        {
+            insure_ready_for_assignment(B.data.array->at(i),B.data.array->at(i+1));
+            optic::object result;
+            optic::store_operations(result,B.data.array->at(i),B.data.array->at(i+1),create_function);
+            optic_stack.push_back(result);
+            evaluate_top();
+            result_A.data.dictionary->insert(
+                        std::make_pair(
+                            std::string(*B.data.array->at(i).data.array->at(0).data.string),
+                            mem_copy(optic_stack.back())
+                            )
+                        );
+            optic_stack.pop_back();
+
+        }
+    }
+    //    optic::shallow_mem_free_array(B.data.array,"ARRAY");
+}
+
+bool prepend(object& result_A, const object& B, const object& container_C)
 {
     if(container_C.type != ARRAY)
     {
@@ -21,7 +61,7 @@ extern bool prepend(object& result_A, const object& B, const object& container_C
     return true;
 }
 
-extern bool append(object& result_A, const object& container_B, const object& object_C)
+bool append(object& result_A, const object& container_B, const object& object_C)
 {
     if(container_B.type != ARRAY)
     {
@@ -37,7 +77,7 @@ extern bool append(object& result_A, const object& container_B, const object& ob
     return true;
 }
 
-extern bool concat(object& A, const object& B, const object& C)
+bool concat(object& A, const object& B, const object& C)
 {
     std::stringstream ss;
     switch(B.type)

@@ -435,6 +435,7 @@ where(A) ::= WHERE LCURL assignment_list(B) RCURL. [DICT]
         optic::store_operations(serial_result,previous_result,result);
         previous_result = serial_result;
     }
+    optic::shallow_mem_free_array(B.data.array,"ARRAY");
     A = serial_result;
     if(!panopticon::correct_parsing)
     {
@@ -557,39 +558,7 @@ dict(A) ::= LCURL LCURL assignment_list(B) RCURL RCURL.
 
 expr(A) ::= dict(B).
 {
-    A = optic::mem_alloc(optic::DICTIONARY);
-    for(int i=0;i<B.data.array->size()-1;i+=2)
-    {
-        if(
-            B.data.array->at(i).type != optic::ARRAY
-        )
-        {
-            A.data.dictionary->insert(
-                std::make_pair(
-                    *B.data.array->at(i).data.string,
-                    B.data.array->at(i+1)
-                    )
-            );
-        }
-        else
-        {
-            insure_ready_for_assignment(B.data.array->at(i),B.data.array->at(i+1));
-            //Leak???
-            optic::object result;
-            optic::create_function(result,B.data.array->at(i),B.data.array->at(i+1));
-            A.data.dictionary->insert(
-                std::make_pair(
-                    *B.data.array->at(i).data.array->at(0).data.string,
-                    result
-                    )
-            );
-/*            optic::mem_free(B.data.array->at(i+1));*/
-        }
-/*        optic::mem_free(B.data.array->at(i));*/
-    }
-
-    optic::shallow_mem_free_array(B.data.array,"ARRAY");
-
+    optic::store_operations(A,B,optic::create_dictionary);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
