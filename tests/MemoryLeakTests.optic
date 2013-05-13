@@ -1,81 +1,74 @@
 // Memory Leak Tests
+
+//===========================
+// Total Report:
+// No Leaks: 12
+// Leaks: 7
+// Negative Leaks: 3
+// Crashes: 3
+//===========================
+
+//Numbers: No Leaks
 1
-1 + 1
-[ 0 1 2 3 ]
-a = [ 0 1 2 3 ]
-f x = x * 2
-f(2)
-
-guardTest x
-       | x == 0         = 0
-       | x == 1         = [ 1 2 3 ]
-       _                = 10000
-
-guardTest(1)
-
-regularWhere x = x * y
-       where
-               y = 20
-
-regularWhere( 13.3 )
-
-string x = "String " + x
-string(2)
-
-print("Hello World")
-"Hello" + 1
-numberGuard x
-	| x > 0 = 1
-	_ 		= 0
-
-numberGuard(10)
-numberGuard(0)
-numberGuard((-1))
-
-funcGuard x
-	| x(10) > 0 = 1
-	_			= 0
-
-func x = x * 0.1
-funcGuard(func)
-func2 x = x * (-1)
-funcGuard(func2)
-
-
-
-// Crashing right now
-stringGuard x
-	| x > 0 = "Doom!"
-	_ 		= "Less than doom."
-
-stringGuard(10)
-
+//Booleans: No Leaks
+true
+//Strings: No Leaks
 "test"
-test = "test"
-// Crashes consistently
-test
-
-//Regular functions DON'T crash:
+//Number Arrays: No Leaks
+[ 0 1 2 3 ]
+//Mixed Arrays: No Leaks
+[ 0 true "test" [ 3 2 ] ]
+//Number Math: No Leaks
+1 + 1 * 3 / 2 - 1 
+//Boolean Math: No Leaks
+true + false
+//String Math: NEGATIVE LEAKS???? Explain this...
+"Are there" + "Leaks?"
+//Array Math: NEGATIVE LEAKS???? Explain this...
+[ 0 1 2 3 ] + [ 0 1 2 3 4 ]
+//Declaring Variables: No Leaks
+a = [ 0 1 2 3 ]
+//Using Variables: LEAKS!!!!!!!!!!!
+a
+//Declaring Vanilla Number Functions: No Leaks
+f x = x * 2
+//Using Vanilla Number Functions: No Leaks
+f(2)
+//Declaring Vanilla Guards: LEAKS!!!!!!!!!!!!!!
+regularGuard x
+	| x > 1	= 1
+	| x < 1 = (-1)
+	_		= 0
+//Using Vanilla Guards: (I believe no more leaks than what comes from declaring the guard function)
+regularGuard(10)
+//Declaring String Guards: LEAKS!!!!!!!!!!!!!!
+stringGuard x
+       | x == "hey"     = "No"
+       | x == "Turtle"	= "Cool"
+       _                = "Yes"
+//Using String Guards: SEGMENTATION FAULT CRASH!!!!!!!!!!!!!!!!!!!!!
+stringGuard("hey")
+//Declaring Array Guards: LEAKS!!!!!!!!!!!!!!
+arrayGuard x
+       | x[0] == 0     	= 10
+       | x[0] == 1		= [ 100 100 ]
+       _                = 0.1
+//Using Array Guards: SEGMENTATION FAULT CRASH!!!!!!!!!!!!!!!!!!!!!
+//ONLY WHEN RETURNING AN ARRAY
+arrayGuard([2 1 2 3])
+//Declaring Where Functions: LEAKS!!!!!!!!!!!!!!
 regularWhere x = x * y
 	where
-		y = 20
-
+    	y = 20
+//Declaring Where Functions: SEGMENTATION FAULT CRASH!!!!!!!!!!!!!!!!!!!!!
 regularWhere( 13.3 )
-
-//Where crashes consistently:
-hellYeah x = x + y("!!!")
-	where
-		y z = "Hell yeah"+z
-
-//CRASH
-hellYeah("ok")
-
-//Guard Statements with arrays crash consistently:
-guardTest x
-	| x == 0 	= 0
-	| x == 1 	= [ 1 2 3 ]
-	_			= 10000
-
-//CRASH
-guardTest(1)
-guardTest(2)
+//Declaring String Function: No Leaks
+string x = "String " + x
+//Using String Functions: NEGATIVE LEAKS???? Explain this...
+string(2)
+//Print: No Leaks
+print("Hello World")
+//Declaring Dictionaries: LEAKS!!!!!!!!!!!!!!
+myDict = { test = 1 test2 = true test3 = "hey" test4 = [ 0 1 2 3 ] }
+//Using Dictionaries: LEAKS!!!!!!!!!!!!!!
+myDict::test

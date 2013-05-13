@@ -63,8 +63,8 @@ State 1:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -186,8 +186,8 @@ State 2:
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           vertical_array ::= LBRAC LCURL * final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -283,11 +283,11 @@ State 3:
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           vertical_array ::= LBRAC * LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
+          array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          array ::= LBRAC * maybe_empty_stmt_list RBRAC
           stmt_list ::= * stmt
           stmt_list ::= * stmt_list stmt
           expr ::= * array
-          array ::= * LBRAC maybe_empty_stmt_list RBRAC
-          array ::= LBRAC * maybe_empty_stmt_list RBRAC
      (66) maybe_empty_stmt_list ::= *
           maybe_empty_stmt_list ::= * stmt_list
           expr ::= * num
@@ -382,10 +382,10 @@ State 4:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
+          array ::= * LBRAC maybe_empty_stmt_list RBRAC
           stmt_list ::= * stmt
           stmt_list ::= * stmt_list stmt
           expr ::= * array
-          array ::= * LBRAC maybe_empty_stmt_list RBRAC
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -478,10 +478,10 @@ State 5:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
+          array ::= * LBRAC maybe_empty_stmt_list RBRAC
           stmt_list ::= * stmt
           stmt_list ::= * stmt_list stmt
           expr ::= * array
-          array ::= * LBRAC maybe_empty_stmt_list RBRAC
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -573,10 +573,10 @@ State 6:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
+          array ::= * LBRAC maybe_empty_stmt_list RBRAC
           stmt_list ::= * stmt
           stmt_list ::= * stmt_list stmt
           expr ::= * array
-          array ::= * LBRAC maybe_empty_stmt_list RBRAC
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -667,10 +667,10 @@ State 7:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
+          array ::= * LBRAC maybe_empty_stmt_list RBRAC
           stmt_list ::= * stmt
           stmt_list ::= * stmt_list stmt
           expr ::= * array
-          array ::= * LBRAC maybe_empty_stmt_list RBRAC
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -760,10 +760,10 @@ State 8:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
+          array ::= * LBRAC maybe_empty_stmt_list RBRAC
           stmt_list ::= * stmt
           stmt_list ::= * stmt_list stmt
           expr ::= * array
-          array ::= * LBRAC maybe_empty_stmt_list RBRAC
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -853,10 +853,10 @@ State 9:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
+          array ::= * LBRAC maybe_empty_stmt_list RBRAC
           stmt_list ::= * stmt
           stmt_list ::= * stmt_list stmt
           expr ::= * array
-          array ::= * LBRAC maybe_empty_stmt_list RBRAC
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -946,9 +946,9 @@ State 10:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
+          array ::= * LBRAC maybe_empty_stmt_list RBRAC
           stmt_list ::= stmt_list * stmt
           expr ::= * array
-          array ::= * LBRAC maybe_empty_stmt_list RBRAC
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -1038,9 +1038,9 @@ State 11:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
+          array ::= * LBRAC maybe_empty_stmt_list RBRAC
           stmt_list ::= stmt_list * stmt
           expr ::= * array
-          array ::= * LBRAC maybe_empty_stmt_list RBRAC
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -1130,9 +1130,9 @@ State 12:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
+          array ::= * LBRAC maybe_empty_stmt_list RBRAC
           stmt_list ::= stmt_list * stmt
           expr ::= * array
-          array ::= * LBRAC maybe_empty_stmt_list RBRAC
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -1222,9 +1222,9 @@ State 13:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
+          array ::= * LBRAC maybe_empty_stmt_list RBRAC
           stmt_list ::= stmt_list * stmt
           expr ::= * array
-          array ::= * LBRAC maybe_empty_stmt_list RBRAC
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -1314,9 +1314,9 @@ State 14:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
+          array ::= * LBRAC maybe_empty_stmt_list RBRAC
           stmt_list ::= stmt_list * stmt
           expr ::= * array
-          array ::= * LBRAC maybe_empty_stmt_list RBRAC
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -1405,9 +1405,9 @@ State 15:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
+          array ::= * LBRAC maybe_empty_stmt_list RBRAC
           stmt_list ::= stmt_list * stmt
           expr ::= * array
-          array ::= * LBRAC maybe_empty_stmt_list RBRAC
      (67) maybe_empty_stmt_list ::= stmt_list *
           expr ::= * num
           expr ::= * string
@@ -1499,8 +1499,8 @@ State 16:
           final_vert_stmt_list ::= vert_stmt_list * stmt
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -1592,8 +1592,8 @@ State 17:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -1723,8 +1723,8 @@ State 18:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -1814,8 +1814,8 @@ State 19:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -1904,8 +1904,8 @@ State 20:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -1993,8 +1993,8 @@ State 21:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -2083,8 +2083,8 @@ State 22:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -2173,8 +2173,8 @@ State 23:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -2260,8 +2260,8 @@ State 24:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -2348,8 +2348,8 @@ State 25:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -2439,8 +2439,8 @@ State 26:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -2527,8 +2527,8 @@ State 27:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -2615,8 +2615,8 @@ State 28:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -2702,8 +2702,8 @@ State 29:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -2792,8 +2792,8 @@ State 30:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -2879,8 +2879,8 @@ State 31:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -2967,8 +2967,8 @@ State 32:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -3055,8 +3055,8 @@ State 33:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -3143,8 +3143,8 @@ State 34:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -3232,8 +3232,8 @@ State 35:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -3319,8 +3319,8 @@ State 36:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -3407,8 +3407,8 @@ State 37:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -3495,8 +3495,8 @@ State 38:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -3583,8 +3583,8 @@ State 39:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -3671,8 +3671,8 @@ State 40:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -3759,8 +3759,8 @@ State 41:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -3847,8 +3847,8 @@ State 42:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -3935,8 +3935,8 @@ State 43:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -4023,8 +4023,8 @@ State 44:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -4111,8 +4111,8 @@ State 45:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -4199,8 +4199,8 @@ State 46:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -4287,8 +4287,8 @@ State 47:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -4375,8 +4375,8 @@ State 48:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -4463,8 +4463,8 @@ State 49:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -4551,8 +4551,8 @@ State 50:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -4639,8 +4639,8 @@ State 51:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -4727,8 +4727,8 @@ State 52:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -4815,8 +4815,8 @@ State 53:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -4903,8 +4903,8 @@ State 54:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -4991,8 +4991,8 @@ State 55:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -5079,8 +5079,8 @@ State 56:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -5169,8 +5169,8 @@ State 57:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -5256,8 +5256,8 @@ State 58:
           expr ::= * name_space
           vertical_array ::= * LBRAC LCURL final_vert_stmt_list RCURL RBRAC
           array ::= * vertical_array
-          expr ::= * array
           array ::= * LBRAC maybe_empty_stmt_list RBRAC
+          expr ::= * array
           expr ::= * num
           expr ::= * string
           expr ::= * bool
@@ -8003,9 +8003,9 @@ State 198:
                      {default} reduce 55
 
 State 199:
-     (65) array ::= LBRAC maybe_empty_stmt_list RBRAC *
+     (62) array ::= LBRAC maybe_empty_stmt_list RBRAC *
 
-                     {default} reduce 65
+                     {default} reduce 62
 
 State 200:
      (60) vertical_array ::= LBRAC LCURL final_vert_stmt_list RCURL RBRAC *
@@ -8073,9 +8073,9 @@ State 212:
                      {default} reduce 50
 
 State 213:
-     (62) stmt_list ::= stmt *
+     (63) stmt_list ::= stmt *
 
-                     {default} reduce 62
+                     {default} reduce 63
 
 State 214:
      (99) expr ::= LPAREN MINUS expr RPAREN *
@@ -8123,14 +8123,14 @@ State 222:
                      {default} reduce 68
 
 State 223:
-     (64) expr ::= array *
+     (65) expr ::= array *
 
-                     {default} reduce 64
+                     {default} reduce 65
 
 State 224:
-     (63) stmt_list ::= stmt_list stmt *
+     (64) stmt_list ::= stmt_list stmt *
 
-                     {default} reduce 63
+                     {default} reduce 64
 
 State 225:
      (61) array ::= vertical_array *

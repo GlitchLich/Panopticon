@@ -332,6 +332,7 @@ void gc_free_all()
 
     while(dealloc_queue.size())
     {
+//        std::cout << "dealloc_queue.size: " << dealloc_queue.size() << std::endl;
         gc_delete(dealloc_queue.front());
         dealloc_queue.pop_front();
         ++i;
