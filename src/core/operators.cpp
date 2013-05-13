@@ -972,7 +972,8 @@ bool call_function(object& A, const object& B, const object& C)
         break;
 
     case FUNCTION:
-        function = mem_copy(B);
+        // function = mem_copy(B);
+        function = B; // Will this cause a mem_free crash later? Not sure, something to test for.
         break;
 
     default:

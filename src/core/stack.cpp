@@ -254,7 +254,7 @@ bool evaluate_variable(const object& variable_name)
             if(result.data.function->arguments.size() == 1)
             {
                 object arguments; // empty, won't be used by call_function so no need to initialize
-                call_function(result, variable_name, arguments);
+                call_function(result, result, arguments);
             }
         }
 

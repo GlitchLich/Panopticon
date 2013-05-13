@@ -2,8 +2,8 @@
 
 //===========================
 // Total Report:
-// No Leaks: 15
-// Leaks: 7
+// No Leaks: 16
+// Leaks: 6b
 // Negative Leaks: 0
 // Crashes: 3
 //===========================
@@ -28,12 +28,16 @@ true + false
 [ 0 1 2 3 ] + [ 0 1 2 3 4 ]
 //Declaring Variables: No Leaks
 a = [ 0 1 2 3 ]
-//Using Variables: LEAKS!!!!!!!!!!!
+//Using Variables: No Leaks
 a
 //Declaring Vanilla Number Functions: No Leaks
 f x = x * 2
 //Using Vanilla Number Functions: No Leaks
 f(2)
+
+array x = [ x x x x x x x ]
+array(10)
+array(array("Ten"))
 
 hello x = x + " World."
 hello("Hello")
