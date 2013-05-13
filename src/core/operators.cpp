@@ -839,6 +839,8 @@ bool resolve_stack_from_parser(const object& operation_tree, bool resolve_entire
     {
         Array* tree;
 
+        // Copy for normal calls, DON'T copy if this is coming from the parser. We know this because the parser resolves the entire stack.
+        // We don't copy the calls from the parser because it passes off ownership of the objects and doesn't free them itself.
         if(!resolve_entire_stack)
         {
             object copy_tree = mem_copy(operation_tree);
