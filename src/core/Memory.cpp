@@ -158,7 +158,7 @@ void decrement_function()
 
 void gc_delete(object& obj); // forward declaration
 
-bool gc_delete_array(Array* array)
+ void gc_delete_array(Array* array, Type type)
 {
     if(array)
     {
@@ -171,16 +171,14 @@ bool gc_delete_array(Array* array)
         }
 
         array->clear();
+        decrement_array(type);
         delete array;
         array = 0;
-
-        return true;
     }
 
     else
     {
         std::cerr << "Attempted to gc_delete_array on a null pointer." << std::endl;
-        return false;
     }
 }
 
@@ -214,9 +212,9 @@ void shallow_mem_free_array(Array* array, Type type)
 {
     if(array)
     {
+        decrement_array(type);
         delete array;
         array = 0;
-        decrement_array(type);
     }
 
     else
@@ -239,9 +237,9 @@ void gc_delete_dictionary(Dictionary* dictionary)
         }
 
         dictionary->clear();
+        decrement_dictionary();
         delete dictionary;
         dictionary = 0;
-        decrement_dictionary();
     }
 
     else
@@ -284,9 +282,9 @@ void gc_delete_function(Function* function)
         mem_free(function->body);
         gc_delete_dictionary(function->heap);
 
+        decrement_function();
         delete function;
         function = 0;
-        decrement_function();
     }
 
     else
@@ -299,9 +297,9 @@ void gc_delete_string(String* string)
 {
     if(string)
     {
+        decrement_string();
         delete string;
         string = 0;
-        decrement_string();
     }
 
     else
@@ -328,8 +326,7 @@ void gc_delete(object& obj)
         gc_delete_function(obj.data.function);
         break;
     case ARRAY:
-        if(gc_delete_array(obj.data.array))
-            decrement_array(ARRAY);
+        gc_delete_array(obj.data.array, ARRAY);
         break;
     case DICTIONARY:
         gc_delete_dictionary(obj.data.dictionary);
@@ -337,8 +334,7 @@ void gc_delete(object& obj)
     case ERROR:
         break;
     case STATEMENT_LIST:
-        if(gc_delete_array(obj.data.array))
-            decrement_array(STATEMENT_LIST);
+        gc_delete_array(obj.data.array, STATEMENT_LIST);
         break;
     case VARIABLE:
         gc_delete_string(obj.data.string);
@@ -347,8 +343,7 @@ void gc_delete(object& obj)
         gc_delete_string(obj.data.string);
         break;
     case OPERATION_TREE:
-        if(gc_delete_array(obj.data.array))
-            decrement_array(OPERATION_TREE);
+        gc_delete_array(obj.data.array, OPERATION_TREE);
         break;
     case OPERATION:
         break;
@@ -357,20 +352,16 @@ void gc_delete(object& obj)
     case ASSIGNMENT:
         break;
     case GUARD:
-        if(gc_delete_array(obj.data.array))
-            decrement_array(GUARD);
+       gc_delete_array(obj.data.array, GUARD);
         break;
     case FUNCTION_BODY:
-        if(gc_delete_array(obj.data.array))
-            decrement_array(FUNCTION_BODY);
+        gc_delete_array(obj.data.array, FUNCTION_BODY);
         break;
     case FUNCTION_ARG_NAMES:
-        if(gc_delete_array(obj.data.array))
-            decrement_array(FUNCTION_ARG_NAMES);
+        gc_delete_array(obj.data.array, FUNCTION_ARG_NAMES);
         break;
     case FUNCTION_ARG_VALUES:
-        if(gc_delete_array(obj.data.array))
-            decrement_array(FUNCTION_ARG_VALUES);
+        gc_delete_array(obj.data.array, FUNCTION_ARG_VALUES);
         break;
     case VOID:
         break;
@@ -379,8 +370,7 @@ void gc_delete(object& obj)
     case PRIMITIVE:
         break;
     case CONDITION_TREE:
-        if(gc_delete_array(obj.data.array))
-            decrement_array(CONDITION_TREE);
+        gc_delete_array(obj.data.array, CONDITION_TREE);
         break;
     case CONDITION_BRANCH:
         break;
