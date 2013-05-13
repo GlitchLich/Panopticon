@@ -574,14 +574,8 @@ expr(A) ::= dict(B).
         else
         {
             insure_ready_for_assignment(B.data.array->at(i),B.data.array->at(i+1));
-
+            //Leak???
             optic::object result;
-/*            panopticon::store_operations(*/
-/*                result,*/
-/*                B.data.array->at(i),*/
-/*                B.data.array->at(i+1),*/
-/*                panopticon::assign_variable*/
-/*            );*/
             optic::create_function(result,B.data.array->at(i),B.data.array->at(i+1));
             A.data.dictionary->insert(
                 std::make_pair(
@@ -589,8 +583,12 @@ expr(A) ::= dict(B).
                     result
                     )
             );
+/*            optic::mem_free(B.data.array->at(i+1));*/
         }
+/*        optic::mem_free(B.data.array->at(i));*/
     }
+
+    optic::shallow_mem_free_array(B.data.array,"ARRAY");
 
     if(!panopticon::correct_parsing)
     {

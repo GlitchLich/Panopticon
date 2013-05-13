@@ -3,9 +3,9 @@
 //===========================
 // Total Report:
 // No Leaks: 16
-// Leaks: 6b
+// Leaks: 8
 // Negative Leaks: 0
-// Crashes: 3
+// Crashes: 1
 //===========================
 
 //Numbers: No Leaks
@@ -17,7 +17,7 @@ true
 //Number Arrays: No Leaks
 [ 0 1 2 3 ]
 //Mixed Arrays: No Leaks
-[ 0 true "test" [ 3 2 ] ]
+[ 0 true "test" [ 3*2 2+"hey" ] ]
 //Number Math: No Leaks
 1 + 1 * 3 / 2 - 1 
 //Boolean Math: No Leaks
@@ -45,25 +45,23 @@ hello("Hello")
 //Declaring Vanilla Guards: LEAKS!!!!!!!!!!!!!!
 regularGuard x
 	| x > 1	= 1
-	| x < 1 = (-1)
 	_		= 0
 //Using Vanilla Guards: (I believe no more leaks than what comes from declaring the guard function)
-regularGuard(10)
+regularGuard(0)
 //Declaring String Guards: LEAKS!!!!!!!!!!!!!!
 stringGuard x
        | x == "hey"     = "No"
        | x == "Turtle"	= "Cool"
        _                = "Yes"
-//Using String Guards: SEGMENTATION FAULT CRASH!!!!!!!!!!!!!!!!!!!!!
+//Using String Guards: LEAKS!!!!!!!!!!!!!!
 stringGuard("hey")
 //Declaring Array Guards: LEAKS!!!!!!!!!!!!!!
 arrayGuard x
        | x[0] == 0     	= 10
        | x[0] == 1		= [ 100 100 ]
        _                = 0.1
-//Using Array Guards: SEGMENTATION FAULT CRASH!!!!!!!!!!!!!!!!!!!!!
-//ONLY WHEN RETURNING AN ARRAY
-arrayGuard([2 1 2 3])
+//Using Array Guards: LEAKS!!!!!!!!!!!!!!
+arrayGuard([1 1 2 3])
 //Declaring Where Functions: LEAKS!!!!!!!!!!!!!!
 regularWhere x = x * y
 	where
@@ -76,7 +74,18 @@ string x = "String " + x
 string(2)
 //Print: No Leaks
 print("Hello World")
-//Declaring Dictionaries: LEAKS!!!!!!!!!!!!!!
-myDict = { test = 1 test2 = true test3 = "hey" test4 = [ 0 1 2 3 ] }
-//Using Dictionaries: LEAKS!!!!!!!!!!!!!!
+//Declaring Vanilla Dictionaries: No Leaks
+myDict = { test = 1 test2 = true test3 = "hey" test4 = [ 0 1 2 3 ] innerDict = { nested = 4} }
+//Using Vanilla Dictionaries: No Leaks
 myDict::test
+myDict::test2
+myDict::test3
+//This simply doesn't do anything
+myDict::test4 + myDict::test
+myDict::innerDict::nested
+
+//Declaring Functions in Dictionaries: Leaks
+functionary = { func x = x + 1 }
+//Using Function in Dictionaries: Crash
+functionary::func(10)
+

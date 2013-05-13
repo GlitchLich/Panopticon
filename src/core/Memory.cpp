@@ -160,6 +160,7 @@ void gc_delete_dictionary(Dictionary* dictionary)
 
         while(iter != dictionary->end())
         {
+
             mem_free(iter->second);
             ++iter;
         }
