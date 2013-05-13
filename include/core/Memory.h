@@ -18,7 +18,7 @@ void mem_free_array(Array& array); // DON'T USE THIS DIRECTLY UNLESS YOU HAVE A 
 void mem_free_dictionary(Dictionary& dictionary); // DON'T USE THIS DIRECTLY UNLESS YOU HAVE A GOOD REASON. Prefer mem_free where possible.
 // Free array, but not the contents. Only used if the contents were copied out using std::copy or std::reverse_copy
 // We still need to free the top level array, but not the contents.
-void shallow_mem_free_array(Array* array, std::string type); // type is used only for reporting
+void shallow_mem_free_array(Array* array, Type type); // type is used only for reporting
 object mem_alloc(Type type);
 void mem_free(object obj); // not immediate, just scheduled
 object mem_copy(const object& obj); // Deep copy an object

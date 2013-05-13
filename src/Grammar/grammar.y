@@ -588,7 +588,7 @@ expr(A) ::= dict(B).
 /*        optic::mem_free(B.data.array->at(i));*/
     }
 
-    optic::shallow_mem_free_array(B.data.array,"ARRAY");
+    optic::shallow_mem_free_array(B.data.array, optic::ARRAY);
 
     if(!panopticon::correct_parsing)
     {

@@ -2081,7 +2081,7 @@ static void yy_reduce(
 /*        optic::mem_free(yymsp[0].minor.yy0.data.array->at(i));*/
     }
 
-    optic::shallow_mem_free_array(yymsp[0].minor.yy0.data.array,"ARRAY");
+    optic::shallow_mem_free_array(yymsp[0].minor.yy0.data.array, optic::ARRAY);
 
     if(!panopticon::correct_parsing)
     {
