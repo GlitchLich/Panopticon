@@ -32,10 +32,12 @@ bool resolve_guard(object& A, const object &condition_tree)
 
     for(int i=0;i<condition_tree.data.array->size();++i)
     {
-        optic_stack.push_back(mem_copy(condition_tree.data.array->at(i)));
+        object operation = mem_copy(condition_tree.data.array->at(i));
+        optic_stack.push_back(operation);
         evaluate_top();
         const object& result = optic_stack.back();
         optic_stack.pop_back();
+//        mem_free(operation);
 
         if(result.type==ERROR)
         {
@@ -121,7 +123,7 @@ bool conditional_function_call(object& result_A,const object& conditional_B,cons
 //    optic_stack.push_back(mem_copy(conditional_B));
     optic_stack.push_back(conditional_B);
     evaluate_top();
-
+    std::cout << "bool conditional_function_call(object& res" << std::endl;
     const object& result_B = optic_stack.back();
     optic_stack.pop_back();
     if(result_B.type == BOOL)

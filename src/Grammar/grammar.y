@@ -322,6 +322,7 @@ final_guard_statement(A) ::= guard_statement(B) WILDCARD ASSIGN expr(D) RCURL. [
 
 assignment(A) ::= final_guard_statement(B).
 {
+
     panopticon::object& b = B.data.array->at(0);
     panopticon::object& c = B.data.array->at(1);
 
@@ -331,6 +332,7 @@ assignment(A) ::= final_guard_statement(B).
     resolve.type = panopticon::FUNCTION_BODY;
     b.type = optic::FUNCTION_ARG_NAMES;
     panopticon::store_operations(A, b, resolve, &panopticon::assign_variable);
+    optic::shallow_mem_free_array(B.data.array,optic::GUARD);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
