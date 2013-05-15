@@ -145,7 +145,6 @@ bool call_function(object& A, const object& B, const object& C)
 
     pop_scope(); // frees dictionary memory as well
     context.erase(function_name);
-    context.clear();
     mem_free_dictionary(context);
     mem_free(function);
     return true;
