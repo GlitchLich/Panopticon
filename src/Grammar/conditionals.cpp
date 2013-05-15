@@ -123,7 +123,6 @@ bool conditional_function_call(object& result_A,const object& conditional_B,cons
 //    optic_stack.push_back(mem_copy(conditional_B));
     optic_stack.push_back(conditional_B);
     evaluate_top();
-    std::cout << "bool conditional_function_call(object& res" << std::endl;
     const object& result_B = optic_stack.back();
     optic_stack.pop_back();
     if(result_B.type == BOOL)

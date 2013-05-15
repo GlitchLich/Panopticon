@@ -30,9 +30,9 @@
 namespace panopticon
 {
 
+object create_void_tree();
+bool create_tree(object&a,const object& obj);
 bool insure_ready_for_assignment(panopticon::object& B, panopticon::object& C);
-
-object flatten_tree(panopticon::object& tree);
 
 }
 

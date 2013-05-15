@@ -25,9 +25,6 @@ bool number_minus(object&A,const object& B,const object& C)
         out() << print_error(SubtractBoolFromNum) << std::endl;
         correct_parsing = false;
         break;
-    case ARRAY:
-        object_operator_array(A,B,C,&number_minus);
-        break;
     }
 }
 
@@ -55,35 +52,12 @@ bool string_minus(object&A, const object& B, const object& C)
         correct_parsing = false;
 //        string_minus_string(A,B,convert_to_string(C));
         break;
-    case ARRAY:
-        object_operator_array(A,B,C,&string_minus);
-//        string_minus_array(A,C,B);
-        break;
     }
 }
 
 bool array_minus(object&A, const object& B, const object& C)
 {
-    switch(C.type)
-    {
-    case NUMBER:
-        array_operator_object(A,B,C,&minus);
-//        array_minus_number(A,B,C);
-        break;
-    case STRING:
-         array_operator_object(A,B,C,&minus);
-//        array_minus_string(A,B,C);
-        break;
-    case BOOL:
-        out() << print_error(SubtractBoolFromNum) << std::endl;
-        correct_parsing = false;
-        break;
-    case ARRAY:
-//        array_minus_array(A,B,C);
-//        array_operator_object(A,B,C,&minus);
-        array_operator_array(A,B,C,&minus);
-        break;
-    }
+
 }
 
 //================================

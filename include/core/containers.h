@@ -6,7 +6,14 @@
 namespace panopticon
 {
 
+// Dictionaries
+bool print_dictionary(const object& dict);
+bool dictionary_lookup(object& value, const object& dict, const object& key);
+bool dictionary_contains(object &boolean, const object &dict, const object &key);
+bool dictionary_insert(object& dictionary_A,const object& string_B, const object& object_C);
 bool create_dictionary(object& result_A, const object& B);
+
+bool index(object&A, const object& B, const object& C);
 
 /**
  * @brief prepend

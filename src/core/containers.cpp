@@ -4,9 +4,162 @@
 #include "../../include/core/stack.h"
 #include "../../include/Grammar/parsingutilities.h"
 #include "../../include/core/operators.h"
+#include "../../include/core/heap.h"
 
 namespace panopticon
 {
+
+bool print_dictionary(const object& dict)
+{
+    Dictionary::iterator iter = dict.data.dictionary->begin();
+
+    out() << "{ " << std::endl;
+
+    while(iter != dict.data.dictionary->end())
+    {
+        out() << "\"" << iter->first << "\" : ";
+
+        panopticon::object& value = iter->second;
+
+        switch(value.type)
+        {
+        case STRING:
+            out() << value.data.string;
+            break;
+
+        case NUMBER:
+            out() << value.data.number;
+            break;
+
+        case BOOL:
+            out() << value.data.boolean;
+            break;
+
+        case OPERATION_TREE:
+        case ARRAY:
+            print_array(value);
+            break;
+
+        case DICTIONARY:
+            print_dictionary(value);
+            break;
+
+        case FUNCTION:
+            out() << "Function";
+            break;
+
+        case NIL:
+            out() << "Nil";
+            break;
+
+        default:
+            break;
+        }
+
+        out() << " ";
+
+        ++iter;
+    }
+
+    out() << "}" << std::endl;
+    return true;
+}
+
+bool dictionary_lookup(object& value, const object& dict, const object& key)
+{
+    if(key.type != STRING)
+    {
+        out() << "Error: Dictionary key must be a String." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+
+    //If the object is a string, attempt to fetch it.
+    if(dict.type == STRING || dict.type == UNDECLARED_VARIABLE)
+    {
+        object result;
+
+        if(get_variable(dict.data.string, &result) == OK)
+        {
+            if(result.type == DICTIONARY)
+            {
+                bool success =  dictionary_lookup(value, result, key);
+                mem_free(result);
+                return success;
+            }
+
+            else
+            {
+                value.type = NIL;
+                out() << "Error: Cannot call a Dictionary lookup on a non-Dictionary object." << std::endl;
+                out() << "Object with Dictionary lookup called on it: " << dict.data.string->c_str() << std::endl;
+                correct_parsing = false;
+                return false;
+            }
+        }
+
+        else
+        {
+            value.type = NIL;
+            out() << "Error: the variable \'" << dict.data.string->c_str() << "\'' has not been declared." << std::endl;
+            correct_parsing = false;
+            return false;
+        }
+
+    }
+
+    Dictionary::iterator find = dict.data.dictionary->find(*key.data.string);
+    if(find != dict.data.dictionary->end())
+    {
+        value = mem_copy(find->second);
+    }
+
+    else
+    {
+        value.type = NIL;
+        out() << "No object found with key \'" << *key.data.string << "\'." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+
+    return true;
+}
+
+bool dictionary_contains(object &boolean, const object &dict, const object &key)
+{
+    if(key.type != STRING)
+    {
+        out() << "Dictionary key must be a String." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+
+    boolean.type = BOOL;
+    boolean.data.boolean = dict.data.dictionary->find(*key.data.string) != dict.data.dictionary->end();
+    return true;
+}
+
+bool dictionary_insert(object& dictionary_A,const object& string_B, const object& object_C)
+{
+    object boolean;
+    dictionary_contains(boolean,dictionary_A,string_B);
+    if(!boolean.data.boolean)
+    {
+        dictionary_A.data.dictionary->insert(
+                    std::make_pair(
+                        *string_B.data.string,
+                        object_C
+                        )
+                    );
+    }
+    else
+    {
+        out() << "Error:  Cannot insert key: " << *string_B.data.string << "into dictionary because this key already exists." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+}
+
 
 bool create_dictionary(object& result_A, const object& B)
 {
@@ -191,5 +344,95 @@ bool concat(object& A, const object& B, const object& C)
     }
 }
 
+bool index(object& A, const object& B, const object& C)
+{
+    object result;
+    switch(B.type)
+    {
+    case ARRAY:
+        switch(C.type)
+        {
+        case NUMBER:
+            if(C.data.number<B.data.array->size())
+            {
+                A = mem_copy(B.data.array->at(C.data.number));
+                optic_stack.push_back(A);
+                evaluate_top();
+                A = optic_stack.back();
+                optic_stack.pop_back();
+            }
+            else
+            {
+                out() << "Error: Index out of range." << std::endl;
+                correct_parsing = false;
+            }
+            break;
+        case STRING:
+            out() << "Syntax error: A string cannot be an array index." << std::endl;
+            correct_parsing = false;
+            break;
+        case BOOL:
+            out() << "Syntax error: A bool cannot be an array index." << std::endl;
+            correct_parsing = false;
+            break;
+        case ARRAY:
+            if(C.data.array->size() > 0)
+            {
+                index(A,B,C.data.array->at(0));
+            }
+            else
+            {
+                out() << "Error: Attempting to index with an array of size zero." << std::endl;
+                correct_parsing = false;
+            }
+            break;
+        case UNDECLARED_VARIABLE:
+            get_variable(C.data.string,&result);
+            index(A,B,mem_copy(result));
+            break;
+        case OPERATION_TREE:
+            optic_stack.push_back(C);
+            evaluate_top();
+            result = mem_copy(optic_stack.back());
+            optic_stack.pop_back();
+            index(A,B,result);
+            break;
+        default:
+            out() << "Syntax error: cannot use a non-numeral for an array index." << std::endl;
+            out() << "Object used as index: ";
+            print_object(C);
+            correct_parsing = false;
+            break;
+        }
+        break;
+    case STRING:
+        if(get_variable(B.data.string, &result) == OK)
+        {
+            if(result.type != FUNCTION)
+            {
+                index(A,result,C);
+            }
+
+            else
+            {
+                call_function(result,B,create_void_tree());
+                index(A,result,C);
+            }
+
+            break;
+        }
+        out() << "Syntax error: Attempting to index an undeclared variable." << std::endl;
+        out() << "Variable with index called on it: ";
+        print_object(B);
+        correct_parsing = false;
+        break;
+    default:
+        out() << "Syntax error: cannot retrieve an index from a non-array data type." << std::endl;
+        out() << "Object with index called on it: ";
+        print_object(B);
+        correct_parsing = false;
+        break;
+    }
+}
 
 }

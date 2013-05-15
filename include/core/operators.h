@@ -30,6 +30,7 @@
 #include "include/core/function.h"
 #include "include/Grammar/conditionals.h"
 #include "containers.h"
+#include "function.h"
 
 #undef STRING
 #undef NUM
@@ -40,48 +41,14 @@ namespace optic = panopticon;
 
 namespace panopticon
 {
-
-
-//GENERAL operations
-// object copy_object(const object &original);
-// bool delete_object(object& obj);
+//General Operations
 bool print_object(const object& A);
-object convert_to_string( object& original);
-object create_void_tree();
-
-// Dictionaries
-// bool create_dictionary(object& dict);
-// bool delete_dictionary(object& dict);
-bool print_dictionary(const object& dict);
-bool dictionary_lookup(object& value, const object& dict, const object& key);
-bool dictionary_contains(object &boolean, const object &dict, const object &key);
-bool dictionary_insert(object& dictionary_A,const object& string_B, const object& object_C);
-
-//object de_tree(object& obj);
-// bool concatenate_arrays(object &a, object b, object c);
-// bool create_array(object &a);
 bool print_array(const object &A, int arrayNum=0, bool isTree=false);
-// bool delete_array(object& a);
 bool unary_print_object(object &A, const object &B);
 
-bool object_operator_array(object &a,const object &obj, const object& array, operator_function func);
-bool array_operator_object(object &a,const object &array,const object& obj, operator_function func);
-bool recursive_apply(object &a,const object &obj1,const object& obj2, operator_function func);
-// bool object_operator_object(object& a, object& b, object& c, operator_function func);
-bool array_operator_array(object& a,const object& array1,const object& array2, operator_function func);
-bool parse_operations(object& a, const object& b, const object& c, operator_function func);
-bool resolve_stack_from_parser(const object &operation_tree, bool resolve_entire_stack = false);
-bool create_tree(object&a,const object& obj);
 bool store_operations(object& a,const object& obj1,unary_operator_function func,bool expand = true);
 bool store_operations(object& a, const object& obj1, const object& obj2, operator_function func, bool expand = true);
 bool store_operations(object& a, const object& obj1, const object& obj2, bool expand = true);
-
-
-bool create_function(object&A, const object& B, const object& C);
-bool call_function(object& A, const object& B, const object& C);
-bool call_function_array(object& A, const object& B, const object& C);
-bool resolve_function_array(object& A, const object& B);
-bool handle_stack(object &A, Function* function);
 
 // Operators
 bool serial(object& A, const object &B, const object &C);
@@ -107,11 +74,7 @@ bool bit_or(object&A, const object& B, const object& C);
 bool bit_not(object&A,const  object& B);
 bool bit_xor(object&A, const object& B, const object& C);
 bool assign_variable(object&A, const object& B, const object& C);
-bool retrieve_variable(object&A, object& B);
 bool u_minus(object&A, const object& B);
 
-//NOT DONE
-bool plusplus(object&A, const object& B, const object& C);
-bool index(object&A, const object& B, const object& C);
 }
 #endif // OPERATORS_H

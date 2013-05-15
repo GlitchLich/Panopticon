@@ -331,7 +331,7 @@ assignment(A) ::= final_guard_statement(B).
 
     resolve.type = panopticon::FUNCTION_BODY;
     b.type = optic::FUNCTION_ARG_NAMES;
-    panopticon::store_operations(A, b, resolve, &panopticon::assign_variable);
+    panopticon::store_operations(A, b, resolve, &panopticon::assign_variable,false);
     optic::shallow_mem_free_array(B.data.array,optic::GUARD);
     if(!panopticon::correct_parsing)
     {
@@ -421,8 +421,7 @@ where(A) ::= WHERE LCURL assignment_list(B) RCURL. [DICT]
             result,
             B.data.array->at(i),
             B.data.array->at(i+1),
-            panopticon::assign_variable,
-            false
+            panopticon::assign_variable
         );
         optic::store_operations(serial_result,previous_result,result);
         previous_result = serial_result;

@@ -1123,19 +1123,3 @@ true ^|  [0 [true 2 [3 "hey"] 5 [6 7] ] 8]
 ~"hey"
 ~true
 ~[0 1 2 3]
-
-//=====================================
-//Experimental Syntax
-//=====================================
-
-//Maps
-< >
-mapTest = ["test" = 4 "other test" = 5 ]
-mapTest["test"]
-mapTest["other test"]
-
-myMap = map( "test" = 4
-			"other test" 5
-			"final test" = 6)
-
-
