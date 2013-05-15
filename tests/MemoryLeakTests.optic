@@ -89,4 +89,9 @@ myDict::innerDict::nested
 functionary = { func x = x + 1 }
 //Using Function in Dictionaries: Crash
 functionary::func(10)
+print(functionary::func)
+do x y = x(y)
+do(functionary::func 10)
+
+
 
