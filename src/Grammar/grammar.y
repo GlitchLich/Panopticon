@@ -74,6 +74,7 @@
 %left PLUS MINUS.
 %left DIVIDE TIMES MODULO.
 %right POW NOT BITNOT UMINUS PLUSPLUS.
+%left COLONCOLON.
 %left LPAREN RPAREN LBRAC RBRAC.
 %left COLLECTARRAY.
 
@@ -99,8 +100,8 @@ in ::= in test DELIMITER.
 start ::= spec(A).
 {
 /*    std::cout << "Object of type: " << A.type << " hit the stack!" << std::endl;*/
-/*    optic::out() << "Object at end of parser: ";*/
-/*    print_object(A);*/
+    optic::out() << "Object at end of parser: ";
+    print_object(A);
     if(A.type!=optic::OPERATION_TREE)
     {
         optic::object a = mem_alloc(optic::OPERATION_TREE);
@@ -585,7 +586,7 @@ expr(A) ::= NAME(B) LCURL string(C) RCURL.
     }
 }
 
-name_space(A) ::= NAME(B) COLONCOLON NAME(C). [INDEX]
+name_space(A) ::= NAME(B) COLONCOLON NAME(C).
 {
     B.type = optic::UNDECLARED_VARIABLE;
     C.type = optic::STRING;
@@ -597,7 +598,7 @@ name_space(A) ::= NAME(B) COLONCOLON NAME(C). [INDEX]
     }
 }
 
-name_space(A) ::= function_call(B) COLONCOLON NAME(C). [INDEX]
+name_space(A) ::= function_call(B) COLONCOLON NAME(C).
 {
     C.type = optic::STRING;
     store_operations(A,B,C,&optic::dictionary_lookup);
@@ -608,7 +609,7 @@ name_space(A) ::= function_call(B) COLONCOLON NAME(C). [INDEX]
     }
 }
 
-name_space(A) ::= name_space(B) COLONCOLON NAME(C). [INDEX]
+name_space(A) ::= name_space(B) COLONCOLON NAME(C).
 {
     C.type = optic::STRING;
     store_operations(A,B,C,&optic::dictionary_lookup);

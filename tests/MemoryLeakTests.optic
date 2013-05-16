@@ -46,28 +46,28 @@ hello("Hello")
 //Declaring Vanilla Guards: No Leaks
 regularGuard x
 	| x > 1	= 1
-	_		= 0
+	|_		= 0
 //Using Vanilla Guards: No Leaks
 regularGuard(0)
 //Declaring String Guards: No Leaks
 stringGuard x
        | x == "hey"     = "No"
        | x == "Turtle"	= "Cool"
-       _                = "Yes"
+       |_               = "Yes"
 //Using String Guards: No Leaks
 stringGuard("hey")
 //Declaring Array Guards: No Leaks
 arrayGuard x
        | x[0] == 0     	= 10
        | x[0] == 1		= 100
-       _                = 0.1
+       |_               = 0.1
 //Using Array Guards: LEAKS!!!!!!!!!!!!!!
 arrayGuard([1])
 
 arrayGuard2 x
        | x == 0     = [ 10  10  ]
        | x == 1		= [ 100 100 ]
-       _            = [ 0.1 0.1 ]
+       |_           = [ 0.1 0.1 ]
 
 arrayGuard2(0)
 
@@ -88,6 +88,7 @@ myDict = { test = 1 test2 = true test3 = "hey" test4 = [ 0 1 2 3 ] innerDict = {
 //Using Vanilla Dictionaries: No Leaks
 myDict::test
 1 + myDict::test
+myDict::test == "hey"
 myDict::test2
 myDict::test3
 //This simply doesn't do anything
@@ -103,7 +104,7 @@ functionary =
 functionary::func(10)
 print(functionary::func)
 do x y = x(y)
-do(functionary::func 10)
+do(functionary::func 20)
 
 add x y = x + y
 splayPlusOne x = [ x x ] + 1
@@ -121,6 +122,9 @@ arraytionaryPlus(1)
 call x y = x (y)
 call(arrationary::array 10)
 
+funcFunc f = f + f
+a = 20 + 1
+funcFunc(a a)
 
 //Array Functors: CRASH!!!!
 doubler x = x * 2
