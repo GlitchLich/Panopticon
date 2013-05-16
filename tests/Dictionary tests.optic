@@ -5,12 +5,12 @@
 myDict = { Turtles = true Octopi = "are cool" Array = [0 1 2 3 4] dictFunc x y = x + y Dragon = { test = 4 } }
 
 //Vertical Construction, with nested dictionaries
-myDict =          
+myDict = {       
 	Turtles = true 
 	Octopi = "are cool" 
 	Array = [0 1 2 3 4]
 	dictFunc x y = x + y
-	Dragon = 
+	Dragon = {
 		test = 4
 		dictFunc x y = x + y
 		dictFunc2 x y = x - y
@@ -20,17 +20,19 @@ myDict =
 			myDict::Dragon::dictFunc2 
 			myDict::Dragon::dictFunc3 
 		]
+	}
+}
 
 //with keyword
 myDict = dict { Turtles = true Octopi = "are cool" Array = [0 1 2 3 4] dictFunc x y = x + y Dragon = dict { test = 4 } }
 
 //with keyword
-myDict = dict          
+myDict = dict {    
 	Turtles = true 
 	Octopi = "are cool" 
 	Array = [0 1 2 3 4]
 	dictFunc x y = x + y
-	Dragon = dict 
+	Dragon = dict {
 		test = 4
 		dictFunc x y = x + y
 		dictFunc2 x y = x - y
@@ -40,8 +42,10 @@ myDict = dict
 			myDict::Dragon::dictFunc2 
 			myDict::Dragon::dictFunc3 
 		]
+	}
+}
 
-myDict::Turtles == true
+myDict::Turtles
 myDict::Octopi
 myDict::Array
 myDict::Dragon
@@ -68,7 +72,7 @@ myDict{stringVar}
 
 //Functions in Dictionaries
 //Doesn't work right now, need to work on this!
-functionary = dict
+functionary = {
 	func  x = ( x + y ) * 10
 		where
 			y = x + 2
@@ -79,6 +83,7 @@ functionary = dict
 		| x < min	= min
 		| x > max	= max
 		_			= x
+}
 
 //Printing is off, but this is theoretically working.
 myDict::Dragon + 4
@@ -98,12 +103,13 @@ notADict{"Dragon"}
 
 lookThatShitUp x y = d{x} * a[y]
 	where
-		d = dict
+		d = {
 			zero 	= 0
 			one		= 1
 			two		= 2
 			three	= 3
 			four	= 4
+		}
 		a = [
 			10
 			11
@@ -118,15 +124,20 @@ lookThatShitUp(
 level1 = dict { level2 = dict { level3 = dict { level4 = dict { level5 = false } } } }
 			
 //Vertical nesting
-level1 = dict
-	level2 = dict
-		level3 = dict
-			level4 = dict
+level1 = {
+	level2 = {
+		level3 = {
+			level4 = {
 				level5 = true
+			}
+		}
+	}
+}
 
 level1
 level1::level2
 level1::level2::level3
 level1::level2::level3::level4
-level1::level2::level3::level4::level5
+level1
+::level2::level3::level4::level5
 

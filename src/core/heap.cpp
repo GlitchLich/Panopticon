@@ -73,7 +73,7 @@ RESULT set_variable(std::string* variable_name, const object& value)
     scope_pointer = current_scope->find(*variable_name);
     if(scope_pointer == current_scope->end())
     {
-        current_scope->insert(std::make_pair(*variable_name, mem_copy(value)));
+        current_scope->insert(std::make_pair(String(*variable_name), mem_copy(value)));
         return OK;
     }
 

@@ -101,3 +101,11 @@ functionary =
 //Using Function in Dictionaries: Crash
 functionary::func(10)
 
+//Array Functors: CRASH!!!!
+doubler x = x * 2
+zeroOut x = x * 0
+doubleNeg x = x * (-2)
+spreader = [doubler zeroOut doubleNeg]
+spreader[0](1)
+spreader[](0)
+spreader[](2)
