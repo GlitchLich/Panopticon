@@ -635,7 +635,8 @@ Function* copy_function(const Function* function)
     new_function->arguments = copy_array(function->arguments);
     new_function->body = mem_copy(function->body);
     new_function->heap = copy_dictionary(function->heap);
-    new_function->name = String(function->name);
+    new_function->name = String(function->name.length(), ' ');
+    std::copy(function->name.begin(), function->name.end(), new_function->name.begin());
     new_function->num_arguments = function->num_arguments;
 
     return new_function;
