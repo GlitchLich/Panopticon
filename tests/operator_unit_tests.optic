@@ -8,8 +8,22 @@
 n*m+z
 n*m+z
 
+//Array ranges
+[2..10]
+//Array ranges with steps
+[2,4..16]
+//With negative ranges
+[12,9..0]
+
+range = [120,117..0]
+range
+range[19::(-3):%]
+range[0:(-60):(-2):%]
+//Also works with Doubles!
+[0.1,0.3..1]
+
 //Array Slice tests:
-a = [20 21 22 23 24 25 26 27 28 29 30]
+a = [20..40]
 //array [ first element : exclusion point : step size ( = 1) ] : Wrapping = %
 a[:3]
 a[3:]
@@ -28,7 +42,7 @@ a[(-7):100:%]
 //Not so useful
 a[::3:%]
 //Rotations with different step sizes
-a[(-2)::(2):%]
+a[2::(-2):%]
 a[:60:9:%]
 a[2:(-40):(-4):%]
 
@@ -38,11 +52,14 @@ a = sinBuilder n =
 	| n == 0	= sin(0)
 	| _			= sin(n):sinBuilder(n-1)
 a = fillArray(num func)
-or
 //List Comprehension?:
-a = [ sin(i) | i <- [..1000] ]
+a = [ sin(i) | i <- [1..1000] ]
+//Using map...the easiest?
+a = map( sin [1..1000] )
+//.... or even easier:
+a = sin( [1..1000] )
 
-b = [6 5 4 3 2 1 0 1 2 3 4 5 6]
+b = [6,5..(-6)]
 frankenArray x sx1 sx2 y sy1 sy2 = x[sx1:sx2] ++ y[sy1:sy2]
 frankenArray(a 0 3 b 6 9)
 frankenArray(a 4 6 b 2 6)
@@ -152,8 +169,8 @@ g x = x * 4
 g( f( 1 ) )
 f( 1 ) >> g
 f( 1 ) >> g()
-g( f( g( f( g( f([2 3 4 5]) ) ) ) ) )
-[2 3 4 5] >> f >> g >> f >> g >> f >> g
+g( f( g( f( g( f( [ 2 3 4 5 ] ) ) ) ) ) )
+[ 2 3 4 5 ] >> f >> g >> f >> g >> f >> g
 
 //Partial application also works :) Inserts into the first argument:
 f2 x y = x * y
@@ -163,7 +180,7 @@ g2( f2( 2 3 ) * 4 10 )
 
 //embedable into other functions as well:
 embededStream x y = x >> y
-embededStream(3 g)
+embededStream(3 a)
 g(3)
 
 //embedable into other functions as well:

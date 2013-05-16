@@ -1711,17 +1711,38 @@ bool slice_beginning_to_with_step_wrapping(object&A, const object& B, const obje
 
     int size = B.data.array->size();
 
-    for(int i=begin;i<begin+size;i+=end)
+    if(end>0)
     {
-        if(i>=0)
+
+        for(int i=begin;i<begin+size;i+=end)
         {
-            A.data.array->push_back(mem_copy(B.data.array->at(i%size)));
+            if(i>=0)
+            {
+                A.data.array->push_back(mem_copy(B.data.array->at(i%size)));
+            }
+            else
+            {
+                int index = i%size;
+                index = size + index;
+                A.data.array->push_back(mem_copy(B.data.array->at(index%size)));
+            }
         }
-        else
+    }
+    else
+    {
+        for(int i=begin;i>begin+(-1 * size);i+=end)
         {
-            int index = i%size;
-            index = size + index;
-            A.data.array->push_back(mem_copy(B.data.array->at(index%size)));
+//            std::cout << i << std::endl;
+            if(i>=0)
+            {
+                A.data.array->push_back(mem_copy(B.data.array->at(i%size)));
+            }
+            else
+            {
+                int index = i%size;
+                index = size + index;
+                A.data.array->push_back(mem_copy(B.data.array->at(index%size)));
+            }
         }
     }
 }
@@ -2143,6 +2164,162 @@ bool slice_with_step_wrapping(object&A, const object& B, const object& C)
         }
     }
 }
+
+//=======================
+//Array ranges
+//=======================
+
+//Default step-size of 1
+bool range_from_to(object&A, const object& B, const object& C)
+{
+    A = mem_alloc(ARRAY);
+
+    if(B.type!=NUMBER)
+    {
+        out() << "Error: Cannot have a non-Number type in an Array-range specifier" << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    if(C.type!=NUMBER)
+    {
+        out() << "Error: Cannot have a non-Number type in an Array-range specifier" << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+
+    int start = B.data.number;
+    int end = C.data.number;
+
+    if(start>end)
+    {
+        out() << "Error: This range is impossible: Start is larger than end, and you have a positive step-size of 1" << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+
+    while(start<=end)
+    {
+        object num = mem_alloc(NUMBER);
+        num.data.number = start;
+        A.data.array->push_back(num);
+        start++;
+    }
+}
+
+bool range_from_step_to(object&A, const object& B, const object& C)
+{
+    A = mem_alloc(ARRAY);
+    out() << type_string(B.data.array->at(0).type) << std::endl;
+    if(B.type!=ARRAY)
+    {
+        out() << "Error: Malformed Array specificer." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    double start,step,end;
+
+    //start
+    if(B.data.array->at(0).type==OPERATION_TREE)
+    {
+        optic_stack.push_back(mem_copy(B.data.array->at(0)));
+        evaluate_top();
+
+        if(optic_stack.back().type!=NUMBER)
+        {
+            out() << "Error: Cannot have a non-Number type in an Array-range specifier" << std::endl;
+            correct_parsing = false;
+            optic_stack.pop_back();
+            return false;
+        }
+        else
+        {
+            start = optic_stack.back().data.number;
+            optic_stack.pop_back();
+        }
+    }
+    else if(B.data.array->at(0).type!=NUMBER)
+    {
+        out() << "Error: Cannot have a non-Number type in an Array-range specifier" << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+
+    //step
+    if(B.data.array->at(1).type==OPERATION_TREE)
+    {
+        optic_stack.push_back(mem_copy(B.data.array->at(1)));
+        evaluate_top();
+
+        if(optic_stack.back().type!=NUMBER)
+        {
+            out() << "Error: Cannot have a non-Number type in an Array-range specifier" << std::endl;
+            correct_parsing = false;
+            optic_stack.pop_back();
+            return false;
+        }
+        else
+        {
+            step = optic_stack.back().data.number;
+            optic_stack.pop_back();
+        }
+    }
+    else if(B.data.array->at(1).type!=NUMBER)
+    {
+        out() << "Error: Cannot have a non-Number type in an Array-range specifier" << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    if(C.type!=NUMBER)
+    {
+        out() << "Error: Cannot have a non-Number type in an Array-range specifier" << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    end = C.data.number;
+
+    step = step - start;
+
+    if(step == 0)
+    {
+        out() << "Error: Cannot have an Array-range step size of zero." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    else if(start>end && step > 0)
+    {
+        out() << "Error: This range is impossible: Start is larger than end, and you have a positive step-size of: " <<step << "." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    else if(end>start && step < 0)
+    {
+        out() << "Error: This range is impossible: End is larger than start, and you have a negative step-size of: " <<step << "." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+
+    if(step>0)
+    {
+        while(start<=end)
+        {
+            object num = mem_alloc(NUMBER);
+            num.data.number = start;
+            A.data.array->push_back(num);
+            start+=step;
+        }
+    }
+    else
+    {
+        while(start>=end)
+        {
+            object num = mem_alloc(NUMBER);
+            num.data.number = start;
+            A.data.array->push_back(num);
+            start+=step;
+        }
+    }
+}
+
 
 
 }
