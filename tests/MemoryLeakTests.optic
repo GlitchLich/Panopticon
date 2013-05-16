@@ -5,7 +5,7 @@
 // No Leaks: 16
 // Leaks: 8
 // Negative Leaks: 0
-// Crashes: 1
+// Crashes: 3
 //===========================
 
 //Numbers: No Leaks
@@ -34,6 +34,7 @@ a
 f x = x * 2
 //Using Vanilla Number Functions: No Leaks
 f(2)
+f([0 1 2 3])
 
 array x = [ x x x x x x x ]
 array(10)
@@ -42,30 +43,38 @@ array([ array("Ten") array(9) ])
 hello x = x + " World."
 hello("Hello")
 
-//Declaring Vanilla Guards: LEAKS!!!!!!!!!!!!!!
+//Declaring Vanilla Guards: No Leaks
 regularGuard x
 	| x > 1	= 1
 	_		= 0
-//Using Vanilla Guards: (I believe no more leaks than what comes from declaring the guard function)
+//Using Vanilla Guards: No Leaks
 regularGuard(0)
-//Declaring String Guards: LEAKS!!!!!!!!!!!!!!
+//Declaring String Guards: No Leaks
 stringGuard x
        | x == "hey"     = "No"
        | x == "Turtle"	= "Cool"
        _                = "Yes"
-//Using String Guards: LEAKS!!!!!!!!!!!!!!
+//Using String Guards: No Leaks
 stringGuard("hey")
-//Declaring Array Guards: LEAKS!!!!!!!!!!!!!!
+//Declaring Array Guards: No Leaks
 arrayGuard x
        | x[0] == 0     	= 10
-       | x[0] == 1		= [ 100 100 ]
+       | x[0] == 1		= 100
        _                = 0.1
 //Using Array Guards: LEAKS!!!!!!!!!!!!!!
-arrayGuard([1 1 2 3])
-//Declaring Where Functions: LEAKS!!!!!!!!!!!!!!
+arrayGuard([1])
+
+arrayGuard2 x
+       | x == 0     = [ 10  10  ]
+       | x == 1		= [ 100 100 ]
+       _            = [ 0.1 0.1 ]
+
+arrayGuard2(0)
+
+//Declaring Where Functions: No Leaks
 regularWhere x = x * y
-	where
-    	y = 20
+	where 
+		y = 20
 //Declaring Where Functions: SEGMENTATION FAULT CRASH!!!!!!!!!!!!!!!!!!!!!
 regularWhere( 13.3 )
 //Declaring String Function: No Leaks
@@ -87,11 +96,21 @@ myDict::innerDict::nested
 
 //Declaring Functions in Dictionaries: No Leaks
 functionary = { func x = x + 1 }
+functionary = 
+	func x = x + 1
 //Using Function in Dictionaries: Crash
 functionary::func(10)
 print(functionary::func)
 do x y = x(y)
 do(functionary::func 10)
 
+arraytionary = { array x = [ x x x ] }
+// crashes
+arraytionary::array(10)
+arraytionaryPlus x = arraytionary::array(x) + x
+arraytionaryPlus(1)
+
+call x y = x (y)
+call(arrationary::array 10)
 
 

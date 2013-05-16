@@ -28,6 +28,7 @@
 #include "include/Grammar/plus.h"
 #include "include/Grammar/minus.h"
 #include "include/Grammar/divide.h"
+#include "include/Grammar/parsingutilities.h"
 #include "include/core/function.h"
 #include "include/core/stack.h"
 #include "core/Memory.h"
@@ -44,127 +45,7 @@ namespace panopticon
 //==================
 //GENERAL
 //==================
-/*
-object copy_object(const object& original)
-{
-    object copy;
-    copy.type = original.type;
-    switch(original.type)
-    {
-    case panopticon::OPERATION:
-    case panopticon::NUMBER:
-    case panopticon::BOOL:
-        copy = original;
-        break;
-    case panopticon::STRING:
-        copy.data.string = new String(*original.data.string);
-        break;
-    case panopticon::OPERATION_TREE:
-    case panopticon::ARRAY:
-        copy.data.array = new Array();
-        //        copy.data.array->reserve(original.data.array->size());
-        for(int i=0;i<original.data.array->size();++i)
-        {
-            copy.data.array->push_back(copy_object(original.data.array->at(i)));
-        }
-        break;
 
-    default:
-        copy = original;
-        break;
-    }
-
-    return copy;
-}*/
-
-object create_void_tree()
-{
-    object void_tree = mem_alloc(OPERATION_TREE);
-    object v;
-    v.type = VOID;
-    void_tree.data.array->push_back(v);
-    return void_tree;
-}
-
-//object de_tree(object &obj)
-//{
-//    object new_object;
-//    out() << "object de_tree(object &obj): obj.type: " << obj.type << std::endl;
-//    if(obj.type==panopticon::OPERATION_TREE)
-//    {
-//        if(obj.data.array->size()==1)
-//        {
-//            return obj.data.array->at(0);
-//        }
-//        else
-//        {
-//            new_object.type = ARRAY;
-//            new_object.data.array = new Array();
-//            new_object.data.array->reserve(obj.data.array->size());
-//            for(int i=0;i<obj.data.array->size();++i)
-//            {
-//                new_object.data.array->push_back(de_tree(obj.data.array->at(i)));
-//            }
-//        }
-//    }
-//    else if(obj.type==ARRAY||obj.type==STATEMENT_LIST)
-//    {
-//        new_object.type = ARRAY;
-//        new_object.data.array = new Array();
-//        new_object.data.array->reserve(obj.data.array->size());
-//        for(int i=0;i<obj.data.array->size();++i)
-//        {
-//            new_object.data.array->push_back(de_tree(obj.data.array->at(i)));
-//        }
-//    }
-//    return new_object;
-//}
-
-/*
-bool delete_array(object& a)
-{
-    for(int i=0;i<a.data.array->size();++i)
-    {
-        panopticon::object& b = a.data.array->at(i);
-        switch(b.type)
-        {
-        case OPERATION:
-        case BOOL:
-        case NUMBER:
-            break;
-        case STRING:
-            delete b.data.string;
-            break;
-        case OPERATION_TREE:
-        case ARRAY:
-            delete_array(b);
-            break;
-        case DICTIONARY:
-            delete_dictionary(b);
-            break;
-        }
-    }
-    delete a.data.array;
-}
-
-bool delete_object(object& obj)
-{
-    switch(obj.type)
-    {
-    case OPERATION:
-    case optic::NUMBER:
-    case optic::BOOL:
-        break;
-    case optic::STRING:
-        delete obj.data.string;
-        break;
-    case OPERATION_TREE:
-    case optic::ARRAY:
-        panopticon::delete_array(obj);
-        break;
-    }
-}
-*/
 bool print_array(const object &A, int arrayNum,bool isTree)
 {
     if(arrayNum!=0)
@@ -332,318 +213,7 @@ bool print_object(const object &A)
 
 bool unary_print_object(object &A, const object &B)
 {
-    // A = mem_copy(B);
     print_object(B);
-}
-/*
-bool create_dictionary(object& dict)
-{
-    dict.data.dictionary = new Dictionary();
-    dict.type = DICTIONARY;
-    return true;
-}
-
-bool delete_dictionary(object& dict)
-{
-    Dictionary::iterator iter = dict.data.dictionary->begin();
-
-    while(iter != dict.data.dictionary->end())
-    {
-        panopticon::object& value = iter->second;
-
-        switch(value.type)
-        {
-        case STRING:
-            delete value.data.string;
-            break;
-
-        case OPERATION_TREE:
-        case ARRAY:
-            delete_array(value);
-
-        case DICTIONARY:
-            delete_dictionary(value);
-            break;
-
-        default:
-            break;
-        }
-
-        ++iter;
-    }
-
-    dict.data.dictionary->clear();
-    delete dict.data.dictionary;
-    return true;
-}*/
-
-bool print_dictionary(const object& dict)
-{
-    Dictionary::iterator iter = dict.data.dictionary->begin();
-
-    out() << "{ " << std::endl;
-
-    while(iter != dict.data.dictionary->end())
-    {
-        out() << "\"" << iter->first << "\" : ";
-
-        panopticon::object& value = iter->second;
-
-        switch(value.type)
-        {
-        case STRING:
-            out() << value.data.string;
-            break;
-
-        case NUMBER:
-            out() << value.data.number;
-            break;
-
-        case BOOL:
-            out() << value.data.boolean;
-            break;
-
-        case OPERATION_TREE:
-        case ARRAY:
-            print_array(value);
-            break;
-
-        case DICTIONARY:
-            print_dictionary(value);
-            break;
-
-        case FUNCTION:
-            out() << "Function";
-            break;
-
-        case NIL:
-            out() << "Nil";
-            break;
-
-        default:
-            break;
-        }
-
-        out() << " ";
-
-        ++iter;
-    }
-
-    out() << "}" << std::endl;
-    return true;
-}
-
-bool dictionary_lookup(object& value, const object& dict, const object& key)
-{
-    if(key.type != STRING)
-    {
-        out() << "Error: Dictionary key must be a String." << std::endl;
-        correct_parsing = false;
-        return false;
-    }
-
-    //If the object is a string, attempt to fetch it.
-    if(dict.type == STRING || dict.type == UNDECLARED_VARIABLE)
-    {
-        std::cout << "UV" << std::endl;
-        object result;
-
-        if(get_variable(dict.data.string, &result) == OK)
-        {
-            if(result.type == DICTIONARY)
-            {
-                bool success =  dictionary_lookup(value, result, key);
-                mem_free(result);
-                return success;
-            }
-
-            else
-            {
-                value.type = NIL;
-                out() << "Error: Cannot call a Dictionary lookup on a non-Dictionary object." << std::endl;
-                out() << "Object with Dictionary lookup called on it: " << dict.data.string->c_str() << std::endl;
-                correct_parsing = false;
-                return false;
-            }
-        }
-
-        else
-        {
-            value.type = NIL;
-            out() << "Error: the variable \'" << dict.data.string->c_str() << "\'' has not been declared." << std::endl;
-            correct_parsing = false;
-            return false;
-        }
-
-    }
-
-    Dictionary::iterator find = dict.data.dictionary->find(*key.data.string);
-    if(find != dict.data.dictionary->end())
-    {
-        value = mem_copy(find->second);
-    }
-
-    else
-    {
-        value.type = NIL;
-        out() << "No object found with key \'" << *key.data.string << "\'." << std::endl;
-        correct_parsing = false;
-        return false;
-    }
-
-    return true;
-}
-
-bool dictionary_contains(object &boolean, const object &dict, const object &key)
-{
-    if(key.type != STRING)
-    {
-        out() << "Dictionary key must be a String." << std::endl;
-        correct_parsing = false;
-        return false;
-    }
-
-    boolean.type = BOOL;
-    boolean.data.boolean = dict.data.dictionary->find(*key.data.string) != dict.data.dictionary->end();
-    return true;
-}
-
-bool dictionary_insert(object& dictionary_A,const object& string_B, const object& object_C)
-{
-    object boolean;
-    dictionary_contains(boolean,dictionary_A,string_B);
-    if(!boolean.data.boolean)
-    {
-        dictionary_A.data.dictionary->insert(
-                    std::make_pair(
-                        *string_B.data.string,
-                        object_C
-                        )
-                    );
-    }
-    else
-    {
-        out() << "Error:  Cannot insert key: " << *string_B.data.string << "into dictionary because this key already exists." << std::endl;
-        correct_parsing = false;
-        return false;
-    }
-}
-
-/*
-bool concatenate_arrays(object &a,object b, object c)
-{
-    //    a.data.array->reserve(b.data.array->size() + c.data.array->size());
-    for(int i=0;i<b.data.array->size();++i)
-    {
-        panopticon::object& d = b.data.array->at(i);
-        switch(d.type)
-        {
-        case NUMBER:
-            a.data.array->push_back(d);
-            break;
-        case STRING:
-            a.data.array->push_back(mem_copy(d));
-            break;
-        case BOOL:
-            a.data.array->push_back(d);
-            break;
-        case ARRAY:
-            a.data.array->push_back(mem_copy(d));
-            break;
-        }
-    }
-
-    for(int i=0;i<c.data.array->size();++i)
-    {
-        panopticon::object& d = b.data.array->at(i);
-        switch(d.type)
-        {
-        case NUMBER:
-            a.data.array->push_back(d);
-            break;
-        case STRING:
-            a.data.array->push_back(mem_copy(d));
-            break;
-        case BOOL:
-            a.data.array->push_back(d);
-            break;
-        case ARRAY:
-            a.data.array->push_back(mem_copy(d));
-            break;
-        }
-    }
-}
-
-bool create_array(object &a)
-{
-    a.data.array = new Array();
-}*/
-
-bool object_operator_array(object& a,const object& obj,const object& array, operator_function func)
-{
-    a = mem_alloc(ARRAY);
-    //    a.data.array->reserve(array.data.array->size());
-
-    for(int i=0;i<array.data.array->size();++i)
-    {
-        object newObject;
-        func(newObject,obj,array.data.array->at(i));
-        a.data.array->push_back(newObject);
-    }
-}
-
-bool array_operator_object(object& a,const object& array,const object& obj, operator_function func)
-{
-    a = mem_alloc(ARRAY);
-    //    a.data.array->reserve(array.data.array->size());
-
-    for(int i=0;i<array.data.array->size();++i)
-    {
-        object newObject;
-        func(newObject,array.data.array->at(i),obj);
-        a.data.array->push_back(newObject);
-    }
-}
-
-bool array_operator_array(object& a,const object& array1,const object& array2, operator_function func)
-{
-    a.type = panopticon::ARRAY;
-    //    a.data.array = new std::vector<object>();
-    int size = 0;
-    if(array1.data.array->size()>array2.data.array->size())
-    {
-        size = array1.data.array->size();
-    }
-    else
-    {
-        size = array2.data.array->size();
-    }
-    //    a.data.array->reserve(size);
-
-    for(int i=0;i<size;++i)
-    {
-        object& array1Object = array1.data.array->at(i%array1.data.array->size());
-        object& array2Object = array2.data.array->at(i%array2.data.array->size());
-        object newObject;
-        func(newObject,array1Object,array2Object);
-        a.data.array->push_back(newObject);
-    }
-}
-
-bool create_tree(object&a, const object& obj)
-{
-    if(obj.type == OPERATION_TREE)
-    {
-//        a = mem_copy(obj);
-        a = obj;
-    }
-
-    else
-    {
-        a = mem_alloc(OPERATION_TREE);
-//        a.data.array->push_back(mem_copy(obj));
-        a.data.array->push_back(obj);
-    }
 }
 
 //Unary
@@ -834,221 +404,6 @@ bool store_operations(object& a, const object& obj1, const object& obj2, operato
     }
 }
 
-
-/*
-bool object_operator_object(object& a, object& b, object& c, operator_function func)
-{
-    func(a, b, c);
-    // mem_free(b);
-    // mem_free(c);
-}*/
-
-bool resolve_stack_from_parser(const object& operation_tree, bool resolve_entire_stack)
-{
-    if(operation_tree.type == OPERATION_TREE)
-    {
-        Array* tree;
-
-        // Copy for normal calls, DON'T copy if this is coming from the parser. We know this because the parser resolves the entire stack.
-        // We don't copy the calls from the parser because it passes off ownership of the objects and doesn't free them itself.
-        if(!resolve_entire_stack)
-        {
-            object copy_tree = mem_copy(operation_tree);
-            tree = copy_tree.data.array;
-        }
-
-        else
-        {
-            tree = operation_tree.data.array;
-        }
-
-        if(operation_tree.data.array->size() > 1)
-        {
-            std::reverse_copy(tree->begin(), tree->end(), std::inserter(optic_stack, optic_stack.end()));
-        }
-
-        else if(operation_tree.data.array->size() == 1)
-        {
-            optic_stack.push_back(tree->at(0));
-        }
-
-        else
-        {
-            out() << "Error: No operations to put on the stack." << std::endl;
-            correct_parsing = false;
-        }
-
-        // Free the Array* we created but not the actual contents because they will get freed on the stack
-        shallow_mem_free_array(tree, OPERATION_TREE);
-
-        if(resolve_entire_stack)
-            evaluate_stack();
-        else
-            evaluate_top();
-    }
-}
-
-//bool parse_operations(object& a, const object& b, const object& c, operator_function func)
-//{
-//    store_operations(a, b, c, func);
-//}
-
-/**
- * @brief create_function
- * @param A
- * @param B Arguments for the Function. First argument is the function name (unless anonymous)
- * @param C Body of the function, stored as an operation_tree.
- * @return
- */
-bool create_function(object &A, const object &B, const object &C)
-{
-    A = mem_alloc(FUNCTION);
-    Function* function = A.data.function;
-
-    if(B.type == FUNCTION_ARG_NAMES)
-    {
-        function->num_arguments = B.data.array->size();
-        for(int i = 0; i < function->num_arguments; ++i)
-        {
-            function->arguments.push_back(mem_copy(B.data.array->at(i)));
-        }
-
-        function->name = std::string(*B.data.array->at(0).data.string);
-    }
-
-    else if(B.type == STRING)
-    {
-        function->num_arguments = 0;
-        function->arguments.push_back(mem_copy(B));
-        function->name = std::string(*B.data.string);
-    }
-
-    function->body = mem_copy(C);
-    function->body.type = OPERATION_TREE;
-}
-
-bool call_function_array(object& A, const object& B, const object& C)
-{
-    optic_stack.push_back(mem_copy(C));
-    optic_stack.push_back(mem_copy(B));
-    object call;
-    call.type = OPERATION;
-    call.data.operator_func = call_function;
-    optic_stack.push_back(call);
-    evaluate_top();
-    A = optic_stack.back(); // optimization: skip copy/free because nothing else will reference it
-    optic_stack.pop_back();
-}
-
-/**
-* @brief call_function
-* @param A = Result
-* @param B = Function name (STRING)
-* @param C = Function Arguments (ARRAY, zero indexed!)
-* @return
-*/
-bool call_function(object& A, const object& B, const object& C)
-{
-    object function;
-
-    switch(B.type)
-    {
-    case VARIABLE:
-    case UNDECLARED_VARIABLE:
-    case STRING:
-
-        if(get_variable(B.data.string, &function) != OK)
-        {
-            out() << "Unable to find function: " << B.data.string->c_str() << " in current scope" << std::endl;
-            correct_parsing = false;
-            return false;
-        }
-
-        if(function.type == ARRAY)
-        {
-            return call_function_array(A, function, C);
-        }
-
-        else if(function.type != FUNCTION)
-        {
-            return false;
-        }
-
-        break;
-
-    case FUNCTION:
-        // function = mem_copy(B);
-        function = B; // Will this cause a mem_free crash later? Not sure, something to test for.
-        break;
-
-    default:
-        out() << "Object is not a function and is not callable: ";
-        out() << "OBJECT TYPE: " << B.type << " ";
-        print_object(B);
-        return false;
-        break;
-    }
-
-    std::string function_name = function.data.function->name;
-    Dictionary context;
-    context.insert(std::make_pair(function_name, function));
-
-    if(function.data.function->arguments.size() > 1) // if it has any arguments
-    {
-        // iterate backwards through the argument list to put them on the stack, this way the resolve in the correct order when we collect them for mapping
-        // we use arguments.size() - 2 because we don't want to count the function name which is included in the arguments array
-        for(int i = function.data.function->arguments.size() - 2; i >= 0; --i)
-        {
-            optic_stack.push_back(mem_copy(C.data.array->at(i)));
-        }
-
-        // Collect the the results and map them to the local scope
-        for(int i = 1; i < function.data.function->num_arguments && optic_stack.size() > 0; ++i)
-        {
-            evaluate_top();
-            String arg_name = function.data.function->arguments.at(i).data.string->c_str();
-            context.insert(std::make_pair(arg_name, optic_stack.back())); // optimization: insert into map without copy because nothing else is pointing to it
-            optic_stack.pop_back();
-        }
-    }
-
-    push_scope(&context);
-    resolve_stack_from_parser(function.data.function->body, false);
-
-    if(optic_stack.back().type == ARRAY)
-    {
-        object parse_array = mem_alloc(UNARY_OPERATION);
-        parse_array.data.unary_operator_func = resolve_function_array;
-        optic_stack.push_back(parse_array); // optimization: No need for mem_copy, UNARY_OPERATION doesn't allocate memory
-        evaluate_top();
-    }
-
-    A = optic_stack.back(); // Move, no need to copy/free
-    optic_stack.pop_back();
-
-    pop_scope(); // frees dictionary memory as well
-    context.erase(function_name);
-    mem_free_dictionary(context);
-    mem_free(function);
-    return true;
-}
-
-bool resolve_function_array(object& A, const object& B)
-{
-    if(B.type != FUNCTION)
-    {
-        optic_stack.push_back(mem_copy(B));
-        evaluate_top();
-        A = optic_stack.back();
-        optic_stack.pop_back();
-    }
-
-    else
-    {
-        A = mem_copy(B);
-    }
-}
-
 //======================================================================================
 //OPERATORS
 //======================================================================================
@@ -1090,9 +445,6 @@ bool plus(object& A, const object& B, const object& C)
     case panopticon::BOOL:
         bool_plus(A,B,C);
         break;
-    case panopticon::ARRAY:
-        array_plus(A,B,C);
-        break;
     }
 }
 
@@ -1108,9 +460,6 @@ bool minus(object& A, const object& B, const object& C)
         break;
     case BOOL:
         bool_minus(A,B,C);
-        break;
-    case ARRAY:
-        array_minus(A,B,C);
         break;
     }
 }
@@ -1134,9 +483,6 @@ bool divide(object& A, const object& B, const object& C)
             out() << print_error(DivideBooolError) << std::endl;
             correct_parsing = false;
             break;
-        case ARRAY:
-            object_operator_array(A,B,C,&divide);
-            break;
         }
         break;
     case STRING:
@@ -1146,25 +492,6 @@ bool divide(object& A, const object& B, const object& C)
     case BOOL:
         out() << print_error(DivideBooolError) << std::endl;
         correct_parsing = false;
-        break;
-    case ARRAY:
-        switch(C.type)
-        {
-        case NUMBER:
-            array_operator_object(A,B,C,&divide);
-            break;
-        case STRING:
-            out() << print_error(DivideStringError) << std::endl;
-            correct_parsing = false;
-            break;
-        case BOOL:
-            out() << print_error(DivideBooolError) << std::endl;
-            correct_parsing = false;
-            break;
-        case ARRAY:
-            array_operator_array(A,B,C,&divide);
-            break;
-        }
         break;
     }
 }
@@ -1189,9 +516,6 @@ bool multiply(object& A, const object& B, const object& C)
             out() << print_error(MultiplyBoolError) << std::endl;
             correct_parsing = false;
             break;
-        case ARRAY:
-            object_operator_array(A,B,C,&multiply);
-            break;
         }
         break;
     case STRING:
@@ -1201,25 +525,6 @@ bool multiply(object& A, const object& B, const object& C)
     case BOOL:
         out() << print_error(MultiplyBoolError) << std::endl;
         correct_parsing = false;
-        break;
-    case ARRAY:
-        switch(C.type)
-        {
-        case NUMBER:
-            array_operator_object(A,B,C,&multiply);
-            break;
-        case STRING:
-            out() << print_error(DivideStringError) << std::endl;
-            correct_parsing = false;
-            break;
-        case BOOL:
-            out() << print_error(DivideBooolError) << std::endl;
-            correct_parsing = false;
-            break;
-        case ARRAY:
-            array_operator_array(A,B,C,&multiply);
-            break;
-        }
         break;
     }
 }
@@ -1243,9 +548,6 @@ bool modulo(object& A, const object& B, const object& C)
             out() << print_error(ModBoolError) << std::endl;
             correct_parsing = false;
             break;
-        case ARRAY:
-            object_operator_array(A,B,C,&modulo);
-            break;
         }
         break;
     case STRING:
@@ -1255,25 +557,6 @@ bool modulo(object& A, const object& B, const object& C)
     case BOOL:
         out() << print_error(ModBoolError) << std::endl;
         correct_parsing = false;
-        break;
-    case ARRAY:
-        switch(C.type)
-        {
-        case NUMBER:
-            array_operator_object(A,B,C,&modulo);
-            break;
-        case STRING:
-            out() << print_error(ModStringError) << std::endl;
-            correct_parsing = false;
-            break;
-        case BOOL:
-            out() << print_error(ModBoolError) << std::endl;
-            correct_parsing = false;
-            break;
-        case ARRAY:
-            array_operator_array(A,B,C,&modulo);
-            break;
-        }
         break;
     }
 }
@@ -1297,9 +580,6 @@ bool value_pow(object& A, const object& B, const object& C)
             out() << print_error(PowBoolError) << std::endl;
             correct_parsing = false;
             break;
-        case ARRAY:
-            object_operator_array(A,B,C,&value_pow);
-            break;
         }
         break;
     case STRING:
@@ -1309,25 +589,6 @@ bool value_pow(object& A, const object& B, const object& C)
     case BOOL:
         out() << print_error(PowBoolError) << std::endl;
         correct_parsing = false;
-        break;
-    case ARRAY:
-        switch(C.type)
-        {
-        case NUMBER:
-            array_operator_object(A,B,C,&value_pow);
-            break;
-        case STRING:
-            out() << print_error(PowStringError) << std::endl;
-            correct_parsing = false;
-            break;
-        case BOOL:
-            out() << print_error(PowBoolError) << std::endl;
-            correct_parsing = false;
-            break;
-        case ARRAY:
-            array_operator_array(A,B,C,&value_pow);
-            break;
-        }
         break;
     }
 }
@@ -1351,9 +612,6 @@ bool equal_to(object& A, const object& B, const object& C)
             A.type = BOOL;
             A.data.boolean = false;
             break;
-        case ARRAY:
-            object_operator_array(A,B,C,&equal_to);
-            break;
         }
         break;
     case STRING:
@@ -1371,9 +629,6 @@ bool equal_to(object& A, const object& B, const object& C)
             A.type = BOOL;
             A.data.boolean = false;
             break;
-        case ARRAY:
-            object_operator_array(A,B,C,&equal_to);
-            break;
         }
         break;
     case BOOL:
@@ -1390,29 +645,6 @@ bool equal_to(object& A, const object& B, const object& C)
         case BOOL:
             A.type = BOOL;
             A.data.boolean = B.data.boolean==C.data.boolean;
-            break;
-        case ARRAY:
-            object_operator_array(A,B,C,&equal_to);
-            break;
-        }
-        break;
-    case ARRAY:
-        switch(C.type)
-        {
-        case NUMBER:
-            A.type = BOOL;
-            A.data.boolean = false;
-            break;
-        case STRING:
-            A.type = BOOL;
-            A.data.boolean = false;
-            break;
-        case BOOL:
-            A.type = BOOL;
-            A.data.boolean = false;
-            break;
-        case ARRAY:
-            array_operator_array(A,B,C,&equal_to);
             break;
         }
         break;
@@ -1438,9 +670,6 @@ bool not_equal_to(object& A, const object& B, const object& C)
             A.type = BOOL;
             A.data.boolean = true;
             break;
-        case ARRAY:
-            object_operator_array(A,B,C,&not_equal_to);
-            break;
         }
         break;
     case STRING:
@@ -1458,9 +687,6 @@ bool not_equal_to(object& A, const object& B, const object& C)
             A.type = BOOL;
             A.data.boolean = true;
             break;
-        case ARRAY:
-            object_operator_array(A,B,C,&not_equal_to);
-            break;
         }
         break;
     case BOOL:
@@ -1477,29 +703,6 @@ bool not_equal_to(object& A, const object& B, const object& C)
         case BOOL:
             A.type = BOOL;
             A.data.boolean = B.data.boolean!=C.data.boolean;
-            break;
-        case ARRAY:
-            object_operator_array(A,B,C,&not_equal_to);
-            break;
-        }
-        break;
-    case ARRAY:
-        switch(C.type)
-        {
-        case NUMBER:
-            A.type = BOOL;
-            A.data.boolean = true;
-            break;
-        case STRING:
-            A.type = BOOL;
-            A.data.boolean = true;
-            break;
-        case BOOL:
-            A.type = BOOL;
-            A.data.boolean = true;
-            break;
-        case ARRAY:
-            array_operator_array(A,B,C,&not_equal_to);
             break;
         }
         break;
@@ -1525,9 +728,6 @@ bool less_than(object& A, const object& B, const object& C)
             out() << "Syntax error: A bool cannot be greater than or less than a number." << std::endl;
             correct_parsing = false;
             break;
-        case ARRAY:
-            object_operator_array(A,B,C,&less_than);
-            break;
         }
         break;
     case STRING:
@@ -1536,9 +736,6 @@ bool less_than(object& A, const object& B, const object& C)
         case STRING:
             A.type = BOOL;
             A.data.boolean =  B.data.string->size() < C.data.string->size();
-            break;
-        case ARRAY:
-            object_operator_array(A,B,C,&less_than);
             break;
         default:
             out() << "Syntax error: A string cannot be greater than or less than a number, or a bool." << std::endl;
@@ -1549,24 +746,6 @@ bool less_than(object& A, const object& B, const object& C)
     case BOOL:
         out() << "Syntax error: A bool cannot be greater than or less than a number." << std::endl;
         correct_parsing = false;
-        break;
-    case ARRAY:
-        switch(C.type)
-        {
-        case NUMBER:
-            array_operator_object(A,B,C,&less_than);
-            break;
-        case STRING:
-            array_operator_object(A,B,C,&less_than);
-            break;
-        case BOOL:
-            out() << "Syntax error: A bool cannot be greater than or less than a number." << std::endl;
-            correct_parsing = false;
-            break;
-        case ARRAY:
-            array_operator_array(A,B,C,&less_than);
-            break;
-        }
         break;
     }
 }
@@ -1590,9 +769,6 @@ bool greater_than(object& A, const object& B, const object& C)
             out() << "Syntax error: A bool cannot be greater than or less than a number." << std::endl;
             correct_parsing = false;
             break;
-        case ARRAY:
-            object_operator_array(A,B,C,&greater_than);
-            break;
         }
         break;
     case STRING:
@@ -1601,9 +777,6 @@ bool greater_than(object& A, const object& B, const object& C)
         case STRING:
             A.type = BOOL;
             A.data.boolean =  B.data.string->size() > C.data.string->size();
-            break;
-        case ARRAY:
-            object_operator_array(A,B,C,&greater_than);
             break;
         default:
             out() << "Syntax error: A string cannot be greater than or less than a number, or a bool." << std::endl;
@@ -1614,24 +787,6 @@ bool greater_than(object& A, const object& B, const object& C)
     case BOOL:
         out() << "Syntax error: A bool cannot be greater than or less than a number." << std::endl;
         correct_parsing = false;
-        break;
-    case ARRAY:
-        switch(C.type)
-        {
-        case NUMBER:
-            array_operator_object(A,B,C,&greater_than);
-            break;
-        case STRING:
-            array_operator_object(A,B,C,&less_than);
-            break;
-        case BOOL:
-            out() << "Syntax error: A bool cannot be greater than or less than a number." << std::endl;
-            correct_parsing = false;
-            break;
-        case ARRAY:
-            array_operator_array(A,B,C,&greater_than);
-            break;
-        }
         break;
     }
 }
@@ -1655,9 +810,6 @@ bool lore(object& A, const object& B, const object& C)
             out() << "Syntax error: A bool cannot be greater than or less than a number." << std::endl;
             correct_parsing = false;
             break;
-        case ARRAY:
-            object_operator_array(A,B,C,&lore);
-            break;
         }
         break;
     case STRING:
@@ -1666,9 +818,6 @@ bool lore(object& A, const object& B, const object& C)
         case STRING:
             A.type = BOOL;
             A.data.boolean =  B.data.string->size() <= C.data.string->size();
-            break;
-        case ARRAY:
-            object_operator_array(A,B,C,&lore);
             break;
         default:
             out() << "Syntax error: A string cannot be greater than or less than a number, or a bool." << std::endl;
@@ -1679,24 +828,6 @@ bool lore(object& A, const object& B, const object& C)
     case BOOL:
         out() << "Syntax error: A bool cannot be greater than or less than a number." << std::endl;
         correct_parsing = false;
-        break;
-    case ARRAY:
-        switch(C.type)
-        {
-        case NUMBER:
-            array_operator_object(A,B,C,&lore);
-            break;
-        case STRING:
-            array_operator_object(A,B,C,&less_than);
-            break;
-        case BOOL:
-            out() << "Syntax error: A bool cannot be greater than or less than a number." << std::endl;
-            correct_parsing = false;
-            break;
-        case ARRAY:
-            array_operator_array(A,B,C,&lore);
-            break;
-        }
         break;
     }
 }
@@ -1720,9 +851,6 @@ bool gore(object& A, const object& B, const object& C)
             out() << "Syntax error: A bool cannot be greater than or less than a number." << std::endl;
             correct_parsing = false;
             break;
-        case ARRAY:
-            object_operator_array(A,B,C,&gore);
-            break;
         }
         break;
     case STRING:
@@ -1731,9 +859,6 @@ bool gore(object& A, const object& B, const object& C)
         case STRING:
             A.type = BOOL;
             A.data.boolean =  B.data.string->size() >= C.data.string->size();
-            break;
-        case ARRAY:
-            object_operator_array(A,B,C,&gore);
             break;
         default:
             out() << "Syntax error: A string cannot be greater than or less than a number, or a bool." << std::endl;
@@ -1744,24 +869,6 @@ bool gore(object& A, const object& B, const object& C)
     case BOOL:
         out() << "Syntax error: A bool cannot be greater than or less than a number." << std::endl;
         correct_parsing = false;
-        break;
-    case ARRAY:
-        switch(C.type)
-        {
-        case NUMBER:
-            array_operator_object(A,B,C,&gore);
-            break;
-        case STRING:
-            array_operator_object(A,B,C,&gore);
-            break;
-        case BOOL:
-            out() << "Syntax error: A bool cannot be greater than or less than a number." << std::endl;
-            correct_parsing = false;
-            break;
-        case ARRAY:
-            array_operator_array(A,B,C,&gore);
-            break;
-        }
         break;
     }
 }
@@ -1799,9 +906,6 @@ bool value_and(object& A, const object& B, const object& C)
                 A.data.boolean = false;
             }
             break;
-        case ARRAY:
-            object_operator_array(A,B,C,&value_and);
-            break;
         }
         break;
     case STRING:
@@ -1836,27 +940,6 @@ bool value_and(object& A, const object& B, const object& C)
             {
                 A.data.boolean = false;
             }
-            break;
-        case ARRAY:
-            object_operator_array(A,B,C,&value_and);
-            break;
-        }
-        break;
-    case ARRAY:
-        switch(C.type)
-        {
-        case NUMBER:
-            array_operator_object(A,B,C,&value_and);
-            break;
-        case STRING:
-            out() << "Syntax error: A string is not a bool." << std::endl;
-            correct_parsing = false;
-            break;
-        case BOOL:
-            array_operator_object(A,B,C,&value_and);
-            break;
-        case ARRAY:
-            array_operator_array(A,B,C,&value_and);
             break;
         }
         break;
@@ -1896,9 +979,6 @@ bool value_or(object& A, const object& B, const object& C)
                 A.data.boolean = false;
             }
             break;
-        case ARRAY:
-            object_operator_array(A,B,C,&value_or);
-            break;
         }
         break;
     case STRING:
@@ -1934,27 +1014,6 @@ bool value_or(object& A, const object& B, const object& C)
                 A.data.boolean = false;
             }
             break;
-        case ARRAY:
-            object_operator_array(A,B,C,&value_or);
-            break;
-        }
-        break;
-    case ARRAY:
-        switch(C.type)
-        {
-        case NUMBER:
-            array_operator_object(A,B,C,&value_or);
-            break;
-        case STRING:
-            out() << "Syntax error: A string is not a bool." << std::endl;
-            correct_parsing = false;
-            break;
-        case BOOL:
-            array_operator_object(A,B,C,&value_or);
-            break;
-        case ARRAY:
-            array_operator_array(A,B,C,&value_or);
-            break;
         }
         break;
     }
@@ -1983,10 +1042,6 @@ bool not_value(object& A, const object& B)
         A = B;
         A.data.boolean = !A.data.boolean;
         break;
-    case ARRAY:
-        out() << "Syntax error: cannot call ! on an array." << std::endl;
-        correct_parsing = false;
-        break;
     }
 }
 
@@ -2009,9 +1064,6 @@ bool shift_left(object& A, const object& B, const object& C)
             out() << "Syntax error: cannot call << on a boolean." << std::endl;
             correct_parsing = false;
             break;
-        case ARRAY:
-            object_operator_array(A,B,C,&shift_left);
-            break;
         }
         break;
     case STRING:
@@ -2021,25 +1073,6 @@ bool shift_left(object& A, const object& B, const object& C)
     case BOOL:
         out() << "Syntax error: cannot call << on a boolean." << std::endl;
         correct_parsing = false;
-        break;
-    case ARRAY:
-        switch(C.type)
-        {
-        case NUMBER:
-            array_operator_object(A,B,C,&shift_left);
-            break;
-        case STRING:
-            out() << "Syntax error: cannot call << on a string." << std::endl;
-            correct_parsing = false;
-            break;
-        case BOOL:
-            out() << "Syntax error: cannot call << on a boolean." << std::endl;
-            correct_parsing = false;
-            break;
-        case ARRAY:
-            array_operator_array(A,B,C,&shift_left);
-            break;
-        }
         break;
     }
 }
@@ -2063,9 +1096,6 @@ bool shift_right(object& A, const object& B, const object& C)
             out() << "Syntax error: cannot call >> on a boolean." << std::endl;
             correct_parsing = false;
             break;
-        case ARRAY:
-            object_operator_array(A,B,C,&shift_right);
-            break;
         }
         break;
     case STRING:
@@ -2075,25 +1105,6 @@ bool shift_right(object& A, const object& B, const object& C)
     case BOOL:
         out() << "Syntax error: cannot call >> on a boolean." << std::endl;
         correct_parsing = false;
-        break;
-    case ARRAY:
-        switch(C.type)
-        {
-        case NUMBER:
-            array_operator_object(A,B,C,&shift_right);
-            break;
-        case STRING:
-            out() << "Syntax error: cannot call >> on a string." << std::endl;
-            correct_parsing = false;
-            break;
-        case BOOL:
-            out() << "Syntax error: cannot call >> on a boolean." << std::endl;
-            correct_parsing = false;
-            break;
-        case ARRAY:
-            array_operator_array(A,B,C,&shift_right);
-            break;
-        }
         break;
     }
 }
@@ -2112,10 +1123,6 @@ bool bit_not(object& A, const object &B)
         break;
     case BOOL:
         out() << "Syntax error: cannot call ~ on a string." << std::endl;
-        correct_parsing = false;
-        break;
-    case ARRAY:
-        out() << "Syntax error: cannot call ~ on an array." << std::endl;
         correct_parsing = false;
         break;
     }
@@ -2140,9 +1147,6 @@ bool bit_and(object& A, const object& B, const object& C)
             out() << "Syntax error: cannot call & on a boolean." << std::endl;
             correct_parsing = false;
             break;
-        case ARRAY:
-            object_operator_array(A,B,C,&bit_and);
-            break;
         }
         break;
     case STRING:
@@ -2152,25 +1156,6 @@ bool bit_and(object& A, const object& B, const object& C)
     case BOOL:
         out() << "Syntax error: cannot call & on a boolean." << std::endl;
         correct_parsing = false;
-        break;
-    case ARRAY:
-        switch(C.type)
-        {
-        case NUMBER:
-            array_operator_object(A,B,C,&bit_and);
-            break;
-        case STRING:
-            out() << "Syntax error: cannot call & on a string." << std::endl;
-            correct_parsing = false;
-            break;
-        case BOOL:
-            out() << "Syntax error: cannot call & on a boolean." << std::endl;
-            correct_parsing = false;
-            break;
-        case ARRAY:
-            array_operator_array(A,B,C,&bit_and);
-            break;
-        }
         break;
     }
 }
@@ -2194,9 +1179,6 @@ bool bit_or(object& A, const object& B, const object& C)
             out() << "Syntax error: cannot call & on a boolean." << std::endl;
             correct_parsing = false;
             break;
-        case ARRAY:
-            object_operator_array(A,B,C,&bit_or);
-            break;
         }
         break;
     case STRING:
@@ -2206,25 +1188,6 @@ bool bit_or(object& A, const object& B, const object& C)
     case BOOL:
         out() << "Syntax error: cannot call & on a boolean." << std::endl;
         correct_parsing = false;
-        break;
-    case ARRAY:
-        switch(C.type)
-        {
-        case NUMBER:
-            array_operator_object(A,B,C,&bit_or);
-            break;
-        case STRING:
-            out() << "Syntax error: cannot call & on a string." << std::endl;
-            correct_parsing = false;
-            break;
-        case BOOL:
-            out() << "Syntax error: cannot call & on a boolean." << std::endl;
-            correct_parsing = false;
-            break;
-        case ARRAY:
-            array_operator_array(A,B,C,&bit_or);
-            break;
-        }
         break;
     }
 }
@@ -2248,9 +1211,6 @@ bool bit_xor(object& A, const object& B, const object& C)
             out() << "Syntax error: cannot call |^ on a boolean." << std::endl;
             correct_parsing = false;
             break;
-        case ARRAY:
-            object_operator_array(A,B,C,&bit_xor);
-            break;
         }
         break;
     case STRING:
@@ -2261,119 +1221,9 @@ bool bit_xor(object& A, const object& B, const object& C)
         out() << "Syntax error: cannot call |^ on a boolean." << std::endl;
         correct_parsing = false;
         break;
-    case ARRAY:
-        switch(C.type)
-        {
-        case NUMBER:
-            array_operator_object(A,B,C,&bit_xor);
-            break;
-        case STRING:
-            out() << "Syntax error: cannot call |^ on a string." << std::endl;
-            correct_parsing = false;
-            break;
-        case BOOL:
-            out() << "Syntax error: cannot call |^ on a boolean." << std::endl;
-            correct_parsing = false;
-            break;
-        case ARRAY:
-            array_operator_array(A,B,C,&bit_xor);
-            break;
-        }
-        break;
     }
 }
 
-
-bool index(object& A, const object& B, const object& C)
-{
-    object result;
-    switch(B.type)
-    {
-    case ARRAY:
-        switch(C.type)
-        {
-        case NUMBER:
-            if(C.data.number<B.data.array->size())
-            {
-                A = mem_copy(B.data.array->at(C.data.number));
-                optic_stack.push_back(A);
-                evaluate_top();
-                A = optic_stack.back();
-                optic_stack.pop_back();
-            }
-            else
-            {
-                out() << "Error: Index out of range." << std::endl;
-                correct_parsing = false;
-            }
-            break;
-        case STRING:
-            out() << "Syntax error: A string cannot be an array index." << std::endl;
-            correct_parsing = false;
-            break;
-        case BOOL:
-            out() << "Syntax error: A bool cannot be an array index." << std::endl;
-            correct_parsing = false;
-            break;
-        case ARRAY:
-            if(C.data.array->size() > 0)
-            {
-                index(A,B,C.data.array->at(0));
-            }
-            else
-            {
-                out() << "Error: Attempting to index with an array of size zero." << std::endl;
-                correct_parsing = false;
-            }
-            break;
-        case UNDECLARED_VARIABLE:
-            get_variable(C.data.string,&result);
-            index(A,B,mem_copy(result));
-            break;
-        case OPERATION_TREE:
-            optic_stack.push_back(C);
-            evaluate_top();
-            result = mem_copy(optic_stack.back());
-            optic_stack.pop_back();
-            index(A,B,result);
-            break;
-        default:
-            out() << "Syntax error: cannot use a non-numeral for an array index." << std::endl;
-            out() << "Object used as index: ";
-            print_object(C);
-            correct_parsing = false;
-            break;
-        }
-        break;
-    case STRING:
-        if(get_variable(B.data.string, &result) == OK)
-        {
-            if(result.type != FUNCTION)
-            {
-                index(A,result,C);
-            }
-
-            else
-            {
-                call_function(result,B,create_void_tree());
-                index(A,result,C);
-            }
-
-            break;
-        }
-        out() << "Syntax error: Attempting to index an undeclared variable." << std::endl;
-        out() << "Variable with index called on it: ";
-        print_object(B);
-        correct_parsing = false;
-        break;
-    default:
-        out() << "Syntax error: cannot retrieve an index from a non-array data type." << std::endl;
-        out() << "Object with index called on it: ";
-        print_object(B);
-        correct_parsing = false;
-        break;
-    }
-}
 
 bool assign_variable(object& A, const object& B, const object& C)
 {
@@ -2401,41 +1251,6 @@ bool assign_variable(object& A, const object& B, const object& C)
         out() << "assign_variable unable to determine type" << std::endl;
         correct_parsing = false;
     }
-
-    //A.type = VOID; // prevent return to stack
 }
-
-bool retrieve_variable(object &A, object &B)
-{
-
-    if(get_variable(B.data.string, &A) != OK)
-    {
-        A = B;
-        A.type = UNDECLARED_VARIABLE;
-        return true;
-    }
-
-    else
-    {
-        return false;
-    }
-}
-
-bool print(object& A, const object& B)
-{
-
-}
-
-object convert_to_string( object& original)
-{
-    object newObject = mem_alloc(STRING);
-
-    std::stringstream ss;
-    ss << original.data.number;
-
-    newObject.data.string->append(ss.str());
-    return newObject;
-}
-
 
 }

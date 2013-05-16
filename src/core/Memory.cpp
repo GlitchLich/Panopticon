@@ -278,6 +278,16 @@ void gc_delete_function(Function* function)
 {
     if(function)
     {
+        if(function->name.size()>0&&function->name.size()<25)
+        {
+            std::cout  << "deleting function: " << function->name << std::endl;
+        }
+        else
+        {
+            std::cout  << "deleting function with no name" << std::endl;
+
+        }
+
         gc_delete_array(function->arguments);
         mem_free(function->body);
         gc_delete_dictionary(function->heap);
@@ -310,7 +320,7 @@ void gc_delete_string(String* string)
 
 void gc_delete(object& obj)
 {
-    std::cout << "gc_delete obj.type = " << obj.type << std::endl;
+    std::cout << "gc_delete obj.type = " << panopticon::type_string(obj.type) << std::endl;
     switch(obj.type)
     {
     case NIL:
@@ -544,7 +554,8 @@ object mem_alloc(Type type)
 void mem_free(object obj)
 {
     std::cout << "mem_free" << std::endl;
-    dealloc_queue.push_back(obj);
+    // dealloc_queue.push_back(obj);
+    gc_delete(obj);
 }
 
 Array* copy_array(Array* array)

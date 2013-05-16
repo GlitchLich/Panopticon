@@ -1,11 +1,12 @@
 #include <iostream>
-
+#include "../../include/core/stack.h"
 #include "core/types.h"
 #include "core/operators.h"
 #include "include/core/panopticon.h"
 #include "include/core/heap.h"
 #include "include/Grammar/parse.h"
 #include "core/Memory.h"
+#include <algorithm>
 
 namespace panopticon
 {
@@ -394,6 +395,51 @@ void print_stack()
         i++;
     }
     out() << ")" << std::endl;
+}
+
+bool resolve_stack_from_parser(const object& operation_tree, bool resolve_entire_stack)
+{
+    if(operation_tree.type == OPERATION_TREE)
+    {
+        Array* tree;
+
+        // Copy for normal calls, DON'T copy if this is coming from the parser. We know this because the parser resolves the entire stack.
+        // We don't copy the calls from the parser because it passes off ownership of the objects and doesn't free them itself.
+        if(!resolve_entire_stack)
+        {
+            object copy_tree = mem_copy(operation_tree);
+            tree = copy_tree.data.array;
+        }
+
+        else
+        {
+            tree = operation_tree.data.array;
+        }
+
+        if(operation_tree.data.array->size() > 1)
+        {
+            std::reverse_copy(tree->begin(), tree->end(), std::inserter(optic_stack, optic_stack.end()));
+        }
+
+        else if(operation_tree.data.array->size() == 1)
+        {
+            optic_stack.push_back(tree->at(0));
+        }
+
+        else
+        {
+            out() << "Error: No operations to put on the stack." << std::endl;
+            correct_parsing = false;
+        }
+
+        // Free the Array* we created but not the actual contents because they will get freed on the stack
+        shallow_mem_free_array(tree, OPERATION_TREE);
+
+        if(resolve_entire_stack)
+            evaluate_stack();
+        else
+            evaluate_top();
+    }
 }
 
 } // panopticon namespace

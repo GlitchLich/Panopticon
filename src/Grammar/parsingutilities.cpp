@@ -5,42 +5,13 @@
 
 namespace panopticon {
 
-void flatten_from_tree(Array& new_tree,const object& tree)
+object create_void_tree()
 {
-//    std::cout << "void flatten_from_tree(Array& new_tree,const object& tree)" << std::endl;
-    for(int i=0;i<tree.data.array->size();++i)
-    {
-        if(tree.data.array->at(i).type == OPERATION_TREE)
-        {
-            flatten_from_tree(new_tree,tree.data.array->at(i));
-        }
-        else
-        {
-            new_tree.push_back(tree.data.array->at(i));
-        }
-    }
-}
-
-panopticon::object flatten_tree(panopticon::object& tree)
-{
-    object new_tree;
-    new_tree.data.array = new Array();
-    new_tree.type = OPERATION_TREE;
-    out() << "Before Flatten: ";
-    print_object(tree);
-    if(tree.type==OPERATION_TREE)
-    {
-        flatten_from_tree(*new_tree.data.array,tree);
-    }
-    else
-    {
-        new_tree.data.array->push_back(tree);
-    }
-    mem_free_array(*tree.data.array);
-    out() << "After Flatten: ";
-    print_object(new_tree);
-
-    return new_tree;
+    object void_tree = mem_alloc(OPERATION_TREE);
+    object v;
+    v.type = VOID;
+    void_tree.data.array->push_back(v);
+    return void_tree;
 }
 
 bool insure_ready_for_assignment(panopticon::object& B, panopticon::object& C)
@@ -68,5 +39,22 @@ bool insure_ready_for_assignment(panopticon::object& B, panopticon::object& C)
     }
     B.type = FUNCTION_ARG_NAMES;
 }
+
+bool create_tree(object&a, const object& obj)
+{
+    if(obj.type == OPERATION_TREE)
+    {
+//        a = mem_copy(obj);
+        a = obj;
+    }
+
+    else
+    {
+        a = mem_alloc(OPERATION_TREE);
+//        a.data.array->push_back(mem_copy(obj));
+        a.data.array->push_back(obj);
+    }
+}
+
 
 }

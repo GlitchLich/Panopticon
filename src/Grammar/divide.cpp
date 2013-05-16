@@ -23,9 +23,6 @@ void number_divide(object&A,object& B, object& C)
         out() << print_error(DivideBooolError) << std::endl;
         correct_parsing = false;
         break;
-    case ARRAY:
-        object_operator_array(A,B,C,&divide);
-        break;
     }
 }
 
@@ -44,7 +41,7 @@ void string_divide(object&A, object& B, object& C)
 
 void array_divide(object&A, object& B, object& C)
 {
-    array_operator_object(A,B,C,&divide);
+
 }
 
 }
