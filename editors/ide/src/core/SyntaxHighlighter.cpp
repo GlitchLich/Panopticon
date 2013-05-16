@@ -34,6 +34,10 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument* parent) :
     rule.format = style->booleanFormat;
     rules.append(rule);
 
+    rule.pattern = QRegExp("\\btrue\\b");
+    rule.format = style->booleanFormat;
+    rules.append(rule);
+
     rule.pattern = QRegExp("\\bfalse\\b");
     rule.format = style->booleanFormat;
     rules.append(rule);
