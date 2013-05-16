@@ -154,7 +154,7 @@ bool dictionary_insert(object& dictionary_A,const object& string_B, const object
     {
         dictionary_A.data.dictionary->insert(
                     std::make_pair(
-                        *string_B.data.string,
+                        String(string_B.data.string->c_str()),
                         object_C
                         )
                     );
@@ -180,7 +180,7 @@ bool create_dictionary(object& result_A, const object& B)
         {
             result_A.data.dictionary->insert(
                         std::make_pair(
-                            std::string(*B.data.array->at(i).data.string),
+                            std::string(B.data.array->at(i).data.string->c_str()),
                             mem_copy(B.data.array->at(i+1))
                             )
                         );
@@ -197,7 +197,7 @@ bool create_dictionary(object& result_A, const object& B)
             evaluate_top();
             result_A.data.dictionary->insert(
                         std::make_pair(
-                            std::string(*B.data.array->at(i).data.array->at(0).data.string),
+                            std::string(B.data.array->at(i).data.array->at(0).data.string->c_str()),
                             mem_copy(optic_stack.back())
                             )
                         );

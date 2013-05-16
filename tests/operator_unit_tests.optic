@@ -18,12 +18,14 @@ n*m+z
 range = [120,117..0]
 range
 range[19::(-3):%]
+range[19::(-3):%][5]
 range[0:(-60):(-2):%]
 //Also works with Doubles!
 [0.1,0.3..1]
 
 //Array Slice tests:
 a = [20..40]
+
 //array [ first element : exclusion point : step size ( = 1) ] : Wrapping = %
 a[:3]
 a[3:]
@@ -85,13 +87,12 @@ whereTest( [ 12 13 ] )
 a = [0 1 2 3]
 a + [ 0 1 2 3 4 ]
 axe x = x
-axe(7)
+axe(a)
 recursion x t = recursion(x t-1)
 
 ten = 10
 ten
 recursion(12)
-
 
 hellYeah x = x + y("!!!")
 	where
@@ -123,10 +124,6 @@ guardTest(1)
 guardTest(2)
 //Will throw an error since there's an array in the guard statement.
 guardTest([5 5])
-
-clunky env var1 var2
-	| Just env::var1 && Just env::var2 	= var1 + var2
-	| _									= Nothing
 
 arrayGuard x
 	| x[0] == 1 							= "Zero!"
@@ -666,6 +663,7 @@ superLazyIndexing( valueAtIndex2 myArray 3 )
 
 //Array functions used for Function Calls
 myFunc x y = x / y
+myFunc(a[(-3):100:%] 3)
 multiArray = [23 22 [ 0 4 [ 6 7 ] ] 20]
 myFunc(2 multiArray)
 myFunc(multiArray[2][2][1] multiArray[2])

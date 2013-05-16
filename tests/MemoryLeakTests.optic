@@ -46,28 +46,28 @@ hello("Hello")
 //Declaring Vanilla Guards: No Leaks
 regularGuard x
 	| x > 1	= 1
-	_		= 0
+	| _		= 0
 //Using Vanilla Guards: No Leaks
 regularGuard(0)
 //Declaring String Guards: No Leaks
 stringGuard x
        | x == "hey"     = "No"
        | x == "Turtle"	= "Cool"
-       _                = "Yes"
+       | _              = "Yes"
 //Using String Guards: No Leaks
 stringGuard("hey")
 //Declaring Array Guards: No Leaks
 arrayGuard x
        | x[0] == 0     	= 10
        | x[0] == 1		= 100
-       _                = 0.1
+       | _              = 0.1
 //Using Array Guards: LEAKS!!!!!!!!!!!!!!
 arrayGuard([1])
 
 arrayGuard2 x
        | x == 0     = [ 10  10  ]
        | x == 1		= [ 100 100 ]
-       _            = [ 0.1 0.1 ]
+       | _          = [ 0.1 0.1 ]
 
 arrayGuard2(0)
 
@@ -86,20 +86,18 @@ print("Hello World")
 //Declaring Vanilla Dictionaries: No Leaks
 myDict = { test = 1 test2 = true test3 = "hey" test4 = [ 0 1 2 3 ] innerDict = { nested = 4} }
 //Using Vanilla Dictionaries: No Leaks
-myDict::test == "hey"
+myDict::test
 myDict::test2
 myDict::test3
-//This simply doesn't do anything
+myDict::test4
 myDict::test4 + myDict::test
 //No Leaks
 myDict::innerDict::nested
 
 //Declaring Functions in Dictionaries: No Leaks
 functionary = { func x = x + 1 }
-functionary = 
-	func x = x + 1
 //Using Function in Dictionaries: Crash
-functionary::func(10)
+functionary::func(20)
 print(functionary::func)
 do x y = x(y)
 do(functionary::func 20)
@@ -125,3 +123,6 @@ spreader = [doubler zeroOut doubleNeg]
 spreader[0](1)
 spreader[](0)
 spreader[](2)
+
+lazyFunctor f = f[](2)
+lazyFunctor(spreader)

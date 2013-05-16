@@ -659,7 +659,8 @@ object mem_copy(const object &obj)
         break;
     case STRING:
         increment_string();
-        new_object.data.string = new String(*obj.data.string);
+//        new_object.data.string = new String(*obj.data.string);
+        new_object.data.string = new String(obj.data.string->c_str());
         break;
     case FUNCTION:
         new_object.data.function = copy_function(obj.data.function);
@@ -680,11 +681,11 @@ object mem_copy(const object &obj)
         break;
     case VARIABLE:
         increment_string();
-        new_object.data.string = new String(*obj.data.string);
+        new_object.data.string = new String(obj.data.string->c_str());
         break;
     case UNDECLARED_VARIABLE:
         increment_string();
-        new_object.data.string = new String(*obj.data.string);
+        new_object.data.string = new String(obj.data.string->c_str());
         break;
     case OPERATION_TREE:
         increment_array(OPERATION_TREE);

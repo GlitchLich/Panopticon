@@ -105,7 +105,6 @@ bool call_function(object& A, const object& B, const object& C)
         return false;
         break;
     }
-
     std::string function_name = function.data.function->name;
     Dictionary context;
     context.insert(std::make_pair(function_name, function));
