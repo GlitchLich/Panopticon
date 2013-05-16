@@ -56,6 +56,7 @@
 %left DICT.
 %left WHERE.
 %left NAME.
+%left COMMA.
 %right BITOR.
 %left FUNCTION_DEC.
 %right COMPOSITION.
@@ -74,7 +75,6 @@
 %left DIVIDE TIMES MODULO.
 %right POW NOT BITNOT UMINUS PLUSPLUS.
 %left LPAREN RPAREN LBRAC RBRAC.
-%left COMMA.
 %left COLLECTARRAY.
 
 /*%left ASSIGN.*/
@@ -1142,6 +1142,10 @@ expr(A) ::= array_index(B). [INDEX]
     A = B;
 }
 
+//===================================================================
+//Extended Array Operations
+//===================================================================
+
 //Array Slicing
 //without step sizes...
 //Beginning to ...
@@ -1260,6 +1264,19 @@ array_slice(A) ::= NAME(B) LBRAC COLONCOLON expr(D) PREPEND MODULO RBRAC. [INDEX
 expr(A) ::= array_slice(B).
 {
     A = B;
+}
+
+expr(A) ::= LBRAC expr(B) RANGE expr(C) RBRAC.
+{
+    store_operations(A,B,C,optic::range_from_to);
+}
+
+expr(A) ::= LBRAC expr(B) COMMA expr(C) RANGE expr(D) RBRAC.
+{
+    optic::object start_step = optic::mem_alloc(optic::ARRAY);
+    start_step.data.array->push_back(B);
+    start_step.data.array->push_back(C);
+    store_operations(A,start_step,D,optic::range_from_step_to,false);
 }
 
 
