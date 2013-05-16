@@ -67,6 +67,7 @@ bool call_function_array(object& A, const object& B, const object& C)
 bool call_function(object& A, const object& B, const object& C)
 {
     object function;
+    bool free_function = true;
 
     switch(B.type)
     {
@@ -96,6 +97,7 @@ bool call_function(object& A, const object& B, const object& C)
     case FUNCTION:
         // function = mem_copy(B);
         function = B; // Will this cause a mem_free crash later? Not sure, something to test for.
+        free_function = false;
         break;
 
     default:
@@ -145,7 +147,8 @@ bool call_function(object& A, const object& B, const object& C)
     pop_scope(); // frees dictionary memory as well
     context.erase(function_name);
     mem_free_dictionary(context);
-    mem_free(function);
+    if(free_function)
+        mem_free(function);
     return true;
 }
 

@@ -174,9 +174,7 @@ bool create_dictionary(object& result_A, const object& B)
     result_A = optic::mem_alloc(optic::DICTIONARY);
     for(int i=0;i<B.data.array->size()-1;i+=2)
     {
-        if(
-                B.data.array->at(i).type != optic::ARRAY
-                )
+        if(B.data.array->at(i).type != optic::ARRAY)
         {
             result_A.data.dictionary->insert(
                         std::make_pair(
@@ -201,7 +199,7 @@ bool create_dictionary(object& result_A, const object& B)
                             mem_copy(optic_stack.back())
                             )
                         );
-            //            optic_stack.pop_back();
+            optic_stack.pop_back();
             //            mem_free(arg_copy);
         }
     }
