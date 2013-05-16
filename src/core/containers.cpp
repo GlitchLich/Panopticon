@@ -163,7 +163,7 @@ bool dictionary_insert(object& dictionary_A,const object& string_B, const object
 
 bool create_dictionary(object& result_A, const object& B)
 {
-//    std::cout << "CREATING A DICTIONARY!!!!!!!!!!!!!!!!!!!" << std::endl;
+    //    std::cout << "CREATING A DICTIONARY!!!!!!!!!!!!!!!!!!!" << std::endl;
     result_A = optic::mem_alloc(optic::DICTIONARY);
     for(int i=0;i<B.data.array->size()-1;i+=2)
     {
@@ -177,7 +177,7 @@ bool create_dictionary(object& result_A, const object& B)
                             mem_copy(B.data.array->at(i+1))
                             )
                         );
-//            optic::mem_free(B.data.array->at(i));
+            //            optic::mem_free(B.data.array->at(i));
         }
         else
         {
@@ -194,8 +194,8 @@ bool create_dictionary(object& result_A, const object& B)
                             mem_copy(optic_stack.back())
                             )
                         );
-//            optic_stack.pop_back();
-//            mem_free(arg_copy);
+            //            optic_stack.pop_back();
+            //            mem_free(arg_copy);
         }
     }
     optic_stack.push_back(result_A);
@@ -434,5 +434,1715 @@ bool index(object& A, const object& B, const object& C)
         break;
     }
 }
+
+bool slice(object&A, const object& B, const object& C)
+{
+    //Error Guards
+    if(B.type == STRING || B.type == UNDECLARED_VARIABLE)
+    {
+        object result;
+        if(get_variable(B.data.string,&result)==OK)
+        {
+            return slice(result,B,C);
+        }
+        else
+        {
+            out() << "Error: Could not find array with name: " << *B.data.string << std::endl;
+            correct_parsing = false;
+            return false;
+        }
+    }
+    if(B.type!=ARRAY)
+    {
+        out() << "Error: Cannot slice a non-Array." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    if(C.type!=ARRAY)
+    {
+        out() << "Error: Malformed Array slicing." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    int begin,end;
+    const object& index1 = C.data.array->at(0);
+    const object& index2 = C.data.array->at(1);
+    if(index1.type==OPERATION_TREE)
+    {
+        optic_stack.push_back(mem_copy(index1));
+        evaluate_top();
+
+        if(optic_stack.back().type!=NUMBER)
+        {
+            out() << "Error: Cannot slice an array with a non-Number. Object in slice index number one is of type: "<< type_string(optic_stack.back().type) << std::endl;
+            correct_parsing = false;
+            optic_stack.pop_back();
+            return false;
+        }
+        else
+        {
+            begin = optic_stack.back().data.number;
+
+            optic_stack.pop_back();
+        }
+    }
+    else if(index1.type == STRING || index1.type == UNDECLARED_VARIABLE)
+    {
+        object result;
+        if(get_variable(index1.data.string,&result)==OK)
+        {
+            if(result.type!=NUMBER)
+            {
+                out() << "Error: Cannot slice an array with a non-Number. Object in slice index number one is of type: "<< type_string(result.type) << std::endl;
+                correct_parsing = false;
+                optic_stack.pop_back();
+                return false;
+            }
+            else
+            {
+                begin = result.data.number;
+            }
+        }
+        else
+        {
+            correct_parsing = false;
+            return false;
+        }
+    }
+    else if(index1.type!=NUMBER)
+    {
+        out() << "Error: Cannot slice an array with a non-Number. Slice type: "<< type_string(C.data.array->at(0).type) << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    else
+    {
+        begin = index1.data.number;
+    }
+
+    //Slice Index 2
+    if(index2.type==OPERATION_TREE)
+    {
+        optic_stack.push_back(mem_copy(index2));
+        evaluate_top();
+
+        if(optic_stack.back().type!=NUMBER)
+        {
+            out() << "Error: Cannot slice an array with a non-Number. Object in slice index number two is of type: "<< type_string(optic_stack.back().type) << std::endl;
+            correct_parsing = false;
+            optic_stack.pop_back();
+            return false;
+        }
+        else
+        {
+            end = optic_stack.back().data.number;
+            optic_stack.pop_back();
+        }
+    }
+    else if(index2.type == STRING || index2.type == UNDECLARED_VARIABLE)
+    {
+        object result;
+        if(get_variable(index2.data.string,&result)==OK)
+        {
+            if(result.type!=NUMBER)
+            {
+                out() << "Error: Cannot slice an array with a non-Number. Object in slice index number one is of type: "<< type_string(result.type) << std::endl;
+                correct_parsing = false;
+                optic_stack.pop_back();
+                return false;
+            }
+            else
+            {
+                end = result.data.number;
+            }
+        }
+        else
+        {
+            correct_parsing = false;
+            return false;
+        }
+    }
+    else if(index2.type!=NUMBER)
+    {
+        out() << "Error: Cannot slice an array with a non-Number. Slice type: "<< type_string(C.data.array->at(1).type) << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    else
+    {
+        end = index2.data.number;
+    }
+    if(begin>end)
+    {
+        out() << "Error: Number on left-hand side of Array slice is larger than the number on the right-hand side, which is illegal with out specifying a negative slice step-size." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    if(begin<0)
+    {
+        begin = 0;
+    }
+    if(end<0)
+    {
+        end = 0;
+    }
+    if(begin>B.data.array->size())
+    {
+        begin = B.data.array->size();
+    }
+    if(end>B.data.array->size())
+    {
+        end = B.data.array->size();
+    }
+    A = mem_alloc(ARRAY);
+    A.data.array->resize(end - begin);
+    std::copy(B.data.array->begin()+begin,B.data.array->begin()+end,A.data.array->begin());
+}
+
+bool slice_beginning_to(object&A, const object& B, const object& C)
+{
+    if(B.type == STRING || B.type == UNDECLARED_VARIABLE)
+    {
+        object result;
+        if(get_variable(B.data.string,&result)==OK)
+        {
+            return slice_beginning_to(result,B,C);
+        }
+        else
+        {
+            out() << "Error: Could not find array with name: " << *B.data.string << std::endl;
+            correct_parsing = false;
+            return false;
+        }
+    }
+    //Error Guards
+    if(B.type!=ARRAY)
+    {
+        out() << "Error: Cannot slice a non-Array." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    if(C.type!=NUMBER)
+    {
+        out() << "Error: Cannot slice an array with a non-Number." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    int num = C.data.number;
+    if(num<0)
+    {
+        num = 0;
+    }
+    if(num>B.data.array->size())
+    {
+        num = B.data.array->size();
+    }
+    A = mem_alloc(ARRAY);
+    A.data.array->resize(num);
+    std::copy(B.data.array->begin(),B.data.array->begin()+num,A.data.array->begin());
+}
+
+bool slice_to_end(object&A, const object& B, const object& C)
+{
+    if(B.type == STRING || B.type == UNDECLARED_VARIABLE)
+    {
+        object result;
+        if(get_variable(B.data.string,&result)==OK)
+        {
+            return slice_to_end(result,B,C);
+        }
+        else
+        {
+            out() << "Error: Could not find array with name: " << *B.data.string << std::endl;
+            correct_parsing = false;
+            return false;
+        }
+    }
+    if(B.type!=ARRAY)
+    {
+        out() << "Error: Cannot slice a non-Array." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    if(C.type!=NUMBER)
+    {
+        out() << "Error: Cannot slice an array with a non-Number." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    int num = C.data.number;
+    if(num<0)
+    {
+        num = 0;
+    }
+    if(num>B.data.array->size())
+    {
+        num = B.data.array->size();
+    }
+
+    A = mem_alloc(ARRAY);
+    A.data.array->resize(B.data.array->size()-num);
+    std::copy(B.data.array->begin()+num,B.data.array->end(),A.data.array->begin());
+}
+
+bool slice_all_with_step(object&A, const object& B, const object& C)
+{
+    if(B.type == STRING || B.type == UNDECLARED_VARIABLE)
+    {
+        object result;
+        if(get_variable(B.data.string,&result)==OK)
+        {
+            return slice_all_with_step(result,B,C);
+        }
+        else
+        {
+            out() << "Error: Could not find array with name: " << *B.data.string << std::endl;
+            correct_parsing = false;
+            return false;
+        }
+    }
+    //Error Guards
+    if(B.type!=ARRAY)
+    {
+        out() << "Error: Cannot slice a non-Array." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    if(C.type!=NUMBER)
+    {
+        out() << "Error: Cannot slice an array with a non-Number for a step-size." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    int num = C.data.number;
+    if(num<0)
+    {
+        num = 0;
+    }
+    if(num>B.data.array->size())
+    {
+        num = B.data.array->size();
+    }
+    A = mem_alloc(ARRAY);
+    for(int i=0;i<B.data.array->size();i+=num)
+    {
+        A.data.array->push_back(mem_copy(B.data.array->at(i)));
+    }
+}
+
+bool slice_beginning_to_with_step(object&A, const object& B, const object& C)
+{
+    //Error Guards
+    if(B.type == STRING || B.type == UNDECLARED_VARIABLE)
+    {
+        object result;
+        if(get_variable(B.data.string,&result)==OK)
+        {
+            return slice_beginning_to_with_step(result,B,C);
+        }
+        else
+        {
+            out() << "Error: Could not find array with name: " << *B.data.string << std::endl;
+            correct_parsing = false;
+            return false;
+        }
+    }
+    if(B.type!=ARRAY)
+    {
+        out() << "Error: Cannot slice a non-Array." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    if(C.type!=ARRAY)
+    {
+        out() << "Error: Malformed Array slicing." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    int begin,end;
+    const object& index1 = C.data.array->at(0);
+    const object& index2 = C.data.array->at(1);
+    if(index1.type==OPERATION_TREE)
+    {
+        optic_stack.push_back(mem_copy(index1));
+        evaluate_top();
+
+        if(optic_stack.back().type!=NUMBER)
+        {
+            out() << "Error: Cannot slice an array with a non-Number. Object in slice index number one is of type: "<< type_string(optic_stack.back().type) << std::endl;
+            correct_parsing = false;
+            optic_stack.pop_back();
+            return false;
+        }
+        else
+        {
+            begin = optic_stack.back().data.number;
+
+            optic_stack.pop_back();
+        }
+    }
+    else if(index1.type == STRING || index1.type == UNDECLARED_VARIABLE)
+    {
+        object result;
+        if(get_variable(index1.data.string,&result)==OK)
+        {
+            if(result.type!=NUMBER)
+            {
+                out() << "Error: Cannot slice an array with a non-Number. Object in slice index number one is of type: "<< type_string(result.type) << std::endl;
+                correct_parsing = false;
+                optic_stack.pop_back();
+                return false;
+            }
+            else
+            {
+                begin = result.data.number;
+            }
+        }
+        else
+        {
+            correct_parsing = false;
+            return false;
+        }
+    }
+    else if(index1.type!=NUMBER)
+    {
+        out() << "Error: Cannot slice an array with a non-Number. Slice type: "<< type_string(C.data.array->at(0).type) << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    else
+    {
+        begin = index1.data.number;
+    }
+
+    //Slice Index 2
+    if(index2.type==OPERATION_TREE)
+    {
+        optic_stack.push_back(mem_copy(index2));
+        evaluate_top();
+
+        if(optic_stack.back().type!=NUMBER)
+        {
+            out() << "Error: Cannot slice an array with a non-Number. Object in slice index number two is of type: "<< type_string(optic_stack.back().type) << std::endl;
+            correct_parsing = false;
+            optic_stack.pop_back();
+            return false;
+        }
+        else
+        {
+            end = optic_stack.back().data.number;
+            optic_stack.pop_back();
+        }
+    }
+    else if(index2.type == STRING || index2.type == UNDECLARED_VARIABLE)
+    {
+        object result;
+        if(get_variable(index2.data.string,&result)==OK)
+        {
+            if(result.type!=NUMBER)
+            {
+                out() << "Error: Cannot slice an array with a non-Number. Object in slice index number one is of type: "<< type_string(result.type) << std::endl;
+                correct_parsing = false;
+                optic_stack.pop_back();
+                return false;
+            }
+            else
+            {
+                end = result.data.number;
+            }
+        }
+        else
+        {
+            correct_parsing = false;
+            return false;
+        }
+    }
+    else if(index2.type!=NUMBER)
+    {
+        out() << "Error: Cannot slice an array with a non-Number. Slice type: "<< type_string(C.data.array->at(1).type) << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    else
+    {
+        end = index2.data.number;
+    }
+    if(begin<0)
+    {
+        begin = 0;
+    }
+    if(end == 0)
+    {
+        out() << "Error: Cannot have a step-size of zero." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    if(begin>B.data.array->size())
+    {
+        begin = B.data.array->size();
+    }
+    A = mem_alloc(ARRAY);
+
+    for(int i=begin;i<B.data.array->size();i+=end)
+    {
+        A.data.array->push_back(mem_copy(B.data.array->at(i)));
+    }
+}
+
+bool slice_to_end_with_step(object&A, const object& B, const object& C)
+{
+    //Error Guards
+    if(B.type == STRING || B.type == UNDECLARED_VARIABLE)
+    {
+        object result;
+        if(get_variable(B.data.string,&result)==OK)
+        {
+            return slice_to_end_with_step(result,B,C);
+        }
+        else
+        {
+            out() << "Error: Could not find array with name: " << *B.data.string << std::endl;
+            correct_parsing = false;
+            return false;
+        }
+    }
+    if(B.type!=ARRAY)
+    {
+        out() << "Error: Cannot slice a non-Array." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    if(C.type!=ARRAY)
+    {
+        out() << "Error: Malformed Array slicing." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    int begin,end;
+    const object& index1 = C.data.array->at(0);
+    const object& index2 = C.data.array->at(1);
+    if(index1.type==OPERATION_TREE)
+    {
+        optic_stack.push_back(mem_copy(index1));
+        evaluate_top();
+
+        if(optic_stack.back().type!=NUMBER)
+        {
+            out() << "Error: Cannot slice an array with a non-Number. Object in slice index number one is of type: "<< type_string(optic_stack.back().type) << std::endl;
+            correct_parsing = false;
+            optic_stack.pop_back();
+            return false;
+        }
+        else
+        {
+            begin = optic_stack.back().data.number;
+
+            optic_stack.pop_back();
+        }
+    }
+    else if(index1.type == STRING || index1.type == UNDECLARED_VARIABLE)
+    {
+        object result;
+        if(get_variable(index1.data.string,&result)==OK)
+        {
+            if(result.type!=NUMBER)
+            {
+                out() << "Error: Cannot slice an array with a non-Number. Object in slice index number one is of type: "<< type_string(result.type) << std::endl;
+                correct_parsing = false;
+                optic_stack.pop_back();
+                return false;
+            }
+            else
+            {
+                begin = result.data.number;
+            }
+        }
+        else
+        {
+            correct_parsing = false;
+            return false;
+        }
+    }
+    else if(index1.type!=NUMBER)
+    {
+        out() << "Error: Cannot slice an array with a non-Number. Slice type: "<< type_string(C.data.array->at(0).type) << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    else
+    {
+        begin = index1.data.number;
+    }
+
+    //Slice Index 2
+    if(index2.type==OPERATION_TREE)
+    {
+        optic_stack.push_back(mem_copy(index2));
+        evaluate_top();
+
+        if(optic_stack.back().type!=NUMBER)
+        {
+            out() << "Error: Cannot slice an array with a non-Number. Object in slice index number two is of type: "<< type_string(optic_stack.back().type) << std::endl;
+            correct_parsing = false;
+            optic_stack.pop_back();
+            return false;
+        }
+        else
+        {
+            end = optic_stack.back().data.number;
+            optic_stack.pop_back();
+        }
+    }
+    else if(index2.type == STRING || index2.type == UNDECLARED_VARIABLE)
+    {
+        object result;
+        if(get_variable(index2.data.string,&result)==OK)
+        {
+            if(result.type!=NUMBER)
+            {
+                out() << "Error: Cannot slice an array with a non-Number. Object in slice index number one is of type: "<< type_string(result.type) << std::endl;
+                correct_parsing = false;
+                optic_stack.pop_back();
+                return false;
+            }
+            else
+            {
+                end = result.data.number;
+            }
+        }
+        else
+        {
+            correct_parsing = false;
+            return false;
+        }
+    }
+    else if(index2.type!=NUMBER)
+    {
+        out() << "Error: Cannot slice an array with a non-Number. Slice type: "<< type_string(C.data.array->at(1).type) << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    else
+    {
+        end = index2.data.number;
+    }
+    if(begin<0)
+    {
+        begin = 0;
+    }
+    if(end == 0)
+    {
+        out() << "Error: Cannot have a step-size of zero." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    else if(end < 0 )
+    {
+        out() << "Error: Cannot have a negative slice step-size that goes below the zero index unless you allow wrapping. (i.e. myArray[:2:(-4):%] )" << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    if(begin>B.data.array->size())
+    {
+        begin = B.data.array->size();
+    }
+    A = mem_alloc(ARRAY);
+
+    for(int i=0;i<begin;i+=end)
+    {
+        A.data.array->push_back(mem_copy(B.data.array->at(i)));
+    }
+}
+
+bool slice_with_step(object&A, const object& B, const object& C)
+{
+    //Error Guards
+    if(B.type == STRING || B.type == UNDECLARED_VARIABLE)
+    {
+        object result;
+        if(get_variable(B.data.string,&result)==OK)
+        {
+            return slice_with_step(result,B,C);
+        }
+        else
+        {
+            out() << "Error: Could not find array with name: " << *B.data.string << std::endl;
+            correct_parsing = false;
+            return false;
+        }
+    }
+    if(B.type!=ARRAY)
+    {
+        out() << "Error: Cannot slice a non-Array." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    if(C.type!=ARRAY)
+    {
+        out() << "Error: Malformed Array slicing." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    int begin,end,step;
+    const object& index1 = C.data.array->at(0);
+    const object& index2 = C.data.array->at(1);
+    const object& index3 = C.data.array->at(2);
+    if(index1.type==OPERATION_TREE)
+    {
+        optic_stack.push_back(mem_copy(index1));
+        evaluate_top();
+
+        if(optic_stack.back().type!=NUMBER)
+        {
+            out() << "Error: Cannot slice an array with a non-Number. Object in slice index number one is of type: "<< type_string(optic_stack.back().type) << std::endl;
+            correct_parsing = false;
+            optic_stack.pop_back();
+            return false;
+        }
+        else
+        {
+            begin = optic_stack.back().data.number;
+
+            optic_stack.pop_back();
+        }
+    }
+    else if(index1.type == STRING || index1.type == UNDECLARED_VARIABLE)
+    {
+        object result;
+        if(get_variable(index1.data.string,&result)==OK)
+        {
+            if(result.type!=NUMBER)
+            {
+                out() << "Error: Cannot slice an array with a non-Number. Object in slice index number one is of type: "<< type_string(result.type) << std::endl;
+                correct_parsing = false;
+                optic_stack.pop_back();
+                return false;
+            }
+            else
+            {
+                begin = result.data.number;
+            }
+        }
+        else
+        {
+            correct_parsing = false;
+            return false;
+        }
+    }
+    else if(index1.type!=NUMBER)
+    {
+        out() << "Error: Cannot slice an array with a non-Number. Slice type: "<< type_string(C.data.array->at(0).type) << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    else
+    {
+        begin = index1.data.number;
+    }
+
+    //Slice Index 2
+    if(index2.type==OPERATION_TREE)
+    {
+        optic_stack.push_back(mem_copy(index2));
+        evaluate_top();
+
+        if(optic_stack.back().type!=NUMBER)
+        {
+            out() << "Error: Cannot slice an array with a non-Number. Object in slice index number two is of type: "<< type_string(optic_stack.back().type) << std::endl;
+            correct_parsing = false;
+            optic_stack.pop_back();
+            return false;
+        }
+        else
+        {
+            end = optic_stack.back().data.number;
+            optic_stack.pop_back();
+        }
+    }
+    else if(index2.type == STRING || index2.type == UNDECLARED_VARIABLE)
+    {
+        object result;
+        if(get_variable(index2.data.string,&result)==OK)
+        {
+            if(result.type!=NUMBER)
+            {
+                out() << "Error: Cannot slice an array with a non-Number. Object in slice index number one is of type: "<< type_string(result.type) << std::endl;
+                correct_parsing = false;
+                optic_stack.pop_back();
+                return false;
+            }
+            else
+            {
+                end = result.data.number;
+            }
+        }
+        else
+        {
+            correct_parsing = false;
+            return false;
+        }
+    }
+    else if(index2.type!=NUMBER)
+    {
+        out() << "Error: Cannot slice an array with a non-Number. Slice type: "<< type_string(C.data.array->at(1).type) << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    else
+    {
+        end = index2.data.number;
+    }
+
+    //Slice Index 2
+    if(index3.type==OPERATION_TREE)
+    {
+        optic_stack.push_back(mem_copy(index3));
+        evaluate_top();
+
+        if(optic_stack.back().type!=NUMBER)
+        {
+            out() << "Error: Cannot slice an array with a non-Number. Object in slice index number two is of type: "<< type_string(optic_stack.back().type) << std::endl;
+            correct_parsing = false;
+            optic_stack.pop_back();
+            return false;
+        }
+        else
+        {
+            step = optic_stack.back().data.number;
+            optic_stack.pop_back();
+        }
+    }
+    else if(index3.type == STRING || index3.type == UNDECLARED_VARIABLE)
+    {
+        object result;
+        if(get_variable(index3.data.string,&result)==OK)
+        {
+            if(result.type!=NUMBER)
+            {
+                out() << "Error: Cannot slice an array with a non-Number. Object in slice index number one is of type: "<< type_string(result.type) << std::endl;
+                correct_parsing = false;
+                optic_stack.pop_back();
+                return false;
+            }
+            else
+            {
+                step = result.data.number;
+            }
+        }
+        else
+        {
+            correct_parsing = false;
+            return false;
+        }
+    }
+    else if(index3.type!=NUMBER)
+    {
+        out() << "Error: Cannot slice an array with a non-Number. Slice type: "<< type_string(C.data.array->at(2).type) << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    else
+    {
+        step = index3.data.number;
+    }
+    if(step == 0)
+    {
+        out() << "Error: Cannot have a step-size of zero." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    else if(step>0)
+    {
+        if(begin>end)
+        {
+            out() << "Error: Number on left-hand side of Array slice is larger than the number on the right-hand side, which is illegal with out specifying a negative slice step-size." << std::endl;
+            correct_parsing = false;
+            return false;
+        }
+    }
+    else
+    {
+        if(end>begin)
+        {
+            out() << "Error: Number on Right-hand side of Array slice is larger than the number on the left-hand side, which is illegal while specifying a negative slice step-size." << std::endl;
+            correct_parsing = false;
+            return false;
+        }
+    }
+
+    if(begin<0)
+    {
+        begin = 0;
+    }
+    if(end<0)
+    {
+        end = 0;
+    }
+    if(begin>B.data.array->size())
+    {
+        begin = B.data.array->size();
+    }
+    if(end>B.data.array->size())
+    {
+        end = B.data.array->size();
+    }
+    A = mem_alloc(ARRAY);
+    if(step>0)
+    {
+        for(int i=begin;i<end;i+=step)
+        {
+            A.data.array->push_back(mem_copy(B.data.array->at(i)));
+        }
+    }
+    else if(step < 0)
+    {
+        for(int i=begin;i>end;i+=step)
+        {
+            A.data.array->push_back(mem_copy(B.data.array->at(i)));
+        }
+    }
+}
+
+//WRAPPING
+bool slice_beginning_to_wrapping(object&A, const object& B, const object& C)
+{
+    if(B.type == STRING || B.type == UNDECLARED_VARIABLE)
+    {
+        object result;
+        if(get_variable(B.data.string,&result)==OK)
+        {
+            return slice_beginning_to(result,B,C);
+        }
+        else
+        {
+            out() << "Error: Could not find array with name: " << *B.data.string << std::endl;
+            correct_parsing = false;
+            return false;
+        }
+    }
+
+    //Error Guards
+    if(B.type!=ARRAY)
+    {
+        out() << "Error: Cannot slice a non-Array." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    if(C.type!=NUMBER)
+    {
+        out() << "Error: Cannot slice an array with a non-Number." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+
+    int num = C.data.number;
+    A = mem_alloc(ARRAY);
+    int size = B.data.array->size();
+    int end  = size - num;
+
+    for(int i=num;i<num + size;i++)
+    {
+        if(i>=0)
+        {
+            A.data.array->push_back(mem_copy(B.data.array->at(i%size)));
+        }
+        else
+        {
+            int index = i%size;
+            index = size + index;
+            A.data.array->push_back(mem_copy(B.data.array->at(index%size)));
+        }
+    }
+}
+
+bool slice_to_end_wrapping(object&A, const object& B, const object& C)
+{
+    if(B.type == STRING || B.type == UNDECLARED_VARIABLE)
+    {
+        object result;
+        if(get_variable(B.data.string,&result)==OK)
+        {
+            return slice_to_end(result,B,C);
+        }
+        else
+        {
+            out() << "Error: Could not find array with name: " << *B.data.string << std::endl;
+            correct_parsing = false;
+            return false;
+        }
+    }
+
+    if(B.type!=ARRAY)
+    {
+        out() << "Error: Cannot slice a non-Array." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    if(C.type!=NUMBER)
+    {
+        out() << "Error: Cannot slice an array with a non-Number." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+
+    int num = C.data.number;
+    A = mem_alloc(ARRAY);
+    int size = B.data.array->size();
+    int end  = size - num;
+
+    for(int i=0;i<num;i++)
+    {
+        if(i>=0)
+        {
+            A.data.array->push_back(mem_copy(B.data.array->at(i%size)));
+        }
+        else
+        {
+            int index = i%size;
+            index = size + index;
+            A.data.array->push_back(mem_copy(B.data.array->at(index%size)));
+        }
+    }
+}
+
+//SLICE WITH WRAPPING
+bool slice_with_wrapping(object&A, const object& B, const object& C)
+{
+    //Error Guards
+    if(B.type == STRING || B.type == UNDECLARED_VARIABLE)
+    {
+        object result;
+        if(get_variable(B.data.string,&result)==OK)
+        {
+            return slice(result,B,C);
+        }
+        else
+        {
+            out() << "Error: Could not find array with name: " << *B.data.string << std::endl;
+            correct_parsing = false;
+            return false;
+        }
+    }
+    if(B.type!=ARRAY)
+    {
+        out() << "Error: Cannot slice a non-Array." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    if(C.type!=ARRAY)
+    {
+        out() << "Error: Malformed Array slicing." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    int begin,end;
+    const object& index1 = C.data.array->at(0);
+    const object& index2 = C.data.array->at(1);
+    if(index1.type==OPERATION_TREE)
+    {
+        optic_stack.push_back(mem_copy(index1));
+        evaluate_top();
+
+        if(optic_stack.back().type!=NUMBER)
+        {
+            out() << "Error: Cannot slice an array with a non-Number. Object in slice index number one is of type: "<< type_string(optic_stack.back().type) << std::endl;
+            correct_parsing = false;
+            optic_stack.pop_back();
+            return false;
+        }
+        else
+        {
+            begin = optic_stack.back().data.number;
+
+            optic_stack.pop_back();
+        }
+    }
+    else if(index1.type == STRING || index1.type == UNDECLARED_VARIABLE)
+    {
+        object result;
+        if(get_variable(index1.data.string,&result)==OK)
+        {
+            if(result.type!=NUMBER)
+            {
+                out() << "Error: Cannot slice an array with a non-Number. Object in slice index number one is of type: "<< type_string(result.type) << std::endl;
+                correct_parsing = false;
+                optic_stack.pop_back();
+                return false;
+            }
+            else
+            {
+                begin = result.data.number;
+            }
+        }
+        else
+        {
+            correct_parsing = false;
+            return false;
+        }
+    }
+    else if(index1.type!=NUMBER)
+    {
+        out() << "Error: Cannot slice an array with a non-Number. Slice type: "<< type_string(C.data.array->at(0).type) << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    else
+    {
+        begin = index1.data.number;
+    }
+
+    //Slice Index 2
+    if(index2.type==OPERATION_TREE)
+    {
+        optic_stack.push_back(mem_copy(index2));
+        evaluate_top();
+
+        if(optic_stack.back().type!=NUMBER)
+        {
+            out() << "Error: Cannot slice an array with a non-Number. Object in slice index number two is of type: "<< type_string(optic_stack.back().type) << std::endl;
+            correct_parsing = false;
+            optic_stack.pop_back();
+            return false;
+        }
+        else
+        {
+            end = optic_stack.back().data.number;
+            optic_stack.pop_back();
+        }
+    }
+    else if(index2.type == STRING || index2.type == UNDECLARED_VARIABLE)
+    {
+        object result;
+        if(get_variable(index2.data.string,&result)==OK)
+        {
+            if(result.type!=NUMBER)
+            {
+                out() << "Error: Cannot slice an array with a non-Number. Object in slice index number one is of type: "<< type_string(result.type) << std::endl;
+                correct_parsing = false;
+                optic_stack.pop_back();
+                return false;
+            }
+            else
+            {
+                end = result.data.number;
+            }
+        }
+        else
+        {
+            correct_parsing = false;
+            return false;
+        }
+    }
+    else if(index2.type!=NUMBER)
+    {
+        out() << "Error: Cannot slice an array with a non-Number. Slice type: "<< type_string(C.data.array->at(1).type) << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    else
+    {
+        end = index2.data.number;
+    }
+    if(begin>end)
+    {
+        out() << "Error: Number on left-hand side of Array slice is larger than the number on the right-hand side, which is illegal with out specifying a negative slice step-size." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+
+    A = mem_alloc(ARRAY);
+
+    int size = B.data.array->size();
+
+    for(int i=begin;i<end;i++)
+    {
+        if(i>=0)
+        {
+            A.data.array->push_back(mem_copy(B.data.array->at(i%size)));
+        }
+        else
+        {
+            int index = i%size;
+            index = size + index;
+            A.data.array->push_back(mem_copy(B.data.array->at(index%size)));
+        }
+    }
+}
+
+bool slice_beginning_to_with_step_wrapping(object&A, const object& B, const object& C)
+{
+    //Error Guards
+    if(B.type == STRING || B.type == UNDECLARED_VARIABLE)
+    {
+        object result;
+        if(get_variable(B.data.string,&result)==OK)
+        {
+            return slice_beginning_to_with_step(result,B,C);
+        }
+        else
+        {
+            out() << "Error: Could not find array with name: " << *B.data.string << std::endl;
+            correct_parsing = false;
+            return false;
+        }
+    }
+    if(B.type!=ARRAY)
+    {
+        out() << "Error: Cannot slice a non-Array." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    if(C.type!=ARRAY)
+    {
+        out() << "Error: Malformed Array slicing." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    int begin,end;
+    const object& index1 = C.data.array->at(0);
+    const object& index2 = C.data.array->at(1);
+    if(index1.type==OPERATION_TREE)
+    {
+        optic_stack.push_back(mem_copy(index1));
+        evaluate_top();
+
+        if(optic_stack.back().type!=NUMBER)
+        {
+            out() << "Error: Cannot slice an array with a non-Number. Object in slice index number one is of type: "<< type_string(optic_stack.back().type) << std::endl;
+            correct_parsing = false;
+            optic_stack.pop_back();
+            return false;
+        }
+        else
+        {
+            begin = optic_stack.back().data.number;
+
+            optic_stack.pop_back();
+        }
+    }
+    else if(index1.type == STRING || index1.type == UNDECLARED_VARIABLE)
+    {
+        object result;
+        if(get_variable(index1.data.string,&result)==OK)
+        {
+            if(result.type!=NUMBER)
+            {
+                out() << "Error: Cannot slice an array with a non-Number. Object in slice index number one is of type: "<< type_string(result.type) << std::endl;
+                correct_parsing = false;
+                optic_stack.pop_back();
+                return false;
+            }
+            else
+            {
+                begin = result.data.number;
+            }
+        }
+        else
+        {
+            correct_parsing = false;
+            return false;
+        }
+    }
+    else if(index1.type!=NUMBER)
+    {
+        out() << "Error: Cannot slice an array with a non-Number. Slice type: "<< type_string(C.data.array->at(0).type) << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    else
+    {
+        begin = index1.data.number;
+    }
+
+    //Slice Index 2
+    if(index2.type==OPERATION_TREE)
+    {
+        optic_stack.push_back(mem_copy(index2));
+        evaluate_top();
+
+        if(optic_stack.back().type!=NUMBER)
+        {
+            out() << "Error: Cannot slice an array with a non-Number. Object in slice index number two is of type: "<< type_string(optic_stack.back().type) << std::endl;
+            correct_parsing = false;
+            optic_stack.pop_back();
+            return false;
+        }
+        else
+        {
+            end = optic_stack.back().data.number;
+            optic_stack.pop_back();
+        }
+    }
+    else if(index2.type == STRING || index2.type == UNDECLARED_VARIABLE)
+    {
+        object result;
+        if(get_variable(index2.data.string,&result)==OK)
+        {
+            if(result.type!=NUMBER)
+            {
+                out() << "Error: Cannot slice an array with a non-Number. Object in slice index number one is of type: "<< type_string(result.type) << std::endl;
+                correct_parsing = false;
+                optic_stack.pop_back();
+                return false;
+            }
+            else
+            {
+                end = result.data.number;
+            }
+        }
+        else
+        {
+            correct_parsing = false;
+            return false;
+        }
+    }
+    else if(index2.type!=NUMBER)
+    {
+        out() << "Error: Cannot slice an array with a non-Number. Slice type: "<< type_string(C.data.array->at(1).type) << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    else
+    {
+        end = index2.data.number;
+    }
+
+    A = mem_alloc(ARRAY);
+
+    int size = B.data.array->size();
+
+    for(int i=begin;i<begin+size;i+=end)
+    {
+        if(i>=0)
+        {
+            A.data.array->push_back(mem_copy(B.data.array->at(i%size)));
+        }
+        else
+        {
+            int index = i%size;
+            index = size + index;
+            A.data.array->push_back(mem_copy(B.data.array->at(index%size)));
+        }
+    }
+}
+
+bool slice_to_end_with_step_wrapping(object&A, const object& B, const object& C)
+{
+    //Error Guards
+    if(B.type == STRING || B.type == UNDECLARED_VARIABLE)
+    {
+        object result;
+        if(get_variable(B.data.string,&result)==OK)
+        {
+            return slice_to_end_with_step(result,B,C);
+        }
+        else
+        {
+            out() << "Error: Could not find array with name: " << *B.data.string << std::endl;
+            correct_parsing = false;
+            return false;
+        }
+    }
+    if(B.type!=ARRAY)
+    {
+        out() << "Error: Cannot slice a non-Array." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    if(C.type!=ARRAY)
+    {
+        out() << "Error: Malformed Array slicing." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    int begin,end;
+    const object& index1 = C.data.array->at(0);
+    const object& index2 = C.data.array->at(1);
+    if(index1.type==OPERATION_TREE)
+    {
+        optic_stack.push_back(mem_copy(index1));
+        evaluate_top();
+
+        if(optic_stack.back().type!=NUMBER)
+        {
+            out() << "Error: Cannot slice an array with a non-Number. Object in slice index number one is of type: "<< type_string(optic_stack.back().type) << std::endl;
+            correct_parsing = false;
+            optic_stack.pop_back();
+            return false;
+        }
+        else
+        {
+            begin = optic_stack.back().data.number;
+
+            optic_stack.pop_back();
+        }
+    }
+    else if(index1.type == STRING || index1.type == UNDECLARED_VARIABLE)
+    {
+        object result;
+        if(get_variable(index1.data.string,&result)==OK)
+        {
+            if(result.type!=NUMBER)
+            {
+                out() << "Error: Cannot slice an array with a non-Number. Object in slice index number one is of type: "<< type_string(result.type) << std::endl;
+                correct_parsing = false;
+                optic_stack.pop_back();
+                return false;
+            }
+            else
+            {
+                begin = result.data.number;
+            }
+        }
+        else
+        {
+            correct_parsing = false;
+            return false;
+        }
+    }
+    else if(index1.type!=NUMBER)
+    {
+        out() << "Error: Cannot slice an array with a non-Number. Slice type: "<< type_string(C.data.array->at(0).type) << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    else
+    {
+        begin = index1.data.number;
+    }
+
+    //Slice Index 2
+    if(index2.type==OPERATION_TREE)
+    {
+        optic_stack.push_back(mem_copy(index2));
+        evaluate_top();
+
+        if(optic_stack.back().type!=NUMBER)
+        {
+            out() << "Error: Cannot slice an array with a non-Number. Object in slice index number two is of type: "<< type_string(optic_stack.back().type) << std::endl;
+            correct_parsing = false;
+            optic_stack.pop_back();
+            return false;
+        }
+        else
+        {
+            end = optic_stack.back().data.number;
+            optic_stack.pop_back();
+        }
+    }
+    else if(index2.type == STRING || index2.type == UNDECLARED_VARIABLE)
+    {
+        object result;
+        if(get_variable(index2.data.string,&result)==OK)
+        {
+            if(result.type!=NUMBER)
+            {
+                out() << "Error: Cannot slice an array with a non-Number. Object in slice index number one is of type: "<< type_string(result.type) << std::endl;
+                correct_parsing = false;
+                optic_stack.pop_back();
+                return false;
+            }
+            else
+            {
+                end = result.data.number;
+            }
+        }
+        else
+        {
+            correct_parsing = false;
+            return false;
+        }
+    }
+    else if(index2.type!=NUMBER)
+    {
+        out() << "Error: Cannot slice an array with a non-Number. Slice type: "<< type_string(C.data.array->at(1).type) << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    else
+    {
+        end = index2.data.number;
+    }
+    if(begin<0)
+    {
+        begin = 0;
+    }
+    if(end == 0)
+    {
+        out() << "Error: Cannot have a step-size of zero." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    else if(end < 0 )
+    {
+        out() << "Error: Cannot have a negative slice step-size that goes below the zero index unless you allow wrapping. (i.e. myArray[:2:(-4):%] )" << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+
+    A = mem_alloc(ARRAY);
+
+    int size = B.data.array->size();
+
+    for(int i=0;i<begin;i+=end)
+    {
+
+        A.data.array->push_back(mem_copy(B.data.array->at(i%size)));
+    }
+}
+
+bool slice_with_step_wrapping(object&A, const object& B, const object& C)
+{
+    //Error Guards
+    if(B.type == STRING || B.type == UNDECLARED_VARIABLE)
+    {
+        object result;
+        if(get_variable(B.data.string,&result)==OK)
+        {
+            return slice_with_step(result,B,C);
+        }
+        else
+        {
+            out() << "Error: Could not find array with name: " << *B.data.string << std::endl;
+            correct_parsing = false;
+            return false;
+        }
+    }
+    if(B.type!=ARRAY)
+    {
+        out() << "Error: Cannot slice a non-Array." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    if(C.type!=ARRAY)
+    {
+        out() << "Error: Malformed Array slicing." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    int begin,end,step;
+    const object& index1 = C.data.array->at(0);
+    const object& index2 = C.data.array->at(1);
+    const object& index3 = C.data.array->at(2);
+    if(index1.type==OPERATION_TREE)
+    {
+        optic_stack.push_back(mem_copy(index1));
+        evaluate_top();
+
+        if(optic_stack.back().type!=NUMBER)
+        {
+            out() << "Error: Cannot slice an array with a non-Number. Object in slice index number one is of type: "<< type_string(optic_stack.back().type) << std::endl;
+            correct_parsing = false;
+            optic_stack.pop_back();
+            return false;
+        }
+        else
+        {
+            begin = optic_stack.back().data.number;
+
+            optic_stack.pop_back();
+        }
+    }
+    else if(index1.type == STRING || index1.type == UNDECLARED_VARIABLE)
+    {
+        object result;
+        if(get_variable(index1.data.string,&result)==OK)
+        {
+            if(result.type!=NUMBER)
+            {
+                out() << "Error: Cannot slice an array with a non-Number. Object in slice index number one is of type: "<< type_string(result.type) << std::endl;
+                correct_parsing = false;
+                optic_stack.pop_back();
+                return false;
+            }
+            else
+            {
+                begin = result.data.number;
+            }
+        }
+        else
+        {
+            correct_parsing = false;
+            return false;
+        }
+    }
+    else if(index1.type!=NUMBER)
+    {
+        out() << "Error: Cannot slice an array with a non-Number. Slice type: "<< type_string(C.data.array->at(0).type) << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    else
+    {
+        begin = index1.data.number;
+    }
+
+    //Slice Index 2
+    if(index2.type==OPERATION_TREE)
+    {
+        optic_stack.push_back(mem_copy(index2));
+        evaluate_top();
+
+        if(optic_stack.back().type!=NUMBER)
+        {
+            out() << "Error: Cannot slice an array with a non-Number. Object in slice index number two is of type: "<< type_string(optic_stack.back().type) << std::endl;
+            correct_parsing = false;
+            optic_stack.pop_back();
+            return false;
+        }
+        else
+        {
+            end = optic_stack.back().data.number;
+            optic_stack.pop_back();
+        }
+    }
+    else if(index2.type == STRING || index2.type == UNDECLARED_VARIABLE)
+    {
+        object result;
+        if(get_variable(index2.data.string,&result)==OK)
+        {
+            if(result.type!=NUMBER)
+            {
+                out() << "Error: Cannot slice an array with a non-Number. Object in slice index number one is of type: "<< type_string(result.type) << std::endl;
+                correct_parsing = false;
+                optic_stack.pop_back();
+                return false;
+            }
+            else
+            {
+                end = result.data.number;
+            }
+        }
+        else
+        {
+            correct_parsing = false;
+            return false;
+        }
+    }
+    else if(index2.type!=NUMBER)
+    {
+        out() << "Error: Cannot slice an array with a non-Number. Slice type: "<< type_string(C.data.array->at(1).type) << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    else
+    {
+        end = index2.data.number;
+    }
+
+    //Slice Index 2
+    if(index3.type==OPERATION_TREE)
+    {
+        optic_stack.push_back(mem_copy(index3));
+        evaluate_top();
+
+        if(optic_stack.back().type!=NUMBER)
+        {
+            out() << "Error: Cannot slice an array with a non-Number. Object in slice index number two is of type: "<< type_string(optic_stack.back().type) << std::endl;
+            correct_parsing = false;
+            optic_stack.pop_back();
+            return false;
+        }
+        else
+        {
+            step = optic_stack.back().data.number;
+            optic_stack.pop_back();
+        }
+    }
+    else if(index3.type == STRING || index3.type == UNDECLARED_VARIABLE)
+    {
+        object result;
+        if(get_variable(index3.data.string,&result)==OK)
+        {
+            if(result.type!=NUMBER)
+            {
+                out() << "Error: Cannot slice an array with a non-Number. Object in slice index number one is of type: "<< type_string(result.type) << std::endl;
+                correct_parsing = false;
+                optic_stack.pop_back();
+                return false;
+            }
+            else
+            {
+                step = result.data.number;
+            }
+        }
+        else
+        {
+            correct_parsing = false;
+            return false;
+        }
+    }
+    else if(index3.type!=NUMBER)
+    {
+        out() << "Error: Cannot slice an array with a non-Number. Slice type: "<< type_string(C.data.array->at(2).type) << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    else
+    {
+        step = index3.data.number;
+    }
+    if(step == 0)
+    {
+        out() << "Error: Cannot have a step-size of zero." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    else if(step>0)
+    {
+        if(begin>end)
+        {
+            out() << "Error: Number on left-hand side of Array slice is larger than the number on the right-hand side, which is illegal with out specifying a negative slice step-size." << std::endl;
+            correct_parsing = false;
+            return false;
+        }
+    }
+    else
+    {
+        if(end>begin)
+        {
+            out() << "Error: Number on Right-hand side of Array slice is larger than the number on the left-hand side, which is illegal while specifying a negative slice step-size." << std::endl;
+            correct_parsing = false;
+            return false;
+        }
+    }
+
+    int size = B.data.array->size();
+
+    A = mem_alloc(ARRAY);
+    if(step>0)
+    {
+        for(int i=begin;i<end;i+=step)
+        {
+            if(i>=0)
+            {
+                A.data.array->push_back(mem_copy(B.data.array->at(i%size)));
+            }
+            else
+            {
+                int index = i%size;
+                index = size + index;
+                A.data.array->push_back(mem_copy(B.data.array->at(index%size)));
+            }
+        }
+    }
+    else if(step < 0)
+    {
+        for(int i=begin;i>end;i+=step)
+        {
+            if(i>=0)
+            {
+                A.data.array->push_back(mem_copy(B.data.array->at(i%size)));
+            }
+            else
+            {
+                int index = i%size;
+                index = size + index;
+                A.data.array->push_back(mem_copy(B.data.array->at(index%size)));
+            }
+        }
+    }
+}
+
 
 }

@@ -595,7 +595,7 @@ Dictionary copy_dictionary(const Dictionary& dictionary)
     {
         new_dictionary.insert(
             std::make_pair(
-                iter->first,
+                String(iter->first),
                 mem_copy(iter->second)
             )
         );
@@ -616,7 +616,7 @@ Dictionary* copy_dictionary(Dictionary* dictionary)
     {
         new_dictionary->insert(
             std::make_pair(
-                iter->first,
+                String(iter->first),
                 mem_copy(iter->second)
             )
         );
@@ -635,7 +635,7 @@ Function* copy_function(const Function* function)
     new_function->arguments = copy_array(function->arguments);
     new_function->body = mem_copy(function->body);
     new_function->heap = copy_dictionary(function->heap);
-    new_function->name = function->name;
+    new_function->name = String(function->name);
     new_function->num_arguments = function->num_arguments;
 
     return new_function;

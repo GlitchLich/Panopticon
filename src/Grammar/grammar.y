@@ -50,6 +50,7 @@
 //Precedence: Top is lowest, bottom is highest
 
 %left ASSIGN.
+%left LCBLOCK RCBLOCK.
 %left LCURL RCURL.
 %left COLON.
 %left DICT.
@@ -296,7 +297,7 @@ test(A) ::= case_statement(B).
 }
 
 //GUARD STATEMENT BEGINNING
-guard_statement(A) ::= name_chain(B) LCURL BITOR expr(C) ASSIGN expr(D) DELIMITER. [ASSIGN]
+guard_statement(A) ::= name_chain(B) LCBLOCK BITOR expr(C) ASSIGN expr(D) DELIMITER. [ASSIGN]
 {
     optic::object tree = create_condition_tree(C,D);
     A = create_guard(B,tree);
@@ -308,13 +309,13 @@ guard_statement(A) ::= guard_statement(B) BITOR expr(C) ASSIGN expr(D) DELIMITER
     A=B;
 }
 
-final_guard_statement(A) ::= guard_statement(B) BITOR expr(C) ASSIGN expr(D) RCURL. [ASSIGN]
+final_guard_statement(A) ::= guard_statement(B) BITOR expr(C) ASSIGN expr(D) RCBLOCK. [ASSIGN]
 {
     add_branch_to_tree(B,C,D);
     A=B;
 }
 
-final_guard_statement(A) ::= guard_statement(B) WILDCARD ASSIGN expr(D) RCURL. [ASSIGN]
+final_guard_statement(A) ::= guard_statement(B) BITOR WILDCARD ASSIGN expr(D) RCBLOCK. [ASSIGN]
 {
     add_wildcard_to_tree(B,D);
     A=B;
@@ -405,7 +406,7 @@ assignment_list(A) ::=  horizontal_assignment_list(B).
     A = B;
 }
 
-where(A) ::= WHERE LCURL assignment_list(B) RCURL. [DICT]
+where(A) ::= WHERE LCBLOCK assignment_list(B) RCBLOCK. [DICT]
 {
     A = B;
     optic::object serial_result;
@@ -443,7 +444,7 @@ assignment ::= name_chain ASSIGN expr expr.
     ParseARG_STORE;
 }
 
-assignment(A) ::= name_chain(B) ASSIGN expr(C) LCURL where(D) RCURL.
+assignment(A) ::= name_chain(B) ASSIGN expr(C) LCBLOCK where(D) RCBLOCK.
 {
     panopticon::object body;
     panopticon::store_operations(body,D,C,false);
@@ -456,7 +457,7 @@ assignment(A) ::= name_chain(B) ASSIGN expr(C) LCURL where(D) RCURL.
     }
 }
 
-assignment(A) ::= guard_statement(B) BITOR expr(C) ASSIGN expr(D) DELIMITER where(E) RCURL. [ASSIGN]
+assignment(A) ::= guard_statement(B) BITOR expr(C) ASSIGN expr(D) DELIMITER where(E) RCBLOCK. [ASSIGN]
 {
     add_branch_to_tree(B,C,D);
     panopticon::object& b = B.data.array->at(0);
@@ -476,7 +477,7 @@ assignment(A) ::= guard_statement(B) BITOR expr(C) ASSIGN expr(D) DELIMITER wher
     }
 }
 
-assignment(A) ::= guard_statement(B) WILDCARD ASSIGN expr(D) DELIMITER where(E) RCURL. [ASSIGN]
+assignment(A) ::= guard_statement(B) BITOR WILDCARD ASSIGN expr(D) DELIMITER where(E) RCBLOCK. [ASSIGN]
 {
     add_wildcard_to_tree(B,D);
     panopticon::object& b = B.data.array->at(0);
@@ -522,12 +523,12 @@ dict(A) ::= DICT LCURL assignment_list(B) RCURL.
     A = B;
 }
 
-dict(A) ::= LCURL DICT LCURL assignment_list(B) RCURL DELIMITER RCURL.
+dict(A) ::= LCURL DICT LCBLOCK assignment_list(B) RCBLOCK DELIMITER RCURL.
 {
     A = B;
 }
 
-dict(A) ::= LCURL DICT LCURL assignment_list(B) RCURL RCURL.
+dict(A) ::= LCURL DICT LCBLOCK assignment_list(B) RCBLOCK RCURL.
 {
     A = B;
 }
@@ -537,12 +538,12 @@ dict(A) ::= LCURL assignment_list(B) RCURL.
     A = B;
 }
 
-dict(A) ::= LCURL LCURL assignment_list(B) RCURL DELIMITER RCURL.
+dict(A) ::= LCURL LCBLOCK assignment_list(B) RCBLOCK DELIMITER RCURL.
 {
     A = B;
 }
 
-dict(A) ::= LCURL LCURL assignment_list(B) RCURL RCURL.
+dict(A) ::= LCURL LCBLOCK assignment_list(B) RCBLOCK RCURL.
 {
     A = B;
 }
@@ -587,6 +588,17 @@ expr(A) ::= NAME(B) LCURL string(C) RCURL.
 name_space(A) ::= NAME(B) COLONCOLON NAME(C). [INDEX]
 {
     B.type = optic::UNDECLARED_VARIABLE;
+    C.type = optic::STRING;
+    store_operations(A,B,C,&optic::dictionary_lookup);
+    if (!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
+
+name_space(A) ::= function_call(B) COLONCOLON NAME(C). [INDEX]
+{
     C.type = optic::STRING;
     store_operations(A,B,C,&optic::dictionary_lookup);
     if (!panopticon::correct_parsing)
@@ -694,7 +706,7 @@ final_vert_stmt_list(A) ::= vert_stmt_list(B) stmt(C). [COLLECTARRAY]
     }
 }
 
-vertical_array(A) ::= LBRAC LCURL final_vert_stmt_list(B) RCURL RBRAC. [COLLECTARRAY]
+vertical_array(A) ::= LBRAC LCBLOCK final_vert_stmt_list(B) RCBLOCK RBRAC. [COLLECTARRAY]
 {
     A = B;
     A.type = optic::ARRAY;
@@ -835,17 +847,19 @@ maybe_empty_name_chain(A) ::= pattern(B). [COLON]
 
 assignment(A) ::= name_chain(B) maybe_empty_name_chain ASSIGN expr. [COLON]
 {
+    optic::out() << "Pattern assignment" << std::endl;
     A = B;
 }
 
 assignment(A) ::= NAME(B) maybe_empty_name_chain ASSIGN expr. [COLON]
 {
+    optic::out() << "Pattern assignment" << std::endl;
     A = B;
 }
 
 pattern(A) ::= LPAREN NAME(B) PREPEND NAME(C) RPAREN. [COLON]
 {
-/*    std::cout << "PATTERN_ARGUMENT" << std::endl;*/
+    std::cout << "PATTERN_ARGUMENT" << std::endl;
     B.type = optic::PATTERN;
     C.type = optic::PATTERN;
     A.type = optic::PATTERN;
@@ -1127,6 +1141,127 @@ expr(A) ::= array_index(B). [INDEX]
 {
     A = B;
 }
+
+//Array Slicing
+//without step sizes...
+//Beginning to ...
+array_slice(A) ::= NAME(B) LBRAC PREPEND expr(D) RBRAC. [INDEX]
+{
+    store_operations(A,B,D,optic::slice_beginning_to,false);
+}
+
+//... to End
+array_slice(A) ::= NAME(B) LBRAC expr(C) PREPEND RBRAC. [INDEX]
+{
+    store_operations(A,B,C,optic::slice_to_end,false);
+}
+
+//... to ...
+array_slice(A) ::= NAME(B) LBRAC expr(C) PREPEND expr(D) RBRAC. [INDEX]
+{
+    optic::object range = optic::mem_alloc(optic::ARRAY);
+    range.data.array->push_back(C);
+    range.data.array->push_back(D);
+    store_operations(A,B,range,optic::slice,false);
+}
+
+//WITH step sizes...
+
+//All with steps
+array_slice(A) ::= NAME(B) LBRAC COLONCOLON expr(D) RBRAC. [INDEX]
+{
+    store_operations(A,B,D,optic::slice_all_with_step,false);
+}
+
+//Beginning to ...
+array_slice(A) ::= NAME(B) LBRAC expr(C) COLONCOLON expr(D) RBRAC. [INDEX]
+{
+    optic::object range = optic::mem_alloc(optic::ARRAY);
+    range.data.array->push_back(C);
+    range.data.array->push_back(D);
+    store_operations(A,B,range,optic::slice_beginning_to_with_step,false);
+}
+
+//... to End
+array_slice(A) ::= NAME(B) LBRAC PREPEND expr(C) PREPEND expr(D) RBRAC. [INDEX]
+{
+    optic::object range = optic::mem_alloc(optic::ARRAY);
+    range.data.array->push_back(C);
+    range.data.array->push_back(D);
+    store_operations(A,B,range,optic::slice_to_end_with_step,false);
+}
+
+//... to ...
+array_slice(A) ::= NAME(B) LBRAC expr(C) PREPEND expr(D) PREPEND expr(E) RBRAC. [INDEX]
+{
+    optic::object range = optic::mem_alloc(optic::ARRAY);
+    range.data.array->push_back(C);
+    range.data.array->push_back(D);
+    range.data.array->push_back(E);
+    store_operations(A,B,range,optic::slice_with_step,false);
+}
+
+//WITH wrapping...
+//Begin to ... with Wrapping
+array_slice(A) ::= NAME(B) LBRAC expr(C) PREPEND MODULO RBRAC. [INDEX]
+{
+    store_operations(A,B,C,optic::slice_beginning_to_wrapping,false);
+}
+
+// ... to End with Wrapping
+array_slice(A) ::= NAME(B) LBRAC PREPEND expr(C) PREPEND MODULO RBRAC. [INDEX]
+{
+    store_operations(A,B,C,optic::slice_to_end_wrapping,false);
+}
+
+//... to ... with Wrapping
+array_slice(A) ::= NAME(B) LBRAC expr(C) PREPEND expr(D) PREPEND MODULO RBRAC. [INDEX]
+{
+    optic::object range = optic::mem_alloc(optic::ARRAY);
+    range.data.array->push_back(C);
+    range.data.array->push_back(D);
+    store_operations(A,B,range,optic::slice_with_wrapping,false);
+}
+
+//Beginning to ... with Step with Wrapping
+array_slice(A) ::= NAME(B) LBRAC expr(C) COLONCOLON expr(D) PREPEND MODULO RBRAC. [INDEX]
+{
+    optic::object range = optic::mem_alloc(optic::ARRAY);
+    range.data.array->push_back(C);
+    range.data.array->push_back(D);
+    store_operations(A,B,range,optic::slice_beginning_to_with_step_wrapping,false);
+}
+
+// ... to End with Step with Wrapping
+array_slice(A) ::= NAME(B) LBRAC PREPEND expr(C) PREPEND expr(D) PREPEND MODULO RBRAC. [INDEX]
+{
+    optic::object range = optic::mem_alloc(optic::ARRAY);
+    range.data.array->push_back(C);
+    range.data.array->push_back(D);
+    store_operations(A,B,range,optic::slice_to_end_with_step_wrapping,false);
+}
+
+//... to ... with Step with Wrapping
+array_slice(A) ::= NAME(B) LBRAC expr(C) PREPEND expr(D) PREPEND expr(E) PREPEND MODULO RBRAC. [INDEX]
+{
+    optic::object range = optic::mem_alloc(optic::ARRAY);
+    range.data.array->push_back(C);
+    range.data.array->push_back(D);
+    range.data.array->push_back(E);
+    store_operations(A,B,range,optic::slice_with_step_wrapping,false);
+}
+
+//All with steps with wrapping
+array_slice(A) ::= NAME(B) LBRAC COLONCOLON expr(D) PREPEND MODULO RBRAC. [INDEX]
+{
+    store_operations(A,B,D,optic::slice_all_with_step,false);
+}
+
+expr(A) ::= array_slice(B).
+{
+    A = B;
+}
+
 
 //======================
 //Syntax ERROR HANDLING

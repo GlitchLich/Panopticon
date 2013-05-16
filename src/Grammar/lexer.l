@@ -31,6 +31,8 @@ int line = 1, col = 1;
 [;]     {return DELIMITER;}
 [{]     {return LCURL;}
 [}]     {return RCURL;}
+[`]     {return LCBLOCK;}
+[@]     {return RCBLOCK;}
 [0-9]+|[0-9]*\.[0-9]+    {
     col += (int) strlen(yytext);
     yylval.dval = atof(yytext);
