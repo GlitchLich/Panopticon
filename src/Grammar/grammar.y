@@ -1265,10 +1265,369 @@ array_index(A) ::= NAME(B) LBRAC COLONCOLON expr(D) PREPEND MODULO RBRAC. [INDEX
     store_operations(A,B,D,optic::slice_all_with_step,false);
 }
 
-/*expr(A) ::= array_slice(B).
+array_index(A) ::= name_space(B) LBRAC expr(C) RBRAC. [INDEX]
 {
-    A = B;
-}*/
+    optic::store_operations(A,B,C,&optic::index,false);
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
+
+//=====
+//REPEAT WITH ARRAY_INDEX
+//=====
+//Array Slicing
+//without step sizes...
+//Beginning to ...
+array_index(A) ::= array_index(B) LBRAC PREPEND expr(D) RBRAC. [INDEX]
+{
+    store_operations(A,B,D,optic::slice_beginning_to,false);
+}
+
+//... to End
+array_index(A) ::= array_index(B) LBRAC expr(C) PREPEND RBRAC. [INDEX]
+{
+    store_operations(A,B,C,optic::slice_to_end,false);
+}
+
+//... to ...
+array_index(A) ::= array_index(B) LBRAC expr(C) PREPEND expr(D) RBRAC. [INDEX]
+{
+    optic::object range = optic::mem_alloc(optic::ARRAY);
+    range.data.array->push_back(C);
+    range.data.array->push_back(D);
+    store_operations(A,B,range,optic::slice,false);
+}
+
+//WITH step sizes...
+
+//All with steps
+array_index(A) ::= array_index(B) LBRAC COLONCOLON expr(D) RBRAC. [INDEX]
+{
+    store_operations(A,B,D,optic::slice_all_with_step,false);
+}
+
+//Beginning to ...
+array_index(A) ::= array_index(B) LBRAC expr(C) COLONCOLON expr(D) RBRAC. [INDEX]
+{
+    optic::object range = optic::mem_alloc(optic::ARRAY);
+    range.data.array->push_back(C);
+    range.data.array->push_back(D);
+    store_operations(A,B,range,optic::slice_beginning_to_with_step,false);
+}
+
+//... to End
+array_index(A) ::= array_index(B) LBRAC PREPEND expr(C) PREPEND expr(D) RBRAC. [INDEX]
+{
+    optic::object range = optic::mem_alloc(optic::ARRAY);
+    range.data.array->push_back(C);
+    range.data.array->push_back(D);
+    store_operations(A,B,range,optic::slice_to_end_with_step,false);
+}
+
+//... to ...
+array_index(A) ::= array_index(B) LBRAC expr(C) PREPEND expr(D) PREPEND expr(E) RBRAC. [INDEX]
+{
+    optic::object range = optic::mem_alloc(optic::ARRAY);
+    range.data.array->push_back(C);
+    range.data.array->push_back(D);
+    range.data.array->push_back(E);
+    store_operations(A,B,range,optic::slice_with_step,false);
+}
+
+//WITH wrapping...
+//Begin to ... with Wrapping
+array_index(A) ::= array_index(B) LBRAC expr(C) PREPEND MODULO RBRAC. [INDEX]
+{
+    store_operations(A,B,C,optic::slice_beginning_to_wrapping,false);
+}
+
+// ... to End with Wrapping
+array_index(A) ::= array_index(B) LBRAC PREPEND expr(C) PREPEND MODULO RBRAC. [INDEX]
+{
+    store_operations(A,B,C,optic::slice_to_end_wrapping,false);
+}
+
+//... to ... with Wrapping
+array_index(A) ::= array_index(B) LBRAC expr(C) PREPEND expr(D) PREPEND MODULO RBRAC. [INDEX]
+{
+    optic::object range = optic::mem_alloc(optic::ARRAY);
+    range.data.array->push_back(C);
+    range.data.array->push_back(D);
+    store_operations(A,B,range,optic::slice_with_wrapping,false);
+}
+
+//Beginning to ... with Step with Wrapping
+array_index(A) ::= array_index(B) LBRAC expr(C) COLONCOLON expr(D) PREPEND MODULO RBRAC. [INDEX]
+{
+    optic::object range = optic::mem_alloc(optic::ARRAY);
+    range.data.array->push_back(C);
+    range.data.array->push_back(D);
+    store_operations(A,B,range,optic::slice_beginning_to_with_step_wrapping,false);
+}
+
+// ... to End with Step with Wrapping
+array_index(A) ::= array_index(B) LBRAC PREPEND expr(C) PREPEND expr(D) PREPEND MODULO RBRAC. [INDEX]
+{
+    optic::object range = optic::mem_alloc(optic::ARRAY);
+    range.data.array->push_back(C);
+    range.data.array->push_back(D);
+    store_operations(A,B,range,optic::slice_to_end_with_step_wrapping,false);
+}
+
+//... to ... with Step with Wrapping
+array_index(A) ::= array_index(B) LBRAC expr(C) PREPEND expr(D) PREPEND expr(E) PREPEND MODULO RBRAC. [INDEX]
+{
+    optic::object range = optic::mem_alloc(optic::ARRAY);
+    range.data.array->push_back(C);
+    range.data.array->push_back(D);
+    range.data.array->push_back(E);
+    store_operations(A,B,range,optic::slice_with_step_wrapping,false);
+}
+
+//All with steps with wrapping
+array_index(A) ::= array_index(B) LBRAC COLONCOLON expr(D) PREPEND MODULO RBRAC. [INDEX]
+{
+    store_operations(A,B,D,optic::slice_all_with_step,false);
+}
+
+//=====
+//REPEAT WITH function_call
+//=====
+//Array Slicing
+//without step sizes...
+//Beginning to ...
+array_index(A) ::= function_call(B) LBRAC PREPEND expr(D) RBRAC. [INDEX]
+{
+    store_operations(A,B,D,optic::slice_beginning_to,false);
+}
+
+//... to End
+array_index(A) ::= function_call(B) LBRAC expr(C) PREPEND RBRAC. [INDEX]
+{
+    store_operations(A,B,C,optic::slice_to_end,false);
+}
+
+//... to ...
+array_index(A) ::= function_call(B) LBRAC expr(C) PREPEND expr(D) RBRAC. [INDEX]
+{
+    optic::object range = optic::mem_alloc(optic::ARRAY);
+    range.data.array->push_back(C);
+    range.data.array->push_back(D);
+    store_operations(A,B,range,optic::slice,false);
+}
+
+//WITH step sizes...
+
+//All with steps
+array_index(A) ::= function_call(B) LBRAC COLONCOLON expr(D) RBRAC. [INDEX]
+{
+    store_operations(A,B,D,optic::slice_all_with_step,false);
+}
+
+//Beginning to ...
+array_index(A) ::= function_call(B) LBRAC expr(C) COLONCOLON expr(D) RBRAC. [INDEX]
+{
+    optic::object range = optic::mem_alloc(optic::ARRAY);
+    range.data.array->push_back(C);
+    range.data.array->push_back(D);
+    store_operations(A,B,range,optic::slice_beginning_to_with_step,false);
+}
+
+//... to End
+array_index(A) ::= function_call(B) LBRAC PREPEND expr(C) PREPEND expr(D) RBRAC. [INDEX]
+{
+    optic::object range = optic::mem_alloc(optic::ARRAY);
+    range.data.array->push_back(C);
+    range.data.array->push_back(D);
+    store_operations(A,B,range,optic::slice_to_end_with_step,false);
+}
+
+//... to ...
+array_index(A) ::= function_call(B) LBRAC expr(C) PREPEND expr(D) PREPEND expr(E) RBRAC. [INDEX]
+{
+    optic::object range = optic::mem_alloc(optic::ARRAY);
+    range.data.array->push_back(C);
+    range.data.array->push_back(D);
+    range.data.array->push_back(E);
+    store_operations(A,B,range,optic::slice_with_step,false);
+}
+
+//WITH wrapping...
+//Begin to ... with Wrapping
+array_index(A) ::= function_call(B) LBRAC expr(C) PREPEND MODULO RBRAC. [INDEX]
+{
+    store_operations(A,B,C,optic::slice_beginning_to_wrapping,false);
+}
+
+// ... to End with Wrapping
+array_index(A) ::= function_call(B) LBRAC PREPEND expr(C) PREPEND MODULO RBRAC. [INDEX]
+{
+    store_operations(A,B,C,optic::slice_to_end_wrapping,false);
+}
+
+//... to ... with Wrapping
+array_index(A) ::= function_call(B) LBRAC expr(C) PREPEND expr(D) PREPEND MODULO RBRAC. [INDEX]
+{
+    optic::object range = optic::mem_alloc(optic::ARRAY);
+    range.data.array->push_back(C);
+    range.data.array->push_back(D);
+    store_operations(A,B,range,optic::slice_with_wrapping,false);
+}
+
+//Beginning to ... with Step with Wrapping
+array_index(A) ::= function_call(B) LBRAC expr(C) COLONCOLON expr(D) PREPEND MODULO RBRAC. [INDEX]
+{
+    optic::object range = optic::mem_alloc(optic::ARRAY);
+    range.data.array->push_back(C);
+    range.data.array->push_back(D);
+    store_operations(A,B,range,optic::slice_beginning_to_with_step_wrapping,false);
+}
+
+// ... to End with Step with Wrapping
+array_index(A) ::= function_call(B) LBRAC PREPEND expr(C) PREPEND expr(D) PREPEND MODULO RBRAC. [INDEX]
+{
+    optic::object range = optic::mem_alloc(optic::ARRAY);
+    range.data.array->push_back(C);
+    range.data.array->push_back(D);
+    store_operations(A,B,range,optic::slice_to_end_with_step_wrapping,false);
+}
+
+//... to ... with Step with Wrapping
+array_index(A) ::= function_call(B) LBRAC expr(C) PREPEND expr(D) PREPEND expr(E) PREPEND MODULO RBRAC. [INDEX]
+{
+    optic::object range = optic::mem_alloc(optic::ARRAY);
+    range.data.array->push_back(C);
+    range.data.array->push_back(D);
+    range.data.array->push_back(E);
+    store_operations(A,B,range,optic::slice_with_step_wrapping,false);
+}
+
+//All with steps with wrapping
+array_index(A) ::= function_call(B) LBRAC COLONCOLON expr(D) PREPEND MODULO RBRAC. [INDEX]
+{
+    store_operations(A,B,D,optic::slice_all_with_step,false);
+}
+
+//=====
+//REPEAT WITH name_space
+//=====
+//Array Slicing
+//without step sizes...
+//Beginning to ...
+array_index(A) ::= name_space(B) LBRAC PREPEND expr(D) RBRAC. [INDEX]
+{
+    store_operations(A,B,D,optic::slice_beginning_to,false);
+}
+
+//... to End
+array_index(A) ::= name_space(B) LBRAC expr(C) PREPEND RBRAC. [INDEX]
+{
+    store_operations(A,B,C,optic::slice_to_end,false);
+}
+
+//... to ...
+array_index(A) ::= name_space(B) LBRAC expr(C) PREPEND expr(D) RBRAC. [INDEX]
+{
+    optic::object range = optic::mem_alloc(optic::ARRAY);
+    range.data.array->push_back(C);
+    range.data.array->push_back(D);
+    store_operations(A,B,range,optic::slice,false);
+}
+
+//WITH step sizes...
+
+//All with steps
+array_index(A) ::= name_space(B) LBRAC COLONCOLON expr(D) RBRAC. [INDEX]
+{
+    store_operations(A,B,D,optic::slice_all_with_step,false);
+}
+
+//Beginning to ...
+array_index(A) ::= name_space(B) LBRAC expr(C) COLONCOLON expr(D) RBRAC. [INDEX]
+{
+    optic::object range = optic::mem_alloc(optic::ARRAY);
+    range.data.array->push_back(C);
+    range.data.array->push_back(D);
+    store_operations(A,B,range,optic::slice_beginning_to_with_step,false);
+}
+
+//... to End
+array_index(A) ::= name_space(B) LBRAC PREPEND expr(C) PREPEND expr(D) RBRAC. [INDEX]
+{
+    optic::object range = optic::mem_alloc(optic::ARRAY);
+    range.data.array->push_back(C);
+    range.data.array->push_back(D);
+    store_operations(A,B,range,optic::slice_to_end_with_step,false);
+}
+
+//... to ...
+array_index(A) ::= name_space(B) LBRAC expr(C) PREPEND expr(D) PREPEND expr(E) RBRAC. [INDEX]
+{
+    optic::object range = optic::mem_alloc(optic::ARRAY);
+    range.data.array->push_back(C);
+    range.data.array->push_back(D);
+    range.data.array->push_back(E);
+    store_operations(A,B,range,optic::slice_with_step,false);
+}
+
+//WITH wrapping...
+//Begin to ... with Wrapping
+array_index(A) ::= name_space(B) LBRAC expr(C) PREPEND MODULO RBRAC. [INDEX]
+{
+    store_operations(A,B,C,optic::slice_beginning_to_wrapping,false);
+}
+
+// ... to End with Wrapping
+array_index(A) ::= name_space(B) LBRAC PREPEND expr(C) PREPEND MODULO RBRAC. [INDEX]
+{
+    store_operations(A,B,C,optic::slice_to_end_wrapping,false);
+}
+
+//... to ... with Wrapping
+array_index(A) ::= name_space(B) LBRAC expr(C) PREPEND expr(D) PREPEND MODULO RBRAC. [INDEX]
+{
+    optic::object range = optic::mem_alloc(optic::ARRAY);
+    range.data.array->push_back(C);
+    range.data.array->push_back(D);
+    store_operations(A,B,range,optic::slice_with_wrapping,false);
+}
+
+//Beginning to ... with Step with Wrapping
+array_index(A) ::= name_space(B) LBRAC expr(C) COLONCOLON expr(D) PREPEND MODULO RBRAC. [INDEX]
+{
+    optic::object range = optic::mem_alloc(optic::ARRAY);
+    range.data.array->push_back(C);
+    range.data.array->push_back(D);
+    store_operations(A,B,range,optic::slice_beginning_to_with_step_wrapping,false);
+}
+
+// ... to End with Step with Wrapping
+array_index(A) ::= name_space(B) LBRAC PREPEND expr(C) PREPEND expr(D) PREPEND MODULO RBRAC. [INDEX]
+{
+    optic::object range = optic::mem_alloc(optic::ARRAY);
+    range.data.array->push_back(C);
+    range.data.array->push_back(D);
+    store_operations(A,B,range,optic::slice_to_end_with_step_wrapping,false);
+}
+
+//... to ... with Step with Wrapping
+array_index(A) ::= name_space(B) LBRAC expr(C) PREPEND expr(D) PREPEND expr(E) PREPEND MODULO RBRAC. [INDEX]
+{
+    optic::object range = optic::mem_alloc(optic::ARRAY);
+    range.data.array->push_back(C);
+    range.data.array->push_back(D);
+    range.data.array->push_back(E);
+    store_operations(A,B,range,optic::slice_with_step_wrapping,false);
+}
+
+//All with steps with wrapping
+array_index(A) ::= name_space(B) LBRAC COLONCOLON expr(D) PREPEND MODULO RBRAC. [INDEX]
+{
+    store_operations(A,B,D,optic::slice_all_with_step,false);
+}
 
 expr(A) ::= LBRAC expr(B) RANGE expr(C) RBRAC.
 {

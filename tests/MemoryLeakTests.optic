@@ -84,7 +84,7 @@ string(2)
 //Print: No Leaks
 print("Hello World")
 //Declaring Vanilla Dictionaries: No Leaks
-myDict = { test = 1 test2 = true test3 = "hey" test4 = [ 0 1 2 3 ] innerDict = { nested = 4} }
+myDict = { test = 1 test2 = true test3 = "hey" test4 = [ 2..30 ] innerDict = { nested = 4} }
 //Using Vanilla Dictionaries: No Leaks
 myDict::test
 1 + myDict::test
@@ -92,6 +92,8 @@ myDict::test == "hey"
 myDict::test2
 myDict::test3
 myDict::test4
+myDict::test4[1]
+myDict::test4[13:][5]
 myDict::test4 + myDict::test
 //No Leaks
 myDict::innerDict::nested

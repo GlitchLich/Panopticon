@@ -15,11 +15,26 @@ n*m+z
 //With negative ranges
 [12,9..0]
 
+//Ranges with slicing
 range = [120,117..0]
 range
 range[19::(-3):%]
+//nesting possible
 range[19::(-3):%][5]
-range[0:(-60):(-2):%]
+//Both ways
+nestedRange = [ [120,117..0] [130,127..10] ]
+nestedRange[0][19::(-3):%]
+nestedRange[1][19::(-3):%]
+//further
+nestedRange[0][19::(-3):%][5:]
+nestedRange[1][19::(-3):%][6:]
+//Make patterns with nesting!
+range[38:40][:120:%]
+range[38:40][:120:%]
+
+arrayBuilder x y = [x..y]
+arrayBuilder(20 200)[:20:8]
+
 //Also works with Doubles!
 [0.1,0.3..1]
 
