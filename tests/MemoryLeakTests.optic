@@ -86,7 +86,7 @@ print("Hello World")
 //Declaring Vanilla Dictionaries: No Leaks
 myDict = { test = 1 test2 = true test3 = "hey" test4 = [ 0 1 2 3 ] innerDict = { nested = 4} }
 //Using Vanilla Dictionaries: No Leaks
-myDict::test
+myDict::test == "hey"
 myDict::test2
 myDict::test3
 //This simply doesn't do anything
@@ -102,7 +102,7 @@ functionary =
 functionary::func(10)
 print(functionary::func)
 do x y = x(y)
-do(functionary::func 10)
+do(functionary::func 20)
 
 arraytionary = { array x = [ x x x ] }
 // crashes
@@ -113,6 +113,9 @@ arraytionaryPlus(1)
 call x y = x (y)
 call(arrationary::array 10)
 
+funcFunc f = f + f
+a = 20 + 1
+funcFunc(a a)
 
 //Array Functors: CRASH!!!!
 doubler x = x * 2

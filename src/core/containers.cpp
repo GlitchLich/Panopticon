@@ -112,6 +112,13 @@ bool dictionary_lookup(object& value, const object& dict, const object& key)
     if(find != dict.data.dictionary->end())
     {
         value = mem_copy(find->second);
+        if(value.type == OPERATION_TREE)
+        {
+            optic_stack.push_back(value);
+            evaluate_top();
+            value = mem_copy(optic_stack.back());
+            optic_stack.pop_back();
+        }
     }
 
     else

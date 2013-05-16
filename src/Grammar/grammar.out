@@ -2109,10 +2109,10 @@ State 18:
                        PREPEND shift  38
                            NOT shift  45
                         BITNOT shift  46
+                    COLONCOLON shift  37
                         LPAREN shift  28
                          LBRAC shift  2
                          RBRAC shift  180
-                    COLONCOLON shift  37
                          PRINT shift  195
                            NUM shift  261
                         STRING shift  260
@@ -8095,9 +8095,9 @@ State 78:
                        LCBLOCK reduce 11
                          LCURL shift  82
                           NAME reduce 11
+                    COLONCOLON shift  174
                         LPAREN shift  4
                          LBRAC shift  18
-                    COLONCOLON shift  174
                     name_chain shift  172
         maybe_empty_name_chain shift  163
                        pattern shift  212
@@ -8402,8 +8402,8 @@ State 93:
                         MODULO shift  63
                            POW shift  62
                       PLUSPLUS shift  68
-                         RBRAC shift  230
                     COLONCOLON shift  39
+                         RBRAC shift  230
 
 State 94:
       (9) stmt ::= expr *
@@ -10491,9 +10491,9 @@ State 138:
           array_slice ::= NAME * LBRAC COLONCOLON expr PREPEND MODULO RBRAC
 
                        PREPEND shift  165
+                    COLONCOLON shift  174
                         LPAREN shift  6
                          LBRAC shift  18
-                    COLONCOLON shift  174
                      {default} reduce 12
 
 State 139:
@@ -10501,9 +10501,9 @@ State 139:
           function_call ::= name_space * LPAREN stmt_list RPAREN
           function_call ::= name_space * LBRAC RBRAC LPAREN stmt_list RPAREN
 
+                    COLONCOLON shift  196
                         LPAREN shift  9
                          LBRAC shift  189
-                    COLONCOLON shift  196
 
 State 140:
      (14) expr ::= expr COMPOSITION NAME *
@@ -10513,10 +10513,9 @@ State 140:
           name_space ::= NAME * COLONCOLON NAME
           array_index ::= NAME * LBRAC expr RBRAC
 
+                    COLONCOLON shift  174
                         LPAREN shift  6
                          LBRAC shift  21
-                    COLONCOLON shift  174
-                    COLONCOLON reduce 14  ** Parsing conflict **
                      {default} reduce 14
 
 State 141:
@@ -10525,12 +10524,12 @@ State 141:
           function_call ::= name_space * LBRAC RBRAC LPAREN stmt_list RPAREN
      (57) expr ::= name_space *
 
+                    COLONCOLON shift  196
+                    COLONCOLON reduce 57  ** Parsing conflict **
                         LPAREN shift  9
                         LPAREN reduce 57  ** Parsing conflict **
                          LBRAC shift  189
                          LBRAC reduce 57  ** Parsing conflict **
-                    COLONCOLON shift  196
-                    COLONCOLON reduce 57  ** Parsing conflict **
                      {default} reduce 57
 
 State 142:
@@ -10557,10 +10556,9 @@ State 142:
           array_slice ::= NAME * LBRAC expr PREPEND expr PREPEND expr PREPEND MODULO RBRAC
           array_slice ::= NAME * LBRAC COLONCOLON expr PREPEND MODULO RBRAC
 
+                    COLONCOLON shift  174
                         LPAREN shift  6
                          LBRAC shift  18
-                    COLONCOLON shift  174
-                    COLONCOLON reduce 12  ** Parsing conflict **
                      {default} reduce 12
 
 State 143:
@@ -10792,10 +10790,10 @@ State 155:
           name_space ::= function_call * COLONCOLON NAME
           array_index ::= function_call * LBRAC expr RBRAC
 
-                         LBRAC shift  72
-                         LBRAC reduce 20  ** Parsing conflict **
                     COLONCOLON shift  198
                     COLONCOLON reduce 20  ** Parsing conflict **
+                         LBRAC shift  72
+                         LBRAC reduce 20  ** Parsing conflict **
                      {default} reduce 20
 
 State 156:
@@ -10813,9 +10811,8 @@ State 157:
           name_space ::= function_call * COLONCOLON NAME
           array_index ::= function_call * LBRAC expr RBRAC
 
-                         LBRAC shift  72
                     COLONCOLON shift  198
-                    COLONCOLON reduce 13  ** Parsing conflict **
+                         LBRAC shift  72
                      {default} reduce 13
 
 State 158:
@@ -11513,18 +11510,18 @@ Symbols:
    37: BITNOT
    38: UMINUS
    39: PLUSPLUS
-   40: LPAREN
-   41: RPAREN
-   42: LBRAC
-   43: RBRAC
-   44: COLLECTARRAY
-   45: DELIMITER
-   46: WILDCARD
-   47: CASE
-   48: OF
-   49: LET
-   50: IN
-   51: COLONCOLON
+   40: COLONCOLON
+   41: LPAREN
+   42: RPAREN
+   43: LBRAC
+   44: RBRAC
+   45: COLLECTARRAY
+   46: DELIMITER
+   47: WILDCARD
+   48: CASE
+   49: OF
+   50: LET
+   51: IN
    52: PRINT
    53: NUM
    54: STRING
