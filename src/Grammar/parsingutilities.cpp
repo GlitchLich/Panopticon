@@ -25,17 +25,21 @@ bool insure_ready_for_assignment(panopticon::object& B, panopticon::object& C)
         C.type != panopticon::OPERATION_TREE
     )
     {
-        panopticon::object temp = C;
-        C = mem_alloc(panopticon::FUNCTION_BODY);
-        C.data.array->push_back(temp);
+//        object c_copy = mem_copy(C);
+        object body = mem_alloc(panopticon::FUNCTION_BODY);
+        body.data.array->push_back(C);
+//        mem_free(C);
+        C = body;
     }
     C.type = FUNCTION_BODY;
 
     if(B.type!=panopticon::ARRAY)
     {
-        panopticon::object temp = B;
-        B = mem_alloc(panopticon::FUNCTION_ARG_NAMES);
-        B.data.array->push_back(temp);
+//        object b_copy = mem_copy(B);
+        object body = mem_alloc(panopticon::FUNCTION_ARG_NAMES);
+        body.data.array->push_back(B);
+//        mem_free(B);
+        B = body;
     }
     B.type = FUNCTION_ARG_NAMES;
 }
