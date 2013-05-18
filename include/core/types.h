@@ -138,22 +138,11 @@ union Data
     unary_operator_function unary_operator_func;
 };
 
-union DataC11 // C++11
-{
-    Number number;
-    String string;
-    bool boolean;
-    Function* function;
-    Array* array;
-    Dictionary* dictionary;
-    operator_function operator_func;
-    unary_operator_function unary_operator_func;
-};
-
 struct object
 {
     Type type;
     Data data;
+    bool* alive; // Pointer to alive value, needs to be pointer because the object itself is pass by value. Use for Garbage Collection
 };
 
 struct Function

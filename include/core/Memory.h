@@ -13,6 +13,7 @@ namespace panopticon
 
 void gc_report(); // print memory leak report
 void gc_free_all(); // collects all free memory, used on stack completion, program end, or assert
+void gc_mark(); // Traverse the heap, beginning with the roots, marking live objects
 void gc_sweep(); // request sweep, will only deallocate if MAX_GC_OBJECTS reached/surpassed
 void mem_free_array(Array& array); // DON'T USE THIS DIRECTLY UNLESS YOU HAVE A GOOD REASON. Prefer mem_free where possible.
 void mem_free_dictionary(Dictionary& dictionary); // DON'T USE THIS DIRECTLY UNLESS YOU HAVE A GOOD REASON. Prefer mem_free where possible.
