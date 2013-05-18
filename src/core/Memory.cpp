@@ -461,7 +461,7 @@ void compactifiy()
         gc_from->begin(),
         gc_from->end(),
         gc_to->begin(),
-        [](const object& obj) { return obj.alive; } // If alive, we don't actually check the malloced value, just that the pointer isn't NULL
+        [](const object& obj) { return obj.alive > 0; } // If alive, we don't actually check the malloced value, just that the pointer isn't NULL
     );
 
     gc_from->clear();
