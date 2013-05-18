@@ -36,6 +36,9 @@ f x = x * 2
 f(2)
 f([0 1 2 3])
 
+double x = x * 2
+double(2)
+
 array x = [ x x x x x x x ]
 array(10)
 array([ array("Ten") array(9) ])

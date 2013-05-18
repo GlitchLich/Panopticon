@@ -52,6 +52,15 @@ nthElement (x:xs) a 	: a <= 0 = Nothing
 			. = Nothing //default case
 
 
-"Some compilers, such as gcc, add extra keywords for a programmer to explicitly mark external functions as pure, to enable such optimizations"
 
+// Garbage Collection
+
+Allocate memory on a heap? Just use new?
+Store pointers in a table or linked list or heap with references pointing to eachother.
+
+At the beginning of the Mark, find the roots. Roots are everything in the dynamic scope stack. Then traverse the tree/heap/whatever finding all the "live" objects. When done collect the "dead" objects, remove duplicate entries, then free all the data. Afterwards add all the live objects back to the "AllObjects" set.
+
+Considerations: Compaction, using 2 heaps and switching between them to avoid fragmentation.
+use handles instead of pointers? Pointers to pointers in a heap.
+Ours will be simpler because we pass by value.
 

@@ -1,0 +1,46 @@
+//////////////////////////////////
+// Syntax / Language Experiments
+//////////////////////////////////
+
+// Just some fun experimentation, none of this actually does anything yet
+
+
+switcher x op y = op(x y)
+	where
+		add x y = x + y
+		mul x y = x * y
+		div x y = x * y
+
+switcher(2 mul 3)
+
+// Lattices
+// A lattice a structure where each element in it has a meet (greatest lower bound) and join (least upper bound
+
+// We want infinite lazy lattices, something I haven't seen before. Ive read about finite, but not infinite
+
+// How they work: 
+// The simples form of lattice structures are boolean lattices, on/off, true/false, join/meet
+// More complicated would be doubles
+
+Lattice x y op = op( x y )
+	where 
+		bottom = false
+		top = true
+		meet = x && y
+		join = x || y
+
+// Lattice as a product of two lattices
+Lattices x y op = op( x y )
+	where
+		bottom = [ bottom bottom ]
+		top = [ top top ] 
+		meet x y u v = [ meet(x y) meet(u v) ]
+		join x y u v = [ join(x y) join(u v) ]
+
+
+// Potential uses: Music! Scales, Rhthms, Patterns in General. An interesting structure for creation.
+
+
+
+
+  
