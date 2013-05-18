@@ -376,7 +376,7 @@ void gc_delete(object& obj)
     case ASSIGNMENT:
         break;
     case GUARD:
-       gc_delete_array(obj.data.array, GUARD);
+        gc_delete_array(obj.data.array, GUARD);
         break;
     case FUNCTION_BODY:
         gc_delete_array(obj.data.array, FUNCTION_BODY);
@@ -410,6 +410,12 @@ void gc_delete(object& obj)
         break;
     case FAILED_CONDITION:
         break;
+    }
+
+    if(obj.alive != 0) // Clean up the mem_alloced alive garbage
+    {
+        free(obj.alive);
+        obj.alive = 0; // Declare Null pointer
     }
 }
 
@@ -455,7 +461,7 @@ void compactifiy()
         gc_from->begin(),
         gc_from->end(),
         gc_to->begin(),
-        [](const object& obj) { return &obj.alive; }
+        [](const object& obj) { return obj.alive; } // If alive, we don't actually check the malloced value, just that the pointer isn't NULL
     );
 
     gc_from->clear();
@@ -481,7 +487,7 @@ void gc_mark_alive(const object& obj); // forward declaration
 
 void gc_mark_array_alive(const object& obj)
 {
-    *obj.alive = true;
+    obj.alive[0] = ALIVE;
     Array::iterator iter = obj.data.array->begin();
 
     while(iter != obj.data.array->end())
@@ -493,7 +499,7 @@ void gc_mark_array_alive(const object& obj)
 
 void gc_mark_dictionary_alive(const object& obj)
 {
-    *obj.alive = true;
+    obj.alive[0] = ALIVE;
     Dictionary::iterator iter = obj.data.dictionary->begin();
 
     while(iter != obj.data.dictionary->end())
@@ -505,7 +511,7 @@ void gc_mark_dictionary_alive(const object& obj)
 
 void gc_mark_function_alive(const object& obj)
 {
-    *obj.alive = true;
+    obj.alive[0] = ALIVE;
     Array::iterator arg_iter = obj.data.function->arguments.begin();
 
     while(arg_iter != obj.data.function->arguments.end())
@@ -524,9 +530,10 @@ void gc_mark_function_alive(const object& obj)
     }
 }
 
-// recursively mark all objects pointer to by the root and the root itself as alive
+// recursively mark all objects pointer to by the root and the root itself as &ALIVE
 void gc_mark_alive(const object& obj)
 {
+    std::cout << "Mark object alive of type: " << obj.type << std::endl;
     switch(obj.type)
     {
     case FUNCTION:
@@ -540,7 +547,7 @@ void gc_mark_alive(const object& obj)
     case STRING:
     case VARIABLE:
     case UNDECLARED_VARIABLE:
-        *obj.alive = true;
+        obj.alive[0] = ALIVE;
         break;
 
     case ARRAY:
@@ -563,11 +570,12 @@ void gc_mark()
 
     while(iter != gc_from->end())
     {
-        *(*iter).alive = false;
+        (*iter).alive[0] = DEAD;
         ++iter;
     }
 
-    // recursively search the roots and mark them and everything they reference as alive
+    std::cout << "Mark items in scope as alive." << std::endl;
+    // recursively search the roots and mark them and everything they reference as ALIVE
     scope_iter_t scope_iter = global_scope.begin();
 
     while(scope_iter != global_scope.end())
@@ -583,14 +591,16 @@ void gc_mark()
         ++scope_iter;
     }
 
-    // Mark stack as alive
+    std::cout << "Mark items on the stack as alive." << std::endl;
+    // Mark stack as ALIVE
     Array::iterator stack_iter = optic_stack.begin();
-    while(iter != optic_stack.end())
+    while(stack_iter != optic_stack.end())
     {
         gc_mark_alive(*stack_iter);
         ++stack_iter;
     }
 
+    std::cout << "Mark global_state as alive" << std::endl;
     gc_mark_alive(global_state);
 }
 
@@ -607,7 +617,7 @@ void gc_sweep()
 
     while(iter != gc_from->end())
     {
-        if(*(*iter).alive != true)
+        if((*iter).alive[0] != true)
             gc_delete(*iter);
 
         ++iter;
@@ -625,13 +635,20 @@ void gc_collect()
     }
 }
 
+void gc_register(object& obj)
+{
+    obj.alive = (bool*) malloc(sizeof(bool)); // Allocate alive pointer
+    obj.alive[0] = ALIVE; // Mark alive
+    gc_from->push_back(obj); // queue for garbage collection
+}
+
 object mem_string_alloc(const char* string)
 {
     object obj;
     obj.type = STRING;
     obj.data.string = new String(string);
     increment_string();
-    gc_from->push_back(obj); // queue for garbage collection
+    gc_register(obj);
     return obj;
 }
 
@@ -641,15 +658,16 @@ object mem_string_alloc(Type type, const char* string)
     obj.type = type;
     obj.data.string = new String(string);
     increment_string();
-    gc_from->push_back(obj); // queue for garbage collection
+    gc_register(obj);
     return obj;
 }
 
 object mem_alloc(Type type)
 {
+    gc_collect();
     object obj;
     obj.type = type;
-    *obj.alive = true;
+    obj.alive = 0; // Assign null pointer by default
 
     switch(type)
     {
@@ -665,44 +683,44 @@ object mem_alloc(Type type)
     case STRING:
         increment_string();
         obj.data.string = new String();
-        gc_from->push_back(obj); // queue for garbage collection
+        gc_register(obj);
         break;
     case FUNCTION:
         increment_function();
         obj.data.function = new Function();
-        gc_from->push_back(obj); // queue for garbage collection
+        gc_register(obj);
         break;
     case ARRAY:
         increment_array(ARRAY);
         obj.data.array = new Array();
-        gc_from->push_back(obj); // queue for garbage collection
+        gc_register(obj);
         break;
     case DICTIONARY:
         increment_dictionary();
         obj.data.dictionary = new Dictionary();
-        gc_from->push_back(obj); // queue for garbage collection
+        gc_register(obj);
         break;
     case ERROR:
         break;
     case STATEMENT_LIST:
         increment_array(STATEMENT_LIST);
         obj.data.array = new Array();
-        gc_from->push_back(obj); // queue for garbage collection
+        gc_register(obj);
         break;
     case VARIABLE:
         increment_string();
         obj.data.string = new String();
-        gc_from->push_back(obj); // queue for garbage collection
+        gc_register(obj);
         break;
     case UNDECLARED_VARIABLE:
         increment_string();
         obj.data.string = new String();
-        gc_from->push_back(obj); // queue for garbage collection
+        gc_register(obj);
         break;
     case OPERATION_TREE:
         increment_array(OPERATION_TREE);
         obj.data.array = new Array();
-        gc_from->push_back(obj); // queue for garbage collection
+        gc_register(obj);
         break;
     case OPERATION:
         break;
@@ -713,22 +731,22 @@ object mem_alloc(Type type)
     case GUARD:
         increment_array(GUARD);
         obj.data.array = new Array();
-        gc_from->push_back(obj); // queue for garbage collection
+        gc_register(obj);
         break;
     case FUNCTION_BODY:
         increment_array(FUNCTION_BODY);
         obj.data.array = new Array();
-        gc_from->push_back(obj); // queue for garbage collection
+        gc_register(obj);
         break;
     case FUNCTION_ARG_NAMES:
         increment_array(FUNCTION_ARG_NAMES);
         obj.data.array = new Array();
-        gc_from->push_back(obj); // queue for garbage collection
+        gc_register(obj);
         break;
     case FUNCTION_ARG_VALUES:
         increment_array(FUNCTION_ARG_VALUES);
         obj.data.array = new Array();
-        gc_from->push_back(obj); // queue for garbage collection
+        gc_register(obj);
         break;
     case VOID:
         break;
@@ -739,7 +757,7 @@ object mem_alloc(Type type)
     case CONDITION_TREE:
         increment_array(CONDITION_TREE);
         obj.data.array = new Array();
-        gc_from->push_back(obj); // queue for garbage collection
+        gc_register(obj);
         break;
     case CONDITION_BRANCH:
         break;
@@ -757,7 +775,6 @@ object mem_alloc(Type type)
         break;
     }
 
-    gc_collect();
     return obj;
 }
 
@@ -853,8 +870,10 @@ Function* copy_function(const Function* function)
 
 object mem_copy(const object &obj)
 {
+    gc_collect();
     object new_object;
     new_object.type = obj.type;
+    new_object.alive = 0; // Default to null pointer
 
     switch(obj.type)
     {
@@ -871,20 +890,20 @@ object mem_copy(const object &obj)
         increment_string();
 //        new_object.data.string = new String(*obj.data.string);
         new_object.data.string = new String(obj.data.string->c_str());
-        gc_from->push_back(obj); // queue for garbage collection
+        gc_register(new_object);
         break;
     case FUNCTION:
         new_object.data.function = copy_function(obj.data.function);
-        gc_from->push_back(obj); // queue for garbage collection
+        gc_register(new_object);
         break;
     case ARRAY:
         increment_array(ARRAY);
         new_object.data.array = copy_array(obj.data.array);
-        gc_from->push_back(obj); // queue for garbage collection
+        gc_register(new_object);
         break;
     case DICTIONARY:
         new_object.data.dictionary = copy_dictionary(obj.data.dictionary);
-        gc_from->push_back(obj); // queue for garbage collection
+        gc_register(new_object);
         break;
     case ERROR:
         new_object.data.number = obj.data.number;
@@ -892,22 +911,22 @@ object mem_copy(const object &obj)
     case STATEMENT_LIST:
         increment_array(STATEMENT_LIST);
         new_object.data.array = copy_array(obj.data.array);
-        gc_from->push_back(obj); // queue for garbage collection
+        gc_register(new_object);
         break;
     case VARIABLE:
         increment_string();
         new_object.data.string = new String(obj.data.string->c_str());
-        gc_from->push_back(obj); // queue for garbage collection
+        gc_register(new_object);
         break;
     case UNDECLARED_VARIABLE:
         increment_string();
         new_object.data.string = new String(obj.data.string->c_str());
-        gc_from->push_back(obj); // queue for garbage collection
+        gc_register(new_object);
         break;
     case OPERATION_TREE:
         increment_array(OPERATION_TREE);
         new_object.data.array = copy_array(obj.data.array);
-        gc_from->push_back(obj); // queue for garbage collection
+        gc_register(new_object);
         break;
     case OPERATION:
         new_object.data.operator_func = obj.data.operator_func;
@@ -921,22 +940,22 @@ object mem_copy(const object &obj)
     case GUARD:
         increment_array(GUARD);
         new_object.data.array = copy_array(obj.data.array);
-        gc_from->push_back(obj); // queue for garbage collection
+        gc_register(new_object);
         break;
     case FUNCTION_BODY:
         increment_array(FUNCTION_BODY);
         new_object.data.array = copy_array(obj.data.array);
-        gc_from->push_back(obj); // queue for garbage collection
+        gc_register(new_object);
         break;
     case FUNCTION_ARG_NAMES:
         increment_array(FUNCTION_ARG_NAMES);
         new_object.data.array = copy_array(obj.data.array);
-        gc_from->push_back(obj); // queue for garbage collection
+        gc_register(new_object);
         break;
     case FUNCTION_ARG_VALUES:
         increment_array(FUNCTION_ARG_VALUES);
         new_object.data.array = copy_array(obj.data.array);
-        gc_from->push_back(obj); // queue for garbage collection
+        gc_register(new_object);
         break;
     case VOID: // don't copy
         break;
@@ -947,7 +966,7 @@ object mem_copy(const object &obj)
     case CONDITION_TREE:
         increment_array(CONDITION_TREE);
         new_object.data.array = copy_array(obj.data.array);
-        gc_from->push_back(obj); // queue for garbage collection
+        gc_register(new_object);
         break;
     case CONDITION_BRANCH:
         break;
@@ -969,7 +988,6 @@ object mem_copy(const object &obj)
         break;
     }
 
-    gc_collect();
     return new_object;
 }
 

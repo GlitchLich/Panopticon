@@ -380,8 +380,6 @@ void evaluate_stack()
         print_object(global_state);
         mem_free(global_state);
     }
-
-    gc_free_all(); // Now's a good time to collect the garbage because the stack is empty and nothing is happening
 }
 
 void print_stack()

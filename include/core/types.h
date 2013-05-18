@@ -138,11 +138,17 @@ union Data
     unary_operator_function unary_operator_func;
 };
 
+// const bool ALIVE = true;
+// const bool DEAD = false;
+
+#define ALIVE true
+#define DEAD false
+
 struct object
 {
     Type type;
     Data data;
-    bool* alive; // Pointer to alive value, needs to be pointer because the object itself is pass by value. Use for Garbage Collection
+    bool* alive; // Handle to alive value, needs to be pointer because the object itself is pass by value. Used for Garbage Collection.
 };
 
 struct Function
