@@ -33,8 +33,6 @@ bool resolve_guard(object& A, const object &condition_tree)
     for(int i=0;i<condition_tree.data.array->size();++i)
     {
         object operation = mem_copy(condition_tree.data.array->at(i));
-        print_object(operation);
-        std::cout << "CONDITIONAL 0" << std::endl;
         optic_stack.push_back(operation);
         evaluate_top();
         const object& result = optic_stack.back();
@@ -69,10 +67,6 @@ bool resolve_guard(object& A, const object &condition_tree)
 object create_guard(object &function_call_name_and_args, object &condition_tree)
 {
     object guard = mem_alloc(GUARD);
-    //2 branches, 1 for the function name/args, one for the condition_tree
-    //    guard.data.array->reserve(2);
-//    guard.data.array->push_back(mem_copy(function_call_name_and_args));
-//    guard.data.array->push_back(mem_copy(condition_tree));
     guard.data.array->push_back(function_call_name_and_args);
     guard.data.array->push_back(condition_tree);
 
@@ -85,9 +79,10 @@ object create_guard(object &function_call_name_and_args, object &condition_tree)
  * @param operation An operation_tree to init the tree with.
  * @return
  */
-object create_condition_tree(const object &condition, const object &operation)
+object create_condition_tree(const object &condition, object &operation)
 {
     object conditional_function;
+    operation.type = ARRAY; //MAKE THIS!
     store_operations(conditional_function, condition, operation, &conditional_function_call, false); // store operations copies, no need for mem_copy here
     object tree = mem_alloc(CONDITION_TREE);
     tree.data.array->push_back(conditional_function);
@@ -103,12 +98,12 @@ object create_condition_tree(const object &condition, const object &operation)
 void add_branch_to_tree(object &tree, const object &condition, object &operation)
 {
     object conditional_function;
-    operation.type = CONDITIONA_OPERATION_TREE; //MAKE THIS!
+    operation.type = ARRAY; //MAKE THIS!
     store_operations(conditional_function, condition, operation, &conditional_function_call, false); // store operations copies, no need for mem_copy here
     tree.data.array->at(1).data.array->push_back(conditional_function);
 }
 
-void add_wildcard_to_tree(object &tree, const object &operation)
+void add_wildcard_to_tree(object &tree, object &operation)
 {
 
     object wild_card;
@@ -116,39 +111,28 @@ void add_wildcard_to_tree(object &tree, const object &operation)
     wild_card.data.boolean = true;
 
     object conditional_function;
+    operation.type = ARRAY; //MAKE THIS!
     store_operations(conditional_function, wild_card, operation, &conditional_function_call, false); // store operations copies, no need for mem_copy here
     tree.data.array->at(1).data.array->push_back(conditional_function);
 }
 
 bool conditional_function_call(object& result_A,const object& conditional_B,const object& operation_tree_C)
 {
-//    optic_stack.push_back(mem_copy(conditional_B));
-    std::cout << "CONDITIONAL 1" << std::endl;
     optic_stack.push_back(conditional_B);
     evaluate_top();
-    std::cout << "CONDITIONAL 2" << std::endl;
     const object& result_B = optic_stack.back();
     optic_stack.pop_back();
-    std::cout << "CONDITIONAL 3" << std::endl;
     if(result_B.type == BOOL)
     {
-        std::cout << "Condition return: " << result_B.data.boolean << std::endl;
         //resolve here
         if(result_B.data.boolean == true)
         {
-
             object operation_copy;
             operation_copy.data.array = operation_tree_C.data.array;
             operation_copy.type = OPERATION_TREE;
             optic_stack.push_back(operation_copy);
-//            optic_stack.push_back(operation_tree_C);
-//            for(int i=0;i<operation_tree_C.data.array->size();++i)
-//            {
-//                optic_stack.push_back(operation_tree_C.data.array->at(i));
-//            }
             evaluate_top();
             result_A = mem_copy(optic_stack.back());
-            optic_stack.pop_back();
             return true;
         }
         else

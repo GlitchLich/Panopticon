@@ -244,10 +244,10 @@ bool evaluate_variable(const object& variable_name)
 {
     object result;
 
-    std::cout << "GET VARIABLE" << std::endl;
+//    std::cout << "GET VARIABLE" << std::endl;
     if(get_variable(variable_name.data.string, &result) == OK)
     {
-        std::cout << "GET VARIABLE" << std::endl;
+//        std::cout << "GET VARIABLE" << std::endl;
 
         // Auto call zero argument functions when they are found.
         if(result.type == FUNCTION)
@@ -305,7 +305,7 @@ bool evaluate_top()
         return false;
     }
 
-    std::cout << "evaluate_top()" << std::endl;
+//    std::cout << "evaluate_top()" << std::endl;
     object obj = optic_stack.back();
     optic_stack.pop_back();
     bool result = true;
@@ -359,7 +359,7 @@ bool evaluate_top()
 
 void evaluate_stack()
 {
-    std::cout << "EVALUATE_STACK: optic_stack.size: " << optic_stack.size() << std::endl;
+//    std::cout << "EVALUATE_STACK: optic_stack.size: " << optic_stack.size() << std::endl;
 
     global_state.type = VOID;
     while(optic_stack.size())

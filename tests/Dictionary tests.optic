@@ -27,7 +27,7 @@ myDict = {
 myDict = dict { Turtles = true Octopi = "are cool" Array = [0 1 2 3 4] dictFunc x y = x + y Dragon = dict { test = 4 } }
 
 //with keyword
-myDict = dict {    
+myDict = {    
 	Turtles = true 
 	Octopi = "are cool" 
 	Array = [0 1 2 3 4]
@@ -138,6 +138,5 @@ level1
 level1::level2
 level1::level2::level3
 level1::level2::level3::level4
-level1
-::level2::level3::level4::level5
+level1::level2::level3::level4::level5
 

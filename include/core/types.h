@@ -102,9 +102,7 @@ enum Type
     PATTERN, //26 for pattern matching
     HEAD, //27 For Arrays/List sorting/construction
     TAIL, //28 For Arrays/List sorting/construction
-    FAILED_CONDITION, //29 Condition test failed
-    WHERE_TREE,  //30
-    CONDITIONA_OPERATION_TREE
+    FAILED_CONDITION //29 Condition test failed
 };
 
 std::string type_string(Type type);

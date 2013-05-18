@@ -33,7 +33,7 @@
 
     void token_destructor(Token t)
     {
-        std::cout << "token_destructor()" << std::endl;
+/*        std::cout << "token_destructor()" << std::endl;*/
         //TO DO: Do we need to free the tokens or not? I don't think so...
 /*        mem_free(t);*/
     }
@@ -556,7 +556,8 @@ expr(A) ::= dict(B).
 
     optic::optic_stack.push_back(dict);
     optic::evaluate_top();
-    A = optic::mem_copy(optic::optic_stack.back());
+/*    A = optic::mem_copy(optic::optic_stack.back());*/
+    A = optic::optic_stack.back();
     optic::optic_stack.pop_back();
     if(!panopticon::correct_parsing)
     {
