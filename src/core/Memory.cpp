@@ -55,7 +55,7 @@ void increment_array(Type type)
 {
     ++gc_count;
     ++num_arrays;
-    std::cout << "new Array(" << type_string(type) << ")" << std::endl;
+//    std::cout << "new Array(" << type_string(type) << ")" << std::endl;
 
     switch(type)
     {
@@ -90,28 +90,28 @@ void increment_string()
 {
     ++gc_count;
     ++num_strings;
-    std::cout << "new String()" << std::endl;
+//    std::cout << "new String()" << std::endl;
 }
 
 void increment_dictionary()
 {
     ++gc_count;
     ++num_dictionaries;
-    std::cout << "new Dictionary()" << std::endl;
+//    std::cout << "new Dictionary()" << std::endl;
 }
 
 void increment_function()
 {
     ++gc_count;
     ++num_functions;
-    std::cout << "new Function()" << std::endl;
+//    std::cout << "new Function()" << std::endl;
 }
 
 void decrement_array(Type type)
 {
     --gc_count;
     --num_arrays;
-    std::cout << "delete Array(" << type_string(type) << ")" << std::endl;
+//    std::cout << "delete Array(" << type_string(type) << ")" << std::endl;
 
     switch(type)
     {
@@ -221,18 +221,17 @@ void mem_free_array(Array& array)
 
 void shallow_mem_free_array(Array* array, Type type)
 {
-    /*
-    if(array)
-    {
-        decrement_array(type);
-        delete array;
-        array = 0;
-    }
+//    if(array)
+//    {
+//        decrement_array(type);
+//        delete array;
+//        array = 0;
+//    }
 
-    else
-    {
-        std::cerr << "Attempted to shallo_mem_free_array on a null pointer." << std::endl;
-    }*/
+//    else
+//    {
+//        std::cerr << "Attempted to shallo_mem_free_array on a null pointer." << std::endl;
+//    }
 }
 
 void gc_delete_dictionary(Dictionary* dictionary)
@@ -334,7 +333,7 @@ void gc_delete_string(String* string)
 
 void gc_delete(object& obj)
 {
-    std::cout << "gc_delete obj.type = " << panopticon::type_string(obj.type) << std::endl;
+//    std::cout << "gc_delete obj.type = " << panopticon::type_string(obj.type) << std::endl;
     switch(obj.type)
     {
     case NIL:
@@ -435,8 +434,8 @@ void gc_free_all()
 
     if(gc_count != 0)
     {
-        std::cerr << "Warning: some memory may not be collectable by the garbage collector, there may be possible memory leaks." << std::endl;
-        std::cout << "gc_count: " << gc_count << std::endl;
+//        std::cerr << "Warning: some memory may not be collectable by the garbage collector, there may be possible memory leaks." << std::endl;
+//        std::cout << "gc_count: " << gc_count << std::endl;
         // gc_count = 0; // If dealloc_queue.size == 0 then gc_count should be 0 as well. If it is not, then likely we've missed something
     }
 

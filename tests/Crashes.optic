@@ -2,9 +2,12 @@
 // Panopticon Crashes
 //////////////////////
 
+//Fixed: Syntax Error.
 0:1:2:3:4:
-::0::1::2::3::4
+//Should Throw Syntax Error, doesn't:
+++0++1++2++3++4
 
+//These all correctly throw syntax errors.
 rt_someFunc()
 rt|someFunc()
 rt/someFunc()
@@ -20,21 +23,41 @@ rt~someOtherFunc( 1 2 3)
 [rt]someFunc( 1 2 3)
 (rt someFunc( 1 2 3 ))
 {rt someFunc( 1 2 3 )}
+
+//Should throw syntax error, doesn't.
 |rt someFunc( 1 2 3 )|
 // Crashes
 
 
 // Bugs
+//This Error Has been fixed....
 1. Guards aren't multi-channel expanding.
 
-
+//...However now Recursion is crashing:
 crossTheStreams x
 	| x < 100 && x > 0	= crossTheStreams(x + 2) - 1 >> crossTheStreams
-	_					= x * 2
+	| _					= x * 2
 
 crossTheStreams(1)
 crossTheStreams(91)
 crossTheStreams([91 91])
+
+recursionTest x
+	| x > 0 	= x + recursionTest(x - 1)
+	| _			= 0
+
+recursionTest(2)
+
+fallthroughTest x
+	| x > 5	= print("This shouldn't happen 5: " + x)
+	| x > 4	= print("This shouldn't happen 4: " + x)
+	| x > 3	= print("This shouldn't happen 3: " + x)
+	| x > 2	= print("This shouldn't happen 2: " + x)
+	| x > 1	= print("This shouldn't happen 1: " + x)
+	| x > 0	= print("This shouldn't happen 0: " + x)
+	| _		= 2+2
+
+fallthroughTest(0)+3
 
 
 2. Double uninitialized variables crash

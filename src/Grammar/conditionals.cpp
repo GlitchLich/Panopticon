@@ -33,6 +33,8 @@ bool resolve_guard(object& A, const object &condition_tree)
     for(int i=0;i<condition_tree.data.array->size();++i)
     {
         object operation = mem_copy(condition_tree.data.array->at(i));
+        print_object(operation);
+        std::cout << "CONDITIONAL 0" << std::endl;
         optic_stack.push_back(operation);
         evaluate_top();
         const object& result = optic_stack.back();
@@ -48,7 +50,6 @@ bool resolve_guard(object& A, const object &condition_tree)
         else if(result.type!=FAILED_CONDITION)
         {
             A = result; // no need to copy, no references to it
-//            optic_stack.push_back(A);
             return true;
         }
     }
@@ -99,9 +100,10 @@ object create_condition_tree(const object &condition, const object &operation)
  * @param condition The condition to add.
  * @param operation The operation_tree to add.
  */
-void add_branch_to_tree(object &tree, const object &condition, const object &operation)
+void add_branch_to_tree(object &tree, const object &condition, object &operation)
 {
     object conditional_function;
+    operation.type = CONDITIONA_OPERATION_TREE; //MAKE THIS!
     store_operations(conditional_function, condition, operation, &conditional_function_call, false); // store operations copies, no need for mem_copy here
     tree.data.array->at(1).data.array->push_back(conditional_function);
 }
@@ -121,17 +123,29 @@ void add_wildcard_to_tree(object &tree, const object &operation)
 bool conditional_function_call(object& result_A,const object& conditional_B,const object& operation_tree_C)
 {
 //    optic_stack.push_back(mem_copy(conditional_B));
+    std::cout << "CONDITIONAL 1" << std::endl;
     optic_stack.push_back(conditional_B);
     evaluate_top();
+    std::cout << "CONDITIONAL 2" << std::endl;
     const object& result_B = optic_stack.back();
     optic_stack.pop_back();
+    std::cout << "CONDITIONAL 3" << std::endl;
     if(result_B.type == BOOL)
     {
+        std::cout << "Condition return: " << result_B.data.boolean << std::endl;
         //resolve here
-        if(result_B.data.boolean)
+        if(result_B.data.boolean == true)
         {
-//            optic_stack.push_back(mem_copy(operation_tree_C));
-            optic_stack.push_back(operation_tree_C);
+
+            object operation_copy;
+            operation_copy.data.array = operation_tree_C.data.array;
+            operation_copy.type = OPERATION_TREE;
+            optic_stack.push_back(operation_copy);
+//            optic_stack.push_back(operation_tree_C);
+//            for(int i=0;i<operation_tree_C.data.array->size();++i)
+//            {
+//                optic_stack.push_back(operation_tree_C.data.array->at(i));
+//            }
             evaluate_top();
             result_A = mem_copy(optic_stack.back());
             optic_stack.pop_back();
