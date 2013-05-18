@@ -1,19 +1,13 @@
 //Unit Tests
 
-//An interesting idea....We could have a function library, this library would be compiled at startup, and would follow rules similar to Pure functional languages: Any functions/Values (which are functions in reality) are immutable and cannot be redefined. Furthermore they are immutable even at runtime. However, one may define functions / values at run time which are mutable. Would serve our two purposes (composed pieces and live coding) well.
-
-//Switches? Guards? Pattern Matching?
-
-//Undeclare Variables throw errors:
-n*m+z
-n*m+z
+//Pattern Matching, Case Statements, List comprehensions
 
 //Array ranges
 [2..10]
 //Array ranges with steps
 [2,4..16]
 //With negative ranges
-[12,9..0]
+a = [12,9..0]
 
 //Ranges with slicing
 range = [120,117..0]
@@ -33,7 +27,12 @@ range[38:40][:120:%]
 range[38:40][:120:%]
 
 arrayBuilder x y = [x..y]
-arrayBuilder(20 200)[:20:8]
+arrayBuilder(20 200)[::16:%]
+
+mySynth freq = [s1 s2] >> out()
+	where
+		s1 = sinSynth(freq) >> distort(0.3) 
+		s2 = sinSynth(freq) >> delay(0.1)  >> filter(freq * 2)
 
 //Also works with Doubles!
 [0.1,0.3..1]
@@ -158,7 +157,6 @@ arrayGuard x
 				subTest = "Works!"
 			}
 		}
-
 arrayGuard([1 1 1])
 arrayGuard([0 1 1])
 arrayGuard([0 0 1])

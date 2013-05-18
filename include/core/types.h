@@ -103,7 +103,8 @@ enum Type
     HEAD, //27 For Arrays/List sorting/construction
     TAIL, //28 For Arrays/List sorting/construction
     FAILED_CONDITION, //29 Condition test failed
-    WHERE_TREE  //30
+    WHERE_TREE,  //30
+    CONDITIONA_OPERATION_TREE
 };
 
 std::string type_string(Type type);
