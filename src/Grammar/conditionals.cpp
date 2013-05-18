@@ -32,8 +32,8 @@ bool resolve_guard(object& A, const object &condition_tree)
 
     for(int i=0;i<condition_tree.data.array->size();++i)
     {
-        object operation = mem_copy(condition_tree.data.array->at(i));
-        optic_stack.push_back(operation);
+//        object operation = mem_copy(condition_tree.data.array->at(i));
+        optic_stack.push_back(condition_tree.data.array->at(i));
         evaluate_top();
         const object& result = optic_stack.back();
         optic_stack.pop_back();
@@ -47,7 +47,7 @@ bool resolve_guard(object& A, const object &condition_tree)
         }
         else if(result.type!=FAILED_CONDITION)
         {
-            A = result; // no need to copy, no references to it
+            A = result; // no neyed to copy, no references to it
             return true;
         }
     }
@@ -132,7 +132,9 @@ bool conditional_function_call(object& result_A,const object& conditional_B,cons
             operation_copy.type = OPERATION_TREE;
             optic_stack.push_back(operation_copy);
             evaluate_top();
-            result_A = mem_copy(optic_stack.back());
+//            result_A = mem_copy(optic_stack.back());
+            result_A = optic_stack.back();
+            optic_stack.pop_back();
             return true;
         }
         else

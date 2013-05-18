@@ -2,13 +2,18 @@
 
 //Pattern Matching, Case Statements, List comprehensions
 
+factorial n
+	| n > 0 = n * factorial(n - 1)
+	| _		= 1
+
+factorial(60)
+
 //Array ranges
 [2..10]
 //Array ranges with steps
 [2,4..16]
 //With negative ranges
 a = [12,9..0]
-
 //Ranges with slicing
 range = [120,117..0]
 range
@@ -526,7 +531,7 @@ arrayGuard x
 	| x[1] == 1 = "Second"
 	| _			= "nope"
 
-arrayGuard([12 11 2])
+arrayGuard([0 1 2])
 
 //Fibonacci sequence! probably shouldn't go above 16 right now....
 fib i

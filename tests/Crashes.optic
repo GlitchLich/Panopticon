@@ -8,6 +8,8 @@
 f x = x + 1
 f(1)
 f("hey")
+f( f( [ 2 3 ] ) )
+
 
 //Fixed: Syntax Error.
 0:1:2:3:4:
@@ -46,14 +48,14 @@ crossTheStreams x
 	| _					= x * 2
 
 crossTheStreams(1)
-crossTheStreams(91)
+crossTheStreams(34)
 crossTheStreams([91 91])
 
 recursionTest x
 	| x > 0 	= x + recursionTest(x - 1)
 	| _			= 0
 
-recursionTest(5)
+recursionTest(10)
 
 fallthroughTest x
 	| x > 5	= "Fallthrough > 5:" + x
@@ -64,7 +66,7 @@ fallthroughTest x
 	| x > 0	= "Fallthrough > 0:" + x
 	| _		= 2+2
 
-fallthroughTest(3)
+fallthroughTest(0)
 
 2. Double uninitialized variables crash
 
