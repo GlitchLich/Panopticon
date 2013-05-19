@@ -33,6 +33,7 @@ int line = 1, col = 1;
 [}]     {return RCURL;}
 [`]     {return LCBLOCK;}
 [@]     {return RCBLOCK;}
+[\\]     {return BACKSLASH;}
 ".."       {return RANGE;}
 [0-9]+|[0-9]*\.[0-9]+    {
     col += (int) strlen(yytext);

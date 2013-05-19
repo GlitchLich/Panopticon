@@ -50,6 +50,10 @@ bool store_operations(object& a,const object& obj1,unary_operator_function func,
 bool store_operations(object& a, const object& obj1, const object& obj2, operator_function func, bool expand = true);
 bool store_operations(object& a, const object& obj1, const object& obj2, bool expand = true);
 
+bool left_section(object& A, object &B, operator_function func, bool expand = true);
+bool right_section(object& A, object &B, operator_function func, bool expand = true);
+
+
 // Operators
 bool serial(object& A, const object &B, const object &C);
 bool plus(object&A, const object& B, const object& C);

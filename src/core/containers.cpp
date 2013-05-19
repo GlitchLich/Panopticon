@@ -205,7 +205,7 @@ bool create_dictionary(object& result_A, const object& B)
             //            mem_free(arg_copy);
         }
     }
-    optic_stack.push_back(result_A);
+//    optic_stack.push_back(result_A);
     //    optic::shallow_mem_free_array(B.data.array,"ARRAY");
 }
 

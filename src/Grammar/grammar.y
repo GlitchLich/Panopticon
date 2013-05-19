@@ -304,6 +304,18 @@ guard_statement(A) ::= name_chain(B) LCBLOCK BITOR expr(C) ASSIGN expr(D) DELIMI
     A = create_guard(B,tree);
 }
 
+//ERROR VERSION!
+guard_statement ::= name_chain ASSIGN LCBLOCK BITOR expr ASSIGN expr DELIMITER. [ASSIGN]
+{
+    optic::out() << "Syntax Error: Cannot assign a guard statement to a function: get rid of the '='." << std::endl;
+    optic::correct_parsing = false;
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
+
 guard_statement(A) ::= guard_statement(B) BITOR expr(C) ASSIGN expr(D) DELIMITER. [ASSIGN]
 {
     add_branch_to_tree(B,C,D);
@@ -346,6 +358,80 @@ assignment(A) ::= name_chain(B) ASSIGN expr(C). [ASSIGN]
 {
     insure_ready_for_assignment(B,C);
     panopticon::store_operations(A, B, C, panopticon::assign_variable);
+    if(!panopticon::correct_parsing)
+    {
+        while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
+        ParseARG_STORE;
+    }
+}
+
+//===============================================================
+//Anonymous Functions / Partial Application / Operator Sections
+//===============================================================
+
+//sectioning
+
+expr(A) ::= LPAREN expr(B) PLUS RPAREN.
+{
+    optic::left_section(A,B,optic::plus);
+}
+
+expr(A) ::= LPAREN PLUS expr(B) RPAREN.
+{
+    optic::right_section(A,B,optic::plus);
+}
+
+expr(A) ::= LPAREN expr(B) MINUS RPAREN.
+{
+    optic::left_section(A,B,optic::minus);
+}
+
+/*expr(A) ::= LPAREN MINUS expr(B) RPAREN.*/
+/*{*/
+/*    optic::right_section(A,B,optic::minus);*/
+/*}*/
+
+expr(A) ::= LPAREN expr(B) TIMES RPAREN.
+{
+    optic::left_section(A,B,optic::multiply);
+}
+
+expr(A) ::= LPAREN TIMES expr(B) RPAREN.
+{
+    optic::right_section(A,B,optic::multiply);
+}
+
+expr(A) ::= LPAREN expr(B) DIVIDE RPAREN.
+{
+    optic::left_section(A,B,optic::divide);
+}
+
+expr(A) ::= LPAREN DIVIDE expr(B) RPAREN.
+{
+    optic::right_section(A,B,optic::divide);
+}
+
+//....Finish this ^
+
+//Anonymous Functions
+expr(A) ::= BACKSLASH name_chain(B) ASSIGN expr(C).
+{
+    if(B.type == optic::ARRAY)
+    {
+        optic::object name = optic::mem_string_alloc("\\");
+        B.data.array->push_front(name);
+        insure_ready_for_assignment(B,C);
+        store_operations(A,B,C,optic::create_function);
+    }
+    else
+    {
+        optic::object name_array = mem_alloc(optic::ARRAY);
+        optic::object name = optic::mem_string_alloc("\\");
+        name_array.data.array->push_front(name);
+        name_array.data.array->push_back(B);
+        insure_ready_for_assignment(name_array,C);
+        store_operations(A,name_array,C,optic::create_function);
+    }
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -1642,7 +1728,6 @@ expr(A) ::= LBRAC expr(B) COMMA expr(C) RANGE expr(D) RBRAC.
     start_step.data.array->push_back(C);
     store_operations(A,start_step,D,optic::range_from_step_to,false);
 }
-
 
 //======================
 //Syntax ERROR HANDLING

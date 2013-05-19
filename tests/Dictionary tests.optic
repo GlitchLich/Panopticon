@@ -32,7 +32,7 @@ myDict = {
 	Octopi = "are cool" 
 	Array = [0 1 2 3 4]
 	dictFunc x y = x + y
-	Dragon = dict {
+	Dragon = {
 		test = 4
 		dictFunc x y = x + y
 		dictFunc2 x y = x - y
@@ -121,7 +121,7 @@ lookThatShitUp x y = d{x} * a[y]
 lookThatShitUp(
 
 //Horizontal nesting
-level1 = dict { level2 = dict { level3 = dict { level4 = dict { level5 = false } } } }
+level1 = { level2 = dict { level3 = dict { level4 = dict { level5 = false } } } }
 			
 //Vertical nesting
 level1 = {

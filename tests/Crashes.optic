@@ -33,16 +33,14 @@ rt~someOtherFunc( 1 2 3)
 (rt someFunc( 1 2 3 ))
 {rt someFunc( 1 2 3 )}
 
-//Should throw syntax error, doesn't.
+//Fixed: Throws correct Syntax error.
 |rt someFunc( 1 2 3 )|
 // Crashes
 
 
 // Bugs
-//This Error Has been fixed....
+//FIXED
 1. Guards aren't multi-channel expanding.
-
-//...However now Recursion is crashing:
 crossTheStreams x
 	| x < 100 && x > 0	= crossTheStreams(x + 2) - 1 >> crossTheStreams
 	| _					= x * 2
@@ -66,7 +64,7 @@ fallthroughTest x
 	| x > 0	= "Fallthrough > 0:" + x
 	| _		= 2+2
 
-fallthroughTest(0)
+fallthroughTest(4)
 
 2. Double uninitialized variables crash
 

@@ -46,6 +46,42 @@ namespace panopticon
 //GENERAL
 //==================
 
+bool left_section(object& A, object &B, operator_function func, bool expand)
+{
+    //Function name/arg
+    optic::object name_array = mem_alloc(optic::ARRAY);
+    optic::object name = optic::mem_string_alloc("\\");
+    optic::object arg = optic::mem_string_alloc("x");
+    name_array.data.array->push_front(name);
+    name_array.data.array->push_back(arg);
+
+    //Function body
+    optic::object var = optic::mem_string_alloc(UNDECLARED_VARIABLE,"x");
+    object body;
+    store_operations(body,B,var,func);
+
+    insure_ready_for_assignment(name_array,body);
+    store_operations(A,name_array,body,optic::create_function);
+}
+
+bool right_section(object& A, object &B, operator_function func, bool expand)
+{
+    //Function name/arg
+    optic::object name_array = mem_alloc(optic::ARRAY);
+    optic::object name = optic::mem_string_alloc("\\");
+    optic::object arg = optic::mem_string_alloc("x");
+    name_array.data.array->push_front(name);
+    name_array.data.array->push_back(arg);
+
+    //Function body
+    optic::object var = optic::mem_string_alloc(UNDECLARED_VARIABLE,"x");
+    object body;
+    store_operations(body,var,B,func);
+
+    insure_ready_for_assignment(name_array,body);
+    store_operations(A,name_array,body,optic::create_function);
+}
+
 bool print_array(const object &A, int arrayNum,bool isTree)
 {
     if(arrayNum!=0)

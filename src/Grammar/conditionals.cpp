@@ -47,7 +47,7 @@ bool resolve_guard(object& A, const object &condition_tree)
         }
         else if(result.type!=FAILED_CONDITION)
         {
-            A = result; // no neyed to copy, no references to it
+            A = result; // no need to copy, no references to it
             return true;
         }
     }

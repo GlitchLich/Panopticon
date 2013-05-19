@@ -2,10 +2,10 @@
 
 //===========================
 // Total Report:
-// No Leaks: 16
-// Leaks: 8
+// No Leaks: All :)
+// Leaks: 0
 // Negative Leaks: 0
-// Crashes: 3
+// Crashes: 0
 //===========================
 
 //Numbers: No Leaks
@@ -64,7 +64,7 @@ arrayGuard x
        | x[0] == 0     	= 10
        | x[0] == 1		= 100
        | _              = 0.1
-//Using Array Guards: LEAKS!!!!!!!!!!!!!!
+//Using Array Guards: No Leaks
 arrayGuard([1])
 
 arrayGuard2 x
@@ -72,14 +72,14 @@ arrayGuard2 x
        | x == 1		= [ 100 100 ]
        | _          = [ 0.1 0.1 ]
 
-arrayGuard2(0)
+arrayGuard2(2)
 
 //Declaring Where Functions: No Leaks
 regularWhere x = x * y
 	where 
 		y = 20
-//Declaring Where Functions: SEGMENTATION FAULT CRASH!!!!!!!!!!!!!!!!!!!!!
-regularWhere( 13.3 )
+//Declaring Where Functions: Fixed.
+regularWhere( 30.3 )
 //Declaring String Function: No Leaks
 string x = "String " + x
 //Using String Functions: No Leaks
@@ -103,7 +103,7 @@ myDict::innerDict::nested
 
 //Declaring Functions in Dictionaries: No Leaks
 functionary = { func x = x + 1 }
-//Using Function in Dictionaries: Crash
+//Using Function in Dictionaries: Fixed
 functionary::func(20)
 print(functionary::func)
 do x y = x(y)
@@ -117,8 +117,8 @@ add( 2 op( splayPlusOne 1 ))
 
 
 arraytionary = { array x = [ x x x ] }
-// crashes
-arraytionary::array(10)
+// Fixed
+arraytionary::array(10)[0]
 arraytionaryPlus x = arraytionary::array(x) + x
 arraytionaryPlus(1)
 
@@ -129,7 +129,7 @@ funcFunc f = f + f
 a = 20 + 1
 funcFunc(a a)
 
-//Array Functors: CRASH!!!!
+//Array Functors: Fixed
 doubler x = x * 2
 zeroOut x = x * 0
 doubleNeg x = x * (-2)
