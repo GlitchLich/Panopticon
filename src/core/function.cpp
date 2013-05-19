@@ -117,7 +117,8 @@ bool call_function(object& A, const object& B, const object& C)
         // we use arguments.size() - 2 because we don't want to count the function name which is included in the arguments array
         for(int i = function.data.function->arguments.size() - 2; i >= 0; --i)
         {
-            optic_stack.push_back(mem_copy(C.data.array->at(i)));
+            optic_stack.push_back(C.data.array->at(i));
+            // optic_stack.push_back(mem_copy(C.data.array->at(i)));
         }
 
         // Collect the the results and map them to the local scope
