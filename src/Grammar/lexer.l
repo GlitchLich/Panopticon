@@ -7,6 +7,27 @@
 
 int line = 1, col = 1;
 
+/**
+ * yyerror() is invoked when the lexer or the parser encounter
+ * an error. The error message is passed via *s
+ *
+ *
+ */
+void yyerror(char *s, int errorCode)
+{
+    switch(errorCode)
+    {
+    //panopticon::OpenQuoteError
+    case 1:
+        printf("Syntax Error p0001, dangling quotation mark: %s at line: %d col: %d\n",s,line,col);
+        break;
+    //panopticon::UnknownError
+    case 0:
+    default:
+        printf("Syntax Error p0000: %s at line: %d col: %d\n",s,line,col);
+        break;
+    }
+}
 
 %}
 
@@ -123,27 +144,7 @@ void reset_lexer(void)
 
 }
 
-/**
- * yyerror() is invoked when the lexer or the parser encounter
- * an error. The error message is passed via *s
- *
- *
- */
-void yyerror(char *s, int errorCode)
-{
-    switch(errorCode)
-    {
-    //panopticon::OpenQuoteError
-    case 1:
-        printf("Syntax Error p0001, dangling quotation mark: %s at line: %d col: %d\n",s,line,col);
-        break;
-    //panopticon::UnknownError
-    case 0:
-    default:
-        printf("Syntax Error p0000: %s at line: %d col: %d\n",s,line,col);
-        break;
-    }
-}
+
 
     /*int yywrap(void)
     {

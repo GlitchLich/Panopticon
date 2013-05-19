@@ -4,9 +4,6 @@
 #include <QtCore/QDir>
 #include <QtQml/qqml.h>
 #include <QtQuick/QtQuick>
-#include <qt5/QtQml/QQmlEngine>
-#include <qt5/QtGui/QGuiApplication>
-#include <qt5/QtQuick/QQuickView>
 #include <QFile>
 #include <QDebug>
 #include <QCoreApplication>

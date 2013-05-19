@@ -2,7 +2,6 @@
 #define MAINWINDOW_H
 
 #include <QtCore/QDir>
-#include <qt5/QtGui/QGuiApplication>
 #include <QDebug>
 #include <QCoreApplication>
 #include <QWindow>
