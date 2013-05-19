@@ -2,7 +2,7 @@
 Panopticon
 ---------------------------------------------------------------------------------------------------------------
 
-Panopticon is (or rather, will be) an interpreted and dynamically typed pure functional Audio/Graphics/Networking Language written in C++ and aimed at creative projects. The language itself only requires GCC 4.7 or higher with C++11 enabled. We have yet to compile with LLVM/Clang, but this should theoretically work. The IDE requires Qt 5 or higher, but the language can be built without the IDE and Qt dependancy.
+Panopticon is (or rather, will be) an interpreted and dynamically typed pure functional Audio/Graphics/Networking Language written in C++ and aimed at creative projects. The language itself only requires GCC 4.7 or LLVM 4.2 or higher with C++11 enabled. The IDE requires Qt 5 or higher, but the language can be built without the IDE and Qt dependancy.
 
 Notable features include higher order functions, dynamic scoping, immutable objects, and lazy evaluation of everything (everything such as variables, arrays, and dictionaries are really just functions, and all functions are lazily evaluated). Most of the basics of the language have been implemented, but the graphics and audio libraries have yet to be written. Most likely audio will use PortAudio and we will roll our own graphics library, heavily influenced by Cinder and other similar projects, albeit it very light weight. At the moment Panopticon is still very unstable, but hopefully in the relative near future a stable alpha will be made available.
 
