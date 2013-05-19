@@ -39,9 +39,5 @@ void string_divide(object&A, object& B, object& C)
     correct_parsing = false;
 }
 
-void array_divide(object&A, object& B, object& C)
-{
-
-}
 
 }

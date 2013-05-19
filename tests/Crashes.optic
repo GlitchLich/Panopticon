@@ -2,6 +2,15 @@
 // Panopticon Crashes
 //////////////////////
 
+//gc tests:
+
+//Doing this repeatedly Works
+f x = x + 1
+f(1)
+f("hey")
+f( f( [ 2 3 ] ) )
+
+
 //Fixed: Syntax Error.
 0:1:2:3:4:
 //Should Throw Syntax Error, doesn't:
@@ -39,26 +48,25 @@ crossTheStreams x
 	| _					= x * 2
 
 crossTheStreams(1)
-crossTheStreams(91)
+crossTheStreams(34)
 crossTheStreams([91 91])
 
 recursionTest x
 	| x > 0 	= x + recursionTest(x - 1)
 	| _			= 0
 
-recursionTest(2)
+recursionTest(10)
 
 fallthroughTest x
-	| x > 5	= print("This shouldn't happen 5: " + x)
-	| x > 4	= print("This shouldn't happen 4: " + x)
-	| x > 3	= print("This shouldn't happen 3: " + x)
-	| x > 2	= print("This shouldn't happen 2: " + x)
-	| x > 1	= print("This shouldn't happen 1: " + x)
-	| x > 0	= print("This shouldn't happen 0: " + x)
+	| x > 5	= "Fallthrough > 5:" + x
+	| x > 4	= "Fallthrough > 4:" + x
+	| x > 3	= "Fallthrough > 3:" + x
+	| x > 2	= "Fallthrough > 2:" + x
+	| x > 1	= "Fallthrough > 1:" + x
+	| x > 0	= "Fallthrough > 0:" + x
 	| _		= 2+2
 
-fallthroughTest(0)+3
-
+fallthroughTest(0)
 
 2. Double uninitialized variables crash
 

@@ -68,12 +68,6 @@ bool string_plus(object&A,const object& B,const object& C)
     }
 }
 
-bool array_plus(object&A,const object& B,const object& C)
-{
-
-}
-
-
 //================================
 //Combinations
 //================================
@@ -201,92 +195,5 @@ bool string_plus_string(object &a,const object b, const object c)
     return true;
 }
 
-//arrays
-bool array_plus_bool(object& a,object& array, object& boolean)
-{
-    a = mem_alloc(ARRAY);
-//    a.data.array->reserve(array.data.array->size());
-
-    for(int i=0;i<array.data.array->size();++i)
-    {
-        bool_plus(a,boolean,array.data.array->at(i));
-    }
-//    delete array.data.array;
-}
-
-bool array_plus_number(object& a,object& array, object& number)
-{
-    a = mem_alloc(ARRAY);
-//    a.data.array->reserve(array.data.array->size());
-
-    for(int i=0;i<array.data.array->size();++i)
-    {
-        object newObject;
-        number_plus(newObject,number,array.data.array->at(i));
-        a.data.array->push_back(newObject);
-    }
-
-//    delete array.data.array;
-}
-
-bool array_plus_string(object&A,object& array, object& string)
-{
-    A = mem_alloc(ARRAY);
-//    A.data.array->reserve(array.data.array->size());
-    for(int i=0;i<A.data.array->size();++i)
-    {
-        object newObject;
-        string_plus(newObject,string,array.data.array->at(i));
-        A.data.array->push_back(newObject);
-    }
-//    delete array.data.array;
-}
-
-bool array_plus_array(object& a,object& array1, object& array2)
-{
-    a = mem_alloc(ARRAY);
-    int size = 1;
-
-    if(array1.data.array->size()>=array2.data.array->size())
-    {
-//        a.data.array->reserve(array1.data.array->size());
-        size = array1.data.array->size();
-    }
-    else
-    {
-//        a.data.array->reserve(array2.data.array->size());
-        size = array2.data.array->size();
-    }
-
-    for(int i=0;i<size;++i)
-    {
-        panopticon::object& bb = array1.data.array->at(i%(array1.data.array->size()));
-        panopticon::object& cc = array2.data.array->at(i%(array2.data.array->size()));
-        object newObject;
-
-        switch(bb.type)
-        {
-        case NUMBER:
-            number_plus(newObject,bb,cc);
-            a.data.array->push_back(newObject);
-            break;
-        case BOOL:
-            bool_plus(newObject,bb,cc);
-            a.data.array->push_back(newObject);
-            break;
-        case STRING:
-            string_plus(newObject,bb,cc);
-            a.data.array->push_back(newObject);
-            break;
-        case ARRAY:
-            array_plus(newObject,bb,cc);
-            a.data.array->push_back(newObject);
-            break;
-        }
-    }
-
-//    delete array1.data.array;
-//    delete array2.data.array;
-}
 
 }

@@ -76,13 +76,15 @@ bool evaluate_binary_operator(const object& operator_object, bool expand = true)
 
                 for(unsigned int i = 0; i < num_iterations; ++i)
                 {
-                    optic_stack.push_back(mem_copy(arg2.data.array->at(i % arg2.data.array->size())));
-                    optic_stack.push_back(mem_copy(arg1.data.array->at(i % arg1.data.array->size())));
+//                    optic_stack.push_back(mem_copy(arg2.data.array->at(i % arg2.data.array->size())));
+//                    optic_stack.push_back(mem_copy(arg1.data.array->at(i % arg1.data.array->size())));
+                    optic_stack.push_back(arg2.data.array->at(i % arg2.data.array->size()));
+                    optic_stack.push_back(arg1.data.array->at(i % arg1.data.array->size()));
                     optic_stack.push_back(operator_object);
 
                     if(evaluate_top())
                     {
-                        new_array.data.array->push_back(optic_stack.back());
+                        new_array.data.array->push_back(mem_copy(optic_stack.back()));
                         optic_stack.pop_back();
                     }
 
@@ -104,13 +106,15 @@ bool evaluate_binary_operator(const object& operator_object, bool expand = true)
 
                 for(int i = 0; i < arg1.data.array->size(); ++i)
                 {
-                    optic_stack.push_back(mem_copy(arg2));
-                    optic_stack.push_back(mem_copy(arg1.data.array->at(i)));
+//                    optic_stack.push_back(mem_copy(arg2));
+//                    optic_stack.push_back(mem_copy(arg1.data.array->at(i)));
+                    optic_stack.push_back(arg2);
+                    optic_stack.push_back(arg1.data.array->at(i));
                     optic_stack.push_back(operator_object);
 
                     if(evaluate_top())
                     {
-                        new_array.data.array->push_back(optic_stack.back());
+                        new_array.data.array->push_back(mem_copy(optic_stack.back()));
                         optic_stack.pop_back();
                     }
 
@@ -133,13 +137,15 @@ bool evaluate_binary_operator(const object& operator_object, bool expand = true)
 
                 for(int i = 0; i < arg2.data.array->size(); ++i)
                 {
-                    optic_stack.push_back(mem_copy(arg2.data.array->at(i)));
-                    optic_stack.push_back(mem_copy(arg1));
+//                    optic_stack.push_back(mem_copy(arg2.data.array->at(i)));
+//                    optic_stack.push_back(mem_copy(arg1));
+                    optic_stack.push_back(arg2.data.array->at(i));
+                    optic_stack.push_back(arg1);
                     optic_stack.push_back(operator_object);
 
                     if(evaluate_top())
                     {
-                        new_array.data.array->push_back(optic_stack.back());
+                        new_array.data.array->push_back(mem_copy(optic_stack.back()));
                         optic_stack.pop_back();
                     }
 
@@ -201,12 +207,13 @@ bool evaluate_unary_operator(const object& operator_object,bool expand = true)
 
                 for(int i = 0; i < arg.data.array->size(); ++i)
                 {
-                    optic_stack.push_back(mem_copy(arg.data.array->at(i)));
+//                    optic_stack.push_back(mem_copy(arg.data.array->at(i)));
+                    optic_stack.push_back(arg.data.array->at(i));
                     optic_stack.push_back(operator_object);
 
                     if(evaluate_top())
                     {
-                        new_array.data.array->push_back(optic_stack.back());
+                        new_array.data.array->push_back(mem_copy(optic_stack.back()));
                         optic_stack.pop_back();
                     }
 
@@ -220,7 +227,7 @@ bool evaluate_unary_operator(const object& operator_object,bool expand = true)
                 operator_object.data.unary_operator_func(result, arg);
             }
 
-            mem_free(arg);
+//            mem_free(arg);
             optic_stack.push_back(result);
             return true;
         }
@@ -244,10 +251,10 @@ bool evaluate_variable(const object& variable_name)
 {
     object result;
 
-    std::cout << "GET VARIABLE" << std::endl;
+//    std::cout << "GET VARIABLE" << std::endl;
     if(get_variable(variable_name.data.string, &result) == OK)
     {
-        std::cout << "GET VARIABLE" << std::endl;
+//        std::cout << "GET VARIABLE" << std::endl;
 
         // Auto call zero argument functions when they are found.
         if(result.type == FUNCTION)
@@ -283,7 +290,7 @@ bool evaluate_assignment()
 
     if(set_variable(result.data.string, optic_stack.back()) == OK) // set_variable uses mem_copy, we need to remember to free the top of the stack
     {
-        mem_free(optic_stack.back()); // make sure to free memory!
+//        mem_free(optic_stack.back()); // make sure to free memory!
         optic_stack.pop_back();
         return true;
     }
@@ -305,7 +312,7 @@ bool evaluate_top()
         return false;
     }
 
-    std::cout << "evaluate_top()" << std::endl;
+//    std::cout << "evaluate_top()" << std::endl;
     object obj = optic_stack.back();
     optic_stack.pop_back();
     bool result = true;
@@ -359,7 +366,7 @@ bool evaluate_top()
 
 void evaluate_stack()
 {
-    std::cout << "EVALUATE_STACK: optic_stack.size: " << optic_stack.size() << std::endl;
+//    std::cout << "EVALUATE_STACK: optic_stack.size: " << optic_stack.size() << std::endl;
 
     global_state.type = VOID;
     while(optic_stack.size())
@@ -405,7 +412,8 @@ bool resolve_stack_from_parser(const object& operation_tree, bool resolve_entire
         // We don't copy the calls from the parser because it passes off ownership of the objects and doesn't free them itself.
         if(!resolve_entire_stack)
         {
-            object copy_tree = mem_copy(operation_tree);
+//            object copy_tree = mem_copy(operation_tree);
+            object copy_tree = operation_tree;
             tree = copy_tree.data.array;
         }
 

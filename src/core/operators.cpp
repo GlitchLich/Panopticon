@@ -156,7 +156,7 @@ bool print_variable(const object& A)
 
 bool print_object(const object &A)
 {
-    std::cout << "print_object.type: " << A.type << std::endl;
+//    std::cout << "print_object.type: " << A.type << std::endl;
     switch(A.type)
     {
     case panopticon::FUNCTION:
@@ -214,6 +214,7 @@ bool print_object(const object &A)
 bool unary_print_object(object &A, const object &B)
 {
     print_object(B);
+    A = B;
 }
 
 //Unary

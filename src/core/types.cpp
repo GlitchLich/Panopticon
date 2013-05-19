@@ -120,9 +120,6 @@ std::string type_string(Type type)
     case FAILED_CONDITION:
         return "FAILED_CONDITION";
         break;
-    case WHERE_TREE:
-        return "WHERE_TREE";
-        break;
     default:
         return "Unknown Type";
         break;
