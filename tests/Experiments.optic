@@ -4,15 +4,6 @@
 
 // Just some fun experimentation, none of this actually does anything yet
 
-
-switcher x op y = op(x y)
-	where
-		add x y = x + y
-		mul x y = x * y
-		div x y = x * y
-
-switcher(2 mul 3)
-
 // Lattices
 // A lattice a structure where each element in it has a meet (greatest lower bound) and join (least upper bound
 
