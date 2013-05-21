@@ -27,7 +27,7 @@ bool create_function(object &A, const object &B, const object &C)
         function->num_arguments = B.data.array->size();
         for(int i = 0; i < function->num_arguments; ++i)
         {
-//            function->arguments.push_back(mem_copy(B.data.array->at(i)));
+            //            function->arguments.push_back(mem_copy(B.data.array->at(i)));
             function->arguments.push_back(B.data.array->at(i));
         }
 
@@ -37,25 +37,25 @@ bool create_function(object &A, const object &B, const object &C)
     else if(B.type == STRING)
     {
         function->num_arguments = 0;
-//        function->arguments.push_back(mem_copy(B));
+        //        function->arguments.push_back(mem_copy(B));
         function->arguments.push_back(B);
         function->name = std::string(*B.data.string);
     }
 
-//    function->body = mem_copy(C);
+    //    function->body = mem_copy(C);
     function->body = C;
     function->body.type = OPERATION_TREE;
 }
 
 bool call_function_array(object& A, const object& B, const object& C)
 {
-//    optic_stack.push_back(mem_copy(C));
-//    optic_stack.push_back(mem_copy(B));
+    //    optic_stack.push_back(mem_copy(C));
+    //    optic_stack.push_back(mem_copy(B));
     optic_stack.push_back(C);
     optic_stack.push_back(B);
-//    object call;
-//    call.type = OPERATION;
-//    call.data.operator_func = call_function;
+    //    object call;
+    //    call.type = OPERATION;
+    //    call.data.operator_func = call_function;
     optic_stack.push_back(C);
     evaluate_top();
     A = optic_stack.back(); // optimization: skip copy/free because nothing else will reference it
@@ -112,6 +112,14 @@ bool call_function(object& A, const object& B, const object& C)
         return false;
         break;
     }
+
+
+    if(C.data.array->size()<function.data.function->arguments.size()-1)
+    {
+        partial_application(A,function,C);
+        return true;
+    }
+
     std::string function_name = function.data.function->name;
     Dictionary context;
     context.insert(std::make_pair(function_name, function));
@@ -151,7 +159,7 @@ bool call_function(object& A, const object& B, const object& C)
     optic_stack.pop_back();
 
     pop_scope(); // frees dictionary memory as well
-//    context.erase(function_name);
+    //    context.erase(function_name);
     mem_free_dictionary(context);
     if(free_function)
         mem_free(function);
@@ -162,7 +170,7 @@ bool resolve_function_array(object& A, const object& B)
 {
     if(B.type != FUNCTION)
     {
-//        optic_stack.push_back(mem_copy(B));
+        //        optic_stack.push_back(mem_copy(B));
         optic_stack.push_back(B);
         evaluate_top();
         A = optic_stack.back();
@@ -171,9 +179,111 @@ bool resolve_function_array(object& A, const object& B)
 
     else
     {
-//        A = mem_copy(B);
+        //        A = mem_copy(B);
         A = B;
     }
+}
+
+//================================================
+//Partial Application, Operation Sectioning:
+//================================================
+
+bool partial_application(object& result_A, const object &func_B, const object &arguments_C)
+{
+
+    //Function name/arg
+    object name_array = mem_alloc(ARRAY);
+    object name = mem_string_alloc("\\");
+    name_array.data.array->push_front(name);
+
+    //Function body
+    object body;
+    object vars = mem_alloc(FUNCTION_ARG_VALUES);
+    vars.data.array = arguments_C.data.array;
+
+    //Create variables
+    for(int i=vars.data.array->size();i<func_B.data.function->arguments.size()-1;++i)
+    {
+        std::stringstream ss;
+        ss << "arg";
+        ss << i;
+
+        object arg = mem_string_alloc(ss.str().c_str());
+        name_array.data.array->push_back(arg);
+
+        object var = mem_string_alloc(UNDECLARED_VARIABLE,ss.str().c_str());
+        vars.data.array->push_back(var);
+    }
+
+    //Store Function call
+    store_operations(body,func_B,vars,call_function);
+    insure_ready_for_assignment(name_array,body);
+    store_operations(result_A,name_array,body,create_function);
+
+    //Resolve on stack
+    optic_stack.push_back(result_A);
+    evaluate_top();
+    result_A = optic_stack.back();
+    optic_stack.pop_back();
+
+    return true;
+}
+
+bool create_operator_function(object& A, operator_function func, bool expand)
+{
+    //Function name/arg
+    optic::object name_array = mem_alloc(optic::ARRAY);
+    optic::object name = optic::mem_string_alloc("\\");
+    optic::object arg = optic::mem_string_alloc("x");
+    optic::object arg2 = optic::mem_string_alloc("y");
+    name_array.data.array->push_front(name);
+    name_array.data.array->push_back(arg);
+    name_array.data.array->push_back(arg2);
+
+    //Function body
+    optic::object var = optic::mem_string_alloc(UNDECLARED_VARIABLE,"x");
+    optic::object var2 = optic::mem_string_alloc(UNDECLARED_VARIABLE,"y");
+    object body;
+    store_operations(body,var,var2,func);
+
+    insure_ready_for_assignment(name_array,body);
+    store_operations(A,name_array,body,optic::create_function);
+}
+
+bool left_section(object& A, object &B, operator_function func, bool expand)
+{
+    //Function name/arg
+    optic::object name_array = mem_alloc(optic::ARRAY);
+    optic::object name = optic::mem_string_alloc("\\");
+    optic::object arg = optic::mem_string_alloc("x");
+    name_array.data.array->push_front(name);
+    name_array.data.array->push_back(arg);
+
+    //Function body
+    optic::object var = optic::mem_string_alloc(UNDECLARED_VARIABLE,"x");
+    object body;
+    store_operations(body,B,var,func,expand);
+
+    insure_ready_for_assignment(name_array,body);
+    store_operations(A,name_array,body,optic::create_function,expand);
+}
+
+bool right_section(object& A, object &B, operator_function func, bool expand)
+{
+    //Function name/arg
+    optic::object name_array = mem_alloc(optic::ARRAY);
+    optic::object name = optic::mem_string_alloc("\\");
+    optic::object arg = optic::mem_string_alloc("x");
+    name_array.data.array->push_front(name);
+    name_array.data.array->push_back(arg);
+
+    //Function body
+    optic::object var = optic::mem_string_alloc(UNDECLARED_VARIABLE,"x");
+    object body;
+    store_operations(body,var,B,func,expand);
+
+    insure_ready_for_assignment(name_array,body);
+    store_operations(A,name_array,body,optic::create_function,expand);
 }
 
 } // panopticon namespace

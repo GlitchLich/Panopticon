@@ -490,7 +490,7 @@ void calculate_white_space(std::string& line) {
                 else if (indent > indent_stack[level]) {
                     //                    if(string.at(insert-1)!='{')
                     //                    {
-                    string.replace(insert,1," `");
+                    string.replace(insert,1," ?");
                     insert++;
 //                                            string.insert(insert,"{");
 //                                            insert++;
