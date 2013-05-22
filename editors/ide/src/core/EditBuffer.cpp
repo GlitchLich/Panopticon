@@ -224,6 +224,11 @@ void EditBuffer::edited()
     unsavedEdits = true;
 }
 
+void EditBuffer::findCodeBlock()
+{
+
+}
+
 void EditBuffer::executeCommand()
 {
     QString command;

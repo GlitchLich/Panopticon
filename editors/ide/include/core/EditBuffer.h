@@ -46,6 +46,7 @@ signals:
 public slots:
 
     void edited();
+    void findCodeBlock();
     void executeCommand();
 
 protected:
