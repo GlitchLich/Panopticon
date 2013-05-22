@@ -33,6 +33,8 @@
 namespace panopticon
 {
 
+
+
 // thread status
 enum ThreadStatus
 {
@@ -77,13 +79,12 @@ enum Type
     ARRAY,//5
     DICTIONARY,//6
 
-
-    //THE FOLLOWING ARE FOR PARSING ONLY,
+    //THE FOLLOWING ARE FOR INTERNAL USE ONLY,
     //NOT TO BE USED AS LANGUAGE CONSTRUCTS
     ERROR,//7
     STATEMENT_LIST,//8
-    VARIABLE,//9
-    UNDECLARED_VARIABLE,//10
+    VARIABLE,//9 CHANGING THIS TO TYPE UNSIGNED LONG LONG
+    UNDECLARED_VARIABLE,//10 CHANGING THIS TO TYPE UNSIGNED LONG LONG
     OPERATION_TREE,//11
     OPERATION,//12
     UNARY_OPERATION, // 13
@@ -109,6 +110,7 @@ std::string type_string(Type type);
 
 // Forward declarations
 struct Function;
+struct Primitive;
 struct object;
 struct Nil { };
 
@@ -117,12 +119,14 @@ struct Nil { };
 typedef double Number;
 //typedef std::vector<object> Array;
 typedef std::deque<object> Array;
-typedef std::unordered_map<std::string, object> Dictionary;
+typedef std::unordered_map<unsigned long long, object> Dictionary;
 typedef std::string String;
 typedef bool Boolean;
 typedef bool (*operator_function) (object &, const object &, const object &);
 typedef bool (*unary_operator_function) (object &, const object &);
 typedef bool (*primitive_function) (object&, const Array& arguments);
+//typedef unsigned long long Variable;
+typedef unsigned int Variable;
 
 // Data type union
 union Data
@@ -135,6 +139,10 @@ union Data
     Dictionary* dictionary;
     operator_function operator_func;
     unary_operator_function unary_operator_func;
+    Primitive* primitive;
+
+    //Only to be used for variable indentification!
+    Variable variable_number;
 };
 
 // const bool ALIVE = true;
@@ -152,11 +160,21 @@ struct object
 
 struct Function
 {
-    String name;
+//    String name;
+    Variable name;
     Dictionary heap;
     int num_arguments;
     Array arguments;
     object body;
+};
+
+struct Primitive
+{
+    Variable name;
+    Dictionary heap;
+    int num_arguments;
+    Array arguments;
+    primitive_function p_func;
 };
 
 } // panopticon namespace

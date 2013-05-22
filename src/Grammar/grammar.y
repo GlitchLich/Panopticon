@@ -145,8 +145,8 @@ name_chain(A) ::= name_chain(B) NAME(C).
     {
         A = optic::mem_alloc(optic::ARRAY);
 
-        B.type = optic::STRING;
-        C.type = optic::STRING;
+        B.type = optic::UNDECLARED_VARIABLE;
+        C.type = optic::UNDECLARED_VARIABLE;
 
         A.data.array->push_back(B);
         A.data.array->push_back(C);
@@ -154,7 +154,7 @@ name_chain(A) ::= name_chain(B) NAME(C).
     else
     {
         A = B;
-        C.type = optic::STRING;
+        C.type = optic::UNDECLARED_VARIABLE;
         A.data.array->push_back(C);
     }
 }
@@ -162,7 +162,7 @@ name_chain(A) ::= name_chain(B) NAME(C).
 name_chain(A) ::= NAME(B).
 {
     A = B;
-    A.type = optic::STRING;
+    A.type = optic::UNDECLARED_VARIABLE;
 }
 
 expr(A) ::= NAME(B).
@@ -187,7 +187,7 @@ expr(A) ::= expr(B) RSTREAM function_call(C).
     {
         optic::object function_body = optic::mem_alloc(optic::FUNCTION_ARG_VALUES);
         function_body.data.array->push_back(B);
-        C.type = optic::STRING;
+        C.type = optic::UNDECLARED_VARIABLE;
         optic::store_operations(A,C,function_body,optic::call_function);
     }
 }
@@ -196,7 +196,6 @@ expr(A) ::= expr(B) RSTREAM NAME(C).
 {
     optic::object function_body = optic::mem_alloc(optic::FUNCTION_ARG_VALUES);;
     function_body.data.array->push_back(B);
-    C.type = optic::STRING;
     optic::store_operations(A,C,function_body,optic::call_function);
 }
 
@@ -211,7 +210,6 @@ expr(A) ::= function_call(C) LSTREAM expr(B).
     {
         optic::object function_body = optic::mem_alloc(optic::FUNCTION_ARG_VALUES);
         function_body.data.array->push_back(B);
-        C.type = optic::STRING;
         optic::store_operations(A,C,function_body,optic::call_function);
     }
 }
@@ -220,7 +218,6 @@ expr(A) ::= NAME(C) LSTREAM expr(B).
 {
     optic::object function_body = optic::mem_alloc(optic::FUNCTION_ARG_VALUES);;
     function_body.data.array->push_back(B);
-    C.type = optic::STRING;
     optic::store_operations(A,C,function_body,optic::call_function);
 }
 
@@ -236,10 +233,6 @@ function_call(A) ::= NAME(B) LPAREN stmt_list(C) RPAREN. [FUNCTION_CALL]
         C = optic::mem_alloc(optic::FUNCTION_ARG_VALUES);
         C.data.array->push_back(temp);
     }
-/*    optic::object b;*/
-/*    b.type = optic::STRING;*/
-/*    b.data.string = B.data.string;*/
-    B.type = optic::STRING;
     optic::store_operations(A,B,C,optic::call_function);
     if(!panopticon::correct_parsing)
     {
@@ -261,7 +254,6 @@ function_call(A) ::= NAME(B) LBRAC RBRAC LPAREN stmt_list(C) RPAREN. [FUNCTION_C
         C.data.array->push_back(temp);
     }
 
-    B.type = optic::VARIABLE;
     optic::store_operations(A,B,C,optic::call_function);
     if(!panopticon::correct_parsing)
     {
@@ -293,7 +285,6 @@ expr(A) ::= array_index(B) LPAREN stmt_list(C) RPAREN. [FUNCTION_CALL]
 
 function_call(A) ::= NAME(B) LPAREN RPAREN. [FUNCTION_CALL]
 {
-    B.type = optic::UNDECLARED_VARIABLE;
     A = B;
     if(!panopticon::correct_parsing)
     {
@@ -625,7 +616,6 @@ expr(A) ::= expr(B) BACKTICK NAME(C) BACKTICK expr(D). [FUNCTION_CALL]
     optic::object args = optic::mem_alloc(optic::FUNCTION_ARG_VALUES);
     args.data.array->push_back(B);
     args.data.array->push_back(D);
-    C.type = optic::UNDECLARED_VARIABLE;
     optic::store_operations(A,C,args,optic::call_function);
     if(!panopticon::correct_parsing)
     {
@@ -640,18 +630,17 @@ expr(A) ::= LPAREN BACKTICK NAME(C) BACKTICK expr(D) RPAREN. [FUNCTION_CALL]
 
     //Function name/arg
     optic::object name_array = mem_alloc(optic::ARRAY);
-    optic::object name = optic::mem_string_alloc("\\");
-    optic::object arg = optic::mem_string_alloc("x");
+    optic::object name = optic::mem_alloc_variable("Anonymous");
+    optic::object arg = optic::mem_alloc_variable("x");
     name_array.data.array->push_front(name);
     name_array.data.array->push_back(arg);
 
     //Store Function call
     optic::object body;
     optic::object args = optic::mem_alloc(optic::FUNCTION_ARG_VALUES);
-    optic::object var = optic::mem_string_alloc(optic::UNDECLARED_VARIABLE,"x");
+    optic::object var = optic::mem_alloc_variable("x");
     args.data.array->push_back(var);
     args.data.array->push_back(D);
-    C.type = optic::UNDECLARED_VARIABLE;
     optic::store_operations(body,C,args,optic::call_function);
 
     insure_ready_for_assignment(name_array,body);
@@ -679,8 +668,8 @@ expr(A) ::= LPAREN expr(B) BACKTICK NAME(C) BACKTICK RPAREN. [FUNCTION_CALL]
 
     //Function name/arg
     optic::object name_array = mem_alloc(optic::ARRAY);
-    optic::object name = optic::mem_string_alloc("\\");
-    optic::object arg = optic::mem_string_alloc("x");
+    optic::object name = optic::mem_alloc_variable("Anonymous");
+    optic::object arg = optic::mem_alloc_variable("x");
     name_array.data.array->push_front(name);
     name_array.data.array->push_back(arg);
 
@@ -688,9 +677,8 @@ expr(A) ::= LPAREN expr(B) BACKTICK NAME(C) BACKTICK RPAREN. [FUNCTION_CALL]
     optic::object body;
     optic::object args = optic::mem_alloc(optic::FUNCTION_ARG_VALUES);
     args.data.array->push_back(B);
-    optic::object var = optic::mem_string_alloc(optic::UNDECLARED_VARIABLE,"x");
+    optic::object var = optic::mem_alloc_variable("x");
     args.data.array->push_back(var);
-    C.type = optic::UNDECLARED_VARIABLE;
     optic::store_operations(body,C,args,optic::call_function);
 
     insure_ready_for_assignment(name_array,body);
@@ -819,7 +807,7 @@ expr(A) ::= BACKSLASH name_chain(B) ASSIGN expr(C).
 {
     if(B.type == optic::ARRAY)
     {
-        optic::object name = optic::mem_string_alloc("\\");
+        optic::object name = optic::mem_alloc_variable("Anonymous");
         B.data.array->push_front(name);
         insure_ready_for_assignment(B,C);
         store_operations(A,B,C,optic::create_function);
@@ -827,7 +815,7 @@ expr(A) ::= BACKSLASH name_chain(B) ASSIGN expr(C).
     else
     {
         optic::object name_array = mem_alloc(optic::ARRAY);
-        optic::object name = optic::mem_string_alloc("\\");
+        optic::object name = optic::mem_alloc_variable("Anonymous");
         name_array.data.array->push_front(name);
         name_array.data.array->push_back(B);
         insure_ready_for_assignment(name_array,C);
@@ -1076,8 +1064,6 @@ expr(A) ::= NAME(B) LCURL string(C) RCURL.
 
 name_space(A) ::= NAME(B) COLONCOLON NAME(C).
 {
-    B.type = optic::UNDECLARED_VARIABLE;
-    C.type = optic::STRING;
     store_operations(A,B,C,&optic::dictionary_lookup);
     if (!panopticon::correct_parsing)
     {
@@ -1088,7 +1074,6 @@ name_space(A) ::= NAME(B) COLONCOLON NAME(C).
 
 name_space(A) ::= function_call(B) COLONCOLON NAME(C).
 {
-    C.type = optic::STRING;
     store_operations(A,B,C,&optic::dictionary_lookup);
     if (!panopticon::correct_parsing)
     {
@@ -1099,7 +1084,6 @@ name_space(A) ::= function_call(B) COLONCOLON NAME(C).
 
 name_space(A) ::= name_space(B) COLONCOLON NAME(C).
 {
-    C.type = optic::STRING;
     store_operations(A,B,C,&optic::dictionary_lookup);
     if (!panopticon::correct_parsing)
     {
@@ -1118,7 +1102,6 @@ function_call(A) ::= name_space(B) LPAREN stmt_list(C) RPAREN. [FUNCTION_CALL]
     else
     {
         optic::object args = optic::mem_alloc(optic::FUNCTION_ARG_VALUES);
-/*        C.data.array->push_back(temp);*/
         args.data.array->push_back(C);
         optic::store_operations(A,B,args,optic::call_function);
     }
@@ -1153,7 +1136,7 @@ function_call(A) ::= name_space(B) LBRAC RBRAC LPAREN stmt_list(C) RPAREN. [FUNC
     }
 }
 
-expr(A) ::= name_space(B).
+function_call(A) ::= name_space(B).
 {
     A = B;
 }
@@ -1328,7 +1311,6 @@ bool(A) ::= BOOLEAN(B).
 maybe_empty_name_chain(A) ::= name_chain(B). [COLON]
 {
     A = optic::mem_alloc(optic::ARRAY);
-    B.type = optic::STRING;
     A.data.array->push_back(B);
 }
 maybe_empty_name_chain(A) ::= pattern(B). [COLON]

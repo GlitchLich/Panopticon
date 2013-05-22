@@ -20,6 +20,7 @@ void init_heap()
     current_scope = &initial_scope;
     scope_pointer = current_scope->end();
     dynamic_scope_pointer = global_scope.begin();
+    register_primitive_functions();
 }
 
 void clear_heap()
@@ -45,7 +46,47 @@ void pop_scope()
     scope_pointer = current_scope->begin();
 }
 
-RESULT get_variable(std::string* variable_name, object* result)
+//RESULT get_variable(std::string* variable_name, object* result)
+//{
+//    dynamic_scope_pointer = global_scope.end();
+
+//    // Iterate backwards through each scope
+//    while(--dynamic_scope_pointer >= global_scope.begin())
+//    {
+//        // Check to see if that scope contains the variable we want
+//        scope_pointer = (*dynamic_scope_pointer)->find(*variable_name);
+
+//        // If it does assign the results and return OK
+//        if(scope_pointer != (*dynamic_scope_pointer)->end())
+//        {
+//            // *result = mem_copy(scope_pointer->second);
+//            *result = scope_pointer->second;
+//            return OK;
+//        }
+//    }
+
+//    // If we get to the end we never found it. Return = NULL, return VARIABLE_NOT_FOUND
+//    result = 0;
+//    return VARIABLE_NOT_FOUND;
+//}
+
+//RESULT set_variable(std::string* variable_name, const object& value)
+//{
+//    scope_pointer = current_scope->find(*variable_name);
+//    if(scope_pointer == current_scope->end())
+//    {
+//        // current_scope->insert(std::make_pair(String(*variable_name), mem_copy(value)));
+//        current_scope->insert(std::make_pair(String(*variable_name), value));
+//        return OK;
+//    }
+
+//    else
+//    {
+//        return VARIABLE_ALREADY_BOUND;
+//    }
+//}
+
+RESULT get_variable(Variable variable_name, object* result)
 {
     dynamic_scope_pointer = global_scope.end();
 
@@ -53,7 +94,7 @@ RESULT get_variable(std::string* variable_name, object* result)
     while(--dynamic_scope_pointer >= global_scope.begin())
     {
         // Check to see if that scope contains the variable we want
-        scope_pointer = (*dynamic_scope_pointer)->find(*variable_name);
+        scope_pointer = (*dynamic_scope_pointer)->find(variable_name);
 
         // If it does assign the results and return OK
         if(scope_pointer != (*dynamic_scope_pointer)->end())
@@ -69,13 +110,13 @@ RESULT get_variable(std::string* variable_name, object* result)
     return VARIABLE_NOT_FOUND;
 }
 
-RESULT set_variable(std::string* variable_name, const object& value)
+RESULT set_variable(Variable variable_name, const object& value)
 {
-    scope_pointer = current_scope->find(*variable_name);
+    scope_pointer = current_scope->find(variable_name);
     if(scope_pointer == current_scope->end())
     {
         // current_scope->insert(std::make_pair(String(*variable_name), mem_copy(value)));
-        current_scope->insert(std::make_pair(String(*variable_name), value));
+        current_scope->insert(std::make_pair(variable_name, value));
         return OK;
     }
 

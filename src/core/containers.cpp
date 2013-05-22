@@ -67,7 +67,7 @@ bool print_dictionary(const object& dict)
 
 bool dictionary_lookup(object& value, const object& dict, const object& key)
 {
-    if(key.type != STRING)
+    if(key.type != UNDECLARED_VARIABLE || key.type != VARIABLE)
     {
         out() << "Error: Dictionary key must be a String." << std::endl;
         correct_parsing = false;
@@ -75,16 +75,15 @@ bool dictionary_lookup(object& value, const object& dict, const object& key)
     }
 
     //If the object is a string, attempt to fetch it.
-    if(dict.type == STRING || dict.type == UNDECLARED_VARIABLE)
+    if(dict.type == UNDECLARED_VARIABLE || dict.type == VARIABLE)
     {
         object result;
 
-        if(get_variable(dict.data.string, &result) == OK)
+        if(get_variable(dict.data.variable_number, &result) == OK)
         {
             if(result.type == DICTIONARY)
             {
                 bool success =  dictionary_lookup(value, result, key);
-                mem_free(result);
                 return success;
             }
 
@@ -101,14 +100,14 @@ bool dictionary_lookup(object& value, const object& dict, const object& key)
         else
         {
             value.type = NIL;
-            out() << "Error: the variable \'" << dict.data.string->c_str() << "\'' has not been declared." << std::endl;
+            out() << "Error: the variable \'" << reverse_variable_name_lookup[key.data.variable_number] << "\'' has not been declared." << std::endl;
             correct_parsing = false;
             return false;
         }
 
     }
 
-    Dictionary::iterator find = dict.data.dictionary->find(*key.data.string);
+    Dictionary::iterator find = dict.data.dictionary->find(key.data.variable_number);
     if(find != dict.data.dictionary->end())
     {
 //        value = mem_copy(find->second);
@@ -126,7 +125,7 @@ bool dictionary_lookup(object& value, const object& dict, const object& key)
     else
     {
         value.type = NIL;
-        out() << "No object found with key \'" << *key.data.string << "\'." << std::endl;
+        out() << "No object found with key \'" << reverse_variable_name_lookup[key.data.variable_number] << "\'." << std::endl;
         correct_parsing = false;
         return false;
     }
@@ -136,7 +135,7 @@ bool dictionary_lookup(object& value, const object& dict, const object& key)
 
 bool dictionary_contains(object &boolean, const object &dict, const object &key)
 {
-    if(key.type != STRING)
+    if(key.type != UNDECLARED_VARIABLE || key.type != VARIABLE)
     {
         out() << "Dictionary key must be a String." << std::endl;
         correct_parsing = false;
@@ -144,7 +143,7 @@ bool dictionary_contains(object &boolean, const object &dict, const object &key)
     }
 
     boolean.type = BOOL;
-    boolean.data.boolean = dict.data.dictionary->find(*key.data.string) != dict.data.dictionary->end();
+    boolean.data.boolean = dict.data.dictionary->find(key.data.variable_number) != dict.data.dictionary->end();
     return true;
 }
 
@@ -156,14 +155,14 @@ bool dictionary_insert(object& dictionary_A,const object& string_B, const object
     {
         dictionary_A.data.dictionary->insert(
                     std::make_pair(
-                        String(string_B.data.string->c_str()),
+                        string_B.data.variable_number,
                         object_C
                         )
                     );
     }
     else
     {
-        out() << "Error:  Cannot insert key: " << *string_B.data.string << "into dictionary because this key already exists." << std::endl;
+        out() << "Error:  Cannot insert key: " << reverse_variable_name_lookup[string_B.data.variable_number] << "into dictionary because this key already exists." << std::endl;
         correct_parsing = false;
         return false;
     }
@@ -180,7 +179,7 @@ bool create_dictionary(object& result_A, const object& B)
         {
             result_A.data.dictionary->insert(
                         std::make_pair(
-                            std::string(B.data.array->at(i).data.string->c_str()),
+                            B.data.array->at(i).data.variable_number,
                             mem_copy(B.data.array->at(i+1))
                             )
                         );
@@ -197,7 +196,7 @@ bool create_dictionary(object& result_A, const object& B)
             evaluate_top();
             result_A.data.dictionary->insert(
                         std::make_pair(
-                            std::string(B.data.array->at(i).data.array->at(0).data.string->c_str()),
+                            B.data.array->at(i).data.array->at(0).data.variable_number,
                             mem_copy(optic_stack.back())
                             )
                         );
@@ -395,7 +394,7 @@ bool index(object& A, const object& B, const object& C)
             }
             break;
         case UNDECLARED_VARIABLE:
-            get_variable(C.data.string,&result);
+            get_variable(C.data.variable_number,&result);
 //            index(A,B,mem_copy(result));
             index(A,B,result);
             break;
@@ -416,7 +415,7 @@ bool index(object& A, const object& B, const object& C)
         }
         break;
     case STRING:
-        if(get_variable(B.data.string, &result) == OK)
+        if(get_variable(B.data.variable_number, &result) == OK)
         {
             if(result.type != FUNCTION)
             {
@@ -448,10 +447,10 @@ bool index(object& A, const object& B, const object& C)
 bool slice(object&A, const object& B, const object& C)
 {
     //Error Guards
-    if(B.type == STRING || B.type == UNDECLARED_VARIABLE)
+    if(B.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(B.data.string,&result)==OK)
+        if(get_variable(B.data.variable_number,&result)==OK)
         {
             return slice(result,B,C);
         }
@@ -497,10 +496,10 @@ bool slice(object&A, const object& B, const object& C)
             optic_stack.pop_back();
         }
     }
-    else if(index1.type == STRING || index1.type == UNDECLARED_VARIABLE)
+    else if(index1.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(index1.data.string,&result)==OK)
+        if(get_variable(index1.data.variable_number,&result)==OK)
         {
             if(result.type!=NUMBER)
             {
@@ -551,10 +550,10 @@ bool slice(object&A, const object& B, const object& C)
             optic_stack.pop_back();
         }
     }
-    else if(index2.type == STRING || index2.type == UNDECLARED_VARIABLE)
+    else if(index2.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(index2.data.string,&result)==OK)
+        if(get_variable(index2.data.variable_number,&result)==OK)
         {
             if(result.type!=NUMBER)
             {
@@ -613,10 +612,10 @@ bool slice(object&A, const object& B, const object& C)
 
 bool slice_beginning_to(object&A, const object& B, const object& C)
 {
-    if(B.type == STRING || B.type == UNDECLARED_VARIABLE)
+    if(B.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(B.data.string,&result)==OK)
+        if(get_variable(B.data.variable_number,&result)==OK)
         {
             return slice_beginning_to(result,B,C);
         }
@@ -656,10 +655,10 @@ bool slice_beginning_to(object&A, const object& B, const object& C)
 
 bool slice_to_end(object&A, const object& B, const object& C)
 {
-    if(B.type == STRING || B.type == UNDECLARED_VARIABLE)
+    if(B.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(B.data.string,&result)==OK)
+        if(get_variable(B.data.variable_number,&result)==OK)
         {
             return slice_to_end(result,B,C);
         }
@@ -699,10 +698,10 @@ bool slice_to_end(object&A, const object& B, const object& C)
 
 bool slice_all_with_step(object&A, const object& B, const object& C)
 {
-    if(B.type == STRING || B.type == UNDECLARED_VARIABLE)
+    if(B.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(B.data.string,&result)==OK)
+        if(get_variable(B.data.variable_number,&result)==OK)
         {
             return slice_all_with_step(result,B,C);
         }
@@ -745,10 +744,10 @@ bool slice_all_with_step(object&A, const object& B, const object& C)
 bool slice_beginning_to_with_step(object&A, const object& B, const object& C)
 {
     //Error Guards
-    if(B.type == STRING || B.type == UNDECLARED_VARIABLE)
+    if(B.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(B.data.string,&result)==OK)
+        if(get_variable(B.data.variable_number,&result)==OK)
         {
             return slice_beginning_to_with_step(result,B,C);
         }
@@ -794,10 +793,10 @@ bool slice_beginning_to_with_step(object&A, const object& B, const object& C)
             optic_stack.pop_back();
         }
     }
-    else if(index1.type == STRING || index1.type == UNDECLARED_VARIABLE)
+    else if(index1.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(index1.data.string,&result)==OK)
+        if(get_variable(index1.data.variable_number,&result)==OK)
         {
             if(result.type!=NUMBER)
             {
@@ -848,10 +847,10 @@ bool slice_beginning_to_with_step(object&A, const object& B, const object& C)
             optic_stack.pop_back();
         }
     }
-    else if(index2.type == STRING || index2.type == UNDECLARED_VARIABLE)
+    else if(index2.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(index2.data.string,&result)==OK)
+        if(get_variable(index2.data.variable_number,&result)==OK)
         {
             if(result.type!=NUMBER)
             {
@@ -906,10 +905,10 @@ bool slice_beginning_to_with_step(object&A, const object& B, const object& C)
 bool slice_to_end_with_step(object&A, const object& B, const object& C)
 {
     //Error Guards
-    if(B.type == STRING || B.type == UNDECLARED_VARIABLE)
+    if(B.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(B.data.string,&result)==OK)
+        if(get_variable(B.data.variable_number,&result)==OK)
         {
             return slice_to_end_with_step(result,B,C);
         }
@@ -955,10 +954,10 @@ bool slice_to_end_with_step(object&A, const object& B, const object& C)
             optic_stack.pop_back();
         }
     }
-    else if(index1.type == STRING || index1.type == UNDECLARED_VARIABLE)
+    else if(index1.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(index1.data.string,&result)==OK)
+        if(get_variable(index1.data.variable_number,&result)==OK)
         {
             if(result.type!=NUMBER)
             {
@@ -1009,10 +1008,10 @@ bool slice_to_end_with_step(object&A, const object& B, const object& C)
             optic_stack.pop_back();
         }
     }
-    else if(index2.type == STRING || index2.type == UNDECLARED_VARIABLE)
+    else if(index2.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(index2.data.string,&result)==OK)
+        if(get_variable(index2.data.variable_number,&result)==OK)
         {
             if(result.type!=NUMBER)
             {
@@ -1073,10 +1072,10 @@ bool slice_to_end_with_step(object&A, const object& B, const object& C)
 bool slice_with_step(object&A, const object& B, const object& C)
 {
     //Error Guards
-    if(B.type == STRING || B.type == UNDECLARED_VARIABLE)
+    if(B.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(B.data.string,&result)==OK)
+        if(get_variable(B.data.variable_number,&result)==OK)
         {
             return slice_with_step(result,B,C);
         }
@@ -1123,10 +1122,10 @@ bool slice_with_step(object&A, const object& B, const object& C)
             optic_stack.pop_back();
         }
     }
-    else if(index1.type == STRING || index1.type == UNDECLARED_VARIABLE)
+    else if(index1.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(index1.data.string,&result)==OK)
+        if(get_variable(index1.data.variable_number,&result)==OK)
         {
             if(result.type!=NUMBER)
             {
@@ -1177,10 +1176,10 @@ bool slice_with_step(object&A, const object& B, const object& C)
             optic_stack.pop_back();
         }
     }
-    else if(index2.type == STRING || index2.type == UNDECLARED_VARIABLE)
+    else if(index2.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(index2.data.string,&result)==OK)
+        if(get_variable(index2.data.variable_number,&result)==OK)
         {
             if(result.type!=NUMBER)
             {
@@ -1231,10 +1230,10 @@ bool slice_with_step(object&A, const object& B, const object& C)
             optic_stack.pop_back();
         }
     }
-    else if(index3.type == STRING || index3.type == UNDECLARED_VARIABLE)
+    else if(index3.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(index3.data.string,&result)==OK)
+        if(get_variable(index3.data.variable_number,&result)==OK)
         {
             if(result.type!=NUMBER)
             {
@@ -1325,10 +1324,10 @@ bool slice_with_step(object&A, const object& B, const object& C)
 //WRAPPING
 bool slice_beginning_to_wrapping(object&A, const object& B, const object& C)
 {
-    if(B.type == STRING || B.type == UNDECLARED_VARIABLE)
+    if(B.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(B.data.string,&result)==OK)
+        if(get_variable(B.data.variable_number,&result)==OK)
         {
             return slice_beginning_to(result,B,C);
         }
@@ -1376,10 +1375,10 @@ bool slice_beginning_to_wrapping(object&A, const object& B, const object& C)
 
 bool slice_to_end_wrapping(object&A, const object& B, const object& C)
 {
-    if(B.type == STRING || B.type == UNDECLARED_VARIABLE)
+    if(B.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(B.data.string,&result)==OK)
+        if(get_variable(B.data.variable_number,&result)==OK)
         {
             return slice_to_end(result,B,C);
         }
@@ -1428,10 +1427,10 @@ bool slice_to_end_wrapping(object&A, const object& B, const object& C)
 bool slice_with_wrapping(object&A, const object& B, const object& C)
 {
     //Error Guards
-    if(B.type == STRING || B.type == UNDECLARED_VARIABLE)
+    if(B.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(B.data.string,&result)==OK)
+        if(get_variable(B.data.variable_number,&result)==OK)
         {
             return slice(result,B,C);
         }
@@ -1477,10 +1476,10 @@ bool slice_with_wrapping(object&A, const object& B, const object& C)
             optic_stack.pop_back();
         }
     }
-    else if(index1.type == STRING || index1.type == UNDECLARED_VARIABLE)
+    else if(index1.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(index1.data.string,&result)==OK)
+        if(get_variable(index1.data.variable_number,&result)==OK)
         {
             if(result.type!=NUMBER)
             {
@@ -1531,10 +1530,10 @@ bool slice_with_wrapping(object&A, const object& B, const object& C)
             optic_stack.pop_back();
         }
     }
-    else if(index2.type == STRING || index2.type == UNDECLARED_VARIABLE)
+    else if(index2.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(index2.data.string,&result)==OK)
+        if(get_variable(index2.data.variable_number,&result)==OK)
         {
             if(result.type!=NUMBER)
             {
@@ -1593,10 +1592,10 @@ bool slice_with_wrapping(object&A, const object& B, const object& C)
 bool slice_beginning_to_with_step_wrapping(object&A, const object& B, const object& C)
 {
     //Error Guards
-    if(B.type == STRING || B.type == UNDECLARED_VARIABLE)
+    if(B.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(B.data.string,&result)==OK)
+        if(get_variable(B.data.variable_number,&result)==OK)
         {
             return slice_beginning_to_with_step(result,B,C);
         }
@@ -1642,10 +1641,10 @@ bool slice_beginning_to_with_step_wrapping(object&A, const object& B, const obje
             optic_stack.pop_back();
         }
     }
-    else if(index1.type == STRING || index1.type == UNDECLARED_VARIABLE)
+    else if(index1.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(index1.data.string,&result)==OK)
+        if(get_variable(index1.data.variable_number,&result)==OK)
         {
             if(result.type!=NUMBER)
             {
@@ -1696,10 +1695,10 @@ bool slice_beginning_to_with_step_wrapping(object&A, const object& B, const obje
             optic_stack.pop_back();
         }
     }
-    else if(index2.type == STRING || index2.type == UNDECLARED_VARIABLE)
+    else if(index2.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(index2.data.string,&result)==OK)
+        if(get_variable(index2.data.variable_number,&result)==OK)
         {
             if(result.type!=NUMBER)
             {
@@ -1773,10 +1772,10 @@ bool slice_beginning_to_with_step_wrapping(object&A, const object& B, const obje
 bool slice_to_end_with_step_wrapping(object&A, const object& B, const object& C)
 {
     //Error Guards
-    if(B.type == STRING || B.type == UNDECLARED_VARIABLE)
+    if(B.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(B.data.string,&result)==OK)
+        if(get_variable(B.data.variable_number,&result)==OK)
         {
             return slice_to_end_with_step(result,B,C);
         }
@@ -1822,10 +1821,10 @@ bool slice_to_end_with_step_wrapping(object&A, const object& B, const object& C)
             optic_stack.pop_back();
         }
     }
-    else if(index1.type == STRING || index1.type == UNDECLARED_VARIABLE)
+    else if(index1.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(index1.data.string,&result)==OK)
+        if(get_variable(index1.data.variable_number,&result)==OK)
         {
             if(result.type!=NUMBER)
             {
@@ -1876,10 +1875,10 @@ bool slice_to_end_with_step_wrapping(object&A, const object& B, const object& C)
             optic_stack.pop_back();
         }
     }
-    else if(index2.type == STRING || index2.type == UNDECLARED_VARIABLE)
+    else if(index2.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(index2.data.string,&result)==OK)
+        if(get_variable(index2.data.variable_number,&result)==OK)
         {
             if(result.type!=NUMBER)
             {
@@ -1940,10 +1939,10 @@ bool slice_to_end_with_step_wrapping(object&A, const object& B, const object& C)
 bool slice_with_step_wrapping(object&A, const object& B, const object& C)
 {
     //Error Guards
-    if(B.type == STRING || B.type == UNDECLARED_VARIABLE)
+    if(B.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(B.data.string,&result)==OK)
+        if(get_variable(B.data.variable_number,&result)==OK)
         {
             return slice_with_step(result,B,C);
         }
@@ -1990,10 +1989,10 @@ bool slice_with_step_wrapping(object&A, const object& B, const object& C)
             optic_stack.pop_back();
         }
     }
-    else if(index1.type == STRING || index1.type == UNDECLARED_VARIABLE)
+    else if(index1.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(index1.data.string,&result)==OK)
+        if(get_variable(index1.data.variable_number,&result)==OK)
         {
             if(result.type!=NUMBER)
             {
@@ -2043,10 +2042,10 @@ bool slice_with_step_wrapping(object&A, const object& B, const object& C)
             optic_stack.pop_back();
         }
     }
-    else if(index2.type == STRING || index2.type == UNDECLARED_VARIABLE)
+    else if(index2.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(index2.data.string,&result)==OK)
+        if(get_variable(index2.data.variable_number,&result)==OK)
         {
             if(result.type!=NUMBER)
             {
@@ -2096,10 +2095,10 @@ bool slice_with_step_wrapping(object&A, const object& B, const object& C)
             optic_stack.pop_back();
         }
     }
-    else if(index3.type == STRING || index3.type == UNDECLARED_VARIABLE)
+    else if(index3.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(index3.data.string,&result)==OK)
+        if(get_variable(index3.data.variable_number,&result)==OK)
         {
             if(result.type!=NUMBER)
             {
