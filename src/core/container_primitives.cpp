@@ -77,7 +77,7 @@ inline bool setup_array(object& array)
         }
         else if(result.type != ARRAY)
         {
-            out() << "Error: Attempting to map a non-Array of type: " << type_string(array.type) << std::endl;
+            out() << "Error: Attempting to use a non-Array of type: " << type_string(array.type) << std::endl;
             print_object(result);
             correct_parsing = false;
             return false;
@@ -87,9 +87,9 @@ inline bool setup_array(object& array)
             array = result;
         }
     }
-    else if(array.type != ARRAY)
+    if(array.type != ARRAY)
     {
-        out() << "Error: Attempting to map a non-Array of type: " << type_string(array.type) << std::endl;
+        out() << "Error: Attempting to use a non-Array of type: " << type_string(array.type) << std::endl;
         print_object(array);
         correct_parsing = false;
         return false;
@@ -156,10 +156,10 @@ inline bool setup_func(object& result, object& function)
         }
 
         //Array Functors...Sort this out
-//        if(function.type == ARRAY)
-//        {
-//            return call_function_array(result, function, array);
-//        }
+        //        if(function.type == ARRAY)
+        //        {
+        //            return call_function_array(result, function, array);
+        //        }
 
         else if(function.type != FUNCTION)
         {
@@ -176,7 +176,7 @@ inline bool setup_func(object& result, object& function)
         break;
     case FUNCTION:
         // function = mem_copy(B);
-//        function = function; // Will this cause a mem_free crash later? Not sure, something to test for.
+        //        function = function; // Will this cause a mem_free crash later? Not sure, something to test for.
         break;
 
     default:
@@ -464,7 +464,7 @@ bool scanl1(object& result, const Array& arguments)
 
     object temp;
     result = mem_alloc(ARRAY);
-//    result.data.array->push_back(starting_value);
+    //    result.data.array->push_back(starting_value);
     call_func_on_two_items(temp,function,array.data.array->at(0),array.data.array->at(1),context);
     result.data.array->push_back(temp);
 
@@ -508,8 +508,8 @@ bool scanr(object& result, const Array& arguments)
     object temp = starting_value;
     result = mem_alloc(ARRAY);
     result.data.array->push_back(starting_value);
-//    call_func_on_two_items(temp,function,starting_value,array.data.array->at(0),context);
-//    result.data.array->push_back(temp);
+    //    call_func_on_two_items(temp,function,starting_value,array.data.array->at(0),context);
+    //    result.data.array->push_back(temp);
 
     for(Array::reverse_iterator it = array.data.array->rbegin(); it != array.data.array->rend(); it++)
     {
@@ -585,7 +585,7 @@ bool filter(object& result, const Array& arguments)
     context.insert(std::make_pair(function.data.function->name, function));
     push_scope(&context);
 
-//    call_func_on_item(result,function,array,context);
+    //    call_func_on_item(result,function,array,context);
     result = mem_alloc(ARRAY);
 
     std::function<bool (object& obj)> filt = [&function,&context,&filt](object& obj)->bool {
@@ -610,7 +610,7 @@ bool filter(object& result, const Array& arguments)
                         obj.data.array->end(),
                         std::back_inserter(*new_array.data.array),
                         filt
-             );
+                        );
             if(new_array.data.array->size()>0)
             {
                 obj.data.array = new_array.data.array;
@@ -626,17 +626,201 @@ bool filter(object& result, const Array& arguments)
                 array.data.array->end(),
                 std::back_inserter(*result.data.array),
                 filt
-     );
+                );
     pop_scope();
 
     return true;
 }
 
+bool length(object& result, const Array& arguments)
+{
+    if(arguments.size()!=1)
+    {
+        out() << "Error: length received an incorrect number of arguments" << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    object array = arguments.at(0);
+    if(setup_array(array))
+    {
+        result = mem_alloc(NUMBER);
+        result.data.number = array.data.array->size();
+        return true;
+    }
+    else
+    {
+        out() << "Error: Attempting to find the length of a non-array." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+}
+
+bool head(object& result, const Array& arguments)
+{
+    if(arguments.size()!=1)
+    {
+        out() << "Error: head received an incorrect number of arguments" << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    object array = arguments.at(0);
+    if(setup_array(array))
+    {
+        if(array.data.array->size()>1)
+        {
+            result = array.data.array->at(0);
+        }
+        else
+        {
+            result = array;
+        }
+        return true;
+    }
+    else
+    {
+        out() << "Error: Attempting to retrieve the head of a non-array." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+}
+
+bool last(object& result, const Array& arguments)
+{
+    if(arguments.size()!=1)
+    {
+        out() << "Error: last received an incorrect number of arguments" << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    object array = arguments.at(0);
+    if(setup_array(array))
+    {
+        if(array.data.array->size()>1)
+        {
+            result = array.data.array->back();
+        }
+        else
+        {
+            result = array;
+        }
+        return true;
+    }
+    else
+    {
+        out() << "Error: Attempting to retrieve the last of a non-array." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+}
+
+bool tail(object& result, const Array& arguments)
+{
+    if(arguments.size()!=1)
+    {
+        out() << "Error: tail received an incorrect number of arguments" << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    object array = arguments.at(0);
+    if(setup_array(array))
+    {
+        if(array.data.array->size()>1)
+        {
+            result = mem_alloc(ARRAY);
+            std::copy(array.data.array->begin()+1,array.data.array->end(),std::back_inserter(*result.data.array));
+        }
+        else
+        {
+            result = array;
+        }
+        return true;
+    }
+    else
+    {
+        out() << "Error: Attempting to find the tail of a non-array." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+}
+
+bool init(object& result, const Array& arguments)
+{
+    if(arguments.size()!=1)
+    {
+        out() << "Error: init received an incorrect number of arguments" << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    object array = arguments.at(0);
+    if(setup_array(array))
+    {
+        if(array.data.array->size()>1)
+        {
+//            result = mem_alloc(ARRAY);
+//            std::copy(array.data.array->begin(),array.data.array->end()-1,std::back_inserter(*result.data.array));
+//            result.data.array = array.data.array;
+//            result.data.array->pop_back();
+            result = array;
+            out() << result.data.array << std::endl;
+            out() << array.data.array << std::endl;
+            result.data.array->pop_back();
+            out() << result.data.array << std::endl;
+            out() << array.data.array << std::endl;
+        }
+        else
+        {
+            result = array;
+        }
+        return true;
+    }
+    else
+    {
+        out() << "Error: Attempting to find the init of a non-array." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+}
 
 void register_container_primitives()
 {
+    object plength = mem_alloc(PRIMITIVE);
+    int variable_number = get_string_hash("length");
+    plength.data.primitive->name = variable_number;
+    plength.data.primitive->num_arguments = 1;
+    plength.data.primitive->p_func = length;
+    set_variable(variable_number,plength);
+
+    object pinit = mem_alloc(PRIMITIVE);
+    variable_number = get_string_hash("init");
+    pinit.data.primitive->name = variable_number;
+    pinit.data.primitive->num_arguments = 3;
+    pinit.data.primitive->p_func = init;
+    set_variable(variable_number,pinit);
+
+    object plast = mem_alloc(PRIMITIVE);
+    variable_number = get_string_hash("last");
+    plast.data.primitive->name = variable_number;
+    plast.data.primitive->num_arguments = 2;
+    plast.data.primitive->p_func = last;
+    set_variable(variable_number,plast);
+
+    object ptail = mem_alloc(PRIMITIVE);
+    variable_number = get_string_hash("tail");
+    ptail.data.primitive->name = variable_number;
+    ptail.data.primitive->num_arguments = 3;
+    ptail.data.primitive->p_func = tail;
+    set_variable(variable_number,ptail);
+
+    object phead = mem_alloc(PRIMITIVE);
+    variable_number = get_string_hash("head");
+    phead.data.primitive->name = variable_number;
+    phead.data.primitive->num_arguments = 3;
+    phead.data.primitive->p_func = head;
+    set_variable(variable_number,phead);
+
+
     object pmap = mem_alloc(PRIMITIVE);
-    int variable_number = get_string_hash("map");
+    variable_number = get_string_hash("map");
     pmap.data.primitive->name = variable_number;
     pmap.data.primitive->num_arguments = 3;
     pmap.data.primitive->p_func = map;

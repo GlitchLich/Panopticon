@@ -220,6 +220,11 @@ void mem_free_array(Array& array)
     array.clear();*/
 }
 
+void mem_shallow_copy_array(object& copy, object& original)
+{
+    *copy.data.array = *original.data.array;
+}
+
 void shallow_mem_free_array(Array* array, Type type)
 {
     //    if(array)

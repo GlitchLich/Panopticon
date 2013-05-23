@@ -336,6 +336,7 @@ bool evaluate_top()
         result = evaluate_unary_operator(obj, false);
         break;
 
+//    case FUNCTION_BODY:
     case OPERATION_TREE:
         result = resolve_stack_from_parser(obj, false);
         break;
@@ -415,6 +416,7 @@ bool resolve_stack_from_parser(const object& operation_tree, bool resolve_entire
 //            object copy_tree = mem_copy(operation_tree);
             object copy_tree = operation_tree;
             tree = copy_tree.data.array;
+//            tree = operation_tree.data.array;
         }
 
         else

@@ -29,6 +29,7 @@
 #include <string>
 #include <cstring>
 #include "core/errors.h"
+#include <list>
 
 namespace panopticon
 {

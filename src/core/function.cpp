@@ -26,32 +26,39 @@ inline bool call_primitive_function(object &A, const object &B, const object &C)
  */
 bool create_function(object &A, const object &B, const object &C)
 {
-    A = mem_alloc(FUNCTION);
-    Function* function = A.data.function;
-
-    if(B.type == FUNCTION_ARG_NAMES)
+//    print_object(C);
+    if(B.data.array->size()>1)
     {
-        function->num_arguments = B.data.array->size();
-        for(int i = 0; i < function->num_arguments; ++i)
+        A = mem_alloc(FUNCTION);
+        Function* function = A.data.function;
+        if(B.type == FUNCTION_ARG_NAMES)
         {
-            //            function->arguments.push_back(mem_copy(B.data.array->at(i)));
-            function->arguments.push_back(B.data.array->at(i));
+            function->num_arguments = B.data.array->size();
+            function->arguments = *B.data.array;
+            function->name = B.data.array->at(0).data.variable_number;
         }
 
-        function->name = B.data.array->at(0).data.variable_number;
-    }
+        else if(B.type == UNDECLARED_VARIABLE || B.type == VARIABLE)
+        {
+            function->num_arguments = 0;
+            function->arguments.push_back(B);
+            function->name = B.data.variable_number;
+        }
 
-    else if(B.type == UNDECLARED_VARIABLE || B.type == VARIABLE)
+        function->body = C;
+        function->body.type = OPERATION_TREE;
+    }
+    else
     {
-        function->num_arguments = 0;
-        //        function->arguments.push_back(mem_copy(B));
-        function->arguments.push_back(B);
-        function->name = B.data.variable_number;
+        //Force evaluation on functions with 0 arguments, as they are essentially constants.
+        A = mem_alloc(OPERATION_TREE);
+        A.data.array = C.data.array;
+        optic_stack.push_back(A);
+        evaluate_top();
+        A = optic_stack.back();
+        optic_stack.pop_back();
+//        out() << type_string(A.type) << std::endl;
     }
-
-    //    function->body = mem_copy(C);
-    function->body = C;
-    function->body.type = OPERATION_TREE;
 }
 
 bool call_function_array(object& A, const object& B, const object& C)
