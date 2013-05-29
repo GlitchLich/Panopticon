@@ -252,7 +252,7 @@ bool evaluate_variable(const object& variable_name)
     object result;
 
 //    std::cout << "GET VARIABLE" << std::endl;
-    if(get_variable(variable_name.data.string, &result) == OK)
+    if(get_variable(variable_name.data.variable_number, &result) == OK)
     {
 //        std::cout << "GET VARIABLE" << std::endl;
 
@@ -272,7 +272,7 @@ bool evaluate_variable(const object& variable_name)
 
     else
     {
-        out() << "Variable " << variable_name.data.string->c_str() << " not found." << std::endl;
+        out() << "Variable " << reverse_variable_name_lookup[variable_name.data.variable_number] << " not found." << std::endl;
         clear_stack();
         return false;
     }
@@ -288,7 +288,7 @@ bool evaluate_assignment()
         return false;
     }
 
-    if(set_variable(result.data.string, optic_stack.back()) == OK) // set_variable uses mem_copy, we need to remember to free the top of the stack
+    if(set_variable(result.data.variable_number, optic_stack.back()) == OK) // set_variable uses mem_copy, we need to remember to free the top of the stack
     {
 //        mem_free(optic_stack.back()); // make sure to free memory!
         optic_stack.pop_back();
@@ -439,7 +439,7 @@ bool resolve_stack_from_parser(const object& operation_tree, bool resolve_entire
         }
 
         // Free the Array* we created but not the actual contents because they will get freed on the stack
-        shallow_mem_free_array(tree, OPERATION_TREE);
+//        shallow_mem_free_array(tree, OPERATION_TREE);
 
         if(resolve_entire_stack)
             evaluate_stack();

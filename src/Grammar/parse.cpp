@@ -107,6 +107,9 @@ struct panopticon::object mToken;
 namespace panopticon
 {
 
+std::unordered_map<std::string,Variable> string_hash_map;
+std::unordered_map<Variable,std::string> reverse_variable_name_lookup;
+Variable string_num = 11;
 
 #define MAX_DEPTH 72
 unsigned int indent_stack[MAX_DEPTH];
@@ -141,6 +144,17 @@ void init()
 
     t0.data.number=0;
     init_heap();
+    reverse_variable_name_lookup[0] = "Anonymous";
+    reverse_variable_name_lookup[1] = "arg1";
+    reverse_variable_name_lookup[2] = "arg2";
+    reverse_variable_name_lookup[3] = "arg3";
+    reverse_variable_name_lookup[4] = "arg4";
+    reverse_variable_name_lookup[5] = "arg5";
+    reverse_variable_name_lookup[6] = "arg6";
+    reverse_variable_name_lookup[7] = "arg7";
+    reverse_variable_name_lookup[8] = "arg8";
+    reverse_variable_name_lookup[9] = "arg9";
+    reverse_variable_name_lookup[10] = "arg10";
 }
 
 bool exec(std::string string, std::string& output)
@@ -207,7 +221,9 @@ bool exec(std::string string, std::string& output)
                 t0.data.number = yylval.dval;
                 break;
             case NAME:
-                t0 = panopticon::mem_string_alloc(panopticon::UNDECLARED_VARIABLE,yylval.sval);
+//                t0 = panopticon::mem_string_alloc(panopticon::UNDECLARED_VARIABLE,yylval.sval);
+                t0 = mem_alloc(UNDECLARED_VARIABLE);
+                t0.data.variable_number = get_string_hash(std::string(yylval.sval));
                 if(yylval.sval!=0)
                 {
                     delete yylval.sval;
@@ -490,7 +506,7 @@ void calculate_white_space(std::string& line) {
                 else if (indent > indent_stack[level]) {
                     //                    if(string.at(insert-1)!='{')
                     //                    {
-                    string.replace(insert,1," `");
+                    string.replace(insert,1," ?");
                     insert++;
 //                                            string.insert(insert,"{");
 //                                            insert++;
@@ -503,39 +519,10 @@ void calculate_white_space(std::string& line) {
                 {
                     while (indent < indent_stack[level]) {
                         --level ;
-
-                        //                        std::cout << "INDENT LEVEL!: " << indent << std::endl;
-                        //                        if(!should_replace(string,insert,indent))
-                        //                        {
                         string.replace(insert,1," @  ");
-//                        string.insert(insert-1," ");
                         insert++;
                         insert++;
                         insert++;
-//                        insert++;
-//                        string.insert(insert," }; ");
-//                        insert++;
-//                        insert++;
-//                        insert++;
-//                        insert++;
-
-                        //                            size++;
-                        //                            size++;
-                        //                        }
-                        //                        else
-                        //                        {
-                        //                            std::cout << "REPLACE!" << std::endl;
-                        //                            std::string replacement("};");
-                        //                            for(int i=0;i<indent+1;++i)
-                        //                            {
-                        //                                replacement.append(" ");
-                        //                            }
-                        //                            string.replace(string.begin()+insert,string.begin()+insert+2+indent,replacement);
-                        //                            string.insert(insert,";");
-                        //                            insert++;
-                        //                            size++;
-                        //                            blanked = true;
-                        //                        }
                     }
                 }
             }
@@ -569,6 +556,38 @@ void calculate_white_space(std::string& line) {
         }
     }
     string.swap(line);
+}
+
+/*
+Variable anonymous = 0;
+Variable arg1 = 1;
+Variable arg2 = 2;
+Variable arg3 = 3;
+Variable arg4 = 4;
+Variable arg5 = 5;
+Variable arg6 = 6;
+Variable arg7 = 7;
+Variable arg8 = 8;
+Variable arg9 = 9;
+Variable arg10 = 10;
+*/
+
+inline Variable get_string_hash(std::string string)
+{
+//    std::cout << "Hash: " << string;
+    if(string_hash_map.find(string)!=string_hash_map.end())
+    {
+//        std::cout << "," << string_hash_map[string] << std::endl;
+        return string_hash_map[string];
+    }
+    else
+    {
+        string_num++;
+        string_hash_map[string] = string_num;
+        reverse_variable_name_lookup[string_num] = string;
+//        std::cout << "," << string_hash_map[string] << std::endl;
+        return string_num;
+    }
 }
 
 }

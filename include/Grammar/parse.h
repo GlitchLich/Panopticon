@@ -62,7 +62,23 @@ extern void string_whitespace_check(std::string& line,int start,int stop);
 extern void calculate_white_space(std::string &line);
 extern unsigned int w_count(std::string &line);
 
+/*
+Variable anonymous = 0;
+Variable arg1 = 1;
+Variable arg2 = 2;
+Variable arg3 = 3;
+Variable arg4 = 4;
+Variable arg5 = 5;
+Variable arg6 = 6;
+Variable arg7 = 7;
+Variable arg8 = 8;
+Variable arg9 = 9;
+Variable arg10 = 10;
+*/
 
+
+inline Variable get_string_hash(std::string string);
+extern std::unordered_map<Variable,std::string> reverse_variable_name_lookup;
 }
 
 namespace optic = panopticon;

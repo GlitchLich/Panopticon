@@ -42,6 +42,7 @@ public:
     QTextCharFormat functionFormat;
     QTextCharFormat numberFormat;
     QTextCharFormat flowFormat;
+    QColor highlightColor;
 
 private:
     real_color prrealClearColor; // requires special handling, using the get/set interface.

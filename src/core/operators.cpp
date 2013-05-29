@@ -32,6 +32,7 @@
 #include "include/core/function.h"
 #include "include/core/stack.h"
 #include "core/Memory.h"
+//#include "include/Grammar/parse.h"
 
 #include <algorithm>
 
@@ -46,40 +47,58 @@ namespace panopticon
 //GENERAL
 //==================
 
-bool left_section(object& A, object &B, operator_function func, bool expand)
+void print_object_in_array(const object B,int arrayNum)
 {
-    //Function name/arg
-    optic::object name_array = mem_alloc(optic::ARRAY);
-    optic::object name = optic::mem_string_alloc("\\");
-    optic::object arg = optic::mem_string_alloc("x");
-    name_array.data.array->push_front(name);
-    name_array.data.array->push_back(arg);
-
-    //Function body
-    optic::object var = optic::mem_string_alloc(UNDECLARED_VARIABLE,"x");
-    object body;
-    store_operations(body,B,var,func);
-
-    insure_ready_for_assignment(name_array,body);
-    store_operations(A,name_array,body,optic::create_function);
-}
-
-bool right_section(object& A, object &B, operator_function func, bool expand)
-{
-    //Function name/arg
-    optic::object name_array = mem_alloc(optic::ARRAY);
-    optic::object name = optic::mem_string_alloc("\\");
-    optic::object arg = optic::mem_string_alloc("x");
-    name_array.data.array->push_front(name);
-    name_array.data.array->push_back(arg);
-
-    //Function body
-    optic::object var = optic::mem_string_alloc(UNDECLARED_VARIABLE,"x");
-    object body;
-    store_operations(body,var,B,func);
-
-    insure_ready_for_assignment(name_array,body);
-    store_operations(A,name_array,body,optic::create_function);
+    switch(B.type)
+    {
+    case panopticon::FUNCTION:
+        out() << " A Function";
+        break;
+    case NUMBER:
+        out() << " " << B.data.number;
+        break;
+    case STRING:
+        out() << " " << *(B.data.string);
+        break;
+    case BOOL:
+        if(B.data.boolean)
+        {
+            out() << " true";
+        }
+        else
+        {
+            out() << " false";
+        }
+        break;
+    case OPERATION_TREE:
+        optic_stack.push_back(B);
+        evaluate_top();
+        print_object_in_array(optic_stack.back(),arrayNum);
+        optic_stack.pop_back();
+        break;
+    case FUNCTION_ARG_VALUES:
+    case FUNCTION_BODY:
+    case FUNCTION_ARG_NAMES:
+    case ARRAY:
+        print_array(B,arrayNum+1);
+        break;
+    case panopticon::OPERATION:
+        out() << " Operator";
+        break;
+    case UNARY_NO_EXPANSION_OPERATION:
+    case panopticon::UNARY_OPERATION:
+        out() << " Unary_Operator";
+        break;
+    case panopticon::NO_EXPANSION_OPERATION:
+        out() << " NoExpandOperator";
+        break;
+    case panopticon::VARIABLE:
+        out() << " " << reverse_variable_name_lookup[B.data.variable_number];
+        break;
+    case panopticon::UNDECLARED_VARIABLE:
+        out() << " " << reverse_variable_name_lookup[B.data.variable_number];
+        break;
+    }
 }
 
 bool print_array(const object &A, int arrayNum,bool isTree)
@@ -99,47 +118,7 @@ bool print_array(const object &A, int arrayNum,bool isTree)
     for(int i=0;i<A.data.array->size();++i)
     {
         panopticon::object& B = A.data.array->at(i);
-        switch(B.type)
-        {
-        case NUMBER:
-            out() << " " << B.data.number;
-            break;
-        case STRING:
-            out() << " " << *(A.data.array->at(i).data.string);
-            break;
-        case BOOL:
-            if(B.data.boolean)
-            {
-                out() << " true";
-            }
-            else
-            {
-                out() << " false";
-            }
-            break;
-        case OPERATION_TREE:
-            print_array(B,arrayNum+1,true);
-            break;
-        case ARRAY:
-            print_array(B,arrayNum+1);
-            break;
-        case panopticon::OPERATION:
-            out() << " Operator";
-            break;
-        case UNARY_NO_EXPANSION_OPERATION:
-        case panopticon::UNARY_OPERATION:
-            out() << " Unary_Operator";
-            break;
-        case panopticon::NO_EXPANSION_OPERATION:
-            out() << " NoExpandOperator";
-            break;
-        case panopticon::VARIABLE:
-            out() << " " << *B.data.string;
-            break;
-        case panopticon::UNDECLARED_VARIABLE:
-            out() << " " << *B.data.string;
-            break;
-        }
+        print_object_in_array(B,arrayNum);
     }
     if(isTree)
     {
@@ -158,7 +137,7 @@ bool print_array(const object &A, int arrayNum,bool isTree)
 bool print_variable(const object& A)
 {
     object result = mem_alloc(NIL);
-    if(get_variable(A.data.string,&result) == OK)
+    if(get_variable(A.data.variable_number,&result) == OK)
     {
         if(result.type==FUNCTION)
         {
@@ -166,28 +145,26 @@ bool print_variable(const object& A)
             {
                 object arguments; // empty, won't be used by call_function so no need to initialize
                 call_function(result, A, arguments);
-                out() << *A.data.string << ": " << print_object(result);
+                out() << reverse_variable_name_lookup[A.data.variable_number] << ": " << print_object(result);
             }
 
             else
             {
-                out() << "Function: " << *A.data.string << std::endl;
+                out() << "Function: " << reverse_variable_name_lookup[A.data.variable_number] << std::endl;
                 out() << "with arguments: " << result.data.function->arguments.size() << std::endl;
             }
         }
         else
         {
-            out() << *A.data.string << ": " << print_object(result);
+            out() << reverse_variable_name_lookup[A.data.variable_number] << ": " << print_object(result);
         }
 
     }
 
     else
     {
-        out() << "Undeclared Variable: " << *A.data.string << std::endl;
+        out() << "Undeclared Variable: " << reverse_variable_name_lookup[A.data.variable_number] << std::endl;
     }
-
-    mem_free(result);
 }
 
 bool print_object(const object &A)
@@ -196,7 +173,6 @@ bool print_object(const object &A)
     switch(A.type)
     {
     case panopticon::FUNCTION:
-        // -1 arguments because it counts itself as an argument internally
         out() << "A Function" << std::endl;
         break;
     case panopticon::NUMBER:
@@ -215,6 +191,9 @@ bool print_object(const object &A)
             out() << "false" << std::endl;
         }
         break;
+    case FUNCTION_ARG_VALUES:
+    case FUNCTION_BODY:
+    case FUNCTION_ARG_NAMES:
     case panopticon::ARRAY:
         panopticon::print_array(A);
         break;
@@ -1268,15 +1247,15 @@ bool assign_variable(object& A, const object& B, const object& C)
     {
         create_function(A,B,C);
 
-        if(set_variable(B.data.array->at(0).data.string, A) != OK)
+        if(set_variable(B.data.array->at(0).data.variable_number, A) != OK)
         {
             out() << "Error. Unable to bind variable " << B.data.array->at(0).data.string << std::endl;
         }
     }
 
-    else if(B.type == STRING)
+    else if(B.type == UNDECLARED_VARIABLE)
     {
-        if(set_variable(B.data.string, A) != OK)
+        if(set_variable(B.data.variable_number, A) != OK)
         {
             out() << "Error. Unable to bind variable " << B.data.string << std::endl;
             correct_parsing = false;

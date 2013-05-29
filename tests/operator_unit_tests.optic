@@ -2,7 +2,117 @@
 
 //Pattern Matching, Case Statements, List comprehensions
 
-//Lambda functions
+//filter, apply a boolean returning function to a map, and return all elements that return true:
+filter( (>=5) [3 4 5 6 [7 [3 2 10] 2 3 ] 8 0 ] )
+filter( (=="hey") ["hey" "you" ["no" "yo" "hey" ] "ok" ] )
+
+//Fold left, function, starting value, array
+foldl( (+) 0 [1 2 3 4 ] )
+foldl( (-) 0 [1 2 3 4 ] )
+//Can mix types
+foldl( (-) "Fuck yeah" ["F" "c" "y"] )
+foldl( (+) "cool" [1 2 3 4 "yeah" true] )
+
+//Fold right
+foldr( (+) "cool" [1 2 3 4 "yeah" true] )
+foldr( (-) 0 [1 2 3 4] )
+foldr( \x y = (x+y)/2 54 [12 4 10 6] )
+
+//Faster than recursion based algorithms:
+factorial x = foldl( (*) 1 [1..x] )
+factorial(5000)
+
+//Nested folds
+foldr( (\x y = foldr( (^) 1 x) * y) 1 [ [1 1] [2 3] [4 5] ] )
+
+//scanl/scanr is like foldl/foldr, but collects the state of the accumulator into an array
+foldl( (-) 100 [1 2 3 4 5] )
+scanl( (-) 100 [1 2 3 4 5] )
+
+foldr( (-) 100 [5 4 3 2 1] )
+
+foldr( (-) 100 [5 4 3 2 1] )
+scanr( (-) 100 [5 4 3 2 1] )
+
+scanl( (*) 2 [ 2 2 2 2 2 2 2 2 2 2 2 2] )
+//Of course, multichannel expansion works:
+foldr( (/) [10 1] [5 4 3 2 1] )	
+
+//fold1, same as fold but without starting value (wraps):
+foldl1( (-) [1 2 3 4 5] )
+foldl1( (+) [1 2 3 4] )
+foldl1( (/) [64 4 2 8] )
+foldl1( (&&) [1>2 3>2 5==5] )
+
+scanl1( (-) [1 2 3 4 5] )
+scanl1( (+) [1 2 3 4] )
+scanl1( (/) [64 4 2 8] )
+scanl1( (&&) [1>2 3>2 5==5] )
+
+foldr1( (/) [8 12 24 4] )
+scanr1( (/) [8 12 24 4] )
+scanr1( (+) [1 2 3 4] )
+
+
+//Primitive Functions
+a = [0 1 2 3 ]
+b = [0 [1 2] 3 ["ok" [ "lets" "go" ] 2 ] ]
+map( (+10) b )
+map( (3/) a )
+map( \x = x^2 - 3 [6 6 6])
+
+//Speed test! calculate with 300,000 element array
+map( \x = (x*2) % 31.3 [1..300000])
+
+//works with functions
+doubleDown x = [x x+2]
+map( doubleDown a)
+
+//Map is Recursive:
+map( (+4) b )
+
+//Use map for applying functions with conditionals to arrays
+guardTest x
+	| x == 0 	= 0
+	| x == 1 	= [ 1 2 3 ]
+	| _			= 1000
+
+guardTest(0)
+guardTest(1)
+guardTest(2)
+//Will throw an error since there's an array in the guard statement.
+guardTest([5 5])
+//Use map instead!
+c = [0 [1 2 [0 [5 0] 0] ] 5]
+map(guardTest c )
+map(guardTest map(guardTest c ) )
+
+//Partial Application of arbitrary functions:
+concat x y = x ++ y
+plus x y = x + y
+div x y = x / y
+mod x y = x % y
+
+plus(2 2)
+concat(2 2)
+div(2 4)
+mod(100 53)
+
+concat(1)
+plus(1)
+
+partialFunc f x = f(x)
+
+partialFunc( concat(10) 20 )
+partialFunc( plus(10) 20 )
+partialFunc( div(10) 20 )
+partialFunc( mod(10) 20 )
+
+mathTime x y z w = x * y + z - w
+wayPartial f y z w = f(y z w) 
+wayPartial( mathTime( 10 ) 11 12 13 )
+
+//Lambda Expressions
 \x = x^2
 \x y = x + y
 \x y z = x - y + z
@@ -22,21 +132,106 @@ lambdazForever f x t
 	| _		= f(x)
 
 lambdazForever( (\x = x * 2) [ 2 3 ] 10)
+lambdazForever( (++0) [2 3] 10)[:100:3:%]
+lambdazForever( (0++) [2 3] 10)
 
 //Operator Sectioning
 (+ 1)
 (1 +)
 
 sectionTest f x = f(x)
-sectionTest( (+10) 4 )
-sectionTest( (10+) 4 )
-sectionTest( (10-) 4 )
-sectionTest( (*10) 4 )
-sectionTest( (10*) 4 )
-sectionTest( (/10) 4 )
-sectionTest( (10/) 4 )
+sectionTest( (+2) 4 )
+sectionTest( (2+) 4 )
+sectionTest( (2-) 4 )
+sectionTest( (*2) 4 )
+sectionTest( (2*) 4 )
+sectionTest( (/2) 4 )
+sectionTest( (2/) 4 )
+sectionTest( (%2) 4 )
+sectionTest( (2%) 4 )
+sectionTest( (^2) 4 )
+sectionTest( (2^) 4 )
+sectionTest( (==2) 4 )
+sectionTest( (2==) 4 )
+sectionTest( (!=2) 4 )
+sectionTest( (2!=) 4 )
+sectionTest( (>2) 4 )
+sectionTest( (2>) 4 )
+sectionTest( (<2) 4 )
+sectionTest( (2<) 4 )
+sectionTest( (>=2) 4 )
+sectionTest( (2>=) 4 )
+sectionTest( (<=2) 4 )
+sectionTest( (2<=) 4 )
+sectionTest( (&&true) true )
+sectionTest( (false&&) true )
+sectionTest( (||true) true )
+sectionTest( (true||) false )
+sectionTest( (<<<2) 4 )
+sectionTest( (2<<<) 4 )
+sectionTest( (>>>2) 4 )
+sectionTest( (2>>>) 4 )
+sectionTest( (|2) 4 )
+sectionTest( (2|) 4 )
+sectionTest( (&2) 4 )
+sectionTest( (2&) 4 )
+sectionTest( (^|2) 4 )
+sectionTest( (2^|) 4 )
+sectionTest( (:2) 4 )
+sectionTest( (2:) 4 )
+sectionTest( (<:2) 4 )
+sectionTest( (2<:) 4 )
+sectionTest( (++2) 4 )
+sectionTest( (2++) 4 )
+//also multi-channel expands!
+sectionTest( (+[10 12 13]) 4 )
+sectionTest( (+10) [4 3] )
 
-map((+) list)
+//Operator functions
+(+)
+(-)
+
+opFunc f x y = f(x y)
+opFunc( (+) 2 4 )
+opFunc( (-) 2 4 )
+opFunc( (*) 2 4 )
+opFunc( (/) 2 4 )
+opFunc( (%) 2 4 )
+opFunc( (^) 2 4 )
+opFunc( (==) 2 4 )
+opFunc( (!=) 2 4 )
+opFunc( (<) 2 4 )
+opFunc( (>) 2 4 )
+opFunc( (<=) 2 4 )
+opFunc( (>=) 2 4 )
+opFunc( (&&) true false )
+opFunc( (||) true false )
+opFunc( (<<<) 2 4 )
+opFunc( (>>>) 2 4 )
+opFunc( (|) 2 4 )
+opFunc( (&) 2 4 )
+opFunc( (^|) 2 4 )
+opFunc( (&) 2 4 )
+opFunc( (:) 2 4 )
+opFunc( (<:) 2 4 )
+opFunc( (++) 2 4 )
+
+//Infix binary argument functions:
+plus x y = x + y
+2 / 4 `plus` 2 * 3
+lazyPlus f x y = x `f` y
+lazyPlus((/) 3 4)
+
+//Partial Application of infix functions
+div x y = x / y
+partialFunc f x = f(x)
+partialFunc( (`div` 2) 3)
+partialFunc( (2 `div`) 3)
+
+moreComplex x y = x - y / z
+	where
+		z = 3
+partialFunc( (`moreComplex` 10) 20 )
 
 //where variables in condition_tree, works:
 wGuard x
@@ -70,7 +265,7 @@ factorial n
 	| n > 0 = n * factorial(n - 1)
 	| _		= 1
 
-factorial(60)
+factorial(10)
 
 //Array ranges
 [2..10]
@@ -197,17 +392,6 @@ recursion(12)
 
 headTailFunc z (x:xs) = x : xs
 
-guardTest x
-	| x == 0 	= 0
-	| x == 1 	= [ 1 2 3 ]
-	| _			= 1000
-
-guardTest(0)
-guardTest(1)
-guardTest(2)
-//Will throw an error since there's an array in the guard statement.
-guardTest([5 5])
-
 arrayGuard x
 	| x[0] == 1 							= "Zero!"
 	| x[1] == 1								= "First!"
@@ -254,31 +438,34 @@ arrayGuard(2)
 arrayGuard([ [1 0 0] [0 1 0] [0 0 1] ])
 
 
-//Composition operator WORKS
+//Stream operator WORKS
 //Takes up same amount of space, but looks waaaaaay clearer IMO
 //Pass expression on the left as the first argument to the func on the right:
 f x = x * 2
 f(2)
-7 >> f
+2 >> f
+//And the opposite: Pass expression on the right as the first argument to the func on the left:
+f << 2
 
 //Chains to other functions:
 g x = x * 4
 g( f( 1 ) )
-f( 1 ) >> g
-f( 1 ) >> g()
+1 >> f >> g
+g << f << 1
 g( f( g( f( g( f( [ 2 3 4 5 ] ) ) ) ) ) )
 [ 2 3 4 5 ] >> f >> g >> f >> g >> f >> g
+g << f << g << f << g << f << [ 2 3 4 5 ]
 
 //Partial application also works :) Inserts into the first argument:
 f2 x y = x * y
 g2 x y = (x * 2) / y
 g2( f2( 2 3 ) * 4 10 )
 2 >> f2( 3 ) * 4 >> g2( 10 )
+g2( 10 ) << 4 * f2( 3 ) << 2
 
 //embedable into other functions as well:
 embededStream x y = x >> y
-embededStream(3 a)
-g(3)
+embededStream(3 g)
 
 //embedable into other functions as well:
 embededStream2 x y = x >> y(2)
@@ -627,7 +814,13 @@ fList s t
 	| s > 0		= fib(s) : fList(s + 1 t)
 	| _			= []
 
-fList( 1 17 )
+fib i
+    | i > 1  	= fib( i-1 ) + fib( i-2 )
+    | _			= 1
+
+fList( 1 20 )
+fib(40)
+2^24
 
 //()'s disband the offside rule
 myGuardFunc(

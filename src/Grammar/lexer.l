@@ -52,10 +52,11 @@ void yyerror(char *s, int errorCode)
 [;]     {return DELIMITER;}
 [{]     {return LCURL;}
 [}]     {return RCURL;}
-[`]     {return LCBLOCK;}
+[?]     {return LCBLOCK;}
 [@]     {return RCBLOCK;}
 [\\]     {return BACKSLASH;}
 ".."       {return RANGE;}
+"`"     {return BACKTICK;}
 [0-9]+|[0-9]*\.[0-9]+    {
     col += (int) strlen(yytext);
     yylval.dval = atof(yytext);
@@ -92,7 +93,7 @@ false     { yylval.bval = 0;return BOOLEAN;}
 ">="          {  return GORE;  }
 "<="          {  return LORE;  }
 "!="          {  return NOTEQUALTO;  }
-"<<"          {  return SHIFTL;  }
+"<<<"          {  return SHIFTL;  }
 ">>>"          {  return SHIFTR;  }
 "&&"          {  return AND;  }
 "||"          {  return OR;  }
@@ -111,13 +112,14 @@ false     { yylval.bval = 0;return BOOLEAN;}
 "<:"          { return APPEND;}
 ":>"          { return PREPEND;}
 ":"         {return PREPEND;}
-">>"       {return COMPOSITION;}
+">>"       {return RSTREAM;}
+"<<"       {return LSTREAM;}
 [\"][^"]*[\"] {
     col += (int)strlen(yytext);
     yylval.sval=strndup(yytext+1,(int)strlen(yytext)-2);
     return STRING;
 }
-"\""+[__+-={}|:;?/>.<,~`!@#$%^&*()A-Za-z0-9 \t\n\r]* {yyerror(yytext,1);return OPENQUOTEERROR;}
+"\""+[__+-={}|:;/>.<,~`!@#$%^&*()A-Za-z0-9 \t\n\r]* {yyerror(yytext,1);return OPENQUOTEERROR;}
 
 \n      { col = 0; ++line; /*return NEWLINE;*/}
 \r      { col = 0; ++line; /*printf("return!\n"); return NEWLINE; */}

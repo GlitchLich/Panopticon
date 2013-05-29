@@ -5,6 +5,7 @@
 #include "include/core/Memory.h"
 #include "include/core/heap.h"
 #include "include/core/stack.h"
+#include "include/Grammar/parse.h"
 
 namespace panopticon
 {
@@ -55,7 +56,7 @@ void increment_array(Type type)
 {
     ++gc_count;
     ++num_arrays;
-//    std::cout << "new Array(" << type_string(type) << ")" << std::endl;
+    //    std::cout << "new Array(" << type_string(type) << ")" << std::endl;
 
     switch(type)
     {
@@ -90,28 +91,28 @@ void increment_string()
 {
     ++gc_count;
     ++num_strings;
-//    std::cout << "new String()" << std::endl;
+    //    std::cout << "new String()" << std::endl;
 }
 
 void increment_dictionary()
 {
     ++gc_count;
     ++num_dictionaries;
-//    std::cout << "new Dictionary()" << std::endl;
+    //    std::cout << "new Dictionary()" << std::endl;
 }
 
 void increment_function()
 {
     ++gc_count;
     ++num_functions;
-//    std::cout << "new Function()" << std::endl;
+    //    std::cout << "new Function()" << std::endl;
 }
 
 void decrement_array(Type type)
 {
     --gc_count;
     --num_arrays;
-//    std::cout << "delete Array(" << type_string(type) << ")" << std::endl;
+    //    std::cout << "delete Array(" << type_string(type) << ")" << std::endl;
 
     switch(type)
     {
@@ -165,7 +166,7 @@ void decrement_function()
 
 void gc_delete(object& obj); // forward declaration
 
- void gc_delete_array(Array* array, Type type)
+void gc_delete_array(Array* array, Type type)
 {
     if(array)
     {
@@ -179,7 +180,7 @@ void gc_delete(object& obj); // forward declaration
         }
 
         array->clear();*/
-
+        std::cout << "Deleting " << type_string(type) << std::endl;
         decrement_array(type);
         delete array;
         array = 0;
@@ -221,17 +222,17 @@ void mem_free_array(Array& array)
 
 void shallow_mem_free_array(Array* array, Type type)
 {
-//    if(array)
-//    {
-//        decrement_array(type);
-//        delete array;
-//        array = 0;
-//    }
+    //    if(array)
+    //    {
+    //        decrement_array(type);
+    //        delete array;
+    //        array = 0;
+    //    }
 
-//    else
-//    {
-//        std::cerr << "Attempted to shallo_mem_free_array on a null pointer." << std::endl;
-//    }
+    //    else
+    //    {
+    //        std::cerr << "Attempted to shallo_mem_free_array on a null pointer." << std::endl;
+    //    }
 }
 
 void gc_delete_dictionary(Dictionary* dictionary)
@@ -249,6 +250,7 @@ void gc_delete_dictionary(Dictionary* dictionary)
         }
 
         dictionary->clear();*/
+        std::cout << "Deleting Dictionary" << std::endl;
         decrement_dictionary();
         delete dictionary;
         dictionary = 0;
@@ -291,20 +293,7 @@ void gc_delete_function(Function* function)
 {
     if(function)
     {
-        if(function->name.size() > 0 && function->name.size() < 25)
-        {
-            std::cout  << "deleting function: " << function->name << std::endl;
-        }
-
-        else
-        {
-            std::cout  << "deleting function with no name" << std::endl;
-        }
-
-        // gc_delete_array(function->arguments); // These will be picked up by the GC
-        // mem_free(function->body); This will be picked up by the GC
-        // gc_delete_dictionary(function->heap); // These will be picked up by the GC
-
+        std::cout  << "deleting function: " << reverse_variable_name_lookup[function->name] << std::endl;
         decrement_function();
         delete function;
         function = 0;
@@ -313,6 +302,22 @@ void gc_delete_function(Function* function)
     else
     {
         std::cerr << "Attempted to gc_delete_function on a null pointer." << std::endl;
+    }
+}
+
+void gc_delete_primitive(Primitive* primitive)
+{
+    if(primitive)
+    {
+        std::cout  << "deleting primitive: " << reverse_variable_name_lookup[primitive->name] << std::endl;
+        decrement_function();
+        delete primitive;
+        primitive = 0;
+    }
+
+    else
+    {
+        std::cerr << "Attempted to gc_delete_primitive on a null pointer." << std::endl;
     }
 }
 
@@ -333,7 +338,7 @@ void gc_delete_string(String* string)
 
 void gc_delete(object& obj)
 {
-//    std::cout << "gc_delete obj.type = " << panopticon::type_string(obj.type) << std::endl;
+    //    std::cout << "gc_delete obj.type = " << panopticon::type_string(obj.type) << std::endl;
     switch(obj.type)
     {
     case NIL:
@@ -347,6 +352,9 @@ void gc_delete(object& obj)
         break;
     case FUNCTION:
         gc_delete_function(obj.data.function);
+        break;
+    case PRIMITIVE:
+        gc_delete_primitive(obj.data.primitive);
         break;
     case ARRAY:
         gc_delete_array(obj.data.array, ARRAY);
@@ -363,7 +371,7 @@ void gc_delete(object& obj)
         gc_delete_string(obj.data.string);
         break;
     case UNDECLARED_VARIABLE:
-        gc_delete_string(obj.data.string);
+        //        gc_delete_string(obj.data.string);
         break;
     case OPERATION_TREE:
         gc_delete_array(obj.data.array, OPERATION_TREE);
@@ -389,8 +397,6 @@ void gc_delete(object& obj)
     case VOID:
         break;
     case CODE_BLOCK:
-        break;
-    case PRIMITIVE:
         break;
     case CONDITION_TREE:
         gc_delete_array(obj.data.array, CONDITION_TREE);
@@ -532,22 +538,20 @@ void gc_mark_function_alive(const object& obj)
 // recursively mark all objects pointer to by the root and the root itself as &ALIVE
 void gc_mark_alive(const object& obj)
 {
-    std::cout << "Mark object alive of type: " << obj.type << std::endl;
+    std::cout << "Mark object alive of type: " << type_string(obj.type) << std::endl;
     switch(obj.type)
     {
     case FUNCTION:
         gc_mark_function_alive(obj);
-        break;
+        return;
 
     case DICTIONARY:
         gc_mark_dictionary_alive(obj);
-        break;
+        return;
 
     case STRING:
-    case VARIABLE:
-    case UNDECLARED_VARIABLE:
         obj.alive[0] = ALIVE;
-        break;
+        return;
 
     case ARRAY:
     case STATEMENT_LIST:
@@ -558,7 +562,10 @@ void gc_mark_alive(const object& obj)
     case FUNCTION_ARG_VALUES:
     case CONDITION_TREE:
         gc_mark_array_alive(obj);
-        break;
+        return;
+    case VARIABLE:
+    case UNDECLARED_VARIABLE:
+        return;
     }
 }
 
@@ -661,6 +668,14 @@ object mem_string_alloc(Type type, const char* string)
     return obj;
 }
 
+object mem_alloc_variable(std::string string)
+{
+    object obj;
+    obj.type = UNDECLARED_VARIABLE;
+    obj.data.variable_number = get_string_hash(string);
+    return obj;
+}
+
 object mem_alloc(Type type)
 {
     gc_collect();
@@ -707,13 +722,11 @@ object mem_alloc(Type type)
         gc_register(obj);
         break;
     case VARIABLE:
-        increment_string();
-        obj.data.string = new String();
+        obj.data.variable_number = 0;
         gc_register(obj);
         break;
     case UNDECLARED_VARIABLE:
-        increment_string();
-        obj.data.string = new String();
+        obj.data.variable_number = 0;
         gc_register(obj);
         break;
     case OPERATION_TREE:
@@ -752,6 +765,9 @@ object mem_alloc(Type type)
     case CODE_BLOCK:
         break;
     case PRIMITIVE:
+        increment_function();
+        obj.data.primitive = new Primitive();
+        gc_register(obj);
         break;
     case CONDITION_TREE:
         increment_array(CONDITION_TREE);
@@ -820,11 +836,11 @@ Dictionary copy_dictionary(const Dictionary& dictionary)
     while(iter != dictionary.end())
     {
         new_dictionary.insert(
-            std::make_pair(
-                String(iter->first),
-                mem_copy(iter->second)
-            )
-        );
+                    std::make_pair(
+                        iter->first,
+                        mem_copy(iter->second)
+                        )
+                    );
 
         ++iter;
     }
@@ -841,11 +857,11 @@ Dictionary* copy_dictionary(Dictionary* dictionary)
     while(iter != dictionary->end())
     {
         new_dictionary->insert(
-            std::make_pair(
-                String(iter->first),
-                mem_copy(iter->second)
-            )
-        );
+                    std::make_pair(
+                        iter->first,
+                        mem_copy(iter->second)
+                        )
+                    );
 
         ++iter;
     }
@@ -861,7 +877,7 @@ Function* copy_function(const Function* function)
     new_function->arguments = copy_array(function->arguments);
     new_function->body = mem_copy(function->body);
     new_function->heap = copy_dictionary(function->heap);
-    new_function->name = String(function->name);
+    new_function->name = function->name;
     new_function->num_arguments = function->num_arguments;
 
     return new_function;
@@ -887,7 +903,7 @@ object mem_copy(const object &obj)
         break;
     case STRING:
         increment_string();
-//        new_object.data.string = new String(*obj.data.string);
+        //        new_object.data.string = new String(*obj.data.string);
         new_object.data.string = new String(obj.data.string->c_str());
         gc_register(new_object);
         break;
@@ -913,14 +929,16 @@ object mem_copy(const object &obj)
         gc_register(new_object);
         break;
     case VARIABLE:
-        increment_string();
-        new_object.data.string = new String(obj.data.string->c_str());
-        gc_register(new_object);
+        //        increment_string();
+        //        new_object.data.string = new String(obj.data.string->c_str());
+        //        gc_register(new_object);
+        new_object.data.variable_number = obj.data.variable_number;
         break;
     case UNDECLARED_VARIABLE:
-        increment_string();
-        new_object.data.string = new String(obj.data.string->c_str());
-        gc_register(new_object);
+        //        increment_string();
+        //        new_object.data.string = new String(obj.data.string->c_str());
+        //        gc_register(new_object);
+        new_object.data.variable_number = obj.data.variable_number;
         break;
     case OPERATION_TREE:
         increment_array(OPERATION_TREE);
