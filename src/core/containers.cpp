@@ -5,6 +5,8 @@
 #include "../../include/Grammar/parsingutilities.h"
 #include "../../include/core/operators.h"
 #include "../../include/core/heap.h"
+#include "include/core/operators.h"
+#include <math.h>
 
 namespace panopticon
 {
@@ -110,7 +112,7 @@ bool dictionary_lookup(object& value, const object& dict, const object& key)
     Dictionary::iterator find = dict.data.dictionary->find(key.data.variable_number);
     if(find != dict.data.dictionary->end())
     {
-//        value = mem_copy(find->second);
+        //        value = mem_copy(find->second);
         value = find->second;
         if(value.type == OPERATION_TREE)
         {
@@ -204,150 +206,8 @@ bool create_dictionary(object& result_A, const object& B)
             //            mem_free(arg_copy);
         }
     }
-//    optic_stack.push_back(result_A);
+    //    optic_stack.push_back(result_A);
     //    optic::shallow_mem_free_array(B.data.array,"ARRAY");
-}
-
-bool prepend(object& result_A, const object& B, const object& container_C)
-{
-    if(container_C.type != ARRAY)
-    {
-        result_A = mem_alloc(ARRAY);
-        result_A.data.array->push_front(mem_copy(container_C));
-        result_A.data.array->push_front(mem_copy(B));
-        return true;
-    }
-
-    // container_C.data.array->push_front(B);
-    result_A = mem_copy(container_C);
-    result_A.data.array->push_front(mem_copy(B));
-    return true;
-}
-
-bool append(object& result_A, const object& container_B, const object& object_C)
-{
-    if(container_B.type != ARRAY)
-    {
-        result_A = mem_alloc(ARRAY);
-        result_A.data.array->push_back(mem_copy(container_B));
-        result_A.data.array->push_back(mem_copy(object_C));
-        return true;
-    }
-
-    // container_B.data.array->push_back(object_C);
-    result_A = mem_copy(container_B);
-    result_A.data.array->push_back(mem_copy(object_C));
-    return true;
-}
-
-bool concat(object& A, const object& B, const object& C)
-{
-    std::stringstream ss;
-    switch(B.type)
-    {
-    case BOOL:
-        switch(C.type)
-        {
-        case BOOL:
-        case NUMBER:
-            A = mem_alloc(ARRAY);
-            A.data.array->push_back(B);
-            A.data.array->push_back(C);
-            break;
-        case STRING:
-            A = mem_alloc(STRING);
-
-            if(B.data.boolean)
-            {
-                A.data.string->append("true");
-            }
-
-            else
-            {
-                A.data.string->append("false");
-            }
-
-            A.data.string->append(*C.data.string);
-            break;
-        case ARRAY:
-            A = mem_copy(C);
-            A.data.array->push_front(B);
-            break;
-        }
-        break;
-        break;
-    case NUMBER:
-        switch(C.type)
-        {
-        case BOOL:
-        case NUMBER:
-            A = mem_alloc(ARRAY);
-            A.data.array->push_back(B);
-            A.data.array->push_back(C);
-            break;
-        case STRING:
-            A = mem_alloc(STRING);
-            ss << B.data.number;
-            A.data.string->append(ss.str());
-            A.data.string->append(*C.data.string);
-            break;
-        case ARRAY:
-            A = mem_copy(C);
-            A.data.array->push_front(B);
-            break;
-        }
-        break;
-    case STRING:
-        switch(C.type)
-        {
-        case BOOL:
-            A = mem_copy(B);
-            if(B.data.boolean)
-            {
-                A.data.string->append("true");
-            }
-            else
-            {
-                A.data.string->append("false");
-            }
-            break;
-        case NUMBER:
-            A = mem_copy(B);
-            ss << C.data.number;
-            A.data.string->append(ss.str());
-            break;
-        case STRING:
-            A = mem_copy(B);
-            A.data.string->append(*C.data.string);
-            break;
-        case ARRAY:
-            A = mem_copy(C);
-            A.data.array->push_front(mem_copy(B));
-            break;
-        }
-        break;
-    case ARRAY:
-        A = mem_copy(B);
-        switch(C.type)
-        {
-        case NUMBER:
-            A.data.array->push_back(C);
-            break;
-        case STRING:
-            A.data.array->push_back(mem_copy(C));
-            break;
-        case BOOL:
-            A.data.array->push_back(C);
-            break;
-        case ARRAY:
-            for(int i=0;i<C.data.array->size();++i)
-            {
-                A.data.array->push_back(mem_copy(C.data.array->at(i)));
-            }
-            break;
-        }
-        break;
-    }
 }
 
 bool index(object& A, const object& B, const object& C)
@@ -355,18 +215,19 @@ bool index(object& A, const object& B, const object& C)
     object result;
     switch(B.type)
     {
-    case ARRAY:
+    case LIST:
         switch(C.type)
         {
         case NUMBER:
             if(C.data.number<B.data.array->size())
             {
-//                A = mem_copy(B.data.array->at(C.data.number));
-                A = B.data.array->at(C.data.number);
-                optic_stack.push_back(A);
-                evaluate_top();
-                A = optic_stack.back();
-                optic_stack.pop_back();
+                //                A = mem_copy(B.data.array->at(C.data.number));
+//                A = B.data.array->at(C.data.number);
+//                optic_stack.push_back(A);
+//                evaluate_top();
+//                A = optic_stack.back();
+//                optic_stack.pop_back();
+                A = two_three_lookup(B.data.list,C.data.number);
             }
             else
             {
@@ -395,13 +256,13 @@ bool index(object& A, const object& B, const object& C)
             break;
         case UNDECLARED_VARIABLE:
             get_variable(C.data.variable_number,&result);
-//            index(A,B,mem_copy(result));
+            //            index(A,B,mem_copy(result));
             index(A,B,result);
             break;
         case OPERATION_TREE:
             optic_stack.push_back(C);
             evaluate_top();
-//            result = mem_copy(optic_stack.back());
+            //            result = mem_copy(optic_stack.back());
             result = optic_stack.back();
             optic_stack.pop_back();
             index(A,B,result);
@@ -478,7 +339,7 @@ bool slice(object&A, const object& B, const object& C)
     const object& index2 = C.data.array->at(1);
     if(index1.type==OPERATION_TREE)
     {
-//        optic_stack.push_back(mem_copy(index1));
+        //        optic_stack.push_back(mem_copy(index1));
         optic_stack.push_back(index1);
         evaluate_top();
 
@@ -533,7 +394,7 @@ bool slice(object&A, const object& B, const object& C)
     //Slice Index 2
     if(index2.type==OPERATION_TREE)
     {
-//        optic_stack.push_back(mem_copy(index2));
+        //        optic_stack.push_back(mem_copy(index2));
         optic_stack.push_back(index2);
         evaluate_top();
 
@@ -775,7 +636,7 @@ bool slice_beginning_to_with_step(object&A, const object& B, const object& C)
     const object& index2 = C.data.array->at(1);
     if(index1.type==OPERATION_TREE)
     {
-//        optic_stack.push_back(mem_copy(index1));
+        //        optic_stack.push_back(mem_copy(index1));
         optic_stack.push_back(index1);
         evaluate_top();
 
@@ -830,7 +691,7 @@ bool slice_beginning_to_with_step(object&A, const object& B, const object& C)
     //Slice Index 2
     if(index2.type==OPERATION_TREE)
     {
-//        optic_stack.push_back(mem_copy(index2));
+        //        optic_stack.push_back(mem_copy(index2));
         optic_stack.push_back(index2);
         evaluate_top();
 
@@ -936,7 +797,7 @@ bool slice_to_end_with_step(object&A, const object& B, const object& C)
     const object& index2 = C.data.array->at(1);
     if(index1.type==OPERATION_TREE)
     {
-//        optic_stack.push_back(mem_copy(index1));
+        //        optic_stack.push_back(mem_copy(index1));
         optic_stack.push_back(index1);
         evaluate_top();
 
@@ -991,7 +852,7 @@ bool slice_to_end_with_step(object&A, const object& B, const object& C)
     //Slice Index 2
     if(index2.type==OPERATION_TREE)
     {
-//        optic_stack.push_back(mem_copy(index2));
+        //        optic_stack.push_back(mem_copy(index2));
         optic_stack.push_back(index2);
         evaluate_top();
 
@@ -1104,7 +965,7 @@ bool slice_with_step(object&A, const object& B, const object& C)
     const object& index3 = C.data.array->at(2);
     if(index1.type==OPERATION_TREE)
     {
-//        optic_stack.push_back(mem_copy(index1));
+        //        optic_stack.push_back(mem_copy(index1));
         optic_stack.push_back(index1);
         evaluate_top();
 
@@ -1159,7 +1020,7 @@ bool slice_with_step(object&A, const object& B, const object& C)
     //Slice Index 2
     if(index2.type==OPERATION_TREE)
     {
-//        optic_stack.push_back(mem_copy(index2));
+        //        optic_stack.push_back(mem_copy(index2));
         optic_stack.push_back(index2);
         evaluate_top();
 
@@ -1213,7 +1074,7 @@ bool slice_with_step(object&A, const object& B, const object& C)
     //Slice Index 2
     if(index3.type==OPERATION_TREE)
     {
-//        optic_stack.push_back(mem_copy(index3));
+        //        optic_stack.push_back(mem_copy(index3));
         optic_stack.push_back(index3);
         evaluate_top();
 
@@ -1458,7 +1319,7 @@ bool slice_with_wrapping(object&A, const object& B, const object& C)
     const object& index2 = C.data.array->at(1);
     if(index1.type==OPERATION_TREE)
     {
-//        optic_stack.push_back(mem_copy(index1));
+        //        optic_stack.push_back(mem_copy(index1));
         optic_stack.push_back(index1);
         evaluate_top();
 
@@ -1513,7 +1374,7 @@ bool slice_with_wrapping(object&A, const object& B, const object& C)
     //Slice Index 2
     if(index2.type==OPERATION_TREE)
     {
-//        optic_stack.push_back(mem_copy(index2));
+        //        optic_stack.push_back(mem_copy(index2));
         optic_stack.push_back(index2);
         evaluate_top();
 
@@ -1623,7 +1484,7 @@ bool slice_beginning_to_with_step_wrapping(object&A, const object& B, const obje
     const object& index2 = C.data.array->at(1);
     if(index1.type==OPERATION_TREE)
     {
-//        optic_stack.push_back(mem_copy(index1));
+        //        optic_stack.push_back(mem_copy(index1));
         optic_stack.push_back(index1);
         evaluate_top();
 
@@ -1678,7 +1539,7 @@ bool slice_beginning_to_with_step_wrapping(object&A, const object& B, const obje
     //Slice Index 2
     if(index2.type==OPERATION_TREE)
     {
-//        optic_stack.push_back(mem_copy(index2));
+        //        optic_stack.push_back(mem_copy(index2));
         optic_stack.push_back(index2);
         evaluate_top();
 
@@ -1754,7 +1615,7 @@ bool slice_beginning_to_with_step_wrapping(object&A, const object& B, const obje
     {
         for(int i=begin;i>begin+(-1 * size);i+=end)
         {
-//            std::cout << i << std::endl;
+            //            std::cout << i << std::endl;
             if(i>=0)
             {
                 A.data.array->push_back(mem_copy(B.data.array->at(i%size)));
@@ -1803,7 +1664,7 @@ bool slice_to_end_with_step_wrapping(object&A, const object& B, const object& C)
     const object& index2 = C.data.array->at(1);
     if(index1.type==OPERATION_TREE)
     {
-//        optic_stack.push_back(mem_copy(index1));
+        //        optic_stack.push_back(mem_copy(index1));
         optic_stack.push_back(index1);
         evaluate_top();
 
@@ -1858,7 +1719,7 @@ bool slice_to_end_with_step_wrapping(object&A, const object& B, const object& C)
     //Slice Index 2
     if(index2.type==OPERATION_TREE)
     {
-//        optic_stack.push_back(mem_copy(index2));
+        //        optic_stack.push_back(mem_copy(index2));
         optic_stack.push_back(index2);
         evaluate_top();
 
@@ -1971,7 +1832,7 @@ bool slice_with_step_wrapping(object&A, const object& B, const object& C)
     const object& index3 = C.data.array->at(2);
     if(index1.type==OPERATION_TREE)
     {
-//        optic_stack.push_back(mem_copy(index1));
+        //        optic_stack.push_back(mem_copy(index1));
         optic_stack.push_back(index1);
         evaluate_top();
 
@@ -2246,7 +2107,7 @@ bool range_from_step_to(object&A, const object& B, const object& C)
     //start
     if(B.data.array->at(0).type==OPERATION_TREE)
     {
-//        optic_stack.push_back(mem_copy(B.data.array->at(0)));
+        //        optic_stack.push_back(mem_copy(B.data.array->at(0)));
         optic_stack.push_back(B.data.array->at(0));
         evaluate_top();
 
@@ -2345,7 +2206,5 @@ bool range_from_step_to(object&A, const object& B, const object& C)
         }
     }
 }
-
-
 
 }

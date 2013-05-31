@@ -24,7 +24,7 @@ object mem_copy(const object& obj); // Deep copy an object
 object mem_string_alloc(Type type, const char* string);
 object mem_string_alloc(const char* string);
 object mem_alloc_variable(std::string string);
-void mem_shallow_copy_array(object& copy, object& original);
+void mem_alloc_shallow_copy_array(object& copy, object& original);
 
 } // panopticon namespace
 

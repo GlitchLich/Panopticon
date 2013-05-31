@@ -220,11 +220,6 @@ void mem_free_array(Array& array)
     array.clear();*/
 }
 
-void mem_shallow_copy_array(object& copy, object& original)
-{
-    *copy.data.array = *original.data.array;
-}
-
 void shallow_mem_free_array(Array* array, Type type)
 {
     //    if(array)
@@ -714,6 +709,11 @@ object mem_alloc(Type type)
         obj.data.array = new Array();
         gc_register(obj);
         break;
+    case LIST:
+        increment_array(ARRAY);
+        obj.data.list = 0;
+//        gc_register(obj);
+        break;
     case DICTIONARY:
         increment_dictionary();
         obj.data.dictionary = new Dictionary();
@@ -886,6 +886,16 @@ Function* copy_function(const Function* function)
     new_function->num_arguments = function->num_arguments;
 
     return new_function;
+}
+
+void mem_alloc_shallow_copy_array(object& copy, object& original)
+{
+    gc_collect();
+    copy.type = ARRAY;
+    copy.alive = 0;
+    increment_array(ARRAY);
+    copy.data.array = new Array(*original.data.array);
+    gc_register(copy);
 }
 
 object mem_copy(const object &obj)

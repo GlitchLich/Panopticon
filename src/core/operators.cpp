@@ -32,6 +32,7 @@
 #include "include/core/function.h"
 #include "include/core/stack.h"
 #include "core/Memory.h"
+#include "include/core/containers.h"
 //#include "include/Grammar/parse.h"
 
 #include <algorithm>
@@ -97,6 +98,9 @@ void print_object_in_array(const object B,int arrayNum)
         break;
     case panopticon::UNDECLARED_VARIABLE:
         out() << " " << reverse_variable_name_lookup[B.data.variable_number];
+        break;
+    case LIST:
+        out() << print_list(B,arrayNum+1);
         break;
     }
 }
@@ -220,6 +224,9 @@ bool print_object(const object &A)
 
     case NIL:
         out() << "Nil" << std::endl;
+    case LIST:
+//        out() << "List: ";
+        print_list(A,0);
         break;
     }
 }
@@ -316,11 +323,6 @@ bool store_operations(object& a, const object& obj1, const object& obj2, bool ex
 
     if(obj1.type == OPERATION_TREE)
     {
-        //TO DO: std::copy instead?
-//        for(int i = 0; i < obj1.data.array->size(); ++i)
-//        {
-//            a.data.array->push_back(obj1.data.array->at(i));
-//        }
         std::copy(obj1.data.array->begin(),obj1.data.array->end(),std::back_inserter(*a.data.array));
     }
 

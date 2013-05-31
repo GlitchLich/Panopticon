@@ -1,6 +1,5 @@
-//Unit Tests
+ //Unit Tests
 //TODO: Pattern Matching, Case Statements, List comprehensions
-
 
 //No argument functions now work in "point-free" form, i.e., partial application with implied arguments.
 f = (+4)
@@ -12,14 +11,26 @@ div9by(18)
 //Even works with infix partial application
 divBy9 = (`div` 9)
 divBy9(18)
+
 //Multiple arguments as well:
 manyArgs x y z w = x + y * z / w
 notEnoughArgs = manyArgs(1)
 notEnoughArgs(2 3 4)
 
-add1 = (+1)
+a = [0 1]
+fibs = 0 : scanl( (+) 1 a)
+take(10 fibs)
+fibs
+
+add1 = (+1) * 2
 partialStream = add1 << notEnoughArgs(1)
 partialStream(2 3 4)
+
+add1 = (+1)
+add2 = (+2)
+comp2 f g = \x y = g( f(x) f(y) )
+comp2 f g = (\x y -> g (f x) (f y))
+comp2(add1 add2)
 
 //length, returns length of an array
 myArray = [0 1 2 3 4 5]
@@ -28,6 +39,21 @@ head( myArray )
 tail( myArray )
 last( myArray )
 init( myArray )
+
+//Reverse reverses an array
+reverse <<  myArray
+
+//Zip combines two arrays into tuplets inside an array
+za1 = [5 4 3 2 1]
+za2 = [2,5..20]
+zip( za1 za2 )
+
+fibs = 0 : 1 : fibs + tail(fibs)
+
+a = [0 1 1 2]
+fibs2 = 0 : 1 : a
+fibs2
+a
 
 //filter, apply a boolean returning function to a map, and return all elements that return true:
 filter( (>=5) [3 4 5 6 [7 [3 2 10] 2 3 ] 8 0 ] )
@@ -47,7 +73,7 @@ foldr( \x y = (x+y)/2 54 [12 4 10 6] )
 
 //Faster than recursion based algorithms:
 factorial x = foldl( (*) 1 [1..x] )
-factorial(5000)
+factorial(50)
 
 //Nested folds
 foldr( (\x y = foldr( (^) 1 x) * y) 1 [ [1 1] [2 3] [4 5] ] )

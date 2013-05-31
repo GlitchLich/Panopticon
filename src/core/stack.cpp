@@ -7,6 +7,7 @@
 #include "include/Grammar/parse.h"
 #include "core/Memory.h"
 #include <algorithm>
+#include "include/core/list.h"
 
 namespace panopticon
 {
@@ -69,96 +70,22 @@ bool evaluate_binary_operator(const object& operator_object, bool expand = true)
     {
         if(expand)
         {
-            if(arg1.type == ARRAY && arg2.type == ARRAY)
+            if(arg1.type == LIST && arg2.type == LIST)
             {
-                object new_array = mem_alloc(ARRAY);
-                unsigned int num_iterations = arg1.data.array->size() > arg2.data.array->size() ? arg1.data.array->size() : arg2.data.array->size();
-
-                for(unsigned int i = 0; i < num_iterations; ++i)
-                {
-//                    optic_stack.push_back(mem_copy(arg2.data.array->at(i % arg2.data.array->size())));
-//                    optic_stack.push_back(mem_copy(arg1.data.array->at(i % arg1.data.array->size())));
-                    optic_stack.push_back(arg2.data.array->at(i % arg2.data.array->size()));
-                    optic_stack.push_back(arg1.data.array->at(i % arg1.data.array->size()));
-                    optic_stack.push_back(operator_object);
-
-                    if(evaluate_top())
-                    {
-                        new_array.data.array->push_back(mem_copy(optic_stack.back()));
-                        optic_stack.pop_back();
-                    }
-
-                    else
-                    {
-                        mem_free(arg1);
-                        mem_free(arg2);
-                        clear_stack();
-                        return false;
-                    }
-                }
-
-                result = new_array;
+                result = mem_alloc(LIST);
+                result.data.list = map_binary_function3(arg1.data.list,arg2.data.list,operator_object);
             }
 
-            else if(arg1.type == ARRAY)
+            else if(arg1.type == LIST)
             {
-                object new_array = mem_alloc(ARRAY);
-
-                for(int i = 0; i < arg1.data.array->size(); ++i)
-                {
-//                    optic_stack.push_back(mem_copy(arg2));
-//                    optic_stack.push_back(mem_copy(arg1.data.array->at(i)));
-                    optic_stack.push_back(arg2);
-                    optic_stack.push_back(arg1.data.array->at(i));
-                    optic_stack.push_back(operator_object);
-
-                    if(evaluate_top())
-                    {
-                        new_array.data.array->push_back(mem_copy(optic_stack.back()));
-                        optic_stack.pop_back();
-                    }
-
-                    else
-                    {
-                        mem_free(arg1);
-                        mem_free(arg2);
-                        clear_stack();
-                        return false;
-                    }
-
-                }
-
-                result = new_array;
+                result = mem_alloc(LIST);
+                result.data.list = map_binary_function1(arg1.data.list,arg2,operator_object);
             }
 
-            else if(arg2.type == ARRAY)
+            else if(arg2.type == LIST)
             {
-                object new_array = mem_alloc(ARRAY);
-
-                for(int i = 0; i < arg2.data.array->size(); ++i)
-                {
-//                    optic_stack.push_back(mem_copy(arg2.data.array->at(i)));
-//                    optic_stack.push_back(mem_copy(arg1));
-                    optic_stack.push_back(arg2.data.array->at(i));
-                    optic_stack.push_back(arg1);
-                    optic_stack.push_back(operator_object);
-
-                    if(evaluate_top())
-                    {
-                        new_array.data.array->push_back(mem_copy(optic_stack.back()));
-                        optic_stack.pop_back();
-                    }
-
-                    else
-                    {
-                        mem_free(arg1);
-                        mem_free(arg2);
-                        clear_stack();
-                        return false;
-                    }
-                }
-
-                result = new_array;
+                result = mem_alloc(LIST);
+                result.data.list = map_binary_function2(arg2.data.list,arg1,operator_object);
             }
 
             else
@@ -171,9 +98,6 @@ bool evaluate_binary_operator(const object& operator_object, bool expand = true)
         {
             operator_object.data.operator_func(result, arg1, arg2);
         }
-
-        mem_free(arg1);
-        mem_free(arg2);
         optic_stack.push_back(result);
         return true;
     }
@@ -414,9 +338,9 @@ bool resolve_stack_from_parser(const object& operation_tree, bool resolve_entire
         if(!resolve_entire_stack)
         {
 //            object copy_tree = mem_copy(operation_tree);
-            object copy_tree = operation_tree;
-            tree = copy_tree.data.array;
-//            tree = operation_tree.data.array;
+//            object copy_tree = operation_tree;
+//            tree = copy_tree.data.array;
+            tree = operation_tree.data.array;
         }
 
         else

@@ -31,6 +31,9 @@
 #include "core/errors.h"
 #include <list>
 
+//#define BRAUN_TREE 1
+#define TWO_THREE_TREE 1
+
 namespace panopticon
 {
 
@@ -79,32 +82,40 @@ enum Type
     FUNCTION,//4
     ARRAY,//5
     DICTIONARY,//6
+    LIST,//7
 
     //THE FOLLOWING ARE FOR INTERNAL USE ONLY,
     //NOT TO BE USED AS LANGUAGE CONSTRUCTS
-    ERROR,//7
-    STATEMENT_LIST,//8
-    VARIABLE,//9 CHANGING THIS TO TYPE UNSIGNED LONG LONG
-    UNDECLARED_VARIABLE,//10 CHANGING THIS TO TYPE UNSIGNED LONG LONG
-    OPERATION_TREE,//11
-    OPERATION,//12
-    UNARY_OPERATION, // 13
-    ASSIGNMENT,//14
-    GUARD,//15
-    FUNCTION_BODY, //16 Used to prevent further parsing by the stack, enables lazy evaluation
-    FUNCTION_ARG_NAMES, // 17 Used to pass argument names to functions for composition
-    FUNCTION_ARG_VALUES, // 18 Used to pass argument values to functions for calling
-    VOID, // 19, Use to prevent return on the stack
-    CODE_BLOCK, //20 Denotes several expression in a row
-    PRIMITIVE, // 21
-    CONDITION_TREE, //22
-    CONDITION_BRANCH, //23
-    NO_EXPANSION_OPERATION, //24 For those operations that you DON'T want to multichannel expand
-    UNARY_NO_EXPANSION_OPERATION, //25 For those unary operations that you don't want to expand.
-    PATTERN, //26 for pattern matching
-    HEAD, //27 For Arrays/List sorting/construction
-    TAIL, //28 For Arrays/List sorting/construction
-    FAILED_CONDITION //29 Condition test failed
+    ERROR,//8
+    STATEMENT_LIST,//9
+    VARIABLE,//10 CHANGING THIS TO TYPE UNSIGNED LONG LONG
+    UNDECLARED_VARIABLE,//11 CHANGING THIS TO TYPE UNSIGNED LONG LONG
+    OPERATION_TREE,//12
+    OPERATION,//13
+    UNARY_OPERATION, // 14
+    ASSIGNMENT,//15
+    GUARD,//16
+    FUNCTION_BODY, //17 Used to prevent further parsing by the stack, enables lazy evaluation
+    FUNCTION_ARG_NAMES, // 18 Used to pass argument names to functions for composition
+    FUNCTION_ARG_VALUES, // 19 Used to pass argument values to functions for calling
+    VOID, // 20, Use to prevent return on the stack
+    CODE_BLOCK, //21 Denotes several expression in a row
+    PRIMITIVE, // 22
+    CONDITION_TREE, //23
+    CONDITION_BRANCH, //24
+    NO_EXPANSION_OPERATION, //25 For those operations that you DON'T want to multichannel expand
+    UNARY_NO_EXPANSION_OPERATION, //26 For those unary operations that you don't want to expand.
+    PATTERN, //27 for pattern matching
+    HEAD, //28 For Arrays/List sorting/construction
+    TAIL, //29 For Arrays/List sorting/construction
+    FAILED_CONDITION, //30 Condition test failed
+    EMPTY_LIST, //31 Signifies empty list.
+    FT_SINGLE, //32 for 23FingerTrees
+    FT_DEEP, //33 for 23FingerTrees
+    FT_DIGIT, //34 for 23FingerTrees
+    FT_ELEMENT, //35 for 23FingerTrees
+    FT_NODE2, //36 for 23 FingerTrees
+    FT_NODE3 //37 for 23 FingerTrees
 };
 
 std::string type_string(Type type);
@@ -114,6 +125,13 @@ struct Function;
 struct Primitive;
 struct object;
 struct Nil { };
+
+#ifdef TWO_THREE_TREE
+struct TwoThreeFingerTree;
+typedef TwoThreeFingerTree List;
+#else
+struct List;
+#endif
 
 /* typedefs for types in Panopticon */
 //typedef double Number;
@@ -137,6 +155,7 @@ union Data
     bool boolean;
     Function* function;
     Array* array;
+    List* list;
     Dictionary* dictionary;
     operator_function operator_func;
     unary_operator_function unary_operator_func;
@@ -154,9 +173,9 @@ union Data
 
 struct object
 {
-    Type type;
     Data data;
     bool* alive; // Handle to alive value, needs to be pointer because the object itself is pass by value. Used for Garbage Collection.
+    Type type;
 };
 
 struct Function
@@ -177,6 +196,20 @@ struct Primitive
     Array arguments;
     primitive_function p_func;
 };
+
+#ifdef BRAUN_TREE
+struct List
+{
+    List* left;
+    object data;
+    List* right;
+};
+#else
+
+#endif
+
+
+
 
 } // panopticon namespace
 

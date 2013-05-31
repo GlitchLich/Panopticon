@@ -5,6 +5,8 @@
 #include "include/core/Memory.h"
 #include <iostream>
 #include <algorithm>
+#include "include/core/containers.h"
+#include "include/core/list.h"
 
 namespace panopticon
 {
@@ -87,9 +89,14 @@ inline bool setup_array(object& array)
             array = result;
         }
     }
-    if(array.type != ARRAY)
+    else if(array.type == FUNCTION)
     {
-        out() << "Error: Attempting to use a non-Array of type: " << type_string(array.type) << std::endl;
+        object arguments;
+        call_function(array, array, arguments);
+    }
+    if(array.type != LIST)
+    {
+        out() << "Error: Attempting to use a non-List of type: " << type_string(array.type) << std::endl;
         print_object(array);
         correct_parsing = false;
         return false;
@@ -130,6 +137,11 @@ inline bool setup_argument(object& argument)
         {
             argument = result;
         }
+    }
+    else if(argument.type == FUNCTION)
+    {
+        object arguments;
+        call_function(argument, argument, arguments);
     }
 }
 
@@ -644,12 +656,60 @@ bool length(object& result, const Array& arguments)
     if(setup_array(array))
     {
         result = mem_alloc(NUMBER);
-        result.data.number = array.data.array->size();
+        result.data.number = two_three_element_count(array.data.list);
         return true;
     }
     else
     {
         out() << "Error: Attempting to find the length of a non-array." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+}
+
+bool last(object& result, const Array& arguments)
+{
+    if(arguments.size()!=1)
+    {
+        out() << "Error: last received an incorrect number of arguments" << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    object array = arguments.at(0);
+    if(setup_array(array))
+    {
+        result = two_three_list_last(array.data.list);
+        return true;
+    }
+    else
+    {
+        out() << "Error: Attempting to retrieve the last of a non-array." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+}
+
+#ifdef BRAUN_TREE
+bool tail(object& result, const Array& arguments)
+{
+    if(arguments.size()!=1)
+    {
+        out() << "Error: tail received an incorrect number of arguments" << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    object array = arguments.at(0);
+    if(setup_array(array))
+    {
+        List* list = braun_tail(array.data.list);
+        result = mem_alloc(LIST);
+        result.data.list = list;
+        complexity_test();
+        return true;
+    }
+    else
+    {
+        out() << "Error: Attempting to find the tail of a non-array." << std::endl;
         correct_parsing = false;
         return false;
     }
@@ -683,36 +743,7 @@ bool head(object& result, const Array& arguments)
         return false;
     }
 }
-
-bool last(object& result, const Array& arguments)
-{
-    if(arguments.size()!=1)
-    {
-        out() << "Error: last received an incorrect number of arguments" << std::endl;
-        correct_parsing = false;
-        return false;
-    }
-    object array = arguments.at(0);
-    if(setup_array(array))
-    {
-        if(array.data.array->size()>1)
-        {
-            result = array.data.array->back();
-        }
-        else
-        {
-            result = array;
-        }
-        return true;
-    }
-    else
-    {
-        out() << "Error: Attempting to retrieve the last of a non-array." << std::endl;
-        correct_parsing = false;
-        return false;
-    }
-}
-
+#elif TWO_THREE_TREE
 bool tail(object& result, const Array& arguments)
 {
     if(arguments.size()!=1)
@@ -724,15 +755,8 @@ bool tail(object& result, const Array& arguments)
     object array = arguments.at(0);
     if(setup_array(array))
     {
-        if(array.data.array->size()>1)
-        {
-            result = mem_alloc(ARRAY);
-            std::copy(array.data.array->begin()+1,array.data.array->end(),std::back_inserter(*result.data.array));
-        }
-        else
-        {
-            result = array;
-        }
+        result = mem_alloc(LIST);
+        result.data.list = two_three_tail(array.data.list);
         return true;
     }
     else
@@ -742,6 +766,29 @@ bool tail(object& result, const Array& arguments)
         return false;
     }
 }
+
+bool head(object& result, const Array& arguments)
+{
+    if(arguments.size()!=1)
+    {
+        out() << "Error: head received an incorrect number of arguments" << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    object array = arguments.at(0);
+    if(setup_array(array))
+    {
+        result = two_three_list_head(array.data.list);
+        return true;
+    }
+    else
+    {
+        out() << "Error: Attempting to retrieve the head of a non-array." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+}
+#endif
 
 bool init(object& result, const Array& arguments)
 {
@@ -754,23 +801,8 @@ bool init(object& result, const Array& arguments)
     object array = arguments.at(0);
     if(setup_array(array))
     {
-        if(array.data.array->size()>1)
-        {
-//            result = mem_alloc(ARRAY);
-//            std::copy(array.data.array->begin(),array.data.array->end()-1,std::back_inserter(*result.data.array));
-//            result.data.array = array.data.array;
-//            result.data.array->pop_back();
-            result = array;
-            out() << result.data.array << std::endl;
-            out() << array.data.array << std::endl;
-            result.data.array->pop_back();
-            out() << result.data.array << std::endl;
-            out() << array.data.array << std::endl;
-        }
-        else
-        {
-            result = array;
-        }
+        result = mem_alloc(LIST);
+        result.data.list = two_three_init(array.data.list);
         return true;
     }
     else
@@ -781,6 +813,109 @@ bool init(object& result, const Array& arguments)
     }
 }
 
+bool reverse(object& result, const Array& arguments)
+{
+    if(arguments.size()!=1)
+    {
+        out() << "Error: reverse received an incorrect number of arguments" << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    object array = arguments.at(0);
+    if(setup_array(array))
+    {
+        if(array.data.array->size()>1)
+        {
+            result = mem_alloc(ARRAY);
+            std::reverse_copy(array.data.array->begin(),array.data.array->end(),std::back_inserter(*result.data.array));
+        }
+        else
+        {
+            result = array;
+        }
+        return true;
+    }
+    else
+    {
+        out() << "Error: Attempting to reverse of a non-array." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+}
+
+bool take(object& result, const Array& arguments)
+{
+//    std::cout << "take" << std::endl;
+    if(arguments.size()!=2)
+    {
+        out() << "Error: take received an incorrect number of arguments" << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    object num_items = arguments.at(0);
+     setup_argument(num_items);
+    object arg = arguments.at(1);
+    if(arg.type == ARRAY)
+    {
+        setup_array(arg);
+    }
+    else
+    {
+        result = arg;
+    }
+    return true;
+}
+
+bool zip(object& result, const Array& arguments)
+{
+    if(arguments.size()!=2)
+    {
+        out() << "Error: zip received an incorrect number of arguments" << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    object array = arguments.at(0);
+    object array2 = arguments.at(1);
+    if(setup_array(array) && setup_array(array2))
+    {
+        int size = 0;
+        int a_size = array.data.array->size();
+        int a2_size = array2.data.array->size();
+        if(a_size > a2_size)
+        {
+            size = a_size;
+        }
+        else
+        {
+            size = a2_size;
+        }
+
+        if(size==0)
+        {
+            out() << "Error: Attempting to zip an array with 0 elements." << std::endl;
+            correct_parsing = false;
+            return false;
+        }
+
+        result = mem_alloc(ARRAY);
+        for(int i=0;i<size;++i)
+        {
+            object tuplet = mem_alloc(ARRAY);
+            tuplet.data.array->push_back(mem_copy(array.data.array->at(i%a_size)));
+            tuplet.data.array->push_back(mem_copy(array2.data.array->at(i%a2_size)));
+            result.data.array->push_back(tuplet);
+        }
+        return true;
+    }
+    else
+    {
+        out() << "Error: Attempting to zip of a non-array." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+}
+
+
 void register_container_primitives()
 {
     object plength = mem_alloc(PRIMITIVE);
@@ -789,6 +924,27 @@ void register_container_primitives()
     plength.data.primitive->num_arguments = 1;
     plength.data.primitive->p_func = length;
     set_variable(variable_number,plength);
+
+    object pzip = mem_alloc(PRIMITIVE);
+    variable_number = get_string_hash("zip");
+    pzip.data.primitive->name = variable_number;
+    pzip.data.primitive->num_arguments = 3;
+    pzip.data.primitive->p_func = zip;
+    set_variable(variable_number,pzip);
+
+    object ptake = mem_alloc(PRIMITIVE);
+    variable_number = get_string_hash("take");
+    ptake.data.primitive->name = variable_number;
+    ptake.data.primitive->num_arguments = 3;
+    ptake.data.primitive->p_func = take;
+    set_variable(variable_number,ptake);
+
+    object preverse = mem_alloc(PRIMITIVE);
+    variable_number = get_string_hash("reverse");
+    preverse.data.primitive->name = variable_number;
+    preverse.data.primitive->num_arguments = 2;
+    preverse.data.primitive->p_func = reverse;
+    set_variable(variable_number,preverse);
 
     object pinit = mem_alloc(PRIMITIVE);
     variable_number = get_string_hash("init");
@@ -817,7 +973,6 @@ void register_container_primitives()
     phead.data.primitive->num_arguments = 3;
     phead.data.primitive->p_func = head;
     set_variable(variable_number,phead);
-
 
     object pmap = mem_alloc(PRIMITIVE);
     variable_number = get_string_hash("map");

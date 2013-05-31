@@ -55,7 +55,6 @@ bool create_tree(object&a, const object& obj)
     else
     {
         a = mem_alloc(OPERATION_TREE);
-//        a.data.array->push_back(mem_copy(obj));
         a.data.array->push_back(obj);
     }
 }
