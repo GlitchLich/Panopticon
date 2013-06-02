@@ -51,7 +51,6 @@ void CodeBlockBackground::init()
 void CodeBlockBackground::colorizeBlock()
 {
     setGeometry(codeGeometry());
-    qDebug() << "CursorRect" << geometry();
     fill = QPixmap(geometry().size());
     fill.fill(QColor(255, 255, 255, 10 + blinkAmount));
     setHidden(false);
@@ -82,7 +81,6 @@ void CodeBlockBackground::paintEvent(QPaintEvent *)
 
 QRect CodeBlockBackground::codeGeometry()
 {
-    std::cout << "LineSpacing: " << ide::style->monoFontMetrics.lineSpacing() << std::endl;
     QTextDocument* document = editBuffer->document();
     QTextCursor cursor = editBuffer->textCursor();
     QRect cursorRect = editBuffer->cursorRect(cursor);
@@ -99,8 +97,6 @@ QRect CodeBlockBackground::codeGeometry()
 
     unsigned int startLine = startBlock.firstLineNumber();
     unsigned int endLine = endBlock.firstLineNumber() + endBlock.lineCount();
-
-    std::cout << "CodeBlock Number of Lines: " << (endLine - startLine) << std::endl;
 
     return QRect(
         0, // Always 0 because every code block must begin unindented
@@ -221,7 +217,6 @@ void EditBuffer::scanCodeBlock(QString* code, ScanDirection direction)
 
 void EditBuffer::updateCodeBlock()
 {
-    std::cout << "Update code block" << std::endl;
     QTextCursor cursor = textCursor();
     previousStartBlock = startBlock;
     previousEndBlock = endBlock;
@@ -243,7 +238,6 @@ void EditBuffer::updateCodeBlock()
             // Check to see if we're not at the beginning of the doc and we ARE indented
             if(cursor.blockNumber() > 0 && (code.startsWith(" ") || code.startsWith("	")))
             {
-                std::cout << "Scan Backwards" << std::endl;
                 // Look for the beginning of this code block, prepending code when appropriate
                 scanCodeBlock(&code, Backward);
             }
@@ -251,7 +245,6 @@ void EditBuffer::updateCodeBlock()
             // Check to see if it isn't at the end of the doc and isn't a comment
             if(cursor.blockNumber() != (document()->blockCount() - 1) && !code.startsWith("//"))
             {
-                std::cout << "Scan Forwards" << std::endl;
                 // Look for the end of this code block, appending code where appropriate
                 scanCodeBlock(&code, Forward);
             }

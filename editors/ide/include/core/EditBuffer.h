@@ -16,6 +16,10 @@ namespace ide
 
 class EditBuffer; // Forward declaration
 
+///////////////////////
+/// BufferCloseDialog
+///////////////////////
+
 class BufferCloseDialog : QDialog
 {
     Q_OBJECT
@@ -24,6 +28,10 @@ public:
 
     BufferCloseDialog();
 };
+
+/////////////////////////
+/// CodeBlockBackground
+/////////////////////////
 
 class CodeBlockBackground : public QWidget
 {
@@ -53,6 +61,10 @@ protected:
     unsigned int blinkAmount;
     QTimer blinkTimer;
 };
+
+///////////////
+/// EditBuffer
+///////////////
 
 class EditBuffer : public QTextEdit
 {
