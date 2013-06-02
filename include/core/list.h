@@ -76,6 +76,7 @@ struct Deep
 
 struct Single
 {
+    int element_count;
     TwoThreeFingerTree* a;
 };
 

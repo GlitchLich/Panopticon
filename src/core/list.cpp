@@ -478,16 +478,6 @@ bool print_braun_tree(List* list)
 //2-3 Finger Tree Implementation
 //======================================
 
-//Fingers worth 1, branches worth the sum of their children
-//inline int get_tag(TwoThreeFingerTree* finger_tree)
-//{
-//    if(finger_tree->type == FINGER_BRANCH)
-//    {
-//        return get_tag(finger_tree->node->branch.left) + get_tag(finger_tree->node->branch.left);
-//    }
-//    return finger_tree->node->leaf.size;
-//}
-
 #ifdef TWO_THREE_TREE
 
 inline int two_three_node_shallow_element_count(TwoThreeFingerTree* a)
@@ -509,9 +499,13 @@ inline int two_three_node_shallow_element_count(TwoThreeFingerTree* a)
 inline int two_three_node_deep_element_count(TwoThreeFingerTree* a)
 {
     int count = 0;
-    if(a->type == FT_ELEMENT || a->type == FT_SINGLE)
+    if(a->type == FT_ELEMENT)
     {
         count =  1;
+    }
+    else if(a->type == FT_SINGLE)
+    {
+        count += a->node.single->element_count;
     }
     else if(a->type == FT_NODE2)
     {
@@ -536,16 +530,16 @@ inline int two_three_digit_element_count(Digit* a)
     switch(a->size)
     {
     case 1:
-        count = two_three_node_deep_element_count(a->one);
+        count = two_three_node_shallow_element_count(a->one);
         break;
     case 2:
-        count = two_three_node_deep_element_count(a->one) + two_three_node_deep_element_count(a->two);
+        count = two_three_node_shallow_element_count(a->one) + two_three_node_shallow_element_count(a->two);
         break;
     case 3:
-        count = two_three_node_deep_element_count(a->one) + two_three_node_deep_element_count(a->two) + two_three_node_deep_element_count(a->three);
+        count = two_three_node_shallow_element_count(a->one) + two_three_node_shallow_element_count(a->two) + two_three_node_shallow_element_count(a->three);
         break;
     case 4:
-        count = two_three_node_deep_element_count(a->one) + two_three_node_deep_element_count(a->two) + two_three_node_deep_element_count(a->three) + two_three_node_deep_element_count(a->four);
+        count = two_three_node_shallow_element_count(a->one) + two_three_node_shallow_element_count(a->two) + two_three_node_shallow_element_count(a->three) + two_three_node_shallow_element_count(a->four);
         break;
     }
     a->element_count = count;
@@ -563,7 +557,8 @@ int two_three_element_count(TwoThreeFingerTree* a)
     }
     else if(a->type == FT_SINGLE)
     {
-        count = 1;
+        count = two_three_node_shallow_element_count(a->node.single->a);
+        a->node.single->element_count = count;
     }
     else if(a->type == FT_DEEP)
     {
@@ -575,9 +570,13 @@ int two_three_element_count(TwoThreeFingerTree* a)
         {
             c = 0;
         }
-        else if(a->node.deep->center->type == FT_ELEMENT||a->node.deep->center->type == FT_SINGLE)
+        else if(a->node.deep->center->type == FT_ELEMENT)
         {
             c = 1;
+        }
+        else if(a->node.deep->center->type == FT_SINGLE)
+        {
+            c = a->node.deep->center->node.single->element_count;
         }
         else
         {
@@ -597,6 +596,7 @@ inline TwoThreeFingerTree* two_three_single(TwoThreeFingerTree* a)
     single->type = FT_SINGLE;
     single->node.single = new Single;
     single->node.single->a = a;
+    two_three_element_count(single);
     return single;
 }
 
@@ -643,6 +643,7 @@ inline TwoThreeFingerTree* two_three_node3(
     tree->node.node3->a = a;
     tree->node.node3->b = b;
     tree->node.node3->c = c;
+    two_three_node_deep_element_count(tree);
     return tree;
 }
 
@@ -656,6 +657,7 @@ inline TwoThreeFingerTree* two_three_node2(
     tree->node.node2 = new Node2;
     tree->node.node2->a = a;
     tree->node.node2->b = b;
+    two_three_node_deep_element_count(tree);
     return tree;
 }
 
@@ -1201,19 +1203,21 @@ TwoThreeFingerTree* two_three_concat(TwoThreeFingerTree* list,TwoThreeFingerTree
     }
     if(list==0 && list2!=0)
     {
-        return two_three_recursive_cons(list2,nodes);
+        return two_three_append(nodes,list2);
+//        return two_three_recursive_cons(list2,nodes);
     }
     if(list!=0 && list2==0)
     {
-        return two_three_recursive_append(list,nodes);
+        return two_three_cons(nodes,list);
+//        return two_three_recursive_append(list,nodes);
     }
     if(list->type == FT_SINGLE)
     {
-        return two_three_cons(two_three_recursive_cons(list2,nodes),list->node.single->a);
+        return two_three_cons(two_three_append(nodes,list2),list->node.single->a);
     }
     if(list2->type == FT_SINGLE)
     {
-        return two_three_append(two_three_recursive_append(list,nodes),list2->node.single->a);
+        return two_three_append(two_three_cons(nodes,list),list2->node.single->a);
     }
     if(list->type == FT_DEEP)
     {
@@ -1401,15 +1405,12 @@ TwoThreeFingerTree* two_three_digit_lookup_check(Digit* digit,int& index)
         switch(digit->four->type)
         {
         case FT_NODE2:
-            std::cout << "four: FT_NODE2" << std::endl;
             size_four = digit->four->node.node2->element_count;
             break;
         case FT_NODE3:
-            std::cout << "four: FT_NODE3" << std::endl;
             size_four = digit->four->node.node3->element_count;
             break;
         case FT_ELEMENT:
-            std::cout << "four: FT_ELEMENT" << std::endl;
             size_four = 1;
             break;
         }
@@ -1417,15 +1418,12 @@ TwoThreeFingerTree* two_three_digit_lookup_check(Digit* digit,int& index)
         switch(digit->three->type)
         {
         case FT_NODE2:
-            std::cout << "three: FT_NODE2" << std::endl;
             size_three = digit->three->node.node2->element_count;
             break;
         case FT_NODE3:
-            std::cout << "three: FT_NODE3" << std::endl;
             size_three = digit->three->node.node3->element_count;
             break;
         case FT_ELEMENT:
-            std::cout << "three: FT_ELEMENT" << std::endl;
             size_three = 1;
             break;
         }
@@ -1433,15 +1431,12 @@ TwoThreeFingerTree* two_three_digit_lookup_check(Digit* digit,int& index)
         switch(digit->two->type)
         {
         case FT_NODE2:
-            std::cout << "two: FT_NODE2" << std::endl;
             size_two = digit->two->node.node2->element_count;
             break;
         case FT_NODE3:
-            std::cout << "two: FT_NODE3" << std::endl;
             size_two = digit->two->node.node3->element_count;
             break;
         case FT_ELEMENT:
-            std::cout << "two: FT_ELEMENT" << std::endl;
             size_two = 1;
             break;
         }
@@ -1449,24 +1444,16 @@ TwoThreeFingerTree* two_three_digit_lookup_check(Digit* digit,int& index)
         switch(digit->one->type)
         {
         case FT_NODE2:
-            std::cout << "one: FT_NODE2" << std::endl;
             size_one = digit->one->node.node2->element_count;
             break;
         case FT_NODE3:
-            std::cout << "one: FT_NODE3" << std::endl;
             size_one = digit->one->node.node3->element_count;
             break;
         case FT_ELEMENT:
-            std::cout << "one: FT_ELEMENT" << std::endl;
             size_one = 1;
             break;
         }
     }
-
-    std::cout << "digit four: " << size_four+size_three+size_two+size_one << std::endl;
-    std::cout << "digit three: " << size_three+size_two+size_one << std::endl;
-    std::cout << "digit two: " << size_two+size_one << std::endl;
-    std::cout << "digit one: " << size_one << std::endl;
 
     switch(digit->size)
     {
@@ -1508,13 +1495,11 @@ TwoThreeFingerTree* two_three_digit_lookup_check(Digit* digit,int& index)
     case 2:
         if(index < size_one )
         {
-            std::cout << "digit one" << std::endl;
             return digit->one;
         }
         if(index < size_one + size_two )
         {
             index -= size_one;
-            std::cout << "digit two" << std::endl;
             return digit->two;
         }
     case 1:
@@ -1524,7 +1509,6 @@ TwoThreeFingerTree* two_three_digit_lookup_check(Digit* digit,int& index)
         }
     }
 
-    std::cout << "NOTHING!?" << std::endl;
     return 0;
 }
 
@@ -1536,15 +1520,15 @@ inline TwoThreeFingerTree* two_three_node3_lookup(TwoThreeFingerTree* tree, int&
     {
     case FT_NODE2:
         size_one = tree->node.node3->a->node.node2->element_count;
+        break;
     case FT_NODE3:
         size_one = tree->node.node3->a->node.node3->element_count;
+        break;
     case FT_ELEMENT:
         size_one = 1;
+        break;
     }
 
-    std::cout << "size_one: " << size_one << std::endl;
-    std::cout << "node index: " << index << std::endl;
-    std::cout << "a type: " << tree->node.node3->a->type << std::endl;
     if(index < size_one )
     {
         return tree->node.node3->a;
@@ -1554,13 +1538,15 @@ inline TwoThreeFingerTree* two_three_node3_lookup(TwoThreeFingerTree* tree, int&
     {
     case FT_NODE2:
         size_two = tree->node.node3->b->node.node2->element_count;
+        break;
     case FT_NODE3:
         size_two = tree->node.node3->b->node.node3->element_count;
+        break;
     case FT_ELEMENT:
         size_two = 1;
+        break;
     }
 
-    std::cout << "size_two: " << size_one+size_two << std::endl;
     if(index < size_one+size_two )
     {
         index -= size_one;
@@ -1571,21 +1557,20 @@ inline TwoThreeFingerTree* two_three_node3_lookup(TwoThreeFingerTree* tree, int&
     {
     case FT_NODE2:
         size_three = tree->node.node3->c->node.node2->element_count;
+        break;
     case FT_NODE3:
         size_three = tree->node.node3->c->node.node3->element_count;
+        break;
     case FT_ELEMENT:
         size_three = 1;
+        break;
     }
 
-    std::cout << "size_three: " << size_one+size_two+size_three << std::endl;
     if(index < size_one+size_two+size_three )
     {
         index -= size_one+size_two;
         return tree->node.node3->c;
     }
-
-    std::cout << "Node3 NOTHING!?: "<< index << std::endl;
-
     return 0;
 }
 
@@ -1604,7 +1589,7 @@ inline TwoThreeFingerTree* two_three_node2_lookup(TwoThreeFingerTree* tree, int 
     }
 
 
-    if(index <= size_one -1)
+    if(index < size_one )
     {
         return tree->node.node2->a;
     }
@@ -1619,9 +1604,8 @@ inline TwoThreeFingerTree* two_three_node2_lookup(TwoThreeFingerTree* tree, int 
         size_two = 1;
     }
 
-    if(index <= size_one+size_two -1)
+    if(index < size_one+size_two )
     {
-//        index -= size_one;
         return tree->node.node2->b;
     }
 
@@ -1646,18 +1630,15 @@ object two_three_lookup(TwoThreeFingerTree* tree, int index)
         switch(search_tree->type)
         {
         case FT_NODE3:
-            test_num++;
             search_tree = two_three_node3_lookup(search_tree, i);
             continue;
         case FT_NODE2:
-            test_num++;
             search_tree = two_three_node2_lookup(search_tree, i);
             continue;
         case FT_DEEP:
             test_num++;
             if(i < search_tree->node.deep->left->element_count)
             {
-//                std::cout << "left" << std::endl;
                 search_tree = two_three_digit_lookup_check(search_tree->node.deep->left,i);
                 continue;
             }
@@ -1671,6 +1652,10 @@ object two_three_lookup(TwoThreeFingerTree* tree, int index)
             {
                 center_size = search_tree->node.deep->center->node.deep->element_count;
             }
+            else if(search_tree->node.deep->center->type == FT_SINGLE)
+            {
+                center_size = search_tree->node.deep->center->node.single->element_count;
+            }
             else
             {
                 center_size = 1;
@@ -1678,44 +1663,25 @@ object two_three_lookup(TwoThreeFingerTree* tree, int index)
 
             if(i - (search_tree->node.deep->left->element_count + center_size) >= 0)
             {
-//                std::cout << "right" << std::endl;
                 i = i - (search_tree->node.deep->left->element_count + center_size);
                 search_tree = two_three_digit_lookup_check(search_tree->node.deep->right,i);
                 continue;
             }
             else
             {
-//                std::cout << "center" << std::endl;
                 i = i - search_tree->node.deep->left->element_count;
                 search_tree = search_tree->node.deep->center;
                 continue;
             }
+        case FT_SINGLE:
+            search_tree = search_tree->node.single->a;
+            continue;
         case FT_ELEMENT:
             complexity_test();
             return *search_tree->node.a;
-        case FT_SINGLE:
-            complexity_test();
-            return *search_tree->node.single->a->node.a;
         }
     }
 }
-
-//inline object two_three_lookup(TwoThreeFingerTree* finger_tree, int index)
-//{
-//    if(finger_tree->type==FINGER_LEAF&&index==0)
-//    {
-//        return finger_tree->node->leaf.one;
-//    }
-//    else if(index< finger_tree->node->branch.left->node->branch.size)
-//    {
-//        return two_three_lookup(finger_tree->node->branch.left,index);
-//    }
-//    else
-//    {
-//        return two_three_lookup(finger_tree->node->branch.right,index - finger_tree->node->branch.left->node->branch.size);
-//    }
-//}
-
 #endif
 
 }

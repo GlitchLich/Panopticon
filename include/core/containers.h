@@ -41,9 +41,6 @@ bool slice_to_end_with_step_wrapping(object&A, const object& B, const object& C)
 bool range_from_to(object&A, const object& B, const object& C);
 bool range_from_step_to(object&A, const object& B, const object& C);
 
-
-
-
 }
 
 #endif // CONTAINERS_H
