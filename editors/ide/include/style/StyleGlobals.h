@@ -2,6 +2,7 @@
 #define STYLEGLOBALS_H
 
 #include <QFont>
+#include <QFontMetrics>
 #include <QTextCharFormat>
 
 namespace panopticon
@@ -33,6 +34,9 @@ public:
     QFont mainFont;
     QFont monoFont;
     QFont toolFont;
+    QFontMetrics mainFontMetrics;
+    QFontMetrics monoFontMetrics;
+    QFontMetrics toolFontMetrics;
     QTextCharFormat printFormat;
     QTextCharFormat printErrorFormat;
     QTextCharFormat keywordFormat;

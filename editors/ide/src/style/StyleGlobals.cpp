@@ -6,7 +6,10 @@ namespace panopticon
 namespace ide
 {
 
-Style::Style()
+Style::Style() :
+    mainFontMetrics(mainFont),
+    monoFontMetrics(monoFont),
+    toolFontMetrics(toolFont)
 {
 #ifdef __LINUX__
     toolFont = QFont("Ubuntu", 8);
@@ -21,6 +24,11 @@ Style::Style()
     // monoFont.setFixedPitch(true);
     monoFont.setStyleHint(QFont::Monospace);
     monoFont.setStyleStrategy(QFont::ForceIntegerMetrics);
+
+    mainFontMetrics = QFontMetrics(mainFont);
+    monoFontMetrics = QFontMetrics(monoFont);
+    toolFontMetrics = QFontMetrics(toolFont);
+
     printFormat.setForeground(QColor(180, 180, 180));
     printFormat.setFont(monoFont);
     printErrorFormat.setForeground(QColor(255, 0, 50));
