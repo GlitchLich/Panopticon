@@ -60,8 +60,8 @@ filter( (>=5) [3 4 5 6 [7 [3 2 10] 2 3 ] 8 0 ] )
 filter( (=="hey") ["hey" "you" ["no" "yo" "hey" ] "ok" ] )
 
 //Fold left, function, starting value, array
-foldl( (+) 0 [1 2 3 4 ] )
-foldl( (-) 0 [1 2 3 4 ] )
+foldl( (+) 0 [ 1 2 3 4 ] )
+foldl( (-) 0 [ 1 2 3 4 ] )
 //Can mix types
 foldl( (-) "Fuck yeah" ["F" "c" "y"] )
 foldl( (+) "cool" [1 2 3 4 "yeah" true] )
@@ -187,6 +187,24 @@ lambdazForever f x t
 lambdazForever( (\x = x * 2) [ 2 3 ] 10)
 lambdazForever( (++0) [2 3] 10)[:100:3:%]
 lambdazForever( (0++) [2 3] 10)
+
+lambdazForever2 f x t
+	| t > 1 = f( lambdazForever2( f x t-1 ) )
+	| _		= f(x)
+
+lambdazForever2( (\x = x * 2) [ 2 3 ] 10)
+lambdazForever2( (++0) [2 3] 10)[:100:3:%]
+lambdazForever2( (0++) [2 3] 10)
+
+lambdazForever3 f x t
+	| t > 1 = f( lambdazForever3( f x t-1 ) )
+	| _		= f(x)
+
+lambdazForever3( (\x = x * 2) [ 2 3 ] 10)
+lambdazForever3( (++0) [2 3] 10)[:100:3:%]
+lambdazForever3( (0++) [2 3] 10)
+
+
 
 //Operator Sectioning
 (+ 1)

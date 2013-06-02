@@ -131,6 +131,8 @@ public:
     explicit MainWindow(QWidget* parent = 0);
     ~MainWindow();
 
+    EditBuffer* getFocusedBuffer();
+
 public slots:
     void post(const QString& string);
     void postError(const QString& string);

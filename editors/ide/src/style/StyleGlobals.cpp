@@ -6,7 +6,10 @@ namespace panopticon
 namespace ide
 {
 
-Style::Style()
+Style::Style() :
+    mainFontMetrics(mainFont),
+    monoFontMetrics(monoFont),
+    toolFontMetrics(toolFont)
 {
 #ifdef __LINUX__
     toolFont = QFont("Ubuntu", 8);
@@ -21,6 +24,11 @@ Style::Style()
     // monoFont.setFixedPitch(true);
     monoFont.setStyleHint(QFont::Monospace);
     monoFont.setStyleStrategy(QFont::ForceIntegerMetrics);
+
+    mainFontMetrics = QFontMetrics(mainFont);
+    monoFontMetrics = QFontMetrics(monoFont);
+    toolFontMetrics = QFontMetrics(toolFont);
+
     printFormat.setForeground(QColor(180, 180, 180));
     printFormat.setFont(monoFont);
     printErrorFormat.setForeground(QColor(255, 0, 50));
@@ -39,12 +47,14 @@ Style::Style()
 //    prrealClearColor = { 0.2, 0.06, 0.15, 1 };
     prrealClearColor = { 0.1, 0.1, 0.1125, 1 };
     prclearColor.setRgbF(prrealClearColor.r, prrealClearColor.g, prrealClearColor.b, prrealClearColor.a);
+    highlightColor = prclearColor.lighter(50);
 }
 
 void Style::setClearColor(const QColor& color)
 {
     prclearColor = color;
     prclearColor.getRgbF(&prrealClearColor.r, &prrealClearColor.g, &prrealClearColor.b, &prrealClearColor.a);
+    highlightColor = prclearColor.lighter(50);
 }
 
 const QColor& Style::clearColor()
@@ -56,6 +66,7 @@ void Style::setClearColor(const real_color& color)
 {
     prrealClearColor = color;
     prclearColor.setRgbF(prrealClearColor.r, prrealClearColor.g, prrealClearColor.b, prrealClearColor.a);
+    highlightColor = prclearColor.lighter(50);
 }
 
 const real_color& Style::realClearColor()

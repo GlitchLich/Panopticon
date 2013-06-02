@@ -366,6 +366,11 @@ MainWindow::~MainWindow()
     editBuffers.clear();
 }
 
+EditBuffer* MainWindow::getFocusedBuffer()
+{
+    return focusedBuffer;
+}
+
 void MainWindow::post(const QString& string)
 {
     postWindow->setCurrentCharFormat(ide::style->printFormat);
