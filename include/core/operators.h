@@ -42,6 +42,7 @@ namespace optic = panopticon;
 namespace panopticon
 {
 //General Operations
+void print_object_in_array(const object B,int arrayNum);
 bool print_object(const object& A);
 bool print_array(const object &A, int arrayNum=0, bool isTree=false);
 bool unary_print_object(object &A, const object &B);

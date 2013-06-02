@@ -14,6 +14,14 @@ namespace panopticon
 
 inline bool call_primitive_function(object &A, const object &B, const object &C)
 {
+    if(reverse_variable_name_lookup.find(B.data.primitive->name)!=reverse_variable_name_lookup.end())
+    {
+        std::cout << "Calling function: " << reverse_variable_name_lookup[B.data.primitive->name] << std::endl;
+    }
+    else
+    {
+        std::cout << "Calling function" << std::endl;
+    }
     B.data.primitive->p_func(A,*C.data.array);
 }
 
@@ -26,32 +34,39 @@ inline bool call_primitive_function(object &A, const object &B, const object &C)
  */
 bool create_function(object &A, const object &B, const object &C)
 {
-    A = mem_alloc(FUNCTION);
-    Function* function = A.data.function;
-
-    if(B.type == FUNCTION_ARG_NAMES)
-    {
-        function->num_arguments = B.data.array->size();
-        for(int i = 0; i < function->num_arguments; ++i)
+//    print_object(C);
+//    if(B.data.array->size()>1)
+//    {
+        A = mem_alloc(FUNCTION);
+        Function* function = A.data.function;
+        if(B.type == FUNCTION_ARG_NAMES)
         {
-            //            function->arguments.push_back(mem_copy(B.data.array->at(i)));
-            function->arguments.push_back(B.data.array->at(i));
+            function->num_arguments = B.data.array->size();
+            function->arguments = *B.data.array;
+            function->name = B.data.array->at(0).data.variable_number;
         }
 
-        function->name = B.data.array->at(0).data.variable_number;
-    }
+        else if(B.type == UNDECLARED_VARIABLE || B.type == VARIABLE)
+        {
+            function->num_arguments = 0;
+            function->arguments.push_back(B);
+            function->name = B.data.variable_number;
+        }
 
-    else if(B.type == UNDECLARED_VARIABLE || B.type == VARIABLE)
-    {
-        function->num_arguments = 0;
-        //        function->arguments.push_back(mem_copy(B));
-        function->arguments.push_back(B);
-        function->name = B.data.variable_number;
-    }
-
-    //    function->body = mem_copy(C);
-    function->body = C;
-    function->body.type = OPERATION_TREE;
+        function->body = C;
+        function->body.type = OPERATION_TREE;
+//    }
+//    else
+//    {
+//        //Force evaluation on functions with 0 arguments, as they are essentially constants.
+//        A = mem_alloc(OPERATION_TREE);
+//        A.data.array = C.data.array;
+//        optic_stack.push_back(A);
+//        evaluate_top();
+//        A = optic_stack.back();
+//        optic_stack.pop_back();
+//        out() << type_string(A.type) << std::endl;
+//    }
 }
 
 bool call_function_array(object& A, const object& B, const object& C)
@@ -69,6 +84,14 @@ bool call_function_array(object& A, const object& B, const object& C)
     optic_stack.pop_back();
 }
 
+bool pop_scope(object &A, object &B)
+{
+    A = B;
+}
+
+//Not Lazy enough! Make this more lazy!
+
+
 /**
 * @brief call_function
 * @param A = Result
@@ -79,7 +102,6 @@ bool call_function_array(object& A, const object& B, const object& C)
 bool call_function(object& A, const object& B, const object& C)
 {
     object function;
-    bool free_function = true;
 
     switch(B.type)
     {
@@ -120,9 +142,7 @@ bool call_function(object& A, const object& B, const object& C)
         return false;
         break;
     case FUNCTION:
-        // function = mem_copy(B);
         function = B; // Will this cause a mem_free crash later? Not sure, something to test for.
-        free_function = false;
         break;
 
     default:
@@ -134,16 +154,15 @@ bool call_function(object& A, const object& B, const object& C)
         break;
     }
 
+// Conflicts with partial application currently....solve this!
+//    if(C.data.array->size()<function.data.function->arguments.size()-1)
+//    {
+//        partial_application(A,function,C);
+//        return true;
+//    }
 
-    if(C.data.array->size()<function.data.function->arguments.size()-1)
-    {
-        partial_application(A,function,C);
-        return true;
-    }
-
-    Variable function_name = function.data.function->name;
     Dictionary context;
-    context.insert(std::make_pair(function_name, function));
+    context.insert(std::make_pair(function.data.function->name, function));
 
     if(function.data.function->arguments.size() > 1) // if it has any arguments
     {
@@ -178,9 +197,7 @@ bool call_function(object& A, const object& B, const object& C)
 
     A = optic_stack.back(); // Move, no need to copy/free
     optic_stack.pop_back();
-
     pop_scope(); // frees dictionary memory as well
-    //    context.erase(function_name);
     return true;
 }
 

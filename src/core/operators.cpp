@@ -32,6 +32,7 @@
 #include "include/core/function.h"
 #include "include/core/stack.h"
 #include "core/Memory.h"
+#include "include/core/containers.h"
 //#include "include/Grammar/parse.h"
 
 #include <algorithm>
@@ -70,6 +71,7 @@ void print_object_in_array(const object B,int arrayNum)
             out() << " false";
         }
         break;
+    case FUNCTION_BODY:
     case OPERATION_TREE:
         optic_stack.push_back(B);
         evaluate_top();
@@ -77,7 +79,6 @@ void print_object_in_array(const object B,int arrayNum)
         optic_stack.pop_back();
         break;
     case FUNCTION_ARG_VALUES:
-    case FUNCTION_BODY:
     case FUNCTION_ARG_NAMES:
     case ARRAY:
         print_array(B,arrayNum+1);
@@ -98,6 +99,9 @@ void print_object_in_array(const object B,int arrayNum)
     case panopticon::UNDECLARED_VARIABLE:
         out() << " " << reverse_variable_name_lookup[B.data.variable_number];
         break;
+    case LIST:
+        out() << print_list(B,arrayNum+1);
+        break;
     }
 }
 
@@ -115,10 +119,9 @@ bool print_array(const object &A, int arrayNum,bool isTree)
     {
         out() << "[";
     }
-    for(int i=0;i<A.data.array->size();++i)
+    for(Array::iterator iter = A.data.array->begin(); iter != A.data.array->end(); ++iter)
     {
-        panopticon::object& B = A.data.array->at(i);
-        print_object_in_array(B,arrayNum);
+        print_object_in_array(*iter,arrayNum);
     }
     if(isTree)
     {
@@ -192,7 +195,6 @@ bool print_object(const object &A)
         }
         break;
     case FUNCTION_ARG_VALUES:
-    case FUNCTION_BODY:
     case FUNCTION_ARG_NAMES:
     case panopticon::ARRAY:
         panopticon::print_array(A);
@@ -205,7 +207,7 @@ bool print_object(const object &A)
 
         print_variable(A);
         break;
-
+    case FUNCTION_BODY:
     case panopticon::OPERATION_TREE:
         panopticon::print_array(A,0,true);
         break;
@@ -222,6 +224,9 @@ bool print_object(const object &A)
 
     case NIL:
         out() << "Nil" << std::endl;
+    case LIST:
+//        out() << "List: ";
+        print_list(A,0);
         break;
     }
 }
@@ -266,11 +271,7 @@ bool store_operations(object& a, const object& obj1, unary_operator_function fun
 
     if(obj1.type == OPERATION_TREE)
     {
-        for(int i = 0; i < obj1.data.array->size(); ++i)
-        {
-            a.data.array->push_back(obj1.data.array->at(i));
-        }
-        shallow_mem_free_array(obj1.data.array, obj1.type);
+        std::copy(obj1.data.array->begin(),obj1.data.array->end(),std::back_inserter(*a.data.array));
     }
 
     else
@@ -322,12 +323,7 @@ bool store_operations(object& a, const object& obj1, const object& obj2, bool ex
 
     if(obj1.type == OPERATION_TREE)
     {
-        //TO DO: std::copy instead?
-        for(int i = 0; i < obj1.data.array->size(); ++i)
-        {
-            a.data.array->push_back(obj1.data.array->at(i));
-        }
-        shallow_mem_free_array(obj1.data.array, obj1.type);
+        std::copy(obj1.data.array->begin(),obj1.data.array->end(),std::back_inserter(*a.data.array));
     }
 
     else
@@ -337,11 +333,7 @@ bool store_operations(object& a, const object& obj1, const object& obj2, bool ex
 
     if(obj2.type == OPERATION_TREE)
     {
-        for(int i = 0; i < obj2.data.array->size(); ++i)
-        {
-            a.data.array->push_back(obj2.data.array->at(i));
-        }
-        shallow_mem_free_array(obj2.data.array, obj2.type);
+        std::copy(obj2.data.array->begin(),obj2.data.array->end(),std::back_inserter(*a.data.array));
     }
 
     else
@@ -393,11 +385,7 @@ bool store_operations(object& a, const object& obj1, const object& obj2, operato
 
     if(obj1.type == OPERATION_TREE)
     {
-        for(int i = 0; i < obj1.data.array->size(); ++i)
-        {
-            a.data.array->push_back(obj1.data.array->at(i));
-        }
-        shallow_mem_free_array(obj1.data.array, obj1.type);
+        std::copy(obj1.data.array->begin(),obj1.data.array->end(),std::back_inserter(*a.data.array));
     }
 
     else
@@ -407,11 +395,7 @@ bool store_operations(object& a, const object& obj1, const object& obj2, operato
 
     if(obj2.type == OPERATION_TREE)
     {
-        for(int i = 0; i < obj2.data.array->size(); ++i)
-        {
-            a.data.array->push_back(obj2.data.array->at(i));
-        }
-        shallow_mem_free_array(obj2.data.array, obj2.type);
+        std::copy(obj2.data.array->begin(),obj2.data.array->end(),std::back_inserter(*a.data.array));
     }
 
     else
@@ -1249,7 +1233,7 @@ bool assign_variable(object& A, const object& B, const object& C)
 
         if(set_variable(B.data.array->at(0).data.variable_number, A) != OK)
         {
-            out() << "Error. Unable to bind variable " << B.data.array->at(0).data.string << std::endl;
+            out() << "Error. Unable to bind variable " << reverse_variable_name_lookup[B.data.variable_number] << std::endl;
         }
     }
 

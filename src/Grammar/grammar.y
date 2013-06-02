@@ -1183,19 +1183,21 @@ final_vert_stmt_list(A) ::= vert_stmt_list(B) stmt(C). [COLLECTARRAY]
 
 vertical_array(A) ::= LBRAC LCBLOCK final_vert_stmt_list(B) RCBLOCK RBRAC. [COLLECTARRAY]
 {
-    A = B;
-    A.type = optic::ARRAY;
+    optic::object list;
+    optic::convert_array_to_list(list,B);
+    optic::create_tree(A,list);
 }
 
 array(A) ::= vertical_array(B).
 {
-    create_tree(A,B);
+    A = B;
 }
 
 array(A) ::= LBRAC maybe_empty_stmt_list(B) RBRAC. [COLLECTARRAY]
 {
-    B.type = optic::ARRAY;
-    create_tree(A,B);
+    optic::object list;
+    optic::convert_array_to_list(list,B);
+    optic::create_tree(A,list);
 }
 
 stmt_list(A) ::= stmt(B).
@@ -1592,7 +1594,7 @@ array_index(A) ::= function_call(B) LBRAC expr(C) RBRAC. [INDEX]
 
 array_index(A) ::= NAME(B) LBRAC expr(C) RBRAC. [INDEX]
 {
-    B.type = optic::STRING;
+/*    B.type = optic::STRING;*/
     optic::store_operations(A,B,C,&optic::index,false);
     if(!panopticon::correct_parsing)
     {
