@@ -546,6 +546,21 @@ inline int two_three_digit_element_count(Digit* a)
     return count;
 }
 
+int two_three_length(TwoThreeFingerTree* a)
+{
+    if(a->type == FT_ELEMENT)
+    {
+        return 1;
+    }
+    else if(a->type == FT_SINGLE)
+    {
+        return a->node.single->element_count;
+    }
+    else if(a->type == FT_DEEP)
+    {
+        return a->node.deep->element_count;
+    }
+}
 
 int two_three_element_count(TwoThreeFingerTree* a)
 {
@@ -844,11 +859,20 @@ inline TwoThreeFingerTree* two_three_last(TwoThreeFingerTree* finger_tree)
     {
         switch(finger_tree->node.deep->right->size)
         {
+        case 0:
+            switch(finger_tree->node.deep->right->size)
+            {
+            case 2:
+                return finger_tree->node.deep->left->two;
+            case 3:
+                return finger_tree->node.deep->left->three;
+            case 4:
+                return finger_tree->node.deep->left->four;
+            }
         case 1:
             return finger_tree->node.deep->right->one;
         case 2:
             return finger_tree->node.deep->right->two;
-            break;
         case 3:
             return finger_tree->node.deep->right->three;
         case 4:
@@ -881,6 +905,29 @@ inline TwoThreeFingerTree* tree_of_digits(Digit* digit)
         deep->node.deep->left = digit;
         deep->node.deep->center = 0;
         deep->node.deep->right = construct_digit();
+
+        switch(digit->size)
+        {
+        case 2:
+            deep->node.deep->right->one = deep->node.deep->left->two;
+            deep->node.deep->right->size = 1;
+            deep->node.deep->left->two = 0;
+            deep->node.deep->left->size = 1;
+            break;
+        case 3:
+            deep->node.deep->right->one = deep->node.deep->left->three;
+            deep->node.deep->right->size = 1;
+            deep->node.deep->left->three = 0;
+            deep->node.deep->left->size = 2;
+            break;
+        case 4:
+            deep->node.deep->right->one = deep->node.deep->left->four;
+            deep->node.deep->right->size = 1;
+            deep->node.deep->left->four = 0;
+            deep->node.deep->left->size = 3;
+            break;
+        }
+
         two_three_element_count(deep);
         return deep;
     }
@@ -1199,25 +1246,23 @@ TwoThreeFingerTree* two_three_concat(TwoThreeFingerTree* list,TwoThreeFingerTree
     test_num++;
     if(list == 0 && list2 == 0)
     {
-        return 0;
+        return nodes;
     }
     if(list==0 && list2!=0)
     {
-        return two_three_append(nodes,list2);
-//        return two_three_recursive_cons(list2,nodes);
+        return two_three_recursive_cons(list2,nodes);
     }
     if(list!=0 && list2==0)
     {
-        return two_three_cons(nodes,list);
-//        return two_three_recursive_append(list,nodes);
+        return two_three_recursive_append(list,nodes);
     }
     if(list->type == FT_SINGLE)
     {
-        return two_three_cons(two_three_append(nodes,list2),list->node.single->a);
+        return two_three_cons(two_three_recursive_cons(list2,nodes),list->node.single->a);
     }
     if(list2->type == FT_SINGLE)
     {
-        return two_three_append(two_three_cons(nodes,list),list2->node.single->a);
+        return two_three_append(two_three_recursive_append(list,nodes),list2->node.single->a);
     }
     if(list->type == FT_DEEP)
     {
@@ -1226,14 +1271,17 @@ TwoThreeFingerTree* two_three_concat(TwoThreeFingerTree* list,TwoThreeFingerTree
         deep->node.deep->right = list2->node.deep->right;
         TwoThreeFingerTree* node_list = shunt_to_nodes(list->node.deep->right,nodes,list2->node.deep->left);
         deep->node.deep->center = two_three_concat(list->node.deep->center,node_list,list2->node.deep->center);
+        two_three_element_count(deep);
         return deep;
     }
 }
 
 TwoThreeFingerTree* two_three_list_concatenation(TwoThreeFingerTree* list,TwoThreeFingerTree* list2)
 {
-    test_num = 0;
-    return two_three_concat(list,0,list2);
+    //    test_num = 0;
+    //    return two_three_concat(list,0,list2);
+    //Stop gap, replace with log(n) version.
+    return two_three_recursive_append(list,list2);
 }
 
 //List hooks

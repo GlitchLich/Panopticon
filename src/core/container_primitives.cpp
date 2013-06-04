@@ -11,39 +11,140 @@
 namespace panopticon
 {
 
-inline bool call_func_on_item(object& result, const object& function,const object& item, Dictionary& context)
+//TO DO: Could probably be optimized better.
+bool call_func_on_item(object& result, const object& function,const object& item, Dictionary& context)
 {
-    if(item.type==ARRAY)
+    if(item.type==LIST)
     {
-        result = mem_alloc(ARRAY);
-        for(Array::iterator it = item.data.array->begin();it!=item.data.array->end();++it)
+        result = mem_alloc(LIST);
+        TwoThreeFingerTree* iterative_list = item.data.list;
+
+        while(iterative_list>0)
         {
             object res;
-            call_func_on_item(res,function,*it,context);
-            result.data.array->push_back(res);
+            call_func_on_item(res,function,two_three_list_head(iterative_list),context);
+            result.data.list = two_three_list_append(result.data.list,res);
+            iterative_list = two_three_tail(iterative_list);
         }
     }
     else
     {
         optic_stack.push_back(item);
         evaluate_top();
-        Variable arg_name = function.data.function->arguments.at(1).data.variable_number;
-        context[arg_name] = optic_stack.back();
-        optic_stack.pop_back();
 
-        resolve_stack_from_parser(function.data.function->body, false);
-
-        if(optic_stack.back().type == ARRAY)
+        if(optic_stack.back().type == LIST)
         {
-            object parse_array = mem_alloc(UNARY_OPERATION);
-            parse_array.data.unary_operator_func = resolve_function_array;
-            optic_stack.push_back(parse_array);
-            evaluate_top();
+            TwoThreeFingerTree* iterative_list = optic_stack.back().data.list;
+            object list_result = mem_alloc(LIST);
+            while(iterative_list>0)
+            {
+                object res;
+                call_func_on_item(res,function,two_three_list_head(iterative_list),context);
+                list_result.data.list = two_three_list_append(list_result.data.list,res);
+                iterative_list = two_three_tail(iterative_list);
+            }
+            result = list_result;
+            optic_stack.pop_back();
         }
+        else if(optic_stack.back().type == NIL || optic_stack.back().type == VOID)
+        {
+            out() << "Error: Attempted to map a Null value." << std::endl;
+            correct_parsing = false;
+            return false;
+        }
+        else
+        {
+            Variable arg_name = function.data.function->arguments.at(1).data.variable_number;
+            context[arg_name] = optic_stack.back();
+            optic_stack.pop_back();
+            resolve_stack_from_parser(function.data.function->body, false);
 
-        result = optic_stack.back();
-        optic_stack.pop_back();
+            result = optic_stack.back();
+            optic_stack.pop_back();
+        }
     }
+    return true;
+}
+
+bool call_filter_func_on_item(object& result, const object& function,const object& item, Dictionary& context)
+{
+    if(item.type==LIST)
+    {
+        result = mem_alloc(LIST);
+        TwoThreeFingerTree* iterative_list = item.data.list;
+
+        while(iterative_list>0)
+        {
+            call_filter_func_on_item(result,function,two_three_list_head(iterative_list),context);
+            iterative_list = two_three_tail(iterative_list);
+        }
+    }
+    else
+    {
+        optic_stack.push_back(item);
+        evaluate_top();
+
+        if(optic_stack.back().type == LIST)
+        {
+            object list_result = mem_alloc(LIST);
+
+            call_filter_func_on_item(list_result,function,optic_stack.back(),context);
+
+            if(two_three_length(list_result.data.list))
+            {
+                result.data.list = two_three_list_append(result.data.list,list_result);
+            }
+            optic_stack.pop_back();
+        }
+        else if(optic_stack.back().type == NIL || optic_stack.back().type == VOID)
+        {
+            out() << "Error: Attempted to map a Null value." << std::endl;
+            correct_parsing = false;
+            return false;
+        }
+        else
+        {
+            Variable arg_name = function.data.function->arguments.at(1).data.variable_number;
+            context[arg_name] = optic_stack.back();
+            optic_stack.pop_back();
+            resolve_stack_from_parser(function.data.function->body, false);
+
+            if(optic_stack.back().type != BOOL)
+            {
+                out() << "Error: Non-boolean found in boolean test for filter." << std::endl;
+                correct_parsing = false;
+                return false;
+            }
+
+            if(optic_stack.back().data.boolean)
+            {
+                result.data.list = two_three_list_append(result.data.list,item);
+            }
+            optic_stack.pop_back();
+        }
+    }
+    return true;
+}
+
+inline bool call_func_on_two_items(object& result, object& function,const object& item1,const object& item2,Dictionary& context)
+{
+    optic_stack.push_back(item1);
+    evaluate_top();
+    Variable arg_name = function.data.function->arguments.at(1).data.variable_number;
+    context[arg_name] = optic_stack.back();
+    optic_stack.pop_back();
+
+    optic_stack.push_back(item2);
+    evaluate_top();
+    arg_name = function.data.function->arguments.at(2).data.variable_number;
+    context[arg_name] = optic_stack.back();
+    optic_stack.pop_back();
+
+    resolve_stack_from_parser(function.data.function->body, false);
+
+    result = optic_stack.back();
+    optic_stack.pop_back();
+
     return true;
 }
 
@@ -77,9 +178,9 @@ inline bool setup_array(object& array)
             array = optic_stack.back();
             optic_stack.pop_back();
         }
-        else if(result.type != ARRAY)
+        else if(result.type != LIST)
         {
-            out() << "Error: Attempting to use a non-Array of type: " << type_string(array.type) << std::endl;
+            out() << "Error: Attempting to use a non-List of type: " << type_string(array.type) << std::endl;
             print_object(result);
             correct_parsing = false;
             return false;
@@ -145,7 +246,7 @@ inline bool setup_argument(object& argument)
     }
 }
 
-inline bool setup_func(object& result, object& function)
+bool setup_func(object& result, object& function)
 {
     optic_stack.push_back(function);
     evaluate_top();
@@ -168,7 +269,7 @@ inline bool setup_func(object& result, object& function)
         }
 
         //Array Functors...Sort this out
-        //        if(function.type == ARRAY)
+        //        if(function.type == LIST)
         //        {
         //            return call_function_array(result, function, array);
         //        }
@@ -233,36 +334,6 @@ bool map(object& result, const Array& arguments)
     return true;
 }
 
-inline bool call_func_on_two_items(object& result, object& function, object& item1, object& item2,Dictionary& context)
-{
-    optic_stack.push_back(item1);
-    evaluate_top();
-    Variable arg_name = function.data.function->arguments.at(1).data.variable_number;
-    context[arg_name] = optic_stack.back();
-    optic_stack.pop_back();
-
-    optic_stack.push_back(item2);
-    evaluate_top();
-    arg_name = function.data.function->arguments.at(2).data.variable_number;
-    context[arg_name] = optic_stack.back();
-    optic_stack.pop_back();
-
-    resolve_stack_from_parser(function.data.function->body, false);
-
-    if(optic_stack.back().type == ARRAY)
-    {
-        object parse_array = mem_alloc(UNARY_OPERATION);
-        parse_array.data.unary_operator_func = resolve_function_array;
-        optic_stack.push_back(parse_array);
-        evaluate_top();
-    }
-
-    result = optic_stack.back();
-    optic_stack.pop_back();
-
-    return true;
-}
-
 bool foldl(object& result, const Array& arguments)
 {
     if(arguments.size()!=3)
@@ -289,10 +360,13 @@ bool foldl(object& result, const Array& arguments)
     context.insert(std::make_pair(function.data.function->name, function));
     push_scope(&context);
 
-    call_func_on_two_items(result,function,starting_value,array.data.array->at(0),context);
-    for(Array::iterator it = array.data.array->begin()+1; it != array.data.array->end(); ++ it)
+    call_func_on_two_items(result,function,starting_value,two_three_list_head(array.data.list),context);
+
+    TwoThreeFingerTree* iterative_list = two_three_tail(array.data.list);
+    while(iterative_list>0)
     {
-        call_func_on_two_items(result,function,result,*it,context);
+        call_func_on_two_items(result,function,result,two_three_list_head(iterative_list),context);
+        iterative_list = two_three_tail(iterative_list);
     }
 
     pop_scope();
@@ -324,10 +398,13 @@ bool foldl1(object& result, const Array& arguments)
     context.insert(std::make_pair(function.data.function->name, function));
     push_scope(&context);
 
-    call_func_on_two_items(result,function,array.data.array->at(0),array.data.array->at(1),context);
-    for(Array::iterator it = array.data.array->begin()+2; it != array.data.array->end(); ++ it)
+    TwoThreeFingerTree* iterative_list = two_three_tail(array.data.list);
+    call_func_on_two_items(result,function,two_three_list_head(array.data.list),two_three_list_head(iterative_list),context);
+    iterative_list = two_three_tail(iterative_list);
+    while(iterative_list)
     {
-        call_func_on_two_items(result,function,result,*it,context);
+        call_func_on_two_items(result,function,result,two_three_list_head(iterative_list),context);
+        iterative_list = two_three_tail(iterative_list);
     }
 
     pop_scope();
@@ -362,9 +439,11 @@ bool foldr(object& result, const Array& arguments)
     push_scope(&context);
 
     result = starting_value;
-    for(Array::reverse_iterator it = array.data.array->rbegin(); it != array.data.array->rend(); it++)
+    TwoThreeFingerTree* iterative_list = array.data.list;
+    while(iterative_list)
     {
-        call_func_on_two_items(result,function,*it,result,context);
+        call_func_on_two_items(result,function,two_three_list_last(iterative_list),result,context);
+        iterative_list = two_three_init(iterative_list);
     }
 
     pop_scope();
@@ -396,10 +475,13 @@ bool foldr1(object& result, const Array& arguments)
     context.insert(std::make_pair(function.data.function->name, function));
     push_scope(&context);
 
-    result =  *(array.data.array->rbegin());
-    for(Array::reverse_iterator it = array.data.array->rbegin()+1; it != array.data.array->rend(); it++)
+    result =  two_three_list_last(array.data.list);
+
+    TwoThreeFingerTree* iterative_list = two_three_init(array.data.list);
+    while(iterative_list)
     {
-        call_func_on_two_items(result,function,*it,result,context);
+        call_func_on_two_items(result,function,two_three_list_last(iterative_list),result,context);
+        iterative_list = two_three_init(iterative_list);
     }
 
     pop_scope();
@@ -434,15 +516,19 @@ bool scanl(object& result, const Array& arguments)
     push_scope(&context);
 
     object temp;
-    result = mem_alloc(ARRAY);
-    result.data.array->push_back(starting_value);
-    call_func_on_two_items(temp,function,starting_value,array.data.array->at(0),context);
-    result.data.array->push_back(temp);
 
-    for(Array::iterator it = array.data.array->begin()+1; it != array.data.array->end(); ++ it)
+    result = mem_alloc(LIST);
+
+    result.data.list = two_three_list_append(result.data.list,starting_value);
+    call_func_on_two_items(temp,function,starting_value,two_three_list_head(array.data.list),context);
+    result.data.list = two_three_list_append(result.data.list,temp);
+
+    TwoThreeFingerTree* iterative_list = two_three_tail(array.data.list);
+    while(iterative_list>0)
     {
-        call_func_on_two_items(temp,function,temp,*it,context);
-        result.data.array->push_back(temp);
+        call_func_on_two_items(temp,function,temp,two_three_list_head(iterative_list),context);
+        iterative_list = two_three_tail(iterative_list);
+        result.data.list = two_three_list_append(result.data.list,temp);
     }
 
     pop_scope();
@@ -475,15 +561,19 @@ bool scanl1(object& result, const Array& arguments)
     push_scope(&context);
 
     object temp;
-    result = mem_alloc(ARRAY);
-    //    result.data.array->push_back(starting_value);
-    call_func_on_two_items(temp,function,array.data.array->at(0),array.data.array->at(1),context);
-    result.data.array->push_back(temp);
 
-    for(Array::iterator it = array.data.array->begin()+2; it != array.data.array->end(); ++ it)
+    result = mem_alloc(LIST);
+
+    TwoThreeFingerTree* iterative_list = two_three_tail(array.data.list);
+    call_func_on_two_items(temp,function,two_three_list_head(array.data.list),two_three_list_head(iterative_list),context);
+    result.data.list = two_three_list_append(result.data.list,temp);
+    iterative_list = two_three_tail(iterative_list);
+
+    while(iterative_list>0)
     {
-        call_func_on_two_items(temp,function,temp,*it,context);
-        result.data.array->push_back(temp);
+        call_func_on_two_items(temp,function,temp,two_three_list_head(iterative_list),context);
+        iterative_list = two_three_tail(iterative_list);
+        result.data.list = two_three_list_append(result.data.list,temp);
     }
 
     pop_scope();
@@ -518,15 +608,17 @@ bool scanr(object& result, const Array& arguments)
     push_scope(&context);
 
     object temp = starting_value;
-    result = mem_alloc(ARRAY);
-    result.data.array->push_back(starting_value);
-    //    call_func_on_two_items(temp,function,starting_value,array.data.array->at(0),context);
-    //    result.data.array->push_back(temp);
 
-    for(Array::reverse_iterator it = array.data.array->rbegin(); it != array.data.array->rend(); it++)
+    result = mem_alloc(LIST);
+
+    result.data.list = two_three_list_append(result.data.list,starting_value);
+
+    TwoThreeFingerTree* iterative_list = array.data.list;
+    while(iterative_list>0)
     {
-        call_func_on_two_items(temp,function,*it,temp,context);
-        result.data.array->push_front(temp);
+        call_func_on_two_items(temp,function,two_three_list_last(iterative_list),temp,context);
+        iterative_list = two_three_init(iterative_list);
+        result.data.list = two_three_list_append(result.data.list,temp);
     }
 
     pop_scope();
@@ -558,13 +650,17 @@ bool scanr1(object& result, const Array& arguments)
     context.insert(std::make_pair(function.data.function->name, function));
     push_scope(&context);
 
-    object temp = *array.data.array->rbegin();
-    result = mem_alloc(ARRAY);
-    result.data.array->push_back(temp);
-    for(Array::reverse_iterator it = array.data.array->rbegin()+1; it != array.data.array->rend(); it++)
+    result = mem_alloc(LIST);
+    TwoThreeFingerTree* iterative_list = array.data.list;
+    object temp = two_three_list_last(iterative_list);
+    result.data.list = two_three_list_append(result.data.list,temp);
+    iterative_list = two_three_init(iterative_list);
+
+    while(iterative_list>0)
     {
-        call_func_on_two_items(temp,function,*it,temp,context);
-        result.data.array->push_front(temp);
+        call_func_on_two_items(temp,function,two_three_list_last(iterative_list),temp,context);
+        iterative_list = two_three_init(iterative_list);
+        result.data.list = two_three_list_append(result.data.list,temp);
     }
 
     pop_scope();
@@ -597,48 +693,12 @@ bool filter(object& result, const Array& arguments)
     context.insert(std::make_pair(function.data.function->name, function));
     push_scope(&context);
 
-    //    call_func_on_item(result,function,array,context);
-    result = mem_alloc(ARRAY);
+    result = mem_alloc(LIST);
 
-    std::function<bool (object& obj)> filt = [&function,&context,&filt](object& obj)->bool {
-        object return_value;
-        call_func_on_item(return_value,function,obj,context);
-        if(return_value.type==BOOL)
-        {
-            if(return_value.data.boolean)
-            {
-                if(obj.type==STRING)
-                {
-                    obj.data.string = mem_copy(obj).data.string;
-                }
-                return true;
-            }
-        }
-        else if(return_value.type==ARRAY)
-        {
-            object new_array = mem_alloc(ARRAY);
-            std::copy_if(
-                        obj.data.array->begin(),
-                        obj.data.array->end(),
-                        std::back_inserter(*new_array.data.array),
-                        filt
-                        );
-            if(new_array.data.array->size()>0)
-            {
-                obj.data.array = new_array.data.array;
-                return true;
-            }
-            return false;
-        }
-        return false;
-    };
+    result = mem_alloc(LIST);
 
-    std::copy_if(
-                array.data.array->begin(),
-                array.data.array->end(),
-                std::back_inserter(*result.data.array),
-                filt
-                );
+    call_filter_func_on_item(result,function,array,context);
+
     pop_scope();
 
     return true;
@@ -656,7 +716,7 @@ bool length(object& result, const Array& arguments)
     if(setup_array(array))
     {
         result = mem_alloc(NUMBER);
-        result.data.number = two_three_element_count(array.data.list);
+        result.data.number = two_three_length(array.data.list);
         return true;
     }
     else
@@ -824,14 +884,12 @@ bool reverse(object& result, const Array& arguments)
     object array = arguments.at(0);
     if(setup_array(array))
     {
-        if(array.data.array->size()>1)
+        result = mem_alloc(LIST);
+        TwoThreeFingerTree* iterative_list = array.data.list;
+        while(iterative_list>0)
         {
-            result = mem_alloc(ARRAY);
-            std::reverse_copy(array.data.array->begin(),array.data.array->end(),std::back_inserter(*result.data.array));
-        }
-        else
-        {
-            result = array;
+            result.data.list = two_three_list_append(result.data.list,two_three_list_last(iterative_list));
+            iterative_list = two_three_init(iterative_list);
         }
         return true;
     }
@@ -845,7 +903,7 @@ bool reverse(object& result, const Array& arguments)
 
 bool take(object& result, const Array& arguments)
 {
-//    std::cout << "take" << std::endl;
+    //    std::cout << "take" << std::endl;
     if(arguments.size()!=2)
     {
         out() << "Error: take received an incorrect number of arguments" << std::endl;
@@ -853,15 +911,26 @@ bool take(object& result, const Array& arguments)
         return false;
     }
     object num_items = arguments.at(0);
-     setup_argument(num_items);
-    object arg = arguments.at(1);
-    if(arg.type == ARRAY)
+    setup_argument(num_items);
+    object array = arguments.at(1);
+    if(setup_array(array))
     {
-        setup_array(arg);
+        //        setup_array(arg);
+        result = mem_alloc(LIST);
+        TwoThreeFingerTree* iterative_list = array.data.list;
+        int num = num_items.data.number;
+        while(iterative_list && num)
+        {
+            result.data.list = two_three_list_append(result.data.list,two_three_list_head(iterative_list));
+            iterative_list = two_three_tail(iterative_list);
+            num-=1;
+        }
     }
     else
     {
-        result = arg;
+        out() << "Error: Received a non-List as an argument of take." << std::endl;
+        correct_parsing = false;
+        return false;
     }
     return true;
 }
@@ -879,8 +948,8 @@ bool zip(object& result, const Array& arguments)
     if(setup_array(array) && setup_array(array2))
     {
         int size = 0;
-        int a_size = array.data.array->size();
-        int a2_size = array2.data.array->size();
+        int a_size = two_three_length(array.data.list);
+        int a2_size = two_three_length(array2.data.list);
         if(a_size > a2_size)
         {
             size = a_size;
@@ -897,13 +966,29 @@ bool zip(object& result, const Array& arguments)
             return false;
         }
 
-        result = mem_alloc(ARRAY);
+        result = mem_alloc(LIST);
+        TwoThreeFingerTree* iterative_list = array.data.list;
+        TwoThreeFingerTree* iterative_list2 = array2.data.list;
         for(int i=0;i<size;++i)
         {
-            object tuplet = mem_alloc(ARRAY);
-            tuplet.data.array->push_back(mem_copy(array.data.array->at(i%a_size)));
-            tuplet.data.array->push_back(mem_copy(array2.data.array->at(i%a2_size)));
-            result.data.array->push_back(tuplet);
+            object tuplet = mem_alloc(LIST);
+
+            if(iterative_list==0)
+            {
+                iterative_list = array.data.list;
+            }
+
+            if(iterative_list2==0)
+            {
+                iterative_list2 = array2.data.list;
+            }
+
+            tuplet.data.list = two_three_list_append(tuplet.data.list,two_three_list_head(iterative_list));
+            tuplet.data.list = two_three_list_append(tuplet.data.list,two_three_list_head(iterative_list2));
+            result.data.list = two_three_list_append(result.data.list,tuplet);
+
+            iterative_list = two_three_tail(iterative_list);
+            iterative_list2 = two_three_tail(iterative_list2);
         }
         return true;
     }

@@ -143,10 +143,10 @@ bool conditional_function_call(object& result_A,const object& conditional_B,cons
             return true;
         }
     }
-    else if(result_B.type == ARRAY)
+    else if(result_B.type == LIST)
     {
         out() << "Error: Non-boolean found in Guard condition statement." << std::endl;
-        out() << "Object is of type ARRAY, consider using map function. See Help for details." << std::endl;
+        out() << "Object is of type List, consider using map function. See Help for details." << std::endl;
         correct_parsing = false;
         result_A.type = ERROR;
         return false;
