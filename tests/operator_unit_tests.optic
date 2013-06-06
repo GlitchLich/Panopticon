@@ -45,7 +45,7 @@ reverse <<  myArray
 
 //Zip combines two arrays into tuplets inside an array
 za1 = [5 4 3 2 1]
-za2 = [2,5..20]
+za2 = [3 4 5 6 7 8 9 10]
 zip( za1 za2 )
 
 fibs = 0 : 1 : fibs + tail(fibs)
@@ -54,6 +54,8 @@ a = [0 1 1 2]
 fibs2 = 0 : 1 : a
 fibs2
 a
+
+take( 2 [ 0 1 2 3 4 ] )
 
 //filter, apply a boolean returning function to a map, and return all elements that return true:
 filter( (>=5) [3 4 5 6 [7 [3 2 10] 2 3 ] 8 0 ] )
@@ -109,7 +111,7 @@ scanr1( (+) [1 2 3 4] )
 
 //Primitive Functions
 a = [0 1 2 3 ]
-b = [0 [1 2] 3 ["ok" [ "lets" "go" ] 2 ] ]
+b = [0 [1 2 [ 33 ] ] 3 ["ok" [ "lets" "go" ] 2 ] ]
 map( (+10) b )
 map( (3/) a )
 map( \x = x^2 - 3 [6 6 6])
@@ -1117,8 +1119,8 @@ true *  [0 [true 2 [3 "hey"] 5 [6 7] ] 8]
 [0 [1 2 [3 4] 5 [6 7] ] 8] * 4
 [0 [true 2 [3 "hey"] 5 [6 7] ] 8] * false
 ["e" ["h" "y" ["ey" "he"] "h" ["hey" " "] ] "e"] * "h"
-mulArrays = [0 [1 2 [3 4] 5 [6 7] ] 8] * [0 [1 2 [3 4] 5 [6 7] ] 8]
-mulArrays
+[0 [1 2 [3 4] 5 [6 7] ] 8] * [0 [1 2 [3 4] 5 [6 7] ] 8]
+
 //DIVIDE
 4 / 4.5
 4 / true

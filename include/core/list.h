@@ -47,6 +47,7 @@ TwoThreeFingerTree* two_three_init(TwoThreeFingerTree* finger_tree);
 TwoThreeFingerTree* two_three_tail(TwoThreeFingerTree* finger_tree);
 bool two_three_print(TwoThreeFingerTree* list);
 int two_three_element_count(TwoThreeFingerTree* a);
+int two_three_length(TwoThreeFingerTree* a);
 object two_three_lookup(TwoThreeFingerTree* tree, int index);
 
 TwoThreeFingerTree* map_binary_function3(TwoThreeFingerTree* list,TwoThreeFingerTree* list2,const object& op);
