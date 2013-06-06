@@ -75,47 +75,48 @@ typedef int (*CFunction) (State* P);
 // basic types
 enum Type
 {
-    NIL = 0,
-    BOOL,//1
-    NUMBER,//2
-    STRING,//3
-    FUNCTION,//4
-    ARRAY,//5
-    DICTIONARY,//6
-    LIST,//7
+    NIL = 0, // 0
+    BOOL,// 1
+    NUMBER,// 2
+    STRING,// 3
+    FUNCTION,// 4
+    ARRAY,// 5
+    DICTIONARY,// 6
+    LIST,// 7
+    TRIE, // 8
 
     //THE FOLLOWING ARE FOR INTERNAL USE ONLY,
     //NOT TO BE USED AS LANGUAGE CONSTRUCTS
-    ERROR,//8
-    STATEMENT_LIST,//9
-    VARIABLE,//10 CHANGING THIS TO TYPE UNSIGNED LONG LONG
+    ERROR,// 9
+    STATEMENT_LIST,// 10
+    VARIABLE,// 11 CHANGING THIS TO TYPE UNSIGNED LONG LONG
     UNDECLARED_VARIABLE,//11 CHANGING THIS TO TYPE UNSIGNED LONG LONG
-    OPERATION_TREE,//12
-    OPERATION,//13
-    UNARY_OPERATION, // 14
-    ASSIGNMENT,//15
-    GUARD,//16
-    FUNCTION_BODY, //17 Used to prevent further parsing by the stack, enables lazy evaluation
-    FUNCTION_ARG_NAMES, // 18 Used to pass argument names to functions for composition
-    FUNCTION_ARG_VALUES, // 19 Used to pass argument values to functions for calling
-    VOID, // 20, Use to prevent return on the stack
-    CODE_BLOCK, //21 Denotes several expression in a row
-    PRIMITIVE, // 22
-    CONDITION_TREE, //23
-    CONDITION_BRANCH, //24
-    NO_EXPANSION_OPERATION, //25 For those operations that you DON'T want to multichannel expand
-    UNARY_NO_EXPANSION_OPERATION, //26 For those unary operations that you don't want to expand.
-    PATTERN, //27 for pattern matching
-    HEAD, //28 For Arrays/List sorting/construction
-    TAIL, //29 For Arrays/List sorting/construction
-    FAILED_CONDITION, //30 Condition test failed
-    EMPTY_LIST, //31 Signifies empty list.
-    FT_SINGLE, //32 for 23FingerTrees
-    FT_DEEP, //33 for 23FingerTrees
-    FT_DIGIT, //34 for 23FingerTrees
-    FT_ELEMENT, //35 for 23FingerTrees
-    FT_NODE2, //36 for 23 FingerTrees
-    FT_NODE3 //37 for 23 FingerTrees
+    OPERATION_TREE,// 13
+    OPERATION,// 14
+    UNARY_OPERATION, // 15
+    ASSIGNMENT,//16
+    GUARD,// 17
+    FUNCTION_BODY, // 18 Used to prevent further parsing by the stack, enables lazy evaluation
+    FUNCTION_ARG_NAMES, // 19 Used to pass argument names to functions for composition
+    FUNCTION_ARG_VALUES, // 20 Used to pass argument values to functions for calling
+    VOID, // 21, Use to prevent return on the stack
+    CODE_BLOCK, // 22 Denotes several expression in a row
+    PRIMITIVE, // 23
+    CONDITION_TREE, // 24
+    CONDITION_BRANCH, // 25
+    NO_EXPANSION_OPERATION, // 26 For those operations that you DON'T want to multichannel expand
+    UNARY_NO_EXPANSION_OPERATION, // 27 For those unary operations that you don't want to expand.
+    PATTERN, // 28 for pattern matching
+    HEAD, // 29 For Arrays/List sorting/construction
+    TAIL, // 30 For Arrays/List sorting/construction
+    FAILED_CONDITION, // 31 Condition test failed
+    EMPTY_LIST, // 32 Signifies empty list.
+    FT_SINGLE, // 33 for 23FingerTrees
+    FT_DEEP, // 34 for 23FingerTrees
+    FT_DIGIT, // 35 for 23FingerTrees
+    FT_ELEMENT, // 36 for 23FingerTrees
+    FT_NODE2, // 37 for 23 FingerTrees
+    FT_NODE3 // 38 for 23 FingerTrees
 };
 
 std::string type_string(Type type);
@@ -133,6 +134,11 @@ typedef TwoThreeFingerTree List;
 struct List;
 #endif
 
+namespace trie
+{
+    struct Trie; // Forward declaration
+}
+
 /* typedefs for types in Panopticon */
 //typedef double Number;
 typedef double Number;
@@ -145,7 +151,7 @@ typedef bool (*operator_function) (object &, const object &, const object &);
 typedef bool (*unary_operator_function) (object &, const object &);
 typedef bool (*primitive_function) (object&, const Array& arguments);
 //typedef unsigned long long Variable;
-typedef unsigned int Variable;
+typedef uint32_t Variable;
 
 // Data type union
 union Data
@@ -156,6 +162,7 @@ union Data
     Function* function;
     Array* array;
     List* list;
+    trie::Trie* trie;
     Dictionary* dictionary;
     operator_function operator_func;
     unary_operator_function unary_operator_func;
@@ -165,11 +172,11 @@ union Data
     Variable variable_number;
 };
 
-// const bool ALIVE = true;
-// const bool DEAD = false;
-
+// Constants
 #define ALIVE true
 #define DEAD false
+extern const Data EMPTY_DATA;
+extern const object EMPTY_OBJECT;
 
 struct object
 {

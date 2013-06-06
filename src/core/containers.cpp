@@ -6,10 +6,191 @@
 #include "../../include/core/operators.h"
 #include "../../include/core/heap.h"
 #include "include/core/operators.h"
+#include "core/Trie.h"
 #include <math.h>
 
 namespace panopticon
 {
+
+bool print_trie(const object& trie)
+{
+    trie::Iterator iter(trie.data.trie);
+
+    while(iter.has_next())
+    {
+        trie::Entry entry = iter.next();
+        out() << "\"" << entry.key << "\" : ";
+
+        panopticon::object& value = entry.obj;
+
+        switch(value.type)
+        {
+        case STRING:
+            out() << value.data.string;
+            break;
+
+        case NUMBER:
+            out() << value.data.number;
+            break;
+
+        case BOOL:
+            out() << value.data.boolean;
+            break;
+
+        case OPERATION_TREE:
+        case ARRAY:
+            print_array(value);
+            break;
+
+        case DICTIONARY:
+            print_dictionary(value);
+            break;
+
+        case TRIE:
+            print_trie(value);
+
+        case FUNCTION:
+            out() << "Function";
+            break;
+
+        case NIL:
+            out() << "Nil";
+            break;
+
+        default:
+            break;
+        }
+
+        out() << " ";
+    }
+}
+
+bool trie_lookup(object& value, const object& trie, const object& key)
+{
+    std::cout << "TRIE LOOK UP!!!!!!!!!!" << std::endl;
+
+    if(key.type != UNDECLARED_VARIABLE || key.type != VARIABLE)
+    {
+        out() << "Error: Trie key must be a String." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+
+    //If the object is a string, attempt to fetch it.
+    if(trie.type == UNDECLARED_VARIABLE || trie.type == VARIABLE)
+    {
+        object result;
+
+        if(get_variable(trie.data.variable_number, &result) == OK)
+        {
+            if(result.type == TRIE)
+            {
+                bool success =  trie_lookup(value, result, key);
+                return success;
+            }
+
+            else
+            {
+                value.type = NIL;
+                out() << "Error: Cannot call a Trie lookup on a non-Trie object." << std::endl;
+                out() << "Object with Trie lookup called on it: " << trie.data.string->c_str() << std::endl;
+                correct_parsing = false;
+                return false;
+            }
+        }
+
+        else
+        {
+            value.type = NIL;
+            out() << "Error: the variable \'" << reverse_variable_name_lookup[key.data.variable_number] << "\'' has not been declared." << std::endl;
+            correct_parsing = false;
+            return false;
+        }
+
+    }
+
+    value = trie::lookup(trie.data.trie, key.data.variable_number);
+    if(value.type != NIL && value.type == OPERATION_TREE)
+    {
+        optic_stack.push_back(value);
+        evaluate_top();
+        value = mem_copy(optic_stack.back());
+        value = optic_stack.back();
+        optic_stack.pop_back();
+    }
+
+    else
+    {
+        value.type = NIL;
+        out() << "No object found with key \'" << reverse_variable_name_lookup[key.data.variable_number] << "\'." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+
+    return true;
+}
+
+bool trie_contains(object& boolean, const object& trie, const object& key)
+{
+    if(key.type != UNDECLARED_VARIABLE || key.type != VARIABLE)
+    {
+        out() << "Trie key must be a String." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+
+    boolean.type = BOOL;
+    boolean.data.boolean = trie::contains(trie.data.trie, key.data.variable_number);
+    return true;
+}
+
+bool trie_insert(object& trie_A,const object& string_B, const object& object_C)
+{
+    object boolean;
+    trie_contains(boolean, trie_A, string_B);
+
+    if(!boolean.data.boolean)
+    {
+        trie_A.data.trie = trie::insert(trie_A.data.trie, string_B.data.variable_number, object_C);
+    }
+
+    else
+    {
+        out() << "Error:  Cannot insert key: " << reverse_variable_name_lookup[string_B.data.variable_number] << "into dictionary because this key already exists." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+}
+
+bool create_trie(object& result_A, const object& B)
+{
+    std::cout << "CREATING A TRIE!!!!!!!!!!!!!!!!!!!" << std::endl;
+    result_A = optic::mem_alloc(optic::TRIE);
+
+    for(int i = 0; i < B.data.array->size() - 1; i += 2)
+    {
+        if(B.data.array->at(i).type != optic::ARRAY)
+        {
+            // std::cout << B.data.array->at(i).data.variable_number << std::endl;
+            // Must redeclare!!!!
+            result_A.data.trie = trie::insert(result_A.data.trie, B.data.array->at(i).data.variable_number, mem_copy(B.data.array->at(i+1)));
+        }
+
+        else
+        {
+            optic::object result;
+            object arg_copy = mem_copy(B.data.array->at(i));
+            object body_copy = mem_copy(B.data.array->at(i+1));
+            insure_ready_for_assignment(arg_copy,body_copy);
+            optic::store_operations(result, arg_copy,body_copy, create_function);
+            optic_stack.push_back(result);
+            evaluate_top();
+
+            result_A.data.trie = trie::insert(result_A.data.trie, B.data.array->at(i).data.array->at(0).data.variable_number, mem_copy(optic_stack.back()));
+            optic_stack.pop_back();
+        }
+    }
+}
 
 bool print_dictionary(const object& dict)
 {

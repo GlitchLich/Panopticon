@@ -202,6 +202,10 @@ bool print_object(const object &A)
     case panopticon::DICTIONARY:
         print_dictionary(A);
         break;
+
+    case panopticon::TRIE:
+        print_trie(A);
+        break;
     case panopticon::VARIABLE:
     case panopticon::UNDECLARED_VARIABLE:
 
@@ -224,6 +228,8 @@ bool print_object(const object &A)
 
     case NIL:
         out() << "Nil" << std::endl;
+        break;
+
     case LIST:
 //        out() << "List: ";
         print_list(A,0);
@@ -595,21 +601,21 @@ bool value_pow(object& A, const object& B, const object& C)
 
 bool equal_to(object& A, const object& B, const object& C)
 {
+    A.type = BOOL;
+    A.data.boolean = false;
+
     switch(B.type)
     {
     case NUMBER:
         switch(C.type)
         {
         case NUMBER:
-            A.type = BOOL;
             A.data.boolean = B.data.number == C.data.number;
             break;
         case STRING:
-            A.type = BOOL;
             A.data.boolean = false;
             break;
         case BOOL:
-            A.type = BOOL;
             A.data.boolean = false;
             break;
         }
@@ -618,15 +624,12 @@ bool equal_to(object& A, const object& B, const object& C)
         switch(C.type)
         {
         case NUMBER:
-            A.type = BOOL;
             A.data.boolean = false;
             break;
         case STRING:
-            A.type = BOOL;
             A.data.boolean = (B.data.string->compare(*C.data.string)==0);
             break;
         case BOOL:
-            A.type = BOOL;
             A.data.boolean = false;
             break;
         }
@@ -635,18 +638,43 @@ bool equal_to(object& A, const object& B, const object& C)
         switch(C.type)
         {
         case NUMBER:
-            A.type = BOOL;
             A.data.boolean = false;
             break;
         case STRING:
-            A.type = BOOL;
             A.data.boolean = false;
             break;
         case BOOL:
-            A.type = BOOL;
             A.data.boolean = B.data.boolean==C.data.boolean;
             break;
         }
+        break;
+
+    case NIL:
+        if(C.type == NIL)
+            A.data.boolean = true;
+        break;
+
+    case FUNCTION:
+
+        if(A.type == FUNCTION)
+            if(A.data.function == B.data.function)
+                A.data.boolean = true;
+        break;
+
+    case ARRAY: // This shouldn't be reached
+        std::cerr << "equal_to called on object of type ARRAY. Multi-channel expansion should prevent reaching here." << std::endl;
+        break;
+
+    case DICTIONARY: // Shouldn't be reached
+        std::cerr << "equal_to called on object of type DICTIONARY. Multi-channel expansion should prevent reaching here." << std::endl;
+        break;
+
+    case TRIE: // Shouldn't be reached
+        std::cerr << "equal_to called on object of type TRIE. Multi-channel expansion should prevent reaching here." << std::endl;
+        break;
+
+    case LIST: // Shouldn't be reached
+        std::cerr << "equal_to called on object of type LIST. Multi-channel expansion should prevent reaching here." << std::endl;
         break;
     }
 }

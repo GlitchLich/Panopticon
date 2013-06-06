@@ -26,6 +26,9 @@
 namespace panopticon
 {
 
+const Data EMPTY_DATA = { 0 };
+const object EMPTY_OBJECT = { 0, 0, NIL };
+
 std::string type_string(Type type)
 {
     switch(type)
@@ -50,6 +53,9 @@ std::string type_string(Type type)
         break;
     case DICTIONARY:
         return "DICTIONARY";
+        break;
+    case TRIE:
+        return "TRIE";
         break;
     case ERROR:
         return "ERROR";

@@ -4,6 +4,10 @@
 //Horizontal construction
 myDict = { Turtles = true Octopi = "are cool" Array = [0 1 2 3 4] dictFunc x y = x + y Dragon = { test = 4 } }
 
+print(myDict)
+myArray = [ 0 1 2 3 ]
+print(myDict)
+
 //Vertical Construction, with nested dictionaries
 myDict = {       
 	Turtles = true 
@@ -68,7 +72,6 @@ myDict::nullTest
 myDict{"Array"}
 stringVar = "Array"
 myDict{stringVar}
-
 
 //Functions in Dictionaries
 //Doesn't work right now, need to work on this!

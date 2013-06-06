@@ -9,6 +9,7 @@
 #define BUFS 1024
 #include <stdio.h>
 #include <string.h>
+#include "core/containers.h"
 #include "../include/Grammar/parse.h"
 #include "../include/Grammar/tokens.h"
 #include "../include/Grammar/lexglobal.h"
@@ -574,6 +575,11 @@ Variable arg10 = 10;
 
 inline Variable get_string_hash(std::string string)
 {
+    Variable var =  fnv1a(string.c_str());
+    string_hash_map[string] = var;
+    reverse_variable_name_lookup[var] = string;
+    return var;
+    /*
 //    std::cout << "Hash: " << string;
     if(string_hash_map.find(string)!=string_hash_map.end())
     {
@@ -587,7 +593,7 @@ inline Variable get_string_hash(std::string string)
         reverse_variable_name_lookup[string_num] = string;
 //        std::cout << "," << string_hash_map[string] << std::endl;
         return string_num;
-    }
+    }*/
 }
 
 }
