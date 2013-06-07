@@ -1,0 +1,68 @@
+//The world as unique value style:
+copyFile source ~dest
+	| readOK 	= copyFile( source1 FWriteC( c dest ) )
+	| _			= dest
+	where
+		[readOK c source1] = SFReadC( source )
+
+Start *world = newWorld
+	where
+		[*files *events] = OpenWorld << world
+		[sourceOpen source *files1] = SFOpen( “Source” ) << FReadData << files
+		[destOpen *dest *files2] = FOpen( “Dest” ) << FWriteData << files1
+		*dest1 = copyFile( source dest )
+		newWorld = CloseWorld( events ) << CloseFile( dest1 files2 )
+
+initSimulacra *world = finalWorld
+	where
+		[*world2 awesomeSample] 		= bufRead(world "hell yeah")
+		[*world3 awesomeSample2] 		= bufRead(world2 "hell yeah2")
+		[*world4 awesomeSample3] 		= bufRead(world3 "hell yeah3")
+		[*finalWorld awesomeSample4] 	= bufRead(world4 "hell yeah4")
+		
+
+initSimulacra = do
+	awesomeSample  <- bufRead("hell yeah")
+	awesomeSample2 <- bufRead("hell yeah2")
+	awesomeSample3 <- bufRead("hell yeah3")
+	awesomeSample4 <- bufRead("hell yeah4")
+
+initSimulacra =
+	bufRead("hell yeah") >>= \awesomeSample ->
+	bufRead("hell yeah") >>= \awesomeSample2 ->
+	bufRead("hell yeah") >>= \awesomeSample3 ->
+	bufRead("hell yeah") >>= \awesomeSample4 ->
+	return [awesomeSample awesample2 awesomeSample3 awesomeSample4]
+
+initSimulacra( thisWorld )
+
+//With Arrow notation?
+initSimulacra *=
+	awesomeSample  =>> bufRead("hell yeah")
+	awesomeSample2 =>> bufRead("hell yeah2")
+	awesomeSample3 =>> bufRead("hell yeah3")
+	awesomeSample4 =:  bufRead("hell yeah4")
+
+initSimulacra *world = finalWorld
+	where
+		[*world2 awesomeSample] 		= bufRead(world "hell yeah")
+		[*world3 awesomeSample2] 		= bufRead(world2 "hell yeah2")
+		[*world4 awesomeSample3] 		= bufRead(world3 "hell yeah3")
+		[*finalWorld awesomeSample4] 	= bufRead(world4 "hell yeah4")
+
+awesomeSample  = do bufRead( "hey yeah"  )
+awesomeSample2 = do bufRead( "hey yeah2" )
+awesomeSample3 = do bufRead( "hey yeah3" )
+awesomeSample4 = do bufRead( "hey yeah4" )
+
+initBufs = do
+	awesomeSample
+	awesomeSample2
+	awesomeSample3
+	awesomeSample4
+
+initSimulacra
+	loadSample
+	loadSample2
+	loadSample3
+	loadSample4

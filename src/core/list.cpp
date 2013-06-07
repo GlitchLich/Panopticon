@@ -43,14 +43,12 @@ bool print_list(const object &A, int arrayNum)
     {
         out() << " ";
     }
-    out() << "L[";
-    //    test_num = 0;
-#ifdef TWO_THREE_TREE
+    out() << "[";
+
     two_three_print(A.data.list);
-#else
-    print_braun_tree(A.data.list);
-#endif
+
     out() << " ]";
+
     if(arrayNum==0)
     {
         out() << std::endl;

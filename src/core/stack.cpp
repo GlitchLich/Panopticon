@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include "../../include/core/stack.h"
 #include "core/types.h"
 #include "core/operators.h"
@@ -21,7 +21,6 @@ void clear_stack()
 {
     while(optic_stack.size())
     {
-        mem_free(optic_stack.back());
         optic_stack.pop_back();
     }
 
@@ -291,7 +290,8 @@ bool evaluate_top()
 
 void evaluate_stack()
 {
-//    std::cout << "EVALUATE_STACK: optic_stack.size: " << optic_stack.size() << std::endl;
+//    std::cout << "EVALUATE_STACK: " << optic_stack.size() << std::endl;
+//    print_stack();
 
     global_state.type = VOID;
     while(optic_stack.size())
@@ -300,7 +300,6 @@ void evaluate_stack()
 
         if(optic_stack.size())
         {
-            mem_free(global_state); // queue for deallocation
             global_state = optic_stack.back();
             optic_stack.pop_back();
         }

@@ -14,14 +14,6 @@ namespace panopticon
 
 inline bool call_primitive_function(object &A, const object &B, const object &C)
 {
-    if(reverse_variable_name_lookup.find(B.data.primitive->name)!=reverse_variable_name_lookup.end())
-    {
-        std::cout << "Calling function: " << reverse_variable_name_lookup[B.data.primitive->name] << std::endl;
-    }
-    else
-    {
-        std::cout << "Calling function" << std::endl;
-    }
     B.data.primitive->p_func(A,*C.data.array);
 }
 
@@ -34,39 +26,39 @@ inline bool call_primitive_function(object &A, const object &B, const object &C)
  */
 bool create_function(object &A, const object &B, const object &C)
 {
-//    print_object(C);
-//    if(B.data.array->size()>1)
-//    {
-        A = mem_alloc(FUNCTION);
-        Function* function = A.data.function;
-        if(B.type == FUNCTION_ARG_NAMES)
-        {
-            function->num_arguments = B.data.array->size();
-            function->arguments = *B.data.array;
-            function->name = B.data.array->at(0).data.variable_number;
-        }
+    //    print_object(C);
+    //    if(B.data.array->size()>1)
+    //    {
+    A = mem_alloc(FUNCTION);
+    Function* function = A.data.function;
+    if(B.type == FUNCTION_ARG_NAMES)
+    {
+        function->num_arguments = B.data.array->size();
+        function->arguments = *B.data.array;
+        function->name = B.data.array->at(0).data.variable_number;
+    }
 
-        else if(B.type == UNDECLARED_VARIABLE || B.type == VARIABLE)
-        {
-            function->num_arguments = 0;
-            function->arguments.push_back(B);
-            function->name = B.data.variable_number;
-        }
+    else if(B.type == UNDECLARED_VARIABLE || B.type == VARIABLE)
+    {
+        function->num_arguments = 0;
+        function->arguments.push_back(B);
+        function->name = B.data.variable_number;
+    }
 
-        function->body = C;
-        function->body.type = OPERATION_TREE;
-//    }
-//    else
-//    {
-//        //Force evaluation on functions with 0 arguments, as they are essentially constants.
-//        A = mem_alloc(OPERATION_TREE);
-//        A.data.array = C.data.array;
-//        optic_stack.push_back(A);
-//        evaluate_top();
-//        A = optic_stack.back();
-//        optic_stack.pop_back();
-//        out() << type_string(A.type) << std::endl;
-//    }
+    function->body = C;
+    function->body.type = OPERATION_TREE;
+    //    }
+    //    else
+    //    {
+    //        //Force evaluation on functions with 0 arguments, as they are essentially constants.
+    //        A = mem_alloc(OPERATION_TREE);
+    //        A.data.array = C.data.array;
+    //        optic_stack.push_back(A);
+    //        evaluate_top();
+    //        A = optic_stack.back();
+    //        optic_stack.pop_back();
+    //        out() << type_string(A.type) << std::endl;
+    //    }
 }
 
 bool call_function_array(object& A, const object& B, const object& C)
@@ -80,7 +72,7 @@ bool call_function_array(object& A, const object& B, const object& C)
     //    call.data.operator_func = call_function;
     optic_stack.push_back(C);
     evaluate_top();
-    A = optic_stack.back(); // optimization: skip copy/free because nothing else will reference it
+    A = optic_stack.back();
     optic_stack.pop_back();
 }
 
@@ -90,7 +82,9 @@ bool pop_scope(object &A, object &B)
 }
 
 //Not Lazy enough! Make this more lazy!
+//Keep track of tail call stuff during initial operation_tree/thunk creation!
 
+bool strict = true;
 
 /**
 * @brief call_function
@@ -154,46 +148,65 @@ bool call_function(object& A, const object& B, const object& C)
         break;
     }
 
-// Conflicts with partial application currently....solve this!
-//    if(C.data.array->size()<function.data.function->arguments.size()-1)
-//    {
-//        partial_application(A,function,C);
-//        return true;
-//    }
+    // Conflicts with partial application currently....solve this!
+    //    if(C.data.array->size()<function.data.function->arguments.size()-1)
+    //    {
+    //        partial_application(A,function,C);
+    //        return true;
+    //    }
 
     Dictionary context;
     context.insert(std::make_pair(function.data.function->name, function));
 
     if(function.data.function->arguments.size() > 1) // if it has any arguments
     {
-        // iterate backwards through the argument list to put them on the stack, this way the resolve in the correct order when we collect them for mapping
-        // we use arguments.size() - 2 because we don't want to count the function name which is included in the arguments array
-        for(int i = function.data.function->arguments.size() - 2; i >= 0; --i)
+        //=============================
+        // Strict Argument Evaluation:
+        //=============================
+        if(strict)
         {
-            // optic_stack.push_back(mem_copy(C.data.array->at(i)));
-            optic_stack.push_back(C.data.array->at(i));
+            // iterate backwards through the argument list to put them on the stack, this way the resolve in the correct order when we collect them for mapping
+            // we use arguments.size() - 2 because we don't want to count the function name which is included in the arguments array
+            for(int i = function.data.function->arguments.size() - 2; i >= 0; --i)
+            {
+                // optic_stack.push_back(mem_copy(C.data.array->at(i)));
+                optic_stack.push_back(C.data.array->at(i));
+            }
+
+            // Collect the the results and map them to the local scope
+            for(int i = 1; i < function.data.function->num_arguments && optic_stack.size() > 0; ++i)
+            {
+                evaluate_top();
+                Variable arg_name = function.data.function->arguments.at(i).data.variable_number;
+                context.insert(std::make_pair(arg_name, optic_stack.back())); // optimization: insert into map without copy because nothing else is pointing to it
+                optic_stack.pop_back();
+            }
         }
 
-        // Collect the the results and map them to the local scope
-        for(int i = 1; i < function.data.function->num_arguments && optic_stack.size() > 0; ++i)
+        //=============================
+        // Lazy Argument Evaluation:
+        //=============================
+        else
         {
-            evaluate_top();
-            Variable arg_name = function.data.function->arguments.at(i).data.variable_number;
-            context.insert(std::make_pair(arg_name, optic_stack.back())); // optimization: insert into map without copy because nothing else is pointing to it
-            optic_stack.pop_back();
+            for(int i = function.data.function->arguments.size() - 2; i >= 0; --i)
+            {
+                Variable arg_name = function.data.function->arguments.at(i).data.variable_number;
+                context.insert(std::make_pair(arg_name, C.data.array->at(i)));
+            }
         }
     }
 
     push_scope(&context);
     resolve_stack_from_parser(function.data.function->body, false);
 
-    if(optic_stack.back().type == ARRAY)
-    {
-        object parse_array = mem_alloc(UNARY_OPERATION);
-        parse_array.data.unary_operator_func = resolve_function_array;
-        optic_stack.push_back(parse_array); // optimization: No need for mem_copy, UNARY_OPERATION doesn't allocate memory
-        evaluate_top();
-    }
+//TO DO: Fix Array Functors
+//    if(optic_stack.back().type == ARRAY)
+//    {
+//        object parse_array = mem_alloc(UNARY_OPERATION);
+//        parse_array.data.unary_operator_func = resolve_function_array;
+//        optic_stack.push_back(parse_array); // optimization: No need for mem_copy, UNARY_OPERATION doesn't allocate memory
+//        evaluate_top();
+//    }
 
     A = optic_stack.back(); // Move, no need to copy/free
     optic_stack.pop_back();
@@ -254,6 +267,7 @@ bool partial_application(object& result_A, const object &func_B, const object &a
     store_operations(body,func_B,vars,call_function);
     insure_ready_for_assignment(name_array,body);
     store_operations(result_A,name_array,body,create_function);
+
     //Resolve on stack
     optic_stack.push_back(result_A);
     evaluate_top();

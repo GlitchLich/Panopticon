@@ -186,6 +186,8 @@ struct Function
     int num_arguments;
     Array arguments;
     object body;
+    Array reg;
+    bool evaluated;
 };
 
 struct Primitive
