@@ -8,7 +8,7 @@ namespace panopticon
 {
 
 void register_container_primitives();
-
+bool call_func_on_item(object& result, const object& function,const object& item, Dictionary& context);
 }
 
 

@@ -7,14 +7,35 @@
 #include <algorithm>
 #include "include/core/containers.h"
 #include "include/core/list.h"
+#include "include/core/Trie.h"
 
 namespace panopticon
 {
 
+inline void resolve_trie(object& result, trie::Trie* trie)
+{
+    if(trie)
+    {
+        result.type = TRIE;
+        result.data.trie = trie;
+    }
+
+    else
+    {
+        result.type = NIL;
+        result.data.number = 0;
+    }
+}
+
 //TO DO: Could probably be optimized better.
 bool call_func_on_item(object& result, const object& function,const object& item, Dictionary& context)
 {
-    if(item.type==LIST)
+    if(item.type == TRIE)
+    {
+        return trie::map(item.data.trie, result, function, context);
+    }
+
+    else if(item.type==LIST)
     {
         result = mem_alloc(LIST);
         TwoThreeFingerTree* iterative_list = item.data.list;
@@ -27,6 +48,7 @@ bool call_func_on_item(object& result, const object& function,const object& item
             iterative_list = two_three_tail(iterative_list);
         }
     }
+
     else
     {
         optic_stack.push_back(item);
@@ -310,7 +332,8 @@ bool map(object& result, const Array& arguments)
         return false;
     }
     object function = arguments.at(0);
-    object array = arguments.at(1);
+    object container = arguments.at(1);
+    setup_argument(container);
 
     setup_func(result,function);
     if(function.data.function->arguments.size()!=2)
@@ -321,13 +344,14 @@ bool map(object& result, const Array& arguments)
     }
 
 
-    setup_array(array);
+    if(container.type == ARRAY || container.type == LIST)
+        setup_array(container);
 
     Dictionary context;
     context.insert(std::make_pair(function.data.function->name, function));
     push_scope(&context);
 
-    call_func_on_item(result,function,array,context);
+    call_func_on_item(result, function, container, context);
 
     pop_scope();
 
@@ -704,27 +728,63 @@ bool filter(object& result, const Array& arguments)
     return true;
 }
 
-bool length(object& result, const Array& arguments)
+bool array_size(object& result, object& container)
 {
-    if(arguments.size()!=1)
+    if(setup_array(container))
+    {
+        result.data.number = two_three_length(container.data.list);
+        return true;
+    }
+
+    else
+    {
+        out() << "Error: Attempting to find the size of a non-container." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+}
+
+bool size(object& result, const Array& arguments)
+{
+    if(arguments.size() != 1)
     {
         out() << "Error: length received an incorrect number of arguments" << std::endl;
         correct_parsing = false;
         return false;
     }
-    object array = arguments.at(0);
-    if(setup_array(array))
+
+    object container = arguments.at(0);
+    setup_argument(container);
+
+    result = mem_alloc(NUMBER);
+
+    switch(container.type)
     {
-        result = mem_alloc(NUMBER);
-        result.data.number = two_three_length(array.data.list);
-        return true;
+    case panopticon::STRING:
+        result.data.number = container.data.string->length();
+        break;
+    case panopticon::DICTIONARY:
+        result.data.number = container.data.dictionary->size();
+        break;
+
+    case panopticon::TRIE:
+        result.data.number = container.data.trie->count;
+        break;
+
+    case NIL:
+        result.data.number = 0;
+        break;
+
+    case LIST:
+        return array_size(result, container);
+        break;
+
+    default:
+        result.data.number = 1;
+        break;
     }
-    else
-    {
-        out() << "Error: Attempting to find the length of a non-array." << std::endl;
-        correct_parsing = false;
-        return false;
-    }
+
+    return true;
 }
 
 bool last(object& result, const Array& arguments)
@@ -1000,15 +1060,117 @@ bool zip(object& result, const Array& arguments)
     }
 }
 
+bool lookup(object& result, const Array& arguments)
+{
+    if(arguments.size() != 2)
+    {
+        out() << "Error: lookup received an incorrect number of arguments: " << arguments.size() << ". Use lookup(container key)" << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+
+    object map = arguments.at(0);
+    setup_argument(map);
+
+    object key = arguments.at(1);
+    setup_argument(key);
+
+    if(map.type != TRIE)
+    {
+        out() << "Error: Received a non-container type the first argument for lookup." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+
+    if(key.type != STRING)
+    {
+        out() << "Error: Received a non-String as the 2nd argument for lookup(map key)" << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+
+    result = trie::lookup(map.data.trie, fnv1a(key.data.string->c_str()));
+    return true;
+}
+
+bool insert(object& result, const Array& arguments)
+{
+    if(arguments.size() != 3)
+    {
+        out() << "Error: insert received an incorrect number of arguments: " << arguments.size() << ". Use insert(container key value)" << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+
+    object map = arguments.at(0);
+    setup_argument(map);
+
+    object key = arguments.at(1);
+    setup_argument(key);
+
+    object value = arguments.at(2);
+    setup_argument(value);
+
+    if(map.type != TRIE)
+    {
+        out() << "Error: Received non-container type the first argument for insert." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+
+    if(key.type != STRING)
+    {
+        out() << "Error: Received a non-String as the 2nd argument for insert(map key value)" << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+
+
+    resolve_trie(result, trie::insert(map.data.trie, fnv1a(key.data.string->c_str()), value));
+    return true;
+}
+
+bool remove(object& result, const Array& arguments)
+{
+    if(arguments.size() != 2)
+    {
+        out() << "Error: remove received an incorrect number of arguments: " << arguments.size() << ". Use remove(container key)" << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+
+    object map = arguments.at(0);
+    setup_argument(map);
+
+    object key = arguments.at(1);
+    setup_argument(key);
+
+    if(map.type != TRIE)
+    {
+        out() << "Error: Received a non-container type the first argument for remove." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+
+    if(key.type != STRING)
+    {
+        out() << "Error: Received a non-String as the 2nd argument for remove(map key)" << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+
+    resolve_trie(result, trie::without(map.data.trie, fnv1a(key.data.string->c_str())));
+    return true;
+}
 
 void register_container_primitives()
 {
-    object plength = mem_alloc(PRIMITIVE);
-    int variable_number = get_string_hash("length");
-    plength.data.primitive->name = variable_number;
-    plength.data.primitive->num_arguments = 1;
-    plength.data.primitive->p_func = length;
-    set_variable(variable_number,plength);
+    object psize = mem_alloc(PRIMITIVE);
+    int variable_number = get_string_hash("size");
+    psize.data.primitive->name = variable_number;
+    psize.data.primitive->num_arguments = 1;
+    psize.data.primitive->p_func = size;
+    set_variable(variable_number, psize);
 
     object pzip = mem_alloc(PRIMITIVE);
     variable_number = get_string_hash("zip");
@@ -1128,7 +1290,27 @@ void register_container_primitives()
     pfilter.data.primitive->num_arguments = 3;
     pfilter.data.primitive->p_func = filter;
     set_variable(variable_number,pfilter);
+
+    object plookup = mem_alloc(PRIMITIVE);
+    variable_number = get_string_hash("lookup");
+    plookup.data.primitive->name = variable_number;
+    plookup.data.primitive->num_arguments = 2;
+    plookup.data.primitive->p_func = lookup;
+    set_variable(variable_number, plookup);
+
+    object pinsert = mem_alloc(PRIMITIVE);
+    variable_number = get_string_hash("insert");
+    pinsert.data.primitive->name = variable_number;
+    pinsert.data.primitive->num_arguments = 3;
+    pinsert.data.primitive->p_func = insert;
+    set_variable(variable_number, pinsert);
+
+    object premove = mem_alloc(PRIMITIVE);
+    variable_number = get_string_hash("remove");
+    premove.data.primitive->name = variable_number;
+    premove.data.primitive->num_arguments = 2;
+    premove.data.primitive->p_func = remove;
+    set_variable(variable_number, premove);
 }
 
-
-}
+} // panopticon namespace

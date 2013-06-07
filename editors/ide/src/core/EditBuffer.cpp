@@ -102,7 +102,7 @@ QRect CodeBlockBackground::codeGeometry()
         0, // Always 0 because every code block must begin unindented
         cursorRect.top() + (startOffset * (ide::style->monoFontMetrics.lineSpacing() + 1)),
         this->editBuffer->width(),
-        (endLine - startLine) * (ide::style->monoFontMetrics.lineSpacing() + 1)
+        (endLine - startLine) * (ide::style->monoFontMetrics.lineSpacing() + 2)
     );
 }
 
@@ -266,7 +266,6 @@ void EditBuffer::updateCodeBlock()
     }
 
     codeBlockBackground.colorizeBlock();
-    std::cout << codeBlock.toStdString() << std::endl;
 }
 
 void EditBuffer::keyPressEvent(QKeyEvent *e)
@@ -327,7 +326,6 @@ void EditBuffer::keyPressEvent(QKeyEvent *e)
         case Qt::Key_Right:
         case Qt::Key_Up:
         case Qt::Key_Down:
-            // updateCodeBlock();
             break;
 
         default:
@@ -342,7 +340,6 @@ void EditBuffer::keyPressEvent(QKeyEvent *e)
         case Qt::Key_Return:
         case Qt::Key_Enter:
             executeCommand();
-            // std::cout << textCursor()
             return;
 
         default:
