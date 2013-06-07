@@ -26,16 +26,6 @@ Node without(Node node, uint32_t shift, uint32_t hash, Node key);
 
 // Constants
 
-// Population count, used for finding bit indexes
-const unsigned long long m1  = 0x5555555555555555; //binary: 0101...
-const unsigned long long m2  = 0x3333333333333333; //binary: 00110011..
-const unsigned long long m4  = 0x0f0f0f0f0f0f0f0f; //binary:  4 zeros,  4 ones ...
-const unsigned long long m8  = 0x00ff00ff00ff00ff; //binary:  8 zeros,  8 ones ...
-const unsigned long long m16 = 0x0000ffff0000ffff; //binary: 16 zeros, 16 ones ...
-const unsigned long long m32 = 0x00000000ffffffff; //binary: 32 zeros, 32 ones
-const unsigned long long hff = 0xffffffffffffffff; //binary: all ones
-const unsigned long long h01 = 0x0101010101010101; //the sum of 256 to the power of 0,1,2,3...
-
 // Array constants
 const uint32_t LEVEL_OFFSET = 5;
 const unsigned int NODE_ARRAY_SIZE = 32;
@@ -130,7 +120,7 @@ Entry NodeSeq::first()
     if(s)
         return s->first();
     else
-        Entry(nodes.at(i).data.uint, nodes.at(i + 1).data.obj);
+        return Entry(nodes.at(i).data.uint, nodes.at(i + 1).data.obj);
 }
 
 NodeSeq* NodeSeq::next()
@@ -185,6 +175,56 @@ void NodeSeq::_init(Trie* meta, Type type, const NArray& nodes, unsigned int i, 
     this->s = s;
 }
 
+void print_node(Node node)
+{
+    switch(node.type)
+    {
+    case NULL_NODE:
+        std::cout << "NULL_NODE ";
+        break;
+
+    case KEY:
+        std::cout << "KEY ";
+        break;
+
+    case OPTIC_OBJECT:
+        std::cout << "OPTIC_OBJECT ";
+        break;
+
+    case ARRAY_NODE:
+        std::cout << "ARRAY_NODE ";
+        break;
+
+    case BITMAP_INDEXED_NODE:
+        std::cout << "BITMAP_INDEXED_NODE ";
+        break;
+
+    case HASH_COLLISION_NODE:
+        std::cout << "HASH_COLLISION_NODE ";
+        break;
+
+    case TRIE_MAP:
+        std::cout << "TRIE_MAP ";
+        break;
+
+    case NODE: // Recursive identity check
+        std::cout << "NODE ";
+        break;
+
+    default:
+        std::cout << "UnknownType: " << node.type;
+        break;
+    }
+}
+
+void print_node_array(const NArray& nodes)
+{
+    for(unsigned int i = 0; i < nodes.size(); ++i)
+    {
+        print_node(nodes.at(i));
+    }
+}
+
 NodeSeq* node_seq(Node node)
 {
     switch(node.type)
@@ -230,8 +270,11 @@ NodeSeq* node_seq(Node node)
 
 NodeSeq* node_seq(Type type, const NArray& nodes, unsigned int i, NodeSeq* s)
 {
+    std::cout << "node_seq(Type: " << type << ", NArray.size: " << nodes.size() << ", i: " << i << ", s: " << s << ")" << std::endl;
+
     if(s)
     {
+
         return new NodeSeq(NULL, s->type, nodes, i, s);
     }
 
@@ -244,15 +287,21 @@ NodeSeq* node_seq(Type type, const NArray& nodes, unsigned int i, NodeSeq* s)
                 Node val = nodes.at(j);
                 if(val.type != NULL_NODE)
                 {
+                    return new NodeSeq(NULL, type, nodes, j, NULL);
+                }
+
+                val = nodes.at(j + 1);
+                if(val.type != NULL_NODE)
+                {
                     NodeSeq* ns = node_seq(val);
 
                     if(ns)
                     {
                         return new NodeSeq(type, nodes, j + 2, ns);
                     }
-
-                    break;
                 }
+
+                break;
             }
         }
 
@@ -284,11 +333,20 @@ NodeSeq* node_seq(Trie* trie)
     return trie->root.type != NULL_NODE ? node_seq(trie->root) : NULL;
 }
 
+Iterator::Iterator(Trie *trie) :
+    ns(node_seq(trie)),
+    trie(trie)
+{
+
+}
+
 Entry Iterator::next()
 {
     if(ns)
     {
-        return ns->next()->first();
+        Entry entry = ns->first();
+        ns = ns->next();
+        return entry;
     }
 
     return Entry(0, EMPTY_OBJECT);
@@ -317,22 +375,28 @@ object node_to_object(const Node& node)
 
 void recurse_leaf(Node* leaf)
 {
+    /*
     Node* new_leaf = new Node();
     new_leaf->type = leaf->type;
     new_leaf->data = leaf->data;
     leaf->type = NODE;
-    leaf->data.node = new_leaf;
+    leaf->data.node = new_leaf;*/
+    leaf->type = NODE;
+    leaf->data.node = leaf;
 }
 
 // Create hash value for key
 uint32_t hash_key(uint32_t key)
 {
-    return key ^ (key >> 32);
+    // return key; // May not need this function at all since all our keys are hashed to begin with
+    return ((uint64_t) key) ^ ((uint64_t) key >> 32);
+    // return fnv1a(key);
 }
 
 // Extract 5-bit level
 uint32_t mask(uint32_t hash, uint32_t shift)
 {
+    // return ((hash << shift) >> 27);
     return (hash >> shift) & 0x01f;
 }
 
@@ -342,12 +406,14 @@ uint32_t bitpos(uint32_t hash, uint32_t shift)
     return 1 << mask(hash, shift);
 }
 
-uint32_t population_count(unsigned long long x)
+uint32_t population_count(uint32_t x)
 {
-    x -= (x >> 1) & m1;             // put count of each 2 bits into those 2 bits
-    x = (x & m2) + ((x >> 2) & m2); // put count of each 4 bits into those 4 bits
-    x = (x + (x >> 4)) & m4;        // put count of each 8 bits into those 8 bits
-    return (x * h01) >> 56;         // returns left 8 bits of x + (x<<8) + (x<<16) + (x<<24) + ...
+    x = x - ((x >> 1) & 0x55555555);
+    x = (x & 0x33333333) + ((x >> 2) & 0x33333333);
+    x = (x + (x >> 4)) & 0x0f0f0f0f;
+    x = x + (x >> 8);
+    x = x + (x >> 16);
+    return x & 0x3f;
 }
 
 uint32_t bitmap_index(uint32_t bitmap, uint32_t bit)
@@ -400,7 +466,7 @@ bool identical(Node a, Node b)
             break;
 
         case ARRAY_NODE:
-            return a.data.array== b.data.array; // We're looking for identity equivalence, ie, ===
+            return a.data.array == b.data.array; // We're looking for identity equivalence, ie, ===
             break;
 
         case BITMAP_INDEXED_NODE:
@@ -497,6 +563,7 @@ Node create_node(uint32_t shift, Node key1, Node val1, uint32_t key2hash, Node k
 
     if(key1hash == key2hash)
     {
+        std::cout << "create_node: Hash Collision!!" << std::endl;
         NArray array(COLLISION_ARRAY_SIZE);
         array.set(0, key1);
         array.set(1, val1);
@@ -508,6 +575,7 @@ Node create_node(uint32_t shift, Node key1, Node val1, uint32_t key2hash, Node k
 
     else
     {
+        std::cout << "create_node: Node bitmap" << std::endl;
         Node leaf;
         Node bitmap = empty_node(BITMAP_INDEXED_NODE);
         bitmap = assoc(bitmap, shift, key1hash, key1, val1, leaf);
@@ -563,7 +631,7 @@ Node clone(const Node& node)
         break;
 
     default:
-        std::cerr << "Unknown Node Type in trie::clone(const Node& node)" << std::endl;
+        std::cerr << "Unknown Node Type in trie::clone(const Node& node): " << node.type << std::endl;
         return EMPTY_NODE;
         break;
     }
@@ -647,39 +715,55 @@ Node array_assoc(Node node, uint32_t shift, uint32_t hash, Node key, Node val, N
 
 Node bitmap_assoc(Node node, uint32_t  shift, uint32_t  hash, Node key, Node val, Node& addedLeaf)
 {
+    std::cout << "bitmap_assoc begin" << std::endl;
+    std::cout << "node.data.bitmap->bitmap: " << node.data.bitmap->bitmap << std::endl;
     uint32_t bit = bitpos(hash, shift);
     int index = bitmap_index(node.data.bitmap->bitmap, bit);
+
+    std::cout << "bitpos(hash, shift) = " << bit << " bitmap_index(bitmap, bit) = " << index << std::endl;
+    std::cout << "node.data.bitmap->bitmap & bit = " << (node.data.bitmap->bitmap & bit) << std::endl;
 
     // If the index is in the bitmap
     if((node.data.bitmap->bitmap & bit) != 0)
     {
+        std::cout << "(bitmap & bit) != 0" << std::endl;
         Node keyOrNull = node.data.bitmap->array.at(index * 2);
         Node valOrNode = node.data.bitmap->array.at(index * 2 + 1);
 
         if(keyOrNull.type == NULL_NODE)
         {
+            std::cout << "keyOrNull.type == NULL_NODE" << std::endl;
             Node n = assoc(valOrNode, shift + LEVEL_OFFSET, hash, key, val, addedLeaf);
 
             if(identical(n, valOrNode))
             {
+                std::cout << "identical(n, valOrNode)" << std::endl;
                 return node;
             }
 
             else
             {
-                return Node(new BitmapIndexedNode(node.data.bitmap->bitmap, clone_and_set(node.data.bitmap->array, 2 * index + 1, n)));
+                std::cout << "Not identical" << std::endl;
+                return Node(new BitmapIndexedNode(node.data.bitmap->bitmap, clone_and_set(node.data.bitmap->array, (2 * index) + 1, n)));
             }
         }
 
         if(key.data.uint == keyOrNull.data.uint)
         {
+            std::cout << "key.data.uint == keyOrNull.data.uint" << std::endl;
             if(identical(valOrNode, val))
             {
+                std::cout << "identical(valOrNode, val)" << std::endl;
                 return node;
             }
 
-            return Node(new BitmapIndexedNode(node.data.bitmap->bitmap, clone_and_set(node.data.bitmap->array, 2 * index + 1, val)));
+            std::cout << "Not identical" << std::endl;
+            return Node(new BitmapIndexedNode(node.data.bitmap->bitmap, clone_and_set(node.data.bitmap->array, (2 * index) + 1, val)));
         }
+
+        std::cout << "create_node" << std::endl;
+        std::cout << "keyOrNull.type = " << keyOrNull.type << std::endl;
+        std::cout << "bitmap_assoc index: " << (2 * index) << std::endl;
 
         recurse_leaf(&addedLeaf); // self reference
         return Node(
@@ -699,9 +783,11 @@ Node bitmap_assoc(Node node, uint32_t  shift, uint32_t  hash, Node key, Node val
     else // try adding to the current bitmap
     {
         int num_bits = population_count(node.data.bitmap->bitmap);
+        std::cout << "NUM_BITS: " << num_bits << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
 
         if(num_bits >= 16) // if we've run out of room create a new ArrayNode
         {
+            std::cout << "num_bits >= 16" << std::endl;
             NArray nodes(NODE_ARRAY_SIZE);
             uint32_t jindex = mask(hash, shift);
             nodes.set(jindex, assoc(EMPTY_NODE, shift + LEVEL_OFFSET, hash, key, val, addedLeaf));
@@ -712,7 +798,7 @@ Node bitmap_assoc(Node node, uint32_t  shift, uint32_t  hash, Node key, Node val
                 // For each index that is found
                 if(((node.data.bitmap->bitmap >> i) & 1) != 0)
                 {
-                    if(node.data.bitmap->array.at(i).type == NULL_NODE) // if null, copy Node object
+                    if(node.data.bitmap->array.at(j).type == NULL_NODE) // if null, copy Node object
                         nodes.set(i, node.data.bitmap->array.at(j + 1));
 
                     else // otherwise call assoc on the value
@@ -737,12 +823,16 @@ Node bitmap_assoc(Node node, uint32_t  shift, uint32_t  hash, Node key, Node val
 
         else // otherwise, insert into the current bitmap
         {
+            std::cout << "bitmap_assoc: otherwise, insert into the current bitmap" << std::endl;
+            std::cout << "bitmap_assoc: index " << (2 * index) << std::endl;
             NArray new_array(2 * (num_bits + 1));
             clone_range(node.data.bitmap->array, 0, new_array, 0, 2 * index);
             new_array.set(2 * index, key);
+            recurse_leaf(&addedLeaf);
             new_array.set(2 * index + 1, val);
             clone_range(node.data.bitmap->array, 2 * index, new_array, 2 * (index + 1), 2 * (num_bits - index));
-
+            std::cout << "new_array.size(): " << new_array.size() << std::endl;
+            print_node_array(new_array);
             return Node(new BitmapIndexedNode(node.data.bitmap->bitmap | bit, new_array));
         }
     }
@@ -803,6 +893,7 @@ Node trie_assoc(Node node, Node key, Node val)
 {
     if(key.type == NULL_NODE)
     {
+        std::cout << "trie::trie_assoc key.type == NULL_NODE" << std::endl;
         if(node.data.trie->has_null && identical(val, node.data.trie->null_value))
         {
             return node;
@@ -831,11 +922,17 @@ Node trie_assoc(Node node, Node key, Node val)
     else
         new_root = node.data.trie->root;
 
+    std::cout << "key.data.uint: " << key.data.uint << std::endl;
+    std::cout << "hash_key(key.data.uint) = " << hash_key(key.data.uint) << std::endl;
     new_root = assoc(new_root, 0, hash_key(key.data.uint), key, val, addedLeaf);
 
     if(identical(new_root, node.data.trie->root))
+    {
+        std::cout << "trie_assoc identical(new_root, node.data.trie->root) == true" << std::endl;
         return node;
+    }
 
+    std::cout << "trie_assoc: New Trie!" << std::endl;
     return Node(
         new Trie(
             node.data.trie->_meta,
@@ -977,7 +1074,7 @@ Node find(Node node, uint32_t shift, uint32_t hash, Node key)
         break;
 
     case TRIE_MAP:
-        return EMPTY_NODE;
+        return find(node.data.trie->root, shift, hash, key);
         std::cerr << "trie called from find, not sure this should happen????" << std::endl;
         break;
 
@@ -1034,7 +1131,7 @@ Node array_without(Node node, uint32_t shift, uint32_t hash, Node key)
     Node n = without(indexed_node, shift + LEVEL_OFFSET, hash, key);
     if(n.type == NULL_NODE)
     {
-        if(node.data.array->count <= 8) // shring
+        if(node.data.array->count <= 8) // shrink
             return pack(node, index);
 
         return Node(new ArrayNode(node.data.array->count - 1, clone_and_set(node.data.array->array, index, n)));
@@ -1146,7 +1243,7 @@ Node without(Node node, uint32_t shift, uint32_t hash, Node key)
 
 Trie* new_trie()
 {
-    return new Trie(0, Node(), false, Node());
+    return new Trie(NULL, 0, Node(), false, Node());
 }
 
 Trie* create(const Array& entry_array)
@@ -1275,59 +1372,6 @@ Trie* without(Trie* trie, Node key)
                 : trie;
     else
         return without(trie, key.data.uint);
-}
-
-bool contains(Trie* trie, const char*  key)
-{
-    uint32_t hash = fnv1a(key);
-    return trie->root.type != NULL_NODE
-            ? find(trie->root, 0, hash_key(hash), key_node(hash)).type != NULL_NODE
-            : false;
-}
-
-Entry entry(Trie* trie, const char*  key)
-{
-    uint32_t hash = fnv1a(key);
-    return trie->root.type != NULL_NODE
-            ? Entry(hash, find(trie->root, 0, hash_key(hash), key_node(hash)))
-            : Entry(hash, EMPTY_NODE);
-}
-
-object lookup(Trie* trie, const char*  key)
-{
-    uint32_t hash = fnv1a(key);
-    return trie->root.type != NULL_NODE
-            ? node_to_object(find(trie->root, 0, hash_key(hash), key_node(hash)))
-            : EMPTY_OBJECT;
-}
-
-
-Trie* insert(Trie* trie, const char* key, const object &value)
-{
-    Node new_trie = trie_assoc(Node(trie), key_node(fnv1a(key)), Node(value));
-
-    if(new_trie.type == TRIE_MAP)
-        return new_trie.data.trie;
-    else
-        return NULL; // Something went wrong!
-}
-
-Trie* without(Trie* trie, const char* key)
-{
-    if(trie->root.type == NULL_NODE)
-    {
-        return trie;
-    }
-
-    else
-    {
-        uint32_t hash = fnv1a(key);
-        Node new_root = without(trie->root, 0, hash_key(hash), key_node(hash));
-        if(identical(new_root, trie->root))
-            return trie;
-
-        return new Trie(trie->_meta, trie->count - 1, new_root, trie->has_null, trie->null_value);
-    }
 }
 
 Iterator iterator(Trie* trie)

@@ -83,6 +83,9 @@ void print_object_in_array(const object B,int arrayNum)
     case ARRAY:
         print_array(B,arrayNum+1);
         break;
+    case TRIE:
+        print_trie(B);
+        break;
     case panopticon::OPERATION:
         out() << " Operator";
         break;
@@ -133,7 +136,7 @@ bool print_array(const object &A, int arrayNum,bool isTree)
     }
     if(arrayNum==0)
     {
-        out() << std::endl;
+         out() << std::endl;
     }
 }
 

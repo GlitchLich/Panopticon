@@ -33,11 +33,6 @@ Entry entry(Trie* trie, uint32_t key);
 object lookup(Trie* trie, uint32_t key);
 Trie* insert(Trie* trie, uint32_t key, const object& value);
 Trie* without(Trie* trie, uint32_t key);
-bool contains(Trie* trie, const char* key);
-Entry entry(Trie* trie, const char* key);
-object lookup(Trie* trie, const char* key);
-Trie* insert(Trie* trie, const char* key, const object& value);
-Trie* without(Trie* trie, const char* key);
 Iterator iterator(Trie* trie);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -59,14 +54,14 @@ struct HashCollisionNode;
 // Trie types, used for type tags
 enum Type
 {
-    NULL_NODE,
-    KEY,
-    OPTIC_OBJECT,
-    ARRAY_NODE,
-    BITMAP_INDEXED_NODE,
-    HASH_COLLISION_NODE,
-    TRIE_MAP,
-    NODE
+    NULL_NODE = 0, // 0
+    KEY, // 1
+    OPTIC_OBJECT, // 2
+    ARRAY_NODE, // 3
+    BITMAP_INDEXED_NODE, // 4
+    HASH_COLLISION_NODE, // 5
+    TRIE_MAP, // 6
+    NODE // 7
 };
 
 //////////////////
@@ -153,9 +148,11 @@ struct Iterator
 {
     Trie* trie;
     NodeSeq* ns;
+    Entry* entries;
     Entry next();
     bool has_next();
-    Iterator(Trie* trie) : ns(node_seq(trie)), trie(trie) {}
+    Iterator(Trie* trie);
+    void collect_entries(Entry* entries, unsigned int index, Node node); // recursive collect on Node, constructor calls on trie by default
 };
 
 object node_to_object(const Node& node);

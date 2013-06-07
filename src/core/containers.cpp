@@ -15,11 +15,15 @@ namespace panopticon
 bool print_trie(const object& trie)
 {
     trie::Iterator iter(trie.data.trie);
+    std::cout << "Iter.has_next: " << iter.has_next() << std::endl;
+    out() << "{ ";
 
     while(iter.has_next())
     {
+        std::cout << "ITER.has_next" << std::endl;
         trie::Entry entry = iter.next();
-        out() << "\"" << entry.key << "\" : ";
+        std::cout << "trie::Entry.key: " << entry.key << " value.type: " << entry.obj.type << std::endl;
+        out() << "\"" << reverse_variable_name_lookup[entry.key] << "\" : ";
 
         panopticon::object& value = entry.obj;
 
@@ -39,7 +43,7 @@ bool print_trie(const object& trie)
 
         case OPERATION_TREE:
         case ARRAY:
-            print_array(value);
+            print_array(value, 1);
             break;
 
         case DICTIONARY:
@@ -63,6 +67,8 @@ bool print_trie(const object& trie)
 
         out() << " ";
     }
+
+    out() << " } ";
 }
 
 bool trie_lookup(object& value, const object& trie, const object& key)
@@ -166,6 +172,7 @@ bool create_trie(object& result_A, const object& B)
 {
     std::cout << "CREATING A TRIE!!!!!!!!!!!!!!!!!!!" << std::endl;
     result_A = optic::mem_alloc(optic::TRIE);
+    std::cout << "Trie Array Size: " << B.data.array->size() << std::endl;
 
     for(int i = 0; i < B.data.array->size() - 1; i += 2)
     {
@@ -174,6 +181,9 @@ bool create_trie(object& result_A, const object& B)
             // std::cout << B.data.array->at(i).data.variable_number << std::endl;
             // Must redeclare!!!!
             result_A.data.trie = trie::insert(result_A.data.trie, B.data.array->at(i).data.variable_number, mem_copy(B.data.array->at(i+1)));
+            std::cout << "Trie->root.type" << result_A.data.trie->root.type << std::endl;
+            std::cout << "Trie->count = " << result_A.data.trie->count << std::endl;
+            // print_trie(result_A);
         }
 
         else
@@ -190,6 +200,8 @@ bool create_trie(object& result_A, const object& B)
             optic_stack.pop_back();
         }
     }
+
+    print_object(result_A);
 }
 
 bool print_dictionary(const object& dict)
@@ -225,6 +237,10 @@ bool print_dictionary(const object& dict)
 
         case DICTIONARY:
             print_dictionary(value);
+            break;
+
+        case TRIE:
+            print_trie(value);
             break;
 
         case FUNCTION:

@@ -1,13 +1,44 @@
 //Dictionary Tests!
 //FOUR different syntaxes, Horziontal vs Vertical, keyworded dict vs none
 
+test = { one = 1 }
+two = { one = 1 two = 2 }
+print(test)
+print(two)
+
+string = { hello = "world" }
+string2 = { hello = "hello" world = "world" }
+
 //Horizontal construction
 myDict = { Turtles = true Octopi = "are cool" Array = [0 1 2 3 4] dictFunc x y = x + y Dragon = { test = 4 } }
+myDict2 = { Turtles = true Octopi = "are cool" dictFunc x y = x + y Dragon = { test = 4 } }
+four = { one = 1 two = 2 three = 3 four = 4 }
+five = { one = 1 two = 2 three = 3 four = 4 five = 5 }
+six = { one = 1 two = 2 three = 3 four = 4 five = 5 size = 6 }
+seven = { one = 1 two = 2 three = 3 four = 4 five = 5 six = 6 seven = 7 }
+eight = { one = 1 two = 2 three = 3 four = 4 five = 5 six = 6 seven = 7 eight = 8 }
+ten = { one = 1 two = 2 three = 3 four = 4 five = 5 six = 6 seven = 7 eight = 8 nine = 9 ten = 10 }
+sixteen = { one = 1 two = 2 three = 3 four = 4 five = 5 six = 6 seven = 7 eight = 8 nine = 9 ten = 10 eleven = 11 twelve = 12 thirteen = 13 fourteen = 14 fifteen = 15 sixten = 16 }
+seventeen = { one = 1 two = 2 three = 3 four = 4 five = 5 six = 6 seven = 7 eight = 8 nine = 9 ten = 10 eleven = 11 twelve = 12 thirteen = 13 fourteen = 14 fifteen = 15 sixten = 16 seventeen = 17 }
 
-print(myDict)
+nextedSevenTeen = { one = 1 two = 2 three = 3 four = 4 five = 5 six = 6 seven = 7 eight = 8 nine = 9 ten = 10 eleven = 11 twelve = 12 thirteen = 13 fourteen = 14 fifteen = 15 sixten = 16 nest = { seventeen = 17 } }
+
+
+print(four)
+print(five)
+print(six)
+print(myDict2)
 myArray = [ 0 1 2 3 ]
-print(myDict)
-
+print(myArray)
+print(seven)
+print(eight)
+print(ten)
+[ 1 .. 99 ]
+numDict = { one = 1 }
+arrayDict = { one = [ 1 ] }
+dictArray = [ { one = 1 two = 2 three = 3 } { four = 4 five = 5 } ]
+dictArray[0]
+print(dictArray)
 //Vertical Construction, with nested dictionaries
 myDict = {       
 	Turtles = true 
@@ -53,6 +84,11 @@ myDict::Turtles
 myDict::Octopi
 myDict::Array
 myDict::Dragon
+
+myDict2::Turtles
+myDict2::Octopi
+myDict2::Array
+myDict2::Dragon
 
 //Nested Dictionaries
 myDict::Dragon::test
@@ -143,3 +179,5 @@ level1::level2::level3
 level1::level2::level3::level4
 level1::level2::level3::level4::level5
 
+test = [ 0 1 2 3 ]
+test
