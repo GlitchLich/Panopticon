@@ -207,7 +207,7 @@ bool print_object(const object &A)
         break;
 
     case panopticon::TRIE:
-        print_trie(A);
+        print_trie(A, true);
         break;
     case panopticon::VARIABLE:
     case panopticon::UNDECLARED_VARIABLE:

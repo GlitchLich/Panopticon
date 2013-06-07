@@ -71,7 +71,7 @@ inline uint32_t fnv1a(const char* text, uint32_t hash = Seed)
 }
 
 // Tries
-bool print_trie(const object& trie);
+bool print_trie(const object& trie, bool endl = false);
 bool trie_lookup(object& value, const object& trie, const object& key);
 bool trie_contains(object& boolean, const object& trie, const object& key);
 bool trie_insert(object& trie_A,const object& string_B, const object& object_C);

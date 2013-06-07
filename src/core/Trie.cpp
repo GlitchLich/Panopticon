@@ -1339,6 +1339,7 @@ object lookup(Trie* trie, Node key)
 
 Trie* insert(Trie* trie, uint32_t key, const object &value)
 {
+    print_object(value);
     Node new_trie = trie_assoc(Node(trie), key_node(key), Node(value));
 
     if(new_trie.type == TRIE_MAP)

@@ -12,7 +12,7 @@
 namespace panopticon
 {
 
-bool print_trie(const object& trie)
+bool print_trie(const object& trie, bool endl)
 {
     trie::Iterator iter(trie.data.trie);
     std::cout << "Iter.has_next: " << iter.has_next() << std::endl;
@@ -39,6 +39,10 @@ bool print_trie(const object& trie)
 
         case BOOL:
             out() << value.data.boolean;
+            break;
+
+        case LIST:
+            print_list(value, 1);
             break;
 
         case OPERATION_TREE:
@@ -69,6 +73,9 @@ bool print_trie(const object& trie)
     }
 
     out() << " } ";
+
+    if(endl)
+        out() << std::endl;
 }
 
 bool trie_lookup(object& value, const object& trie, const object& key)
@@ -201,7 +208,7 @@ bool create_trie(object& result_A, const object& B)
         }
     }
 
-    print_object(result_A);
+    // print_object(result_A);
 }
 
 bool print_dictionary(const object& dict)
