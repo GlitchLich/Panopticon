@@ -22,6 +22,7 @@
 #include "../../include/core/errors.h"
 #include "../../include/core/heap.h"
 #include "include/core/stack.h"
+#include "include/core/Trie.h"
 #include "core/Memory.h"
 
 #undef STRING
@@ -1027,7 +1028,7 @@ dict(A) ::= LCURL LCBLOCK assignment_list(B) RCBLOCK RCURL.
 expr(A) ::= dict(B).
 {
     optic::object dict;
-    optic::store_operations(dict,B,&optic::create_dictionary,false);
+    optic::store_operations(dict,B,&optic::create_trie,false);
 
     optic::optic_stack.push_back(dict);
     optic::evaluate_top();
@@ -1044,7 +1045,7 @@ expr(A) ::= dict(B).
 //LOOKUP
 expr(A) ::= NAME(B) LCURL NAME(C) RCURL.
 {
-    store_operations(A,B,C,&optic::dictionary_lookup);
+    store_operations(A,B,C,&optic::trie_lookup);
     if (!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -1054,7 +1055,7 @@ expr(A) ::= NAME(B) LCURL NAME(C) RCURL.
 
 expr(A) ::= NAME(B) LCURL string(C) RCURL.
 {
-    store_operations(A,B,C,&optic::dictionary_lookup);
+    store_operations(A,B,C,&optic::trie_lookup);
     if (!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -1064,7 +1065,7 @@ expr(A) ::= NAME(B) LCURL string(C) RCURL.
 
 name_space(A) ::= NAME(B) COLONCOLON NAME(C).
 {
-    store_operations(A,B,C,&optic::dictionary_lookup);
+    store_operations(A,B,C,&optic::trie_lookup);
     if (!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -1074,7 +1075,7 @@ name_space(A) ::= NAME(B) COLONCOLON NAME(C).
 
 name_space(A) ::= function_call(B) COLONCOLON NAME(C).
 {
-    store_operations(A,B,C,&optic::dictionary_lookup);
+    store_operations(A,B,C,&optic::trie_lookup);
     if (!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -1084,7 +1085,7 @@ name_space(A) ::= function_call(B) COLONCOLON NAME(C).
 
 name_space(A) ::= name_space(B) COLONCOLON NAME(C).
 {
-    store_operations(A,B,C,&optic::dictionary_lookup);
+    store_operations(A,B,C,&optic::trie_lookup);
     if (!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);

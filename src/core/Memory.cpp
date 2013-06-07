@@ -6,6 +6,7 @@
 #include "include/core/heap.h"
 #include "include/core/stack.h"
 #include "include/Grammar/parse.h"
+#include "include/core/Trie.h"
 
 namespace panopticon
 {
@@ -719,6 +720,11 @@ object mem_alloc(Type type)
         obj.data.dictionary = new Dictionary();
         gc_register(obj);
         break;
+    case TRIE:
+        increment_dictionary();
+        obj.data.trie = trie::new_trie();
+        // gc_register(obj); HAVEN'T WORKED THIS OUT YET
+        break;
     case ERROR:
         break;
     case STATEMENT_LIST:
@@ -934,6 +940,9 @@ object mem_copy(const object &obj)
     case DICTIONARY:
         new_object.data.dictionary = copy_dictionary(obj.data.dictionary);
         gc_register(new_object);
+        break;
+    case TRIE:
+        new_object.data.trie = obj.data.trie; // Persistent, just copy the pointer
         break;
     case ERROR:
         new_object.data.number = obj.data.number;
