@@ -1,6 +1,7 @@
 //Dictionary Tests!
 //FOUR different syntaxes, Horziontal vs Vertical, keyworded dict vs none
-
+dictionary = { Turtles = true Octopi = "are cool" dictFunc x y = x + y Dragon = { test = 4 } }
+dictionary::Turtles
 
 yes = { yes = "yo" }
 yes
