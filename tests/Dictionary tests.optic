@@ -5,14 +5,47 @@ funcDict = { mul x y = x * y }
 funcDict
 metamul = lookup(funcDict "mul")
 metamul( 2 3 )
+type(funcDict)
+type(metamul( 2 3 ))
+type(type)
+func x = x * 10
+type(func)
+type( func funcDict metamul( 2 3 ) )
 
 numKeys = { one = 1 }
 numKeys
+print(remove(numKeys "one"))
 // Keys can be numbers (float or int) as well strings
 moreNumKeys = insert(numKeys 2 2)
 moreNumKeys
 floatNumKeys = insert(numKeys 666.666 666.666)
 floatNumKeys
+moreInserts = insert(numKeys 1 1 2 2 3 3)
+moreInserts
+wordInsert = insert(numKeys "five" 5)
+wordInsert
+wordInserts = insert(numKeys "four" 4 "two" 2 "three" 3)
+wordInserts
+moreRemoves = remove(moreInserts 1 2 3)
+moreRemoves
+// Won't work, too few arguments
+remove( moreRemoves )
+// Won't work, wrong number of arguments
+insert(numKeys "one")
+// This should throw a useful error, but I think we have parsing problems
+insert(numKeys 1 1 "five")
+
+evil = { doom = 666 }
+evil
+replace = insert(evil "doom" 777)
+replace
+print(replace)
+print(insert(replace "ninja" "turtle"))
+added = insert(evil "moreDoom" 888)
+added
+replaceDoom = insert(added "doom" 999)
+print(replaceDoom)
+
 // Be careful though, precision is just to three decimal places
 print(insert(numKeys 666.6666 666.666))
 print(insert(numKeys 666.6669 666.666))

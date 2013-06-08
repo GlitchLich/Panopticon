@@ -1117,21 +1117,15 @@ bool lookup(object& result, const Array& arguments)
 
 bool insert(object& result, const Array& arguments)
 {
-    if(arguments.size() != 3)
+    if(arguments.size() % 2 != 1 && arguments.size() < 3)
     {
-        out() << "Error: insert received an incorrect number of arguments: " << arguments.size() << ". Use insert(container key value)" << std::endl;
+        out() << "Error: insert received an incorrect number of arguments: " << arguments.size() << ". Use insert(container key value key2 value2 etc...)" << std::endl;
         correct_parsing = false;
         return false;
     }
 
     object map = arguments.at(0);
     setup_argument(map);
-
-    object key = arguments.at(1);
-    setup_argument(key);
-
-    object value = arguments.at(2);
-    setup_argument(value);
 
     if(map.type != TRIE)
     {
@@ -1140,32 +1134,43 @@ bool insert(object& result, const Array& arguments)
         return false;
     }
 
-    if(key.type != STRING && key.type != VARIABLE && key.type != NUMBER)
+    for(unsigned int i = 1; i < arguments.size(); i += 2)
     {
-        out() << "Error: Received a non-String as the 2nd argument for insert(map key value)" << std::endl;
-        correct_parsing = false;
-        return false;
+        object key = arguments.at(i);
+        setup_argument(key);
+
+        object value = arguments.at(i + 1);
+        setup_argument(value);
+
+
+
+        if(key.type != STRING && key.type != VARIABLE && key.type != NUMBER)
+        {
+            out() << "Error: Received a non-String as the 2nd argument for insert(dictionary key value)" << std::endl;
+            correct_parsing = false;
+            return false;
+        }
+
+        trie_insert(map, key, value);
     }
 
-    trie_insert(map, key, value);
+    std::cout << "Trie.insert.type = " << type_string(map.type) << std::endl;
+
     resolve_trie(result, map.data.trie);
     return true;
 }
 
 bool remove(object& result, const Array& arguments)
 {
-    if(arguments.size() != 2)
+    if(arguments.size() < 2)
     {
-        out() << "Error: remove received an incorrect number of arguments: " << arguments.size() << ". Use remove(container key)" << std::endl;
+        out() << "Error: remove received a wrong number of arguments: " << arguments.size() << ". remove must be used as remove(container key key2 key3 etc...)" << std::endl;
         correct_parsing = false;
         return false;
     }
 
     object map = arguments.at(0);
     setup_argument(map);
-
-    object key = arguments.at(1);
-    setup_argument(key);
 
     if(map.type != TRIE)
     {
@@ -1174,16 +1179,112 @@ bool remove(object& result, const Array& arguments)
         return false;
     }
 
-    if(key.type != STRING && key.type != VARIABLE && key.type != NUMBER)
+    for(unsigned int i = 1; i < arguments.size(); ++i)
     {
-        out() << "Error: Received a non-String as the 2nd argument for remove(map key)" << std::endl;
-        correct_parsing = false;
-        return false;
+        object key = arguments.at(i);
+        setup_argument(key);
+
+        if(key.type != STRING && key.type != VARIABLE && key.type != NUMBER)
+        {
+            out() << "Error: Received a non-String as the 2nd argument for remove(dictionary key)" << std::endl;
+            correct_parsing = false;
+            return false;
+        }
+
+        trie_remove(map, key);
     }
 
-    trie_remove(map, key);
+
     resolve_trie(result, map.data.trie);
-    // resolve_trie(result, trie::without(map.data.trie, fnv1a(key.data.string->c_str())));
+    return true;
+}
+
+object type_to_string_object(const object& obj); // Forward declaration
+
+object variable_to_string_object(const object& obj)
+{
+    optic_stack.push_back(obj);
+    evaluate_top();
+    object var = optic_stack.back();
+    optic_stack.pop_back();
+    return type_to_string_object(var);
+}
+
+object type_to_string_object(const object& obj)
+{
+    switch(obj.type)
+    {
+    case NIL:
+        return mem_string_alloc("Nil");
+        break;
+
+    case BOOL:
+        return mem_string_alloc("Bool");
+        break;
+
+    case NUMBER:
+        return mem_string_alloc("Number");
+        break;
+
+    case STRING:
+        return mem_string_alloc("String");
+        break;
+
+    case FUNCTION:
+        return mem_string_alloc("Function");
+        break;
+
+    case ARRAY:
+    case LIST:
+        return mem_string_alloc("Array");
+        break;
+
+    case DICTIONARY:
+    case TRIE:
+        return mem_string_alloc("Dictionary");
+        break;
+
+    case PRIMITIVE:
+        return mem_string_alloc("Primitive");
+        break;
+
+    case UNDECLARED_VARIABLE:
+        return variable_to_string_object(obj);
+        break;
+
+    case VARIABLE:
+        return mem_string_alloc(reverse_variable_name_lookup[obj.data.variable_number].c_str());
+        break;
+
+    default:
+        return mem_string_alloc(type_string(obj.type).c_str());
+        break;
+    }
+}
+
+bool type_of(object& result, const Array& arguments)
+{
+    if(arguments.size() == 0)
+    {
+        result.type = NIL;
+        result.data.number = 0;
+    }
+
+    else if(arguments.size() > 1)
+    {
+        result = mem_alloc(ARRAY);
+
+        for(unsigned int i = 0; i < arguments.size(); ++i)
+        {
+            result.data.array->push_back(type_to_string_object(arguments.at(i)));
+        }
+    }
+
+    else
+    {
+        result = type_to_string_object(arguments.at(0));
+    }
+
     return true;
 }
 
@@ -1335,6 +1436,13 @@ void register_container_primitives()
     premove.data.primitive->num_arguments = 2;
     premove.data.primitive->p_func = remove;
     set_variable(variable_number, premove);
+
+    object ptype = mem_alloc(PRIMITIVE);
+    variable_number = get_string_hash("type");
+    ptype.data.primitive->name = variable_number;
+    ptype.data.primitive->num_arguments = 1;
+    ptype.data.primitive->p_func = type_of;
+    set_variable(variable_number, ptype);
 }
 
 } // panopticon namespace

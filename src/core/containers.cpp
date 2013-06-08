@@ -24,7 +24,7 @@ object hash_number(object& number)
 }
 
 // READS a hash entry from the global hash map
-object get_hash(object& obj)
+object get_hash(object& obj, bool write = false)
 {
     object result;
     result.type = VARIABLE;
@@ -36,7 +36,10 @@ object get_hash(object& obj)
         break;
 
     case STRING:
-        result.data.variable_number = fnv1a(obj.data.string->c_str());
+        if(write)
+            result.data.variable_number = get_string_hash(*obj.data.string);
+        else
+            result.data.variable_number = fnv1a(obj.data.string->c_str());
         break;
 
     case NUMBER:
@@ -102,6 +105,10 @@ bool print_trie(const object& trie, bool endl)
 
         case NIL:
             out() << "Nil";
+            break;
+
+        case VARIABLE:
+            out() << reverse_variable_name_lookup[value.data.variable_number];
             break;
 
         default:
@@ -200,7 +207,7 @@ bool trie_contains(object& boolean, const object& trie, object &key)
 
 bool trie_insert(object& trie_A, object& string_B, object& object_C)
 {
-    string_B = get_hash(string_B);
+    string_B = get_hash(string_B, true);
     trie_A.data.trie = trie::insert(trie_A.data.trie, string_B.data.variable_number, object_C);
     return true;
 }
