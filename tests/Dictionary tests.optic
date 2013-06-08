@@ -1,6 +1,21 @@
 //Dictionary Tests!
 //FOUR different syntaxes, Horziontal vs Vertical, keyworded dict vs none
 
+
+yes = { yes = "yo" }
+yes
+// good
+no = insert(yes "yes" 0 )
+no
+noo = insert(yes "yes" 0 0)
+// bad, won't work because you gave (dict key val key) instead of (dict key val key val)
+noo
+
+stringDict = { one = "one" two = "two" three = "three" }
+stringDict
+insert(stringDict "four" "four")
+lookup(stringDict "one")
+
 funcDict = { mul x y = x * y }
 lookup(funcDict "mul")
 metamul = lookup(funcDict "mul")
@@ -9,6 +24,7 @@ type(funcDict)
 type(metamul( 2 3 ))
 type(type)
 func x = x * 10
+// CRASHES RIGHT NOW
 type(func)
 type( func funcDict metamul( 2 3 ) )
 size( metamul( 2 3 ) funcDict )
@@ -21,6 +37,9 @@ size( func funcDict insert(funcDict "one" 1 "two" 2 "Three" 3) )
 numKeys = { one = 1 }
 numKeys
 print(remove(numKeys "one"))
+print(insert(numKeys "one" 1.1))
+type(numKeys)
+print(type(insert(numKeys "one" 1.1)))
 // Keys can be numbers (float or int) as well strings
 moreNumKeys = insert(numKeys 2 2)
 moreNumKeys
@@ -44,11 +63,10 @@ insert(numKeys 1 1 "five")
 evil = { doom = 666 }
 evil
 replace = insert(evil "doom" 777)
-// Printing is weird
 replace
-// The first print is right, second is not. Weird.
 print(replace)
-// I don't even know what is happening here. Strings as dictionary values arent working right.
+type(replace)
+print(type(replace))
 print(insert(replace "ninja" "turtle"))
 added = insert(evil "moreDoom" 888)
 added
@@ -92,7 +110,6 @@ size(elevenNoOne)
 elevenNoOneTwo = remove(elevenNoOne "two")
 elevenNoOneTwo
 size(elevenNoOneTwo)
-// Something is wrong here. Our "three" dissapears
 replaceThree = insert(elevenNoOneTwo "three" false)
 replaceThree
 print(replaceThree)

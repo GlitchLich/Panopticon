@@ -1325,7 +1325,7 @@ bool lookup(object& result, const Array& arguments)
 
 bool insert(object& result, const Array& arguments)
 {
-    if(arguments.size() % 2 != 1 && arguments.size() < 3)
+    if(arguments.size() % 2 == 0 || arguments.size() < 3)
     {
         out() << "Error: insert received an incorrect number of arguments: " << arguments.size() << ". Use insert(container key value key2 value2 etc...)" << std::endl;
         correct_parsing = false;
@@ -1399,7 +1399,6 @@ bool remove(object& result, const Array& arguments)
         }
         trie_remove(map, key);
     }
-
 
     resolve_trie(result, map.data.trie);
     return true;
