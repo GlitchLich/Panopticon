@@ -1281,38 +1281,6 @@ Trie* new_trie()
     return new Trie(NULL, 0, Node(), false, Node());
 }
 
-Trie* create(const Array& entry_array)
-{
-    Node trie_node = empty_node(TRIE_MAP);
-
-    for(unsigned int i = 0; i < entry_array.size(); i += 2)
-    {
-        trie_node = trie_assoc(
-            trie_node,
-            key_node(entry_array.at(i).data.number),
-            object_node(entry_array.at(i + 1))
-        );
-    }
-
-    return trie_node.data.trie;
-}
-
-Trie* create(const std::deque<Entry>& entry_array)
-{
-    Node trie_node = empty_node(TRIE_MAP);
-
-    for(unsigned int i = 0; i < entry_array.size(); i++)
-    {
-        trie_node = trie_assoc(
-            trie_node,
-            key_node(entry_array.at(i).key),
-            object_node(entry_array.at(i).obj)
-        );
-    }
-
-    return trie_node.data.trie;
-}
-
 Trie* create(Entry* entry_array, unsigned int size)
 {
     Node trie_node = empty_node(TRIE_MAP);
@@ -1327,20 +1295,6 @@ Trie* create(Entry* entry_array, unsigned int size)
     }
 
     return trie_node.data.trie;
-}
-
-Trie* create(Trie* meta, const Array& entry_array)
-{
-    Trie* trie = create(entry_array);
-    trie->_meta = meta;
-    return trie;
-}
-
-Trie* create(Trie* meta, const std::deque<Entry>& entry_array)
-{
-    Trie* trie = create(entry_array);
-    trie->_meta = meta;
-    return trie;
 }
 
 bool contains(Trie* trie, uint32_t key)

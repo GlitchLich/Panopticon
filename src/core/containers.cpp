@@ -12,17 +12,56 @@
 namespace panopticon
 {
 
+object hash_number(object& number)
+{
+    object string;
+    cast_to_string(string, number);
+
+    object hash;
+    hash.type = VARIABLE;
+    hash.data.variable_number = get_string_hash(*string.data.string);
+    return hash;
+}
+
+// READS a hash entry from the global hash map
+object get_hash(object& obj)
+{
+    object result;
+    result.type = VARIABLE;
+
+    switch(obj.type)
+    {
+    case VARIABLE:
+        return obj;
+        break;
+
+    case STRING:
+        result.data.variable_number = fnv1a(obj.data.string->c_str());
+        break;
+
+    case NUMBER:
+        return hash_number(obj);
+        break;
+
+    default:
+        result.data.variable_number = 0;
+        break;
+    }
+
+    return result;
+}
+
 bool print_trie(const object& trie, bool endl)
 {
     trie::Iterator iter(trie.data.trie);
-    std::cout << "Iter.has_next: " << iter.has_next() << std::endl;
+    // std::cout << "Iter.has_next: " << iter.has_next() << std::endl;
     out() << "{ ";
 
     while(iter.has_next())
     {
-        std::cout << "ITER.has_next" << std::endl;
+        // std::cout << "ITER.has_next" << std::endl;
         trie::Entry entry = iter.next();
-        std::cout << "trie::Entry.key: " << entry.key << " value.type: " << entry.obj.type << std::endl;
+        // std::cout << "trie::Entry.key: " << entry.key << " value.type: " << entry.obj.type << std::endl;
         out() << "\"" << reverse_variable_name_lookup[entry.key] << "\" : ";
 
         panopticon::object& value = entry.obj;
@@ -78,11 +117,11 @@ bool print_trie(const object& trie, bool endl)
         out() << std::endl;
 }
 
-bool trie_lookup(object& value, const object& trie, const object& key)
+bool trie_lookup(object& value, const object& trie, object& key)
 {
-    std::cout << "TRIE LOOK UP!!!!!!!!!!" << std::endl;
+    key = get_hash(key);
 
-    if(key.type != UNDECLARED_VARIABLE || key.type != VARIABLE)
+    if(key.type != UNDECLARED_VARIABLE && key.type != VARIABLE)
     {
         out() << "Error: Trie key must be a String." << std::endl;
         correct_parsing = false;
@@ -143,9 +182,11 @@ bool trie_lookup(object& value, const object& trie, const object& key)
     return true;
 }
 
-bool trie_contains(object& boolean, const object& trie, const object& key)
+bool trie_contains(object& boolean, const object& trie, object &key)
 {
-    if(key.type != UNDECLARED_VARIABLE || key.type != VARIABLE)
+    key = get_hash(key);
+
+    if(key.type != UNDECLARED_VARIABLE && key.type != VARIABLE)
     {
         out() << "Trie key must be a String." << std::endl;
         correct_parsing = false;
@@ -157,40 +198,33 @@ bool trie_contains(object& boolean, const object& trie, const object& key)
     return true;
 }
 
-bool trie_insert(object& trie_A,const object& string_B, const object& object_C)
+bool trie_insert(object& trie_A, object& string_B, object& object_C)
 {
-    object boolean;
-    trie_contains(boolean, trie_A, string_B);
+    string_B = get_hash(string_B);
+    trie_A.data.trie = trie::insert(trie_A.data.trie, string_B.data.variable_number, object_C);
+    return true;
+}
 
-    if(!boolean.data.boolean)
-    {
-        trie_A.data.trie = trie::insert(trie_A.data.trie, string_B.data.variable_number, object_C);
-    }
-
-    else
-    {
-        out() << "Error:  Cannot insert key: " << reverse_variable_name_lookup[string_B.data.variable_number] << "into dictionary because this key already exists." << std::endl;
-        correct_parsing = false;
-        return false;
-    }
+bool trie_remove(object& trie_A, object& string_B)
+{
+    string_B = get_hash(string_B);
+    trie_A.data.trie = trie::without(trie_A.data.trie, string_B.data.variable_number);
 }
 
 bool create_trie(object& result_A, const object& B)
 {
-    std::cout << "CREATING A TRIE!!!!!!!!!!!!!!!!!!!" << std::endl;
     result_A = optic::mem_alloc(optic::TRIE);
-    std::cout << "Trie Array Size: " << B.data.array->size() << std::endl;
 
     for(int i = 0; i < B.data.array->size() - 1; i += 2)
     {
         if(B.data.array->at(i).type != optic::ARRAY)
         {
-            // std::cout << B.data.array->at(i).data.variable_number << std::endl;
-            // Must redeclare!!!!
-            result_A.data.trie = trie::insert(result_A.data.trie, B.data.array->at(i).data.variable_number, mem_copy(B.data.array->at(i+1)));
-            std::cout << "Trie->root.type" << result_A.data.trie->root.type << std::endl;
-            std::cout << "Trie->count = " << result_A.data.trie->count << std::endl;
-            // print_trie(result_A);
+            object key = B.data.array->at(i);
+
+            if(key.type == NUMBER || key.type == STRING)
+                key = get_hash(key);
+
+            result_A.data.trie = trie::insert(result_A.data.trie, key.data.variable_number, mem_copy(B.data.array->at(i+1)));
         }
 
         else
@@ -207,8 +241,6 @@ bool create_trie(object& result_A, const object& B)
             optic_stack.pop_back();
         }
     }
-
-    // print_object(result_A);
 }
 
 bool print_dictionary(const object& dict)
@@ -273,7 +305,7 @@ bool print_dictionary(const object& dict)
 
 bool dictionary_lookup(object& value, const object& dict, const object& key)
 {
-    if(key.type != UNDECLARED_VARIABLE || key.type != VARIABLE)
+    if(key.type != UNDECLARED_VARIABLE && key.type != VARIABLE)
     {
         out() << "Error: Dictionary key must be a String." << std::endl;
         correct_parsing = false;

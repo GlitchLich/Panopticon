@@ -6,6 +6,17 @@ funcDict
 metamul = lookup(funcDict "mul")
 metamul( 2 3 )
 
+numKeys = { one = 1 }
+numKeys
+// Keys can be numbers (float or int) as well strings
+moreNumKeys = insert(numKeys 2 2)
+moreNumKeys
+floatNumKeys = insert(numKeys 666.666 666.666)
+floatNumKeys
+// Be careful though, precision is just to three decimal places
+print(insert(numKeys 666.6666 666.666))
+print(insert(numKeys 666.6669 666.666))
+
 ten = { one = 1 two = 2 three = 3 four = 4 five = 5 six = 6 seven = 7 eight = 8 nine = 9 ten = 10 }
 ten
 tenPlusTen = map(\x = x + 10 ten)
@@ -17,6 +28,8 @@ tenEven = filter(\x = x % 2 == 0 ten)
 tenEven
 eleven = insert(ten "eleven" 11)
 eleven
+numEleven = insert(ten 11 11)
+numEleven
 size(eleven)
 ten
 one = lookup(eleven "one")
@@ -33,7 +46,7 @@ rightEleven = lookup(eleven "eleven")
 rightEleven
 elevenNoOne = remove(eleven "one")
 elevenNoOne
-elevenNoOneTwo = remove(eleven "one")
+elevenNoOneTwo = remove(eleven "two")
 elevenNoOneTwo
 
 lookup(ten "ten")
@@ -131,6 +144,9 @@ myDict::Turtles
 myDict::Octopi
 myDict::Array
 myDict::Dragon
+lookup(myDict "Turtles")
+lookup(myDict "Octopi")
+lookup(myDict "Array")
 
 myDict2::Turtles
 myDict2::Octopi

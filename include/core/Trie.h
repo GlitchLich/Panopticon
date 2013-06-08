@@ -24,11 +24,7 @@ struct Iterator; // Trie HashMap iterator, use Entry Iterator::next() and bool I
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 Trie* new_trie(); // Create a blank Trie
-Trie* create(const Array& entry_array); // create from array of panopticon::objects, key/val pairs alternating
-Trie* create(const std::deque<Entry>& entry_array); // create from a deque of Entry structs
 Trie* create(Entry* entry_array, unsigned int size);
-Trie* create(Trie* meta, const Array& entry_array); // create from array of panopticon::objects, key/val pairs alternating with Meta Trie
-Trie* create(Trie* meta, const std::deque<Entry>& entry_array); // create from a deque of Entry structs with Meta Trie
 bool contains(Trie* trie, uint32_t key);
 Entry entry(Trie* trie, uint32_t key);
 object lookup(Trie* trie, uint32_t key);

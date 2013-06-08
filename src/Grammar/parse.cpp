@@ -596,4 +596,14 @@ inline Variable get_string_hash(std::string string)
     }*/
 }
 
+Variable get_float_hash(Number number)
+{
+    std::stringstream ss;
+    ss << number; // Cheating is easy. I like easy.
+    Variable var = fnv1a(number);
+    string_hash_map[ss.str()] = var;
+    reverse_variable_name_lookup[var] = ss.str();
+    return var;
 }
+
+} // panopticon namespace

@@ -1284,4 +1284,44 @@ bool assign_variable(object& A, const object& B, const object& C)
     }
 }
 
+const char* number_to_string(Number number)
+{
+    std::stringstream ss;
+    ss << number;
+    return ss.str().c_str();
 }
+
+bool cast_to_string(object&A, const object& B)
+{
+    A.type = STRING;
+
+    switch(B.type)
+    {
+    case panopticon::NUMBER:
+        A = mem_string_alloc(number_to_string(B.data.number));
+        break;
+
+    case panopticon::STRING:
+        A = mem_copy(B);
+        break;
+
+    case panopticon::BOOL:
+        if(B.data.boolean)
+            A = mem_string_alloc("true");
+        else
+            A = mem_string_alloc("false");
+        break;
+
+    case NIL:
+        A = mem_string_alloc("");
+        break;
+
+    default:
+        out() << "can't cast " << type_string(B.type) << " to String" << std::endl;
+        correct_parsing = false;
+        return false;
+        break;
+    }
+}
+
+} // panopticon namespace

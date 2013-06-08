@@ -1140,15 +1140,15 @@ bool insert(object& result, const Array& arguments)
         return false;
     }
 
-    if(key.type != STRING)
+    if(key.type != STRING && key.type != VARIABLE && key.type != NUMBER)
     {
         out() << "Error: Received a non-String as the 2nd argument for insert(map key value)" << std::endl;
         correct_parsing = false;
         return false;
     }
 
-
-    resolve_trie(result, trie::insert(map.data.trie, fnv1a(key.data.string->c_str()), value));
+    trie_insert(map, key, value);
+    resolve_trie(result, map.data.trie);
     return true;
 }
 
@@ -1174,14 +1174,16 @@ bool remove(object& result, const Array& arguments)
         return false;
     }
 
-    if(key.type != STRING)
+    if(key.type != STRING && key.type != VARIABLE && key.type != NUMBER)
     {
         out() << "Error: Received a non-String as the 2nd argument for remove(map key)" << std::endl;
         correct_parsing = false;
         return false;
     }
 
-    resolve_trie(result, trie::without(map.data.trie, fnv1a(key.data.string->c_str())));
+    trie_remove(map, key);
+    resolve_trie(result, map.data.trie);
+    // resolve_trie(result, trie::without(map.data.trie, fnv1a(key.data.string->c_str())));
     return true;
 }
 
