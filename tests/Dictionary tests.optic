@@ -8,7 +8,7 @@ yes
 no = insert(yes "yes" 0 )
 no
 noo = insert(yes "yes" 0 0)
-// Breakage. Should just print an error though.
+// bad, won't work because you gave (dict key val key) instead of (dict key val key val)
 noo
 
 stringDict = { one = "one" two = "two" three = "three" }
