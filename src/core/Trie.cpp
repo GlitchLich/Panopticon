@@ -1461,6 +1461,44 @@ bool map(Trie* trie, object& result, const object& function, Dictionary& context
     }
 }
 
+bool filter(Trie* trie, object& result, const object& function, Dictionary& context)
+{
+    if(trie)
+    {
+        Iterator iter(trie);
+        Entry* entry_array = (Entry*) malloc(trie->count * sizeof(Entry));
+        unsigned int i = 0;
+
+        while(iter.has_next())
+        {
+            Entry entry = iter.next();
+            object res;
+            call_filter_func_on_item(res, function, entry.obj, context);
+
+            if(res.type == BOOL)
+            {
+                if(res.data.boolean)
+                {
+                    entry_array[i] = Entry(entry.key, entry.obj);
+                    ++i;
+                }
+            }
+        }
+
+        result.type = TRIE;
+        result.data.trie = create(entry_array, i);
+        free(entry_array);
+        return true;
+    }
+
+    else
+    {
+        out() << "Dictionary in filter() is null" << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+}
+
 } // trie namespace
 
 } // Panopticon namespace

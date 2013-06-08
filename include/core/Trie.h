@@ -35,6 +35,7 @@ object lookup(Trie* trie, uint32_t key);
 Trie* insert(Trie* trie, uint32_t key, const object& value);
 Trie* without(Trie* trie, uint32_t key);
 bool map(Trie* trie, object& result, const object& function, Dictionary& context);
+bool filter(Trie* trie, object& result, const object& function, Dictionary& context);
 Iterator iterator(Trie* trie);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -35,12 +35,12 @@ bool call_func_on_item(object& result, const object& function,const object& item
         return trie::map(item.data.trie, result, function, context);
     }
 
-    else if(item.type==LIST)
+    else if(item.type == LIST)
     {
         result = mem_alloc(LIST);
         TwoThreeFingerTree* iterative_list = item.data.list;
 
-        while(iterative_list>0)
+        while(iterative_list > 0)
         {
             object res;
             call_func_on_item(res,function,two_three_list_head(iterative_list),context);
@@ -58,6 +58,7 @@ bool call_func_on_item(object& result, const object& function,const object& item
         {
             TwoThreeFingerTree* iterative_list = optic_stack.back().data.list;
             object list_result = mem_alloc(LIST);
+
             while(iterative_list>0)
             {
                 object res;
@@ -65,15 +66,18 @@ bool call_func_on_item(object& result, const object& function,const object& item
                 list_result.data.list = two_three_list_append(list_result.data.list,res);
                 iterative_list = two_three_tail(iterative_list);
             }
+
             result = list_result;
             optic_stack.pop_back();
         }
+
         else if(optic_stack.back().type == NIL || optic_stack.back().type == VOID)
         {
             out() << "Error: Attempted to map a Null value." << std::endl;
             correct_parsing = false;
             return false;
         }
+
         else
         {
             Variable arg_name = function.data.function->arguments.at(1).data.variable_number;
@@ -85,12 +89,18 @@ bool call_func_on_item(object& result, const object& function,const object& item
             optic_stack.pop_back();
         }
     }
+
     return true;
 }
 
 bool call_filter_func_on_item(object& result, const object& function,const object& item, Dictionary& context)
 {
-    if(item.type==LIST)
+    if(item.type == TRIE)
+    {
+        return trie::filter(item.data.trie, result, function, context);
+    }
+
+    else if(item.type == LIST)
     {
         result = mem_alloc(LIST);
         TwoThreeFingerTree* iterative_list = item.data.list;
@@ -101,6 +111,7 @@ bool call_filter_func_on_item(object& result, const object& function,const objec
             iterative_list = two_three_tail(iterative_list);
         }
     }
+
     else
     {
         optic_stack.push_back(item);
@@ -109,21 +120,23 @@ bool call_filter_func_on_item(object& result, const object& function,const objec
         if(optic_stack.back().type == LIST)
         {
             object list_result = mem_alloc(LIST);
-
             call_filter_func_on_item(list_result,function,optic_stack.back(),context);
 
             if(two_three_length(list_result.data.list))
             {
                 result.data.list = two_three_list_append(result.data.list,list_result);
             }
+
             optic_stack.pop_back();
         }
+
         else if(optic_stack.back().type == NIL || optic_stack.back().type == VOID)
         {
             out() << "Error: Attempted to map a Null value." << std::endl;
             correct_parsing = false;
             return false;
         }
+
         else
         {
             Variable arg_name = function.data.function->arguments.at(1).data.variable_number;
@@ -138,13 +151,23 @@ bool call_filter_func_on_item(object& result, const object& function,const objec
                 return false;
             }
 
-            if(optic_stack.back().data.boolean)
+            if(item.type == LIST)
             {
-                result.data.list = two_three_list_append(result.data.list,item);
+                if(optic_stack.back().data.boolean)
+                {
+                    result.data.list = two_three_list_append(result.data.list,item);
+                }
             }
+
+            else
+            {
+                result = optic_stack.back();
+            }
+
             optic_stack.pop_back();
         }
     }
+
     return true;
 }
 
@@ -694,16 +717,18 @@ bool scanr1(object& result, const Array& arguments)
 
 bool filter(object& result, const Array& arguments)
 {
-    if(arguments.size()!=2)
+    if(arguments.size() != 2)
     {
         out() << "Error: filter received an incorrect number of arguments" << std::endl;
         correct_parsing = false;
         return false;
     }
     object function = arguments.at(0);
-    object array = arguments.at(1);
+    object container = arguments.at(1);
 
     setup_func(result,function);
+    setup_argument(container);
+
     if(function.data.function->arguments.size()!=2)
     {
         out() << "Error: filter function must take exactly 1 argument." << std::endl;
@@ -711,21 +736,18 @@ bool filter(object& result, const Array& arguments)
         return false;
     }
 
-    setup_array(array);
+
+    if(container.type == LIST)
+        setup_array(container);
 
     Dictionary context;
     context.insert(std::make_pair(function.data.function->name, function));
     push_scope(&context);
-
     result = mem_alloc(LIST);
-
-    result = mem_alloc(LIST);
-
-    call_filter_func_on_item(result,function,array,context);
-
+    bool success = call_filter_func_on_item(result, function, container, context);
     pop_scope();
 
-    return true;
+    return success;
 }
 
 bool array_size(object& result, object& container)

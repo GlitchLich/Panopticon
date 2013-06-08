@@ -11,6 +11,10 @@ ten
 tenPlusTen = map(\x = x + 10 ten)
 tenPlusTen
 size(ten)
+tenOdd = filter(\x = x % 2 == 1 ten)
+tenOdd
+tenEven = filter(\x = x % 2 == 0 ten)
+tenEven
 eleven = insert(ten "eleven" 11)
 eleven
 size(eleven)
@@ -81,6 +85,7 @@ arrayDict
 dictArray = [ { one = 1 two = 2 three = 3 } { four = 4 five = 5 } ]
 dictArray[0]
 print(dictArray)
+
 //Vertical Construction, with nested dictionaries
 myDict = {       
 	Turtles = true 
