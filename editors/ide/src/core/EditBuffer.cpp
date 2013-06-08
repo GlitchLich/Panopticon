@@ -52,21 +52,21 @@ void CodeBlockBackground::colorizeBlock()
 {
     setGeometry(codeGeometry());
     fill = QPixmap(geometry().size());
-    fill.fill(QColor(255, 255, 255, 10 + blinkAmount));
+    fill.fill(QColor(255 - (blinkAmount * 2), 255, 255, 10 + blinkAmount));
     setHidden(false);
 }
 
 void CodeBlockBackground::blink()
 {
-    blinkAmount = 66;
+    blinkAmount = 100;
     blinkTimer.start(33);
 }
 
 void CodeBlockBackground::decrementBlinkAlpha()
 {
-    blinkAmount -= 3;
+    blinkAmount -= 5;
     fill = QPixmap(geometry().size());
-    fill.fill(QColor(255, 255, 255, 10 + blinkAmount));
+    fill.fill(QColor(255 - (blinkAmount * 2), 255, 255, 10 + blinkAmount));
     MAIN_WINDOW->centralWidget()->update(geometry());
 
     if(blinkAmount <= 0)
@@ -102,7 +102,7 @@ QRect CodeBlockBackground::codeGeometry()
         0, // Always 0 because every code block must begin unindented
         cursorRect.top() + (startOffset * (ide::style->monoFontMetrics.lineSpacing() + 1)),
         this->editBuffer->width(),
-        (endLine - startLine) * (ide::style->monoFontMetrics.lineSpacing() + 1)
+        (endLine - startLine) * (ide::style->monoFontMetrics.lineSpacing() + 2)
     );
 }
 
@@ -160,6 +160,18 @@ bool isWhiteSpace(QString string)
     return string.simplified().replace(" ", "").length() == 0;
 }
 
+// Compare Char to each character in a QString, return true if any are true
+bool charIn(const QChar& block, QString charArray)
+{
+    for(unsigned int i = 0; i < charArray.length(); ++i)
+    {
+        if(charArray.at(i) == block)
+            return true;
+    }
+
+    return false;
+}
+
 void EditBuffer::scanCodeBlock(QString* code, ScanDirection direction)
 {
     unsigned int currentBlock = textCursor().blockNumber();
@@ -179,7 +191,7 @@ void EditBuffer::scanCodeBlock(QString* code, ScanDirection direction)
             return;
         }
 
-        if(block.text().size() > 0 && block.text().at(0).isSpace())
+        if(block.text().size() > 0 && (block.text().at(0).isSpace() || charIn(block.text().at(0), "})]")))
         {
             if(direction == Forward)
                 code->append("\n" + block.text());
@@ -236,7 +248,7 @@ void EditBuffer::updateCodeBlock()
         if(!isWhiteSpace(code))
         {
             // Check to see if we're not at the beginning of the doc and we ARE indented
-            if(cursor.blockNumber() > 0 && (code.startsWith(" ") || code.startsWith("	")))
+            if(cursor.blockNumber() > 0 && charIn(code.at(0), " 	}])"))
             {
                 // Look for the beginning of this code block, prepending code when appropriate
                 scanCodeBlock(&code, Backward);
@@ -254,7 +266,6 @@ void EditBuffer::updateCodeBlock()
     }
 
     codeBlockBackground.colorizeBlock();
-    std::cout << codeBlock.toStdString() << std::endl;
 }
 
 void EditBuffer::keyPressEvent(QKeyEvent *e)
@@ -315,7 +326,6 @@ void EditBuffer::keyPressEvent(QKeyEvent *e)
         case Qt::Key_Right:
         case Qt::Key_Up:
         case Qt::Key_Down:
-            // updateCodeBlock();
             break;
 
         default:
@@ -330,7 +340,6 @@ void EditBuffer::keyPressEvent(QKeyEvent *e)
         case Qt::Key_Return:
         case Qt::Key_Enter:
             executeCommand();
-            // std::cout << textCursor()
             return;
 
         default:

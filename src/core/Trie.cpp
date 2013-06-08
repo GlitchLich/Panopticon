@@ -1,10 +1,11 @@
 #include <cmath>
 #include <iostream>
 
-#include <core/Trie.h>
-#include <core/panopticon.h>
-#include <core/stack.h>
-#include <core/operators.h>
+#include "core/Trie.h"
+#include "core/panopticon.h"
+#include "core/stack.h"
+#include "core/operators.h"
+#include "core/container_primitives.h"
 
 namespace panopticon
 {
@@ -136,43 +137,55 @@ NodeSeq* NodeSeq::next()
     }
 }
 
-NodeSeq* NodeSeq::cons(const Node& node)
+NodeSeq* NodeSeq::cons()
 {
+    if(s && i > 0)
+    {
+        return node_seq(type, nodes, i - 1, s->cons(), this);
+    }
 
+    else
+    {
+        if(i >= 2)
+            return node_seq(type, nodes, i - 2, NULL, this);
+        else
+            return cs;
+    }
 }
 
 NodeSeq* NodeSeq::with_meta(Trie* meta)
 {
-    return new NodeSeq(meta, type, nodes, i, s);
+    return new NodeSeq(meta, type, nodes, i, s, cs);
 }
 
 NodeSeq::NodeSeq()
 {
-    _init(NULL, NULL_NODE, NArray(), 0, NULL);
+    _init(NULL, NULL_NODE, NArray(), 0, NULL, NULL);
 }
 
 NodeSeq::NodeSeq(Type type, const NArray& nodes, unsigned int i)
 {
-    _init(NULL, type, nodes, i, NULL);
+    _init(NULL, type, nodes, i, NULL, NULL);
 }
 
-NodeSeq::NodeSeq(Type type, const NArray &nodes, unsigned int i, NodeSeq* s)
+NodeSeq::NodeSeq(Type type, const NArray &nodes, unsigned int i, NodeSeq* s, NodeSeq* cs)
 {
-    _init(NULL, type, nodes, i, s);
+    _init(NULL, type, nodes, i, s, cs);
 }
 
-NodeSeq::NodeSeq(Trie* meta, Type type, const NArray& nodes, unsigned int i, NodeSeq* s)
+NodeSeq::NodeSeq(Trie* meta, Type type, const NArray& nodes, unsigned int i, NodeSeq* s, NodeSeq* cs)
 {
-    _init(meta, type, nodes, i, s);
+    _init(meta, type, nodes, i, s, cs);
 }
 
-void NodeSeq::_init(Trie* meta, Type type, const NArray& nodes, unsigned int i, NodeSeq* s)
+void NodeSeq::_init(Trie* meta, Type type, const NArray& nodes, unsigned int i, NodeSeq* s, NodeSeq* cs)
 {
     this->meta = meta;
     this->type = type;
     this->nodes = nodes;
     this->i = i;
     this->s = s;
+    this->cs = cs;
 }
 
 void print_node(Node node)
@@ -268,14 +281,14 @@ NodeSeq* node_seq(Node node)
     }
 }
 
-NodeSeq* node_seq(Type type, const NArray& nodes, unsigned int i, NodeSeq* s)
+NodeSeq* node_seq(Type type, const NArray& nodes, unsigned int i, NodeSeq* s, NodeSeq *cs)
 {
-    std::cout << "node_seq(Type: " << type << ", NArray.size: " << nodes.size() << ", i: " << i << ", s: " << s << ")" << std::endl;
+    // std::cout << "node_seq(Type: " << type << ", NArray.size: " << nodes.size() << ", i: " << i << ", s: " << s << ")" << std::endl;
 
     if(s)
     {
 
-        return new NodeSeq(NULL, s->type, nodes, i, s);
+        return new NodeSeq(NULL, s->type, nodes, i, s, cs);
     }
 
     else
@@ -287,7 +300,7 @@ NodeSeq* node_seq(Type type, const NArray& nodes, unsigned int i, NodeSeq* s)
                 Node val = nodes.at(j);
                 if(val.type != NULL_NODE)
                 {
-                    return new NodeSeq(NULL, type, nodes, j, NULL);
+                    return new NodeSeq(NULL, type, nodes, j, NULL, cs);
                 }
 
                 val = nodes.at(j + 1);
@@ -297,7 +310,7 @@ NodeSeq* node_seq(Type type, const NArray& nodes, unsigned int i, NodeSeq* s)
 
                     if(ns)
                     {
-                        return new NodeSeq(type, nodes, j + 2, ns);
+                        return new NodeSeq(type, nodes, j + 2, ns, cs);
                     }
                 }
 
@@ -316,7 +329,7 @@ NodeSeq* node_seq(Type type, const NArray& nodes, unsigned int i, NodeSeq* s)
 
                     if(ns)
                     {
-                        return new NodeSeq(type, nodes, j + 1, ns);
+                        return new NodeSeq(type, nodes, j + 1, ns, cs);
                     }
 
                     break;
@@ -357,6 +370,35 @@ bool Iterator::has_next()
     return ns != NULL;
 }
 
+Entry Iterator::cons()
+{
+    if(ns)
+    {
+        Entry entry = ns->first();
+        ns = ns->cons();
+        return entry;
+    }
+
+    return Entry(0, EMPTY_OBJECT);
+}
+
+bool Iterator::has_cons()
+{
+    if(ns)
+     {
+        if(ns->i > 0)
+            return true;
+        else if(ns->cs != NULL)
+            return true;
+        else return false;
+    }
+
+    else
+    {
+        return false;
+    }
+}
+
 object node_to_object(const Node& node)
 {
     object obj;
@@ -375,12 +417,6 @@ object node_to_object(const Node& node)
 
 void recurse_leaf(Node* leaf)
 {
-    /*
-    Node* new_leaf = new Node();
-    new_leaf->type = leaf->type;
-    new_leaf->data = leaf->data;
-    leaf->type = NODE;
-    leaf->data.node = new_leaf;*/
     leaf->type = NODE;
     leaf->data.node = leaf;
 }
@@ -396,7 +432,6 @@ uint32_t hash_key(uint32_t key)
 // Extract 5-bit level
 uint32_t mask(uint32_t hash, uint32_t shift)
 {
-    // return ((hash << shift) >> 27);
     return (hash >> shift) & 0x01f;
 }
 
@@ -416,6 +451,7 @@ uint32_t population_count(uint32_t x)
     return x & 0x3f;
 }
 
+// Count number of 1s to find the index
 uint32_t bitmap_index(uint32_t bitmap, uint32_t bit)
 {
     return population_count(bitmap & (bit - 1));
@@ -442,6 +478,7 @@ bool obj_equivalent(object a, object b)
         return false;
 }
 
+// Compare identity of two nodes. Identical pointer values will return true.
 bool identical(Node a, Node b)
 {
     if(a.type != b.type)
@@ -563,7 +600,7 @@ Node create_node(uint32_t shift, Node key1, Node val1, uint32_t key2hash, Node k
 
     if(key1hash == key2hash)
     {
-        std::cout << "create_node: Hash Collision!!" << std::endl;
+        // std::cout << "create_node: Hash Collision!!" << std::endl;
         NArray array(COLLISION_ARRAY_SIZE);
         array.set(0, key1);
         array.set(1, val1);
@@ -575,7 +612,7 @@ Node create_node(uint32_t shift, Node key1, Node val1, uint32_t key2hash, Node k
 
     else
     {
-        std::cout << "create_node: Node bitmap" << std::endl;
+        // std::cout << "create_node: Node bitmap" << std::endl;
         Node leaf;
         Node bitmap = empty_node(BITMAP_INDEXED_NODE);
         bitmap = assoc(bitmap, shift, key1hash, key1, val1, leaf);
@@ -715,55 +752,55 @@ Node array_assoc(Node node, uint32_t shift, uint32_t hash, Node key, Node val, N
 
 Node bitmap_assoc(Node node, uint32_t  shift, uint32_t  hash, Node key, Node val, Node& addedLeaf)
 {
-    std::cout << "bitmap_assoc begin" << std::endl;
-    std::cout << "node.data.bitmap->bitmap: " << node.data.bitmap->bitmap << std::endl;
+    // std::cout << "bitmap_assoc begin" << std::endl;
+    // std::cout << "node.data.bitmap->bitmap: " << node.data.bitmap->bitmap << std::endl;
     uint32_t bit = bitpos(hash, shift);
     int index = bitmap_index(node.data.bitmap->bitmap, bit);
 
-    std::cout << "bitpos(hash, shift) = " << bit << " bitmap_index(bitmap, bit) = " << index << std::endl;
-    std::cout << "node.data.bitmap->bitmap & bit = " << (node.data.bitmap->bitmap & bit) << std::endl;
+    // std::cout << "bitpos(hash, shift) = " << bit << " bitmap_index(bitmap, bit) = " << index << std::endl;
+    // std::cout << "node.data.bitmap->bitmap & bit = " << (node.data.bitmap->bitmap & bit) << std::endl;
 
     // If the index is in the bitmap
     if((node.data.bitmap->bitmap & bit) != 0)
     {
-        std::cout << "(bitmap & bit) != 0" << std::endl;
+        // std::cout << "(bitmap & bit) != 0" << std::endl;
         Node keyOrNull = node.data.bitmap->array.at(index * 2);
         Node valOrNode = node.data.bitmap->array.at(index * 2 + 1);
 
         if(keyOrNull.type == NULL_NODE)
         {
-            std::cout << "keyOrNull.type == NULL_NODE" << std::endl;
+            // std::cout << "keyOrNull.type == NULL_NODE" << std::endl;
             Node n = assoc(valOrNode, shift + LEVEL_OFFSET, hash, key, val, addedLeaf);
 
             if(identical(n, valOrNode))
             {
-                std::cout << "identical(n, valOrNode)" << std::endl;
+                // std::cout << "identical(n, valOrNode)" << std::endl;
                 return node;
             }
 
             else
             {
-                std::cout << "Not identical" << std::endl;
+                // std::cout << "Not identical" << std::endl;
                 return Node(new BitmapIndexedNode(node.data.bitmap->bitmap, clone_and_set(node.data.bitmap->array, (2 * index) + 1, n)));
             }
         }
 
         if(key.data.uint == keyOrNull.data.uint)
         {
-            std::cout << "key.data.uint == keyOrNull.data.uint" << std::endl;
+            // std::cout << "key.data.uint == keyOrNull.data.uint" << std::endl;
             if(identical(valOrNode, val))
             {
-                std::cout << "identical(valOrNode, val)" << std::endl;
+                // std::cout << "identical(valOrNode, val)" << std::endl;
                 return node;
             }
 
-            std::cout << "Not identical" << std::endl;
+            // std::cout << "Not identical" << std::endl;
             return Node(new BitmapIndexedNode(node.data.bitmap->bitmap, clone_and_set(node.data.bitmap->array, (2 * index) + 1, val)));
         }
 
-        std::cout << "create_node" << std::endl;
-        std::cout << "keyOrNull.type = " << keyOrNull.type << std::endl;
-        std::cout << "bitmap_assoc index: " << (2 * index) << std::endl;
+        // std::cout << "create_node" << std::endl;
+        // std::cout << "keyOrNull.type = " << keyOrNull.type << std::endl;
+        // std::cout << "bitmap_assoc index: " << (2 * index) << std::endl;
 
         recurse_leaf(&addedLeaf); // self reference
         return Node(
@@ -783,11 +820,11 @@ Node bitmap_assoc(Node node, uint32_t  shift, uint32_t  hash, Node key, Node val
     else // try adding to the current bitmap
     {
         int num_bits = population_count(node.data.bitmap->bitmap);
-        std::cout << "NUM_BITS: " << num_bits << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+        // std::cout << "NUM_BITS: " << num_bits << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
 
         if(num_bits >= 16) // if we've run out of room create a new ArrayNode
         {
-            std::cout << "num_bits >= 16" << std::endl;
+            // std::cout << "num_bits >= 16" << std::endl;
             NArray nodes(NODE_ARRAY_SIZE);
             uint32_t jindex = mask(hash, shift);
             nodes.set(jindex, assoc(EMPTY_NODE, shift + LEVEL_OFFSET, hash, key, val, addedLeaf));
@@ -823,16 +860,16 @@ Node bitmap_assoc(Node node, uint32_t  shift, uint32_t  hash, Node key, Node val
 
         else // otherwise, insert into the current bitmap
         {
-            std::cout << "bitmap_assoc: otherwise, insert into the current bitmap" << std::endl;
-            std::cout << "bitmap_assoc: index " << (2 * index) << std::endl;
+            // std::cout << "bitmap_assoc: otherwise, insert into the current bitmap" << std::endl;
+            // std::cout << "bitmap_assoc: index " << (2 * index) << std::endl;
             NArray new_array(2 * (num_bits + 1));
             clone_range(node.data.bitmap->array, 0, new_array, 0, 2 * index);
             new_array.set(2 * index, key);
             recurse_leaf(&addedLeaf);
             new_array.set(2 * index + 1, val);
             clone_range(node.data.bitmap->array, 2 * index, new_array, 2 * (index + 1), 2 * (num_bits - index));
-            std::cout << "new_array.size(): " << new_array.size() << std::endl;
-            print_node_array(new_array);
+            // std::cout << "new_array.size(): " << new_array.size() << std::endl;
+            // print_node_array(new_array);
             return Node(new BitmapIndexedNode(node.data.bitmap->bitmap | bit, new_array));
         }
     }
@@ -893,7 +930,7 @@ Node trie_assoc(Node node, Node key, Node val)
 {
     if(key.type == NULL_NODE)
     {
-        std::cout << "trie::trie_assoc key.type == NULL_NODE" << std::endl;
+        // std::cout << "trie::trie_assoc key.type == NULL_NODE" << std::endl;
         if(node.data.trie->has_null && identical(val, node.data.trie->null_value))
         {
             return node;
@@ -922,17 +959,17 @@ Node trie_assoc(Node node, Node key, Node val)
     else
         new_root = node.data.trie->root;
 
-    std::cout << "key.data.uint: " << key.data.uint << std::endl;
-    std::cout << "hash_key(key.data.uint) = " << hash_key(key.data.uint) << std::endl;
+    // std::cout << "key.data.uint: " << key.data.uint << std::endl;
+    // std::cout << "hash_key(key.data.uint) = " << hash_key(key.data.uint) << std::endl;
     new_root = assoc(new_root, 0, hash_key(key.data.uint), key, val, addedLeaf);
 
     if(identical(new_root, node.data.trie->root))
     {
-        std::cout << "trie_assoc identical(new_root, node.data.trie->root) == true" << std::endl;
+        // std::cout << "trie_assoc identical(new_root, node.data.trie->root) == true" << std::endl;
         return node;
     }
 
-    std::cout << "trie_assoc: New Trie!" << std::endl;
+    // std::cout << "trie_assoc: New Trie!" << std::endl;
     return Node(
         new Trie(
             node.data.trie->_meta,
@@ -1075,7 +1112,6 @@ Node find(Node node, uint32_t shift, uint32_t hash, Node key)
 
     case TRIE_MAP:
         return find(node.data.trie->root, shift, hash, key);
-        std::cerr << "trie called from find, not sure this should happen????" << std::endl;
         break;
 
     case NODE: // Recursive apply?
@@ -1222,7 +1258,6 @@ Node without(Node node, uint32_t shift, uint32_t hash, Node key)
         break;
 
     case TRIE_MAP:
-        std::cerr << "trie called from without, not sure this should happen????" << std::endl;
         return Node(without(node.data.trie, key.data.uint));
         break;
 
@@ -1246,50 +1281,20 @@ Trie* new_trie()
     return new Trie(NULL, 0, Node(), false, Node());
 }
 
-Trie* create(const Array& entry_array)
+Trie* create(Entry* entry_array, unsigned int size)
 {
     Node trie_node = empty_node(TRIE_MAP);
 
-    for(unsigned int i = 0; i < entry_array.size(); i += 2)
+    for(unsigned int i = 0; i < size; ++i)
     {
         trie_node = trie_assoc(
             trie_node,
-            key_node(entry_array.at(i).data.number),
-            object_node(entry_array.at(i + 1))
+            key_node(entry_array[i].key),
+            object_node(entry_array[i].obj)
         );
     }
 
     return trie_node.data.trie;
-}
-
-Trie* create(const std::deque<Entry>& entry_array)
-{
-    Node trie_node = empty_node(TRIE_MAP);
-
-    for(unsigned int i = 0; i < entry_array.size(); i += 2)
-    {
-        trie_node = trie_assoc(
-            trie_node,
-            key_node(entry_array.at(i).key),
-            object_node(entry_array.at(i + 1).obj)
-        );
-    }
-
-    return trie_node.data.trie;
-}
-
-Trie* create(Trie* meta, const Array& entry_array)
-{
-    Trie* trie = create(entry_array);
-    trie->_meta = meta;
-    return trie;
-}
-
-Trie* create(Trie* meta, const std::deque<Entry>& entry_array)
-{
-    Trie* trie = create(entry_array);
-    trie->_meta = meta;
-    return trie;
 }
 
 bool contains(Trie* trie, uint32_t key)
@@ -1377,6 +1382,75 @@ Trie* without(Trie* trie, Node key)
 Iterator iterator(Trie* trie)
 {
     return Iterator(trie);
+}
+
+bool map(Trie* trie, object& result, const object& function, Dictionary& context)
+{
+    if(trie)
+    {
+        Iterator iter(trie);
+        Entry* entry_array = (Entry*) malloc(trie->count * sizeof(Entry));
+        unsigned int i = 0;
+
+        while(iter.has_next())
+        {
+            Entry entry = iter.next();
+            object res;
+            call_func_on_item(res, function, entry.obj, context);
+            entry_array[i] = Entry(entry.key, res);
+            ++i;
+        }
+
+        result.type = TRIE;
+        result.data.trie = create(entry_array, trie->count);
+        free(entry_array);
+        return true;
+    }
+
+    else
+    {
+        out() << "Dictionary in map() is null" << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+}
+
+bool filter(Trie* trie, object& result, const object& function, Dictionary& context)
+{
+    if(trie)
+    {
+        Iterator iter(trie);
+        Entry* entry_array = (Entry*) malloc(trie->count * sizeof(Entry));
+        unsigned int i = 0;
+
+        while(iter.has_next())
+        {
+            Entry entry = iter.next();
+            object res;
+            call_filter_func_on_item(res, function, entry.obj, context);
+
+            if(res.type == BOOL)
+            {
+                if(res.data.boolean)
+                {
+                    entry_array[i] = Entry(entry.key, entry.obj);
+                    ++i;
+                }
+            }
+        }
+
+        result.type = TRIE;
+        result.data.trie = create(entry_array, i);
+        free(entry_array);
+        return true;
+    }
+
+    else
+    {
+        out() << "Dictionary in filter() is null" << std::endl;
+        correct_parsing = false;
+        return false;
+    }
 }
 
 } // trie namespace

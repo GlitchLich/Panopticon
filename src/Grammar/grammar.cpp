@@ -4577,7 +4577,7 @@ static void yy_reduce(
 #line 1069 "./src/Grammar/grammar.y"
 {
     std::cout << "Namespace" << std::endl;
-    store_operations(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0,&optic::trie_lookup);
+    store_operations(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0,optic::trie_lookup);
     if (!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -4591,7 +4591,7 @@ static void yy_reduce(
       case 126: /* name_space ::= name_space COLONCOLON NAME */ yytestcase(yyruleno==126);
 #line 1080 "./src/Grammar/grammar.y"
 {
-    store_operations(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0,&optic::trie_lookup);
+    store_operations(yygotominor.yy0,yymsp[-2].minor.yy0,yymsp[0].minor.yy0,optic::trie_lookup);
     if (!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);

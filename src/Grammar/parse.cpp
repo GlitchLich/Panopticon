@@ -145,17 +145,28 @@ void init()
 
     t0.data.number=0;
     init_heap();
-    reverse_variable_name_lookup[0] = "Anonymous";
-    reverse_variable_name_lookup[1] = "arg1";
-    reverse_variable_name_lookup[2] = "arg2";
-    reverse_variable_name_lookup[3] = "arg3";
-    reverse_variable_name_lookup[4] = "arg4";
-    reverse_variable_name_lookup[5] = "arg5";
-    reverse_variable_name_lookup[6] = "arg6";
-    reverse_variable_name_lookup[7] = "arg7";
-    reverse_variable_name_lookup[8] = "arg8";
-    reverse_variable_name_lookup[9] = "arg9";
-    reverse_variable_name_lookup[10] = "arg10";
+//    reverse_variable_name_lookup[0] = "Anonymous";
+//    reverse_variable_name_lookup[1] = "arg1";
+//    reverse_variable_name_lookup[2] = "arg2";
+//    reverse_variable_name_lookup[3] = "arg3";
+//    reverse_variable_name_lookup[4] = "arg4";
+//    reverse_variable_name_lookup[5] = "arg5";
+//    reverse_variable_name_lookup[6] = "arg6";
+//    reverse_variable_name_lookup[7] = "arg7";
+//    reverse_variable_name_lookup[8] = "arg8";
+//    reverse_variable_name_lookup[9] = "arg9";
+//    reverse_variable_name_lookup[10] = "arg10";
+//    get_string_hash("\\");
+//    get_string_hash("1");
+//    get_string_hash("2");
+//    get_string_hash("3");
+//    get_string_hash("4");
+//    get_string_hash("5");
+//    get_string_hash("6");
+//    get_string_hash("7");
+//    get_string_hash("8");
+//    get_string_hash("9");
+//    get_string_hash("10");
 }
 
 bool exec(std::string string, std::string& output)
@@ -575,25 +586,28 @@ Variable arg10 = 10;
 
 inline Variable get_string_hash(std::string string)
 {
-    Variable var =  fnv1a(string.c_str());
-    string_hash_map[string] = var;
-    reverse_variable_name_lookup[var] = string;
-    return var;
-    /*
-//    std::cout << "Hash: " << string;
-    if(string_hash_map.find(string)!=string_hash_map.end())
+    if(string_hash_map.find(string) == string_hash_map.end())
     {
-//        std::cout << "," << string_hash_map[string] << std::endl;
-        return string_hash_map[string];
+        Variable var =  fnv1a(string.c_str());
+        string_hash_map[string] = var;
+        reverse_variable_name_lookup[var] = string;
+        return var;
     }
+
     else
     {
-        string_num++;
-        string_hash_map[string] = string_num;
-        reverse_variable_name_lookup[string_num] = string;
-//        std::cout << "," << string_hash_map[string] << std::endl;
-        return string_num;
-    }*/
+        return string_hash_map[string];
+    }
 }
 
+Variable get_float_hash(Number number)
+{
+    std::stringstream ss;
+    ss << number; // Cheating is easy. I like easy.
+    Variable var = fnv1a(number);
+    string_hash_map[ss.str()] = var;
+    reverse_variable_name_lookup[var] = ss.str();
+    return var;
 }
+
+} // panopticon namespace

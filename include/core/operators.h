@@ -76,6 +76,7 @@ bool bit_not(object&A,const  object& B);
 bool bit_xor(object&A, const object& B, const object& C);
 bool assign_variable(object&A, const object& B, const object& C);
 bool u_minus(object&A, const object& B);
+bool cast_to_string(object&A, const object& B);
 
 }
 #endif // OPERATORS_H

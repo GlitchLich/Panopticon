@@ -24,15 +24,14 @@ struct Iterator; // Trie HashMap iterator, use Entry Iterator::next() and bool I
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 Trie* new_trie(); // Create a blank Trie
-Trie* create(const Array& entry_array); // create from array of panopticon::objects, key/val pairs alternating
-Trie* create(const std::deque<Entry>& entry_array); // create from a deque of Entry structs
-Trie* create(Trie* meta, const Array& entry_array); // create from array of panopticon::objects, key/val pairs alternating with Meta Trie
-Trie* create(Trie* meta, const std::deque<Entry>& entry_array); // create from a deque of Entry structs with Meta Trie
+Trie* create(Entry* entry_array, unsigned int size);
 bool contains(Trie* trie, uint32_t key);
 Entry entry(Trie* trie, uint32_t key);
 object lookup(Trie* trie, uint32_t key);
 Trie* insert(Trie* trie, uint32_t key, const object& value);
 Trie* without(Trie* trie, uint32_t key);
+bool map(Trie* trie, object& result, const object& function, Dictionary& context);
+bool filter(Trie* trie, object& result, const object& function, Dictionary& context);
 Iterator iterator(Trie* trie);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -118,39 +117,42 @@ struct NArray
 
 Node* next_node(Node* node); // Iterator support
 
-struct NodeSeq
+struct NodeSeq // Don' use this directly, this is just for Iterator supprt
 {
     Trie* meta;
     NArray nodes;
     Type type;
     unsigned int i;
     NodeSeq* s;
+    NodeSeq* cs;
 
     Entry first();
     NodeSeq* next();
-    NodeSeq* cons(const Node& node);
+    NodeSeq* cons();
     NodeSeq* with_meta(Trie* meta);
 
     NodeSeq();
     NodeSeq(Type type, const NArray& nodes, unsigned int i);
-    NodeSeq(Type type, const NArray &nodes, unsigned int i, NodeSeq* s);
-    NodeSeq(Trie* meta, Type type, const NArray& nodes, unsigned int i, NodeSeq* s);
+    NodeSeq(Type type, const NArray& nodes, unsigned int i, NodeSeq* s, NodeSeq* cs = NULL);
+    NodeSeq(Trie* meta, Type type, const NArray& nodes, unsigned int i, NodeSeq* s, NodeSeq* cs = NULL);
 
 private:
-    void _init(Trie* meta, Type type, const NArray& nodes, unsigned int i, NodeSeq* s);
+    void _init(Trie* meta, Type type, const NArray& nodes, unsigned int i, NodeSeq* s, NodeSeq* cs);
 };
 
-NodeSeq* node_seq(Type type, const NArray& nodes, unsigned int i, NodeSeq* s);
+NodeSeq* node_seq(Type type, const NArray& nodes, unsigned int i, NodeSeq* s, NodeSeq* cs = NULL);
 NodeSeq* node_seq(Node node);
 NodeSeq* node_seq(Trie* trie);
 
-struct Iterator
+struct Iterator // Use this for Trie iteration
 {
     Trie* trie;
     NodeSeq* ns;
     Entry* entries;
     Entry next();
     bool has_next();
+    Entry cons(); // Previous, COMPLETELY UNTESTED. NEEDS THOROUGH TESTING
+    bool has_cons(); // Needs testing
     Iterator(Trie* trie);
     void collect_entries(Entry* entries, unsigned int index, Node node); // recursive collect on Node, constructor calls on trie by default
 };
