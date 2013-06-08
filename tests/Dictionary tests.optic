@@ -1,12 +1,15 @@
 //Dictionary Tests!
 //FOUR different syntaxes, Horziontal vs Vertical, keyworded dict vs none
 
+
 yes = { yes = "yo" }
 yes
-no = insert(yes "yes" "no")
+// good
+no = insert(yes "yes" 0 )
 no
-yess = insert(yes "yess" "yess")
-insert(insert(yess "yo" "noo") "yo" "noo")
+noo = insert(yes "yes" 0 0)
+// Breakage. Should just print an error though.
+noo
 
 stringDict = { one = "one" two = "two" three = "three" }
 stringDict
@@ -60,15 +63,10 @@ insert(numKeys 1 1 "five")
 evil = { doom = 666 }
 evil
 replace = insert(evil "doom" 777)
-// Printing is weird
 replace
-// The first print is right, second is not. Weird.
 print(replace)
-// This doesn't work right either?
 type(replace)
-// This will print right at first. Something with the stack or hash lookup?
 print(type(replace))
-// I don't even know what is happening here. Strings as dictionary values arent working right.
 print(insert(replace "ninja" "turtle"))
 added = insert(evil "moreDoom" 888)
 added
@@ -112,7 +110,6 @@ size(elevenNoOne)
 elevenNoOneTwo = remove(elevenNoOne "two")
 elevenNoOneTwo
 size(elevenNoOneTwo)
-// Something is wrong here. Our "three" dissapears
 replaceThree = insert(elevenNoOneTwo "three" false)
 replaceThree
 print(replaceThree)
