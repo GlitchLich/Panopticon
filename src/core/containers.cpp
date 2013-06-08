@@ -12,7 +12,7 @@
 namespace panopticon
 {
 
-object hash_number(object& number)
+object hash_number(const object& number)
 {
     object string;
     cast_to_string(string, number);
@@ -24,7 +24,7 @@ object hash_number(object& number)
 }
 
 // READS a hash entry from the global hash map
-object get_hash(object& obj, bool write = false)
+object get_hash(const object& obj, bool write = false)
 {
     object result;
     result.type = VARIABLE;
@@ -124,11 +124,12 @@ bool print_trie(const object& trie, bool endl)
         out() << std::endl;
 }
 
-bool trie_lookup(object& value, const object& trie, object& key)
+bool trie_lookup(object& value, const object& trie, const object& key)
 {
-    key = get_hash(key);
+    std::cout << "TRIE_LOOKUP!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+    object hashed_key = get_hash(key);
 
-    if(key.type != UNDECLARED_VARIABLE && key.type != VARIABLE)
+    if(hashed_key.type != UNDECLARED_VARIABLE && hashed_key.type != VARIABLE)
     {
         out() << "Error: Trie key must be a String." << std::endl;
         correct_parsing = false;
@@ -144,7 +145,7 @@ bool trie_lookup(object& value, const object& trie, object& key)
         {
             if(result.type == TRIE)
             {
-                bool success =  trie_lookup(value, result, key);
+                bool success =  trie_lookup(value, result, hashed_key);
                 return success;
             }
 
@@ -161,14 +162,14 @@ bool trie_lookup(object& value, const object& trie, object& key)
         else
         {
             value.type = NIL;
-            out() << "Error: the variable \'" << reverse_variable_name_lookup[key.data.variable_number] << "\'' has not been declared." << std::endl;
+            out() << "Error: the variable \'" << reverse_variable_name_lookup[hashed_key.data.variable_number] << "\'' has not been declared." << std::endl;
             correct_parsing = false;
             return false;
         }
 
     }
 
-    value = trie::lookup(trie.data.trie, key.data.variable_number);
+    value = trie::lookup(trie.data.trie, hashed_key.data.variable_number);
     if(value.type != NIL && value.type == OPERATION_TREE)
     {
         optic_stack.push_back(value);
@@ -181,7 +182,7 @@ bool trie_lookup(object& value, const object& trie, object& key)
     else
     {
         value.type = NIL;
-        out() << "No object found with key \'" << reverse_variable_name_lookup[key.data.variable_number] << "\'." << std::endl;
+        out() << "No object found with key \'" << reverse_variable_name_lookup[hashed_key.data.variable_number] << "\'." << std::endl;
         correct_parsing = false;
         return false;
     }
@@ -189,11 +190,11 @@ bool trie_lookup(object& value, const object& trie, object& key)
     return true;
 }
 
-bool trie_contains(object& boolean, const object& trie, object &key)
+bool trie_contains(object& boolean, const object& trie, const object &key)
 {
-    key = get_hash(key);
+    object hashed_key = get_hash(key);
 
-    if(key.type != UNDECLARED_VARIABLE && key.type != VARIABLE)
+    if(hashed_key.type != UNDECLARED_VARIABLE && hashed_key.type != VARIABLE)
     {
         out() << "Trie key must be a String." << std::endl;
         correct_parsing = false;
@@ -201,21 +202,21 @@ bool trie_contains(object& boolean, const object& trie, object &key)
     }
 
     boolean.type = BOOL;
-    boolean.data.boolean = trie::contains(trie.data.trie, key.data.variable_number);
+    boolean.data.boolean = trie::contains(trie.data.trie, hashed_key.data.variable_number);
     return true;
 }
 
-bool trie_insert(object& trie_A, object& string_B, object& object_C)
+bool trie_insert(object& trie_A, const object& string_B, const object& object_C)
 {
-    string_B = get_hash(string_B, true);
-    trie_A.data.trie = trie::insert(trie_A.data.trie, string_B.data.variable_number, object_C);
+    object hashed_key = get_hash(string_B, true);
+    trie_A.data.trie = trie::insert(trie_A.data.trie, hashed_key.data.variable_number, object_C);
     return true;
 }
 
-bool trie_remove(object& trie_A, object& string_B)
+bool trie_remove(object& trie_A, const object& string_B)
 {
-    string_B = get_hash(string_B);
-    trie_A.data.trie = trie::without(trie_A.data.trie, string_B.data.variable_number);
+    object hashed_key = get_hash(string_B);
+    trie_A.data.trie = trie::without(trie_A.data.trie, hashed_key.data.variable_number);
 }
 
 bool create_trie(object& result_A, const object& B)
