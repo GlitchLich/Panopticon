@@ -1045,6 +1045,7 @@ expr(A) ::= dict(B).
 //LOOKUP
 expr(A) ::= NAME(B) LCURL NAME(C) RCURL.
 {
+    std::cout << "Namespace" << std::endl;
     store_operations(A,B,C,&optic::trie_lookup);
     if (!panopticon::correct_parsing)
     {
@@ -1055,6 +1056,7 @@ expr(A) ::= NAME(B) LCURL NAME(C) RCURL.
 
 expr(A) ::= NAME(B) LCURL string(C) RCURL.
 {
+    std::cout << "Namespace" << std::endl;
     store_operations(A,B,C,&optic::trie_lookup);
     if (!panopticon::correct_parsing)
     {
@@ -1065,6 +1067,7 @@ expr(A) ::= NAME(B) LCURL string(C) RCURL.
 
 name_space(A) ::= NAME(B) COLONCOLON NAME(C).
 {
+    std::cout << "Namespace" << std::endl;
     store_operations(A,B,C,&optic::trie_lookup);
     if (!panopticon::correct_parsing)
     {

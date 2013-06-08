@@ -35,6 +35,7 @@ print(eight)
 print(ten)
 [ 1 .. 99 ]
 numDict = { one = 1 }
+numDict::one
 arrayDict = { one = [ 1 ] }
 dictArray = [ { one = 1 two = 2 three = 3 } { four = 4 five = 5 } ]
 dictArray[0]
