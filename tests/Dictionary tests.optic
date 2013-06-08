@@ -18,7 +18,7 @@ insert(stringDict "four" "four")
 lookup(stringDict "one")
 
 funcDict = { mul x y = x * y }
-funcDict
+lookup(funcDict "mul")
 metamul = lookup(funcDict "mul")
 metamul( 2 3 )
 type(funcDict)
@@ -159,6 +159,7 @@ print(eight)
 print(ten)
 [ 1 .. 99 ]
 numDict = { one = 1 }
+numDict.one
 arrayDict = { one = [ 1 ] }
 arrayDict
 dictArray = [ { one = 1 two = 2 three = 3 } { four = 4 five = 5 } ]

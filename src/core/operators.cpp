@@ -103,7 +103,7 @@ void print_object_in_array(const object B,int arrayNum)
         out() << " " << reverse_variable_name_lookup[B.data.variable_number];
         break;
     case LIST:
-        out() << print_list(B,arrayNum+1);
+        print_list(B,arrayNum+1);
         break;
     }
 }
@@ -175,7 +175,7 @@ bool print_variable(const object& A)
 
 bool print_object(const object &A)
 {
-//    std::cout << "print_object.type: " << A.type << std::endl;
+    //    std::cout << "print_object.type: " << A.type << std::endl;
     switch(A.type)
     {
     case panopticon::FUNCTION:
@@ -234,7 +234,7 @@ bool print_object(const object &A)
         break;
 
     case LIST:
-//        out() << "List: ";
+        //        out() << "List: ";
         print_list(A,0);
         break;
     }

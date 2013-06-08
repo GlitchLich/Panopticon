@@ -822,15 +822,14 @@ bool size(object& result, const Array& arguments)
 
     else if(arguments.size() > 1)
     {
-        result = mem_alloc(ARRAY);
-
+        result = mem_alloc(LIST);
         for(unsigned int i = 0; i < arguments.size(); ++i)
         {
             object item_size = mem_alloc(NUMBER);
             object argument = arguments.at(i);
             setup_argument(argument);
             size_of_object(item_size, argument);
-            result.data.array->push_back(item_size);
+            result.data.list = two_three_list_append(result.data.list,item_size);
         }
 
         return true;
@@ -859,61 +858,6 @@ bool last(object& result, const Array& arguments)
     }
 }
 
-#ifdef BRAUN_TREE
-bool tail(object& result, const Array& arguments)
-{
-    if(arguments.size()!=1)
-    {
-        out() << "Error: tail received an incorrect number of arguments" << std::endl;
-        correct_parsing = false;
-        return false;
-    }
-    object array = arguments.at(0);
-    if(setup_array(array))
-    {
-        List* list = braun_tail(array.data.list);
-        result = mem_alloc(LIST);
-        result.data.list = list;
-        complexity_test();
-        return true;
-    }
-    else
-    {
-        out() << "Error: Attempting to find the tail of a non-array." << std::endl;
-        correct_parsing = false;
-        return false;
-    }
-}
-
-bool head(object& result, const Array& arguments)
-{
-    if(arguments.size()!=1)
-    {
-        out() << "Error: head received an incorrect number of arguments" << std::endl;
-        correct_parsing = false;
-        return false;
-    }
-    object array = arguments.at(0);
-    if(setup_array(array))
-    {
-        if(array.data.array->size()>1)
-        {
-            result = array.data.array->at(0);
-        }
-        else
-        {
-            result = array;
-        }
-        return true;
-    }
-    else
-    {
-        out() << "Error: Attempting to retrieve the head of a non-array." << std::endl;
-        correct_parsing = false;
-        return false;
-    }
-}
-#elif TWO_THREE_TREE
 bool tail(object& result, const Array& arguments)
 {
     if(arguments.size()!=1)
@@ -958,7 +902,6 @@ bool head(object& result, const Array& arguments)
         return false;
     }
 }
-#endif
 
 bool init(object& result, const Array& arguments)
 {
@@ -1110,6 +1053,243 @@ bool zip(object& result, const Array& arguments)
     }
 }
 
+bool zip3(object& result, const Array& arguments)
+{
+    if(arguments.size()!=3)
+    {
+        out() << "Error: zip3 received an incorrect number of arguments" << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    object array = arguments.at(0);
+    object array2 = arguments.at(1);
+    object array3 = arguments.at(2);
+    if(setup_array(array) && setup_array(array2) && setup_array(array3) )
+    {
+        int size = 0;
+        int a_size = two_three_length(array.data.list);
+        int a2_size = two_three_length(array2.data.list);
+        int a3_size = two_three_length(array3.data.list);
+
+        size = a_size;
+
+        if(a2_size > size)
+        {
+            size = a2_size;
+        }
+        if(a3_size > size)
+        {
+            size = a3_size;
+        }
+
+        if(size==0)
+        {
+            out() << "Error: Attempting to zip3 an array with 0 elements." << std::endl;
+            correct_parsing = false;
+            return false;
+        }
+
+        result = mem_alloc(LIST);
+
+        TwoThreeFingerTree* iterative_list = array.data.list;
+        TwoThreeFingerTree* iterative_list2 = array2.data.list;
+        TwoThreeFingerTree* iterative_list3 = array3.data.list;
+
+        for(int i=0;i<size;++i)
+        {
+            object tuplet = mem_alloc(LIST);
+
+            if(iterative_list==0)
+            {
+                iterative_list = array.data.list;
+            }
+
+            if(iterative_list2==0)
+            {
+                iterative_list2 = array2.data.list;
+            }
+
+            if(iterative_list3==0)
+            {
+                iterative_list3 = array3.data.list;
+            }
+
+            tuplet.data.list = two_three_list_append(tuplet.data.list,two_three_list_head(iterative_list));
+            tuplet.data.list = two_three_list_append(tuplet.data.list,two_three_list_head(iterative_list2));
+            tuplet.data.list = two_three_list_append(tuplet.data.list,two_three_list_head(iterative_list3));
+            result.data.list = two_three_list_append(result.data.list,tuplet);
+
+            iterative_list = two_three_tail(iterative_list);
+            iterative_list2 = two_three_tail(iterative_list2);
+            iterative_list3 = two_three_tail(iterative_list3);
+        }
+        return true;
+    }
+    else
+    {
+        out() << "Error: Attempting to zip3 a non-array." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+}
+
+bool zipWith(object& result, const Array& arguments)
+{
+    if(arguments.size()!=3)
+    {
+        out() << "Error: zipWith received an incorrect number of arguments" << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    object function = arguments.at(0);
+    setup_func(result,function);
+    object array = arguments.at(1);
+    object array2 = arguments.at(2);
+    if(setup_array(array) && setup_array(array2))
+    {
+        int size = 0;
+        int a_size = two_three_length(array.data.list);
+        int a2_size = two_three_length(array2.data.list);
+        if(a_size > a2_size)
+        {
+            size = a_size;
+        }
+        else
+        {
+            size = a2_size;
+        }
+
+        if(size==0)
+        {
+            out() << "Error: Attempting to zip an array with 0 elements." << std::endl;
+            correct_parsing = false;
+            return false;
+        }
+        result = mem_alloc(LIST);
+        TwoThreeFingerTree* iterative_list = array.data.list;
+        TwoThreeFingerTree* iterative_list2 = array2.data.list;
+
+        Dictionary context;
+        context.insert(std::make_pair(function.data.function->name, function));
+        push_scope(&context);
+
+        for(int i=0;i<size;++i)
+        {
+            if(iterative_list==0)
+            {
+                iterative_list = array.data.list;
+            }
+
+            if(iterative_list2==0)
+            {
+                iterative_list2 = array2.data.list;
+            }
+
+            object with;
+            call_func_on_two_items(with,function,two_three_list_head(iterative_list),two_three_list_head(iterative_list2),context);
+            result.data.list = two_three_list_append(result.data.list,with);
+
+            iterative_list = two_three_tail(iterative_list);
+            iterative_list2 = two_three_tail(iterative_list2);
+        }
+
+        pop_scope();
+        return true;
+    }
+    else
+    {
+        out() << "Error: Attempting to zip of a non-array." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+}
+
+//TODO: Fix this so that it takes 3 argument functions...
+bool zipWith3(object& result, const Array& arguments)
+{
+    if(arguments.size()!=4)
+    {
+        out() << "Error: zipWith3 received an incorrect number of arguments" << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+    object function = arguments.at(0);
+    setup_func(result,function);
+    object array = arguments.at(1);
+    object array2 = arguments.at(2);
+    object array3 = arguments.at(3);
+
+    if(setup_array(array) && setup_array(array2) && setup_array(array3))
+    {
+        int size = 0;
+        int a_size = two_three_length(array.data.list);
+        int a2_size = two_three_length(array2.data.list);
+        int a3_size = two_three_length(array3.data.list);
+
+        size = a_size;
+
+        if(a2_size > size)
+        {
+            size = a2_size;
+        }
+        if(a3_size > size)
+        {
+            size = a3_size;
+        }
+
+        if(size==0)
+        {
+            out() << "Error: Attempting to zipWith3 an array with 0 elements." << std::endl;
+            correct_parsing = false;
+            return false;
+        }
+        result = mem_alloc(LIST);
+        TwoThreeFingerTree* iterative_list = array.data.list;
+        TwoThreeFingerTree* iterative_list2 = array2.data.list;
+        TwoThreeFingerTree* iterative_list3 = array3.data.list;
+
+        Dictionary context;
+        context.insert(std::make_pair(function.data.function->name, function));
+        push_scope(&context);
+
+        for(int i=0;i<size;++i)
+        {
+            if(iterative_list==0)
+            {
+                iterative_list = array.data.list;
+            }
+
+            if(iterative_list2==0)
+            {
+                iterative_list2 = array2.data.list;
+            }
+
+            if(iterative_list3==0)
+            {
+                iterative_list3 = array3.data.list;
+            }
+
+            object with;
+            call_func_on_two_items(with,function,two_three_list_head(iterative_list),two_three_list_head(iterative_list2),context);
+            call_func_on_two_items(with,function,with,two_three_list_head(iterative_list3),context);
+            result.data.list = two_three_list_append(result.data.list,with);
+
+            iterative_list = two_three_tail(iterative_list);
+            iterative_list2 = two_three_tail(iterative_list2);
+            iterative_list3 = two_three_tail(iterative_list3);
+        }
+
+        pop_scope();
+
+        return true;
+    }
+    else
+    {
+        out() << "Error: Attempting to zipWith3 a non-array." << std::endl;
+        correct_parsing = false;
+        return false;
+    }
+}
 bool lookup(object& result, const Array& arguments)
 {
     if(arguments.size() != 2)
@@ -1178,7 +1358,6 @@ bool insert(object& result, const Array& arguments)
             correct_parsing = false;
             return false;
         }
-
         trie_insert(map, key, value);
     }
 
@@ -1218,7 +1397,6 @@ bool remove(object& result, const Array& arguments)
             correct_parsing = false;
             return false;
         }
-
         trie_remove(map, key);
     }
 
@@ -1299,13 +1477,12 @@ bool type_of(object& result, const Array& arguments)
 
     else if(arguments.size() > 1)
     {
-        result = mem_alloc(ARRAY);
-
+        result = mem_alloc(LIST);
         for(unsigned int i = 0; i < arguments.size(); ++i)
         {
             object argument = arguments.at(i);
             setup_argument(argument);
-            result.data.array->push_back(type_to_string_object(argument));
+            result.data.list = two_three_list_append(result.data.list,type_to_string_object(argument));
         }
     }
 
@@ -1334,6 +1511,27 @@ void register_container_primitives()
     pzip.data.primitive->num_arguments = 3;
     pzip.data.primitive->p_func = zip;
     set_variable(variable_number,pzip);
+
+    object pzip3 = mem_alloc(PRIMITIVE);
+    variable_number = get_string_hash("zip3");
+    pzip3.data.primitive->name = variable_number;
+    pzip3.data.primitive->num_arguments = 4;
+    pzip3.data.primitive->p_func = zip3;
+    set_variable(variable_number,pzip3);
+
+    object pzipWith = mem_alloc(PRIMITIVE);
+    variable_number = get_string_hash("zipWith");
+    pzipWith.data.primitive->name = variable_number;
+    pzipWith.data.primitive->num_arguments = 4;
+    pzipWith.data.primitive->p_func = zipWith;
+    set_variable(variable_number,pzipWith);
+
+    object pzipWith3 = mem_alloc(PRIMITIVE);
+    variable_number = get_string_hash("zipWith3");
+    pzipWith3.data.primitive->name = variable_number;
+    pzipWith3.data.primitive->num_arguments = 4;
+    pzipWith3.data.primitive->p_func = zipWith3;
+    set_variable(variable_number,pzipWith3);
 
     object ptake = mem_alloc(PRIMITIVE);
     variable_number = get_string_hash("take");

@@ -145,17 +145,28 @@ void init()
 
     t0.data.number=0;
     init_heap();
-    reverse_variable_name_lookup[0] = "Anonymous";
-    reverse_variable_name_lookup[1] = "arg1";
-    reverse_variable_name_lookup[2] = "arg2";
-    reverse_variable_name_lookup[3] = "arg3";
-    reverse_variable_name_lookup[4] = "arg4";
-    reverse_variable_name_lookup[5] = "arg5";
-    reverse_variable_name_lookup[6] = "arg6";
-    reverse_variable_name_lookup[7] = "arg7";
-    reverse_variable_name_lookup[8] = "arg8";
-    reverse_variable_name_lookup[9] = "arg9";
-    reverse_variable_name_lookup[10] = "arg10";
+//    reverse_variable_name_lookup[0] = "Anonymous";
+//    reverse_variable_name_lookup[1] = "arg1";
+//    reverse_variable_name_lookup[2] = "arg2";
+//    reverse_variable_name_lookup[3] = "arg3";
+//    reverse_variable_name_lookup[4] = "arg4";
+//    reverse_variable_name_lookup[5] = "arg5";
+//    reverse_variable_name_lookup[6] = "arg6";
+//    reverse_variable_name_lookup[7] = "arg7";
+//    reverse_variable_name_lookup[8] = "arg8";
+//    reverse_variable_name_lookup[9] = "arg9";
+//    reverse_variable_name_lookup[10] = "arg10";
+//    get_string_hash("\\");
+//    get_string_hash("1");
+//    get_string_hash("2");
+//    get_string_hash("3");
+//    get_string_hash("4");
+//    get_string_hash("5");
+//    get_string_hash("6");
+//    get_string_hash("7");
+//    get_string_hash("8");
+//    get_string_hash("9");
+//    get_string_hash("10");
 }
 
 bool exec(std::string string, std::string& output)

@@ -26,6 +26,7 @@ object hash_number(const object& number)
 // READS a hash entry from the global hash map
 object get_hash(const object& obj, bool write = false)
 {
+    std::cout << "get_hash" << std::endl;
     object result;
     result.type = VARIABLE;
 
@@ -126,7 +127,6 @@ bool print_trie(const object& trie, bool endl)
 
 bool trie_lookup(object& value, const object& trie, const object& key)
 {
-    std::cout << "TRIE_LOOKUP!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
     object hashed_key = get_hash(key);
 
     if(hashed_key.type != UNDECLARED_VARIABLE && hashed_key.type != VARIABLE)

@@ -4,6 +4,7 @@
 //No argument functions now work in "point-free" form, i.e., partial application with implied arguments.
 f = (+4)
 f(2)
+
 //Works with partial function application as well
 div x y = x / y
 div9by = div(9)
@@ -16,11 +17,6 @@ divBy9(18)
 manyArgs x y z w = x + y * z / w
 notEnoughArgs = manyArgs(1)
 notEnoughArgs(2 3 4)
-
-a = [0 1]
-fibs = 0 : scanl( (+) 1 a)
-take(10 fibs)
-fibs
 
 add1 = (+1) * 2
 partialStream = add1 << notEnoughArgs(1)
@@ -47,8 +43,13 @@ reverse <<  myArray
 za1 = [5 4 3 2 1]
 za2 = [3 4 5 6 7 8 9 10]
 zip( za1 za2 )
+zipWith( (+) za1 za2 )
+za3 = [ 99 98 (-666) ]
+zip3( za1 za2 za3 )
+zipWith3( (+) za1 za2 za3 )
 
 fibs = 0 : 1 : fibs + tail(fibs)
+take( 5 fibs )
 
 a = [0 1 1 2]
 fibs2 = 0 : 1 : a

@@ -1045,6 +1045,7 @@ expr(A) ::= dict(B).
 //LOOKUP
 expr(A) ::= NAME(B) LCURL NAME(C) RCURL.
 {
+    std::cout << "Namespace" << std::endl;
     store_operations(A,B,C,&optic::trie_lookup);
     if (!panopticon::correct_parsing)
     {
@@ -1055,6 +1056,7 @@ expr(A) ::= NAME(B) LCURL NAME(C) RCURL.
 
 expr(A) ::= NAME(B) LCURL string(C) RCURL.
 {
+    std::cout << "Namespace" << std::endl;
     store_operations(A,B,C,&optic::trie_lookup);
     if (!panopticon::correct_parsing)
     {
@@ -1065,7 +1067,8 @@ expr(A) ::= NAME(B) LCURL string(C) RCURL.
 
 name_space(A) ::= NAME(B) COLONCOLON NAME(C).
 {
-    store_operations(A,B,C,&optic::trie_lookup);
+    std::cout << "Namespace" << std::endl;
+    store_operations(A,B,C,optic::trie_lookup);
     if (!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -1075,7 +1078,7 @@ name_space(A) ::= NAME(B) COLONCOLON NAME(C).
 
 name_space(A) ::= function_call(B) COLONCOLON NAME(C).
 {
-    store_operations(A,B,C,&optic::trie_lookup);
+    store_operations(A,B,C,optic::trie_lookup);
     if (!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -1085,7 +1088,7 @@ name_space(A) ::= function_call(B) COLONCOLON NAME(C).
 
 name_space(A) ::= name_space(B) COLONCOLON NAME(C).
 {
-    store_operations(A,B,C,&optic::trie_lookup);
+    store_operations(A,B,C,optic::trie_lookup);
     if (!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);

@@ -81,6 +81,7 @@ false     { yylval.bval = 0;return BOOLEAN;}
 }
 [+]+[+]          {  return PLUSPLUS; }
 "::"          {  return COLONCOLON; }
+    /*"."             {return PERIOD;}*/
 "+"           {  return PLUS; }
 "-"           {  return MINUS; }
 "*"           {  return TIMES; }

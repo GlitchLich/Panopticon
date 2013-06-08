@@ -28,11 +28,7 @@ bool convert_array_to_list(object& result, object& array)
     result = mem_alloc(LIST);
     for(Array::reverse_iterator it = array.data.array->rbegin();it!=array.data.array->rend();++it)
     {
-#ifdef TWO_THREE_TREE
         result.data.list =  two_three_list_cons(result.data.list,*it);
-#elif BRAUN_TREE
-        result.data.list =  braun_cons(*it,result.data.list);
-#endif
     }
     //    test_num = 0;
 }
@@ -43,14 +39,12 @@ bool print_list(const object &A, int arrayNum)
     {
         out() << " ";
     }
-    out() << "L[";
-    //    test_num = 0;
-#ifdef TWO_THREE_TREE
+    out() << "[";
+
     two_three_print(A.data.list);
-#else
-    print_braun_tree(A.data.list);
-#endif
+
     out() << " ]";
+
     if(arrayNum==0)
     {
         out() << std::endl;
@@ -62,30 +56,15 @@ bool prepend(object& result_A, const object& B, const object& container_C)
 {
     if(container_C.type != LIST)
     {
-#ifdef TWO_THREE_TREE
         result_A = mem_alloc(LIST);
         List* list = two_three_list_cons(result_A.data.list,container_C);
         list = two_three_list_cons(list,B);
         result_A.data.list = list;
-#else
-        result_A = mem_alloc(LIST);
-        List* list = braun_cons(container_C,result_A.data.list);
-        list = braun_cons(B,list);
-        result_A.data.list = list;
-#endif
         return true;
     }
-#ifdef TWO_THREE_TREE
     result_A = mem_alloc(LIST);
     List* list = two_three_list_cons(container_C.data.list,B);
     result_A.data.list = list;
-#else
-    test_num = 0;
-    result_A = mem_alloc(LIST);
-    List* list = braun_cons(B,container_C.data.list);
-    result_A.data.list = list;
-    complexity_test();
-#endif
     return true;
 }
 
@@ -93,36 +72,20 @@ bool append(object& result_A, const object& container_B, const object& object_C)
 {
     if(container_B.type != LIST)
     {
-#ifdef TWO_THREE_TREE
         result_A = mem_alloc(LIST);
         List* list = two_three_list_cons(result_A.data.list,object_C);
         list = two_three_list_cons(list,container_B);
         result_A.data.list = list;
-#else
-        result_A = mem_alloc(LIST);
-        List* list = braun_cons(container_B,result_A.data.list);
-        list = braun_cons(object_C,list);
-        result_A.data.list = list;
-#endif
         return true;
     }
-#ifdef TWO_THREE_TREE
     result_A = mem_alloc(LIST);
     List* list = two_three_list_append(container_B.data.list,object_C);
     result_A.data.list = list;
-#else
-    test_num = 0;
-    result_A = mem_alloc(LIST);
-    List* list = braun_update(container_B.data.list,braun_length(container_B.data.list),object_C);
-    result_A.data.list = list;
-    complexity_test();
-#endif
     return true;
 }
 
 bool concat(object& A, const object& B, const object& C)
 {
-#ifdef TWO_THREE_TREE
     std::stringstream ss;
     switch(B.type)
     {
@@ -214,271 +177,12 @@ bool concat(object& A, const object& B, const object& C)
         }
         break;
     }
-#else
-    std::stringstream ss;
-    switch(B.type)
-    {
-    case BOOL:
-        switch(C.type)
-        {
-        case BOOL:
-        case NUMBER:
-            return prepend(A,B,C);
-        case STRING:
-            A = mem_alloc(STRING);
-
-            if(B.data.boolean)
-            {
-                A.data.string->append("true");
-            }
-
-            else
-            {
-                A.data.string->append("false");
-            }
-
-            A.data.string->append(*C.data.string);
-            break;
-        case LIST:
-            A = mem_alloc(LIST);
-            List* list = braun_cons(B,C.data.list);
-            A.data.list = list;
-            break;
-        }
-        break;
-    case NUMBER:
-        switch(C.type)
-        {
-        case BOOL:
-        case NUMBER:
-            return prepend(A,B,C);
-        case STRING:
-            ss << B.data.number;
-            A.data.string->append(ss.str());
-            A.data.string->append(*C.data.string);
-            break;
-        case LIST:
-            A = mem_alloc(LIST);
-            List* list = braun_cons(B,C.data.list);
-            A.data.list = list;
-            break;
-        }
-        break;
-    case STRING:
-        switch(C.type)
-        {
-        case BOOL:
-            if(B.data.boolean)
-            {
-                A.data.string->append("true");
-            }
-            else
-            {
-                A.data.string->append("false");
-            }
-            break;
-        case NUMBER:
-            ss << C.data.number;
-            A.data.string->append(ss.str());
-            break;
-        case STRING:
-            A.data.string->append(*C.data.string);
-            break;
-        case LIST:
-            A = mem_alloc(LIST);
-            List* list = braun_cons(B,C.data.list);
-            A.data.list = list;
-            break;
-        }
-        break;
-    case LIST:
-        List* list;
-        switch(C.type)
-        {
-        case NUMBER:
-            A = mem_alloc(LIST);
-            list = braun_update(B.data.list,braun_length(B.data.list),C);
-            A.data.list = list;
-            break;
-        case STRING:
-            A = mem_alloc(LIST);
-            list = braun_update(B.data.list,braun_length(B.data.list),C);
-            A.data.list = list;
-            break;
-        case BOOL:
-            A = mem_alloc(LIST);
-            list = braun_update(B.data.list,braun_length(B.data.list),C);
-            A.data.list = list;
-            break;
-        case LIST:
-            A = mem_alloc(LIST);
-
-            A.data.list = list;
-            break;
-        }
-        break;
-    }
-#endif
 }
 
-//======================================
-//Braun_Tree Implementation
-//======================================
-#ifdef BRAUN_TREE
-//Braun-tree implentation of List
-
-inline List* create_braun_node(List* l,const object& x, List* r)
-{
-    test_num++;
-    List* node = new List();
-    node->data = x;
-    node->left = l;
-    node->right = r;
-    return node;
-}
-
-//traverse tree
-int braun_rows(List* list, int row=0)
-{
-    if(list == 0)
-    {
-        return row;
-    }
-    return braun_rows(list->left,row+1);
-}
-
-inline bool braun_null(List* list)
-{
-    if(list==0)
-    {
-        return true;
-    }
-    return false;
-}
-
-List* braun_cons(const object &x, List* list)
-{
-    //    test_num++;
-    if(braun_null(list))
-    {
-        return create_braun_node(0, x, 0);
-    }
-    return create_braun_node(braun_cons(list->data,list->right),x,list->left);
-}
-
-inline List* braun_join(List* list1,List* list2)
-{
-    //    test_num++;
-    if(list1==0)
-    {
-        return 0;
-    }
-    return create_braun_node(list2,list1->data,braun_join(list1->left,list1->right));
-}
-
-List* braun_tail(List* list)
-{
-    //    test_num++;
-    return braun_join(list->left,list->right);
-}
-
-//O(log(n))
-List* braun_update(List* list, int index,const object& y)
-{
-    //    test_num++;
-    if(index==0)
-    {
-        if(list==0)
-        {
-            return create_braun_node(0,y,0);
-        }
-        return create_braun_node(list->left,y,list->right);
-    }
-    if(index%2==0)
-    {
-        return create_braun_node(list->left,list->data,braun_update(list->right,((index)/2)-1,y));
-    }
-    return create_braun_node(braun_update(list->left,(index-1)/2,y),list->data,list->right);
-}
-
-inline object braun_head(List* list)
-{
-    //    test_num++;
-    return list->data;
-}
-
-/*
-lookup (Node l x r) 0 = x
-lookup (Node l x r) n
-    | n `mod` 2 == 0 = lookup r ((n `div` 2)-1)
-    | otherwise
-    = lookup l ((n-1) `div` 2)
-*/
-
-inline object braun_lookup(List* list, int index)
-{
-    //    test_num++;
-    if(index==0)
-    {
-        return list->data;
-    }
-    if(index%2==0)
-    {
-        return braun_lookup(list->right,((index)/2)-1);
-    }
-    return braun_lookup(list->left,(index-1)/2);
-}
-
-inline int braun_diff(List* list, int n)
-{
-    //    test_num++;
-    if(list==0&&n==0)
-    {
-        return 0;
-    }
-    if(n==0)
-    {
-        return 1;
-    }
-    if(n%2 == 1)
-    {
-        //if odd
-        return braun_diff(list->left, (((float)(n - 1)) / 2.0));
-    }
-    else
-    {
-        //if even
-        return braun_diff( list->right, (((float)(n - 2)) / 2.0));
-    }
-}
-
-int braun_length(List* list)
-{
-    //    test_num++;
-    if(list==0)
-    {
-        return 0;
-    }
-    int right_size = braun_length(list->right);
-    return 1 + 2 * right_size + braun_diff(list->left,right_size);
-}
-
-bool print_braun_tree(List* list)
-{
-    if(braun_null(list))
-    {
-        return true;
-    }
-    print_object_in_array(braun_head(list),1);
-    return print_braun_tree(braun_tail(list));
-}
-#endif
 
 //======================================
 //2-3 Finger Tree Implementation
 //======================================
-
-#ifdef TWO_THREE_TREE
 
 inline int two_three_node_shallow_element_count(TwoThreeFingerTree* a)
 {
@@ -1730,6 +1434,6 @@ object two_three_lookup(TwoThreeFingerTree* tree, int index)
         }
     }
 }
-#endif
+
 
 }

@@ -1,7 +1,7 @@
 //Synthfunc syntax
 
 //With Composition operator
-*sinSynth |f=440 mf=220 mf2=100.5 g=1 dur=1 a=1 ch=0| =
+sinSynth |f=440 mf=220 mf2=100.5 g=1 dur=1 a=1 ch=0| =
 	sin( f2 sa ) >> filter( 1200 * env ) * env * a >> fout >> out( ch ) >> drawScope
 	where
 		env = adr( [ 1 0.5*dur ] [ 0.1 0.2 ] -3 g )
@@ -13,18 +13,9 @@
 sinSynth(f=440 mf=340 mf2=100.5 g=1 dur=0.1 a=2 ch=4)
 synth("sinSynth" f=440 mf=340 mf2=100.5 g=1 dur=0.1 a=2 ch=4)
 
-//Without Composition operator (pure where statements)
-*sinSynth {f=440 mf=220 mf2=100.5 g=1 dur=1 a=1 ch=0} = ds
+sampleSynth |speed=1 sample="nil" g=1 dur=1 a=1 ch=0| =
+	play( speed sample ) * env * a
 	where
-		env = adr( [ 1 0.5 ] [ 0.1 0.2 ] -3 g )
-		mod = range( sin( f ) * sin( 0.1 )  100 300 )
-		mod2 = range( saw( f ) * tri( 0.1 ) -100 300 )
-		f2 = f*mod( [ mf mf2 ] ) * fin
-		sa = mod2( [ mf2 mf ] )
-		msin = sin( f2 sa )
-		filt = filter(msin 1200 * env) * env * a
-		feed = fout(filt)
-		o = out(feed)
-		ds = drawScope(o)
-
+		env = adr( [ 1 0.5*dur ] [ 0.1 0.2 ] -3 g )
+		sampleBuf = loadBuf
 
