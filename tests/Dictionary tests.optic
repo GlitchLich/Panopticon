@@ -11,6 +11,12 @@ type(type)
 func x = x * 10
 type(func)
 type( func funcDict metamul( 2 3 ) )
+size( metamul( 2 3 ) funcDict )
+twoFuncDict = insert(funcDict "div" \x y = x / y)
+twoFuncDict
+size( twoFuncDict )
+// This doesn't work right, should be [ 1 1 4 ]
+size( func funcDict insert(funcDict "one" 1 "two" 2 "Three" 3) )
 
 numKeys = { one = 1 }
 numKeys
@@ -38,8 +44,11 @@ insert(numKeys 1 1 "five")
 evil = { doom = 666 }
 evil
 replace = insert(evil "doom" 777)
+// Printing is weird
 replace
+// The first print is right, second is not. Weird.
 print(replace)
+// I don't even know what is happening here. Strings as dictionary values arent working right.
 print(insert(replace "ninja" "turtle"))
 added = insert(evil "moreDoom" 888)
 added
@@ -79,8 +88,14 @@ rightEleven = lookup(eleven "eleven")
 rightEleven
 elevenNoOne = remove(eleven "one")
 elevenNoOne
-elevenNoOneTwo = remove(eleven "two")
+size(elevenNoOne)
+elevenNoOneTwo = remove(elevenNoOne "two")
 elevenNoOneTwo
+size(elevenNoOneTwo)
+// Something is wrong here. Our "three" dissapears
+replaceThree = insert(elevenNoOneTwo "three" false)
+replaceThree
+print(replaceThree)
 
 lookup(ten "ten")
 lookup(ten "nine")

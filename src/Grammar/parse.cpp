@@ -575,25 +575,18 @@ Variable arg10 = 10;
 
 inline Variable get_string_hash(std::string string)
 {
-    Variable var =  fnv1a(string.c_str());
-    string_hash_map[string] = var;
-    reverse_variable_name_lookup[var] = string;
-    return var;
-    /*
-//    std::cout << "Hash: " << string;
-    if(string_hash_map.find(string)!=string_hash_map.end())
+    if(string_hash_map.find(string) == string_hash_map.end())
     {
-//        std::cout << "," << string_hash_map[string] << std::endl;
-        return string_hash_map[string];
+        Variable var =  fnv1a(string.c_str());
+        string_hash_map[string] = var;
+        reverse_variable_name_lookup[var] = string;
+        return var;
     }
+
     else
     {
-        string_num++;
-        string_hash_map[string] = string_num;
-        reverse_variable_name_lookup[string_num] = string;
-//        std::cout << "," << string_hash_map[string] << std::endl;
-        return string_num;
-    }*/
+        return string_hash_map[string];
+    }
 }
 
 Variable get_float_hash(Number number)

@@ -258,6 +258,7 @@ inline bool setup_argument(object& argument)
         argument = optic_stack.back();
         optic_stack.pop_back();
     }
+
     else if(argument.type == UNDECLARED_VARIABLE||argument.type == VARIABLE)
     {
         object result;
@@ -275,7 +276,7 @@ inline bool setup_argument(object& argument)
         else if(result.type == OPERATION_TREE)
         {
             optic_stack.push_back(argument);
-            evaluate_top;
+            evaluate_top();
             argument = optic_stack.back();
             optic_stack.pop_back();
         }
@@ -284,6 +285,7 @@ inline bool setup_argument(object& argument)
             argument = result;
         }
     }
+
     else if(argument.type == FUNCTION)
     {
         object arguments;
@@ -766,31 +768,20 @@ bool array_size(object& result, object& container)
     }
 }
 
-bool size(object& result, const Array& arguments)
+void size_of_object(object& result, object& obj)
 {
-    if(arguments.size() != 1)
-    {
-        out() << "Error: length received an incorrect number of arguments" << std::endl;
-        correct_parsing = false;
-        return false;
-    }
-
-    object container = arguments.at(0);
-    setup_argument(container);
-
-    result = mem_alloc(NUMBER);
-
-    switch(container.type)
+    switch(obj.type)
     {
     case panopticon::STRING:
-        result.data.number = container.data.string->length();
+        result.data.number = obj.data.string->length();
         break;
+
     case panopticon::DICTIONARY:
-        result.data.number = container.data.dictionary->size();
+        result.data.number = obj.data.dictionary->size();
         break;
 
     case panopticon::TRIE:
-        result.data.number = container.data.trie->count;
+        result.data.number = obj.data.trie->count;
         break;
 
     case NIL:
@@ -798,15 +789,52 @@ bool size(object& result, const Array& arguments)
         break;
 
     case LIST:
-        return array_size(result, container);
+        array_size(result, obj);
+        break;
+
+    case ARRAY:
+        result.data.number = obj.data.array->size();
         break;
 
     default:
         result.data.number = 1;
         break;
     }
+}
 
-    return true;
+bool size(object& result, const Array& arguments)
+{
+    if(arguments.size() == 0)
+    {
+        result.type = NIL;
+        result.data.number = 0;
+        return true;
+    }
+
+    else if(arguments.size() == 1)
+    {
+        result = mem_alloc(NUMBER);
+        object argument = arguments.at(0);
+        setup_argument(argument);
+        size_of_object(result, argument);
+        return true;
+    }
+
+    else if(arguments.size() > 1)
+    {
+        result = mem_alloc(ARRAY);
+
+        for(unsigned int i = 0; i < arguments.size(); ++i)
+        {
+            object item_size = mem_alloc(NUMBER);
+            object argument = arguments.at(i);
+            setup_argument(argument);
+            size_of_object(item_size, argument);
+            result.data.array->push_back(item_size);
+        }
+
+        return true;
+    }
 }
 
 bool last(object& result, const Array& arguments)
@@ -1276,13 +1304,17 @@ bool type_of(object& result, const Array& arguments)
 
         for(unsigned int i = 0; i < arguments.size(); ++i)
         {
-            result.data.array->push_back(type_to_string_object(arguments.at(i)));
+            object argument = arguments.at(i);
+            setup_argument(argument);
+            result.data.array->push_back(type_to_string_object(argument));
         }
     }
 
     else
     {
-        result = type_to_string_object(arguments.at(0));
+        object argument = arguments.at(0);
+        setup_argument(argument);
+        result = type_to_string_object(argument);
     }
 
     return true;
