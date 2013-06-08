@@ -465,7 +465,6 @@ bool obj_equivalent(object a, object b)
 
     optic_stack.push_back(b);
     optic_stack.push_back(a);
-    optic_stack.push_back(object());
     optic_stack.push_back(equal_function);
     evaluate_top();
 

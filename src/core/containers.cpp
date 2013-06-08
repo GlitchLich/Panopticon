@@ -72,7 +72,7 @@ bool print_trie(const object& trie, bool endl)
         switch(value.type)
         {
         case STRING:
-            out() << value.data.string;
+            out() << value.data.string->c_str();
             break;
 
         case NUMBER:

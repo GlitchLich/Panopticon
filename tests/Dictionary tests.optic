@@ -1,6 +1,18 @@
 //Dictionary Tests!
 //FOUR different syntaxes, Horziontal vs Vertical, keyworded dict vs none
 
+yes = { yes = "yo" }
+yes
+no = insert(yes "yes" "no")
+no
+yess = insert(yes "yess" "yess")
+insert(insert(yess "yo" "noo") "yo" "noo")
+
+stringDict = { one = "one" two = "two" three = "three" }
+stringDict
+insert(stringDict "four" "four")
+lookup(stringDict "one")
+
 funcDict = { mul x y = x * y }
 funcDict
 metamul = lookup(funcDict "mul")
@@ -9,6 +21,7 @@ type(funcDict)
 type(metamul( 2 3 ))
 type(type)
 func x = x * 10
+// CRASHES RIGHT NOW
 type(func)
 type( func funcDict metamul( 2 3 ) )
 size( metamul( 2 3 ) funcDict )
@@ -21,6 +34,9 @@ size( func funcDict insert(funcDict "one" 1 "two" 2 "Three" 3) )
 numKeys = { one = 1 }
 numKeys
 print(remove(numKeys "one"))
+print(insert(numKeys "one" 1.1))
+type(numKeys)
+print(type(insert(numKeys "one" 1.1)))
 // Keys can be numbers (float or int) as well strings
 moreNumKeys = insert(numKeys 2 2)
 moreNumKeys
@@ -48,6 +64,10 @@ replace = insert(evil "doom" 777)
 replace
 // The first print is right, second is not. Weird.
 print(replace)
+// This doesn't work right either?
+type(replace)
+// This will print right at first. Something with the stack or hash lookup?
+print(type(replace))
 // I don't even know what is happening here. Strings as dictionary values arent working right.
 print(insert(replace "ninja" "turtle"))
 added = insert(evil "moreDoom" 888)

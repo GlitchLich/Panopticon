@@ -1222,7 +1222,6 @@ bool remove(object& result, const Array& arguments)
         trie_remove(map, key);
     }
 
-
     resolve_trie(result, map.data.trie);
     return true;
 }
