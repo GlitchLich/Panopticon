@@ -68,10 +68,10 @@ struct HashCollisionNode
 
 // Struct constants
 const Node EMPTY_NODE = Node();
+Node EMPTY_NODE_NC = Node(); // non-const
 const Trie EMPTY = { 0, Node(), false, Node() };
 
-extern const Node EMPTY_NODE;
-extern const Trie EMPTY;
+
 
 ////////////////////
 /// Trie functions
@@ -1383,73 +1383,207 @@ Iterator iterator(Trie* trie)
     return Iterator(trie);
 }
 
-bool map(Trie* trie, object& result, const object& function, Dictionary& context)
+// Calls func on each element of the Trie. Performs no mutation and does not return a new trie
+void map(Node& node, trie_map_function func, Node& previous_node)
 {
-    if(trie)
-    {
-        Iterator iter(trie);
-        Entry* entry_array = (Entry*) malloc(trie->count * sizeof(Entry));
-        unsigned int i = 0;
+    Node next_node = EMPTY_NODE_NC;
 
-        while(iter.has_next())
+    switch(node.type)
+    {
+    case NULL_NODE:
+        return;
+        break;
+
+    case KEY:
+        break;
+
+    case OPTIC_OBJECT:
+        func(previous_node.data.uint, node.data.obj);
+        break;
+
+    case ARRAY_NODE:
+
+        previous_node = node;
+        for(unsigned int i = 0; i < node.data.array->array.size(); ++i)
         {
-            Entry entry = iter.next();
-            object res;
-            call_func_on_item(res, function, entry.obj, context);
-            entry_array[i] = Entry(entry.key, res);
-            ++i;
+            next_node = node.data.array->array.at(i);
+            map(next_node, func, previous_node);
+            previous_node = next_node;
         }
 
-        result.type = TRIE;
-        result.data.trie = create(entry_array, trie->count);
-        free(entry_array);
-        return true;
+        return;
+        break;
+
+    case BITMAP_INDEXED_NODE:
+
+        previous_node = node;
+        for(unsigned int i = 0; i < node.data.bitmap->array.size(); ++i)
+        {
+            next_node = node.data.bitmap->array.at(i);
+            map(next_node, func, previous_node);
+            previous_node = next_node;
+        }
+
+        return;
+        break;
+
+    case HASH_COLLISION_NODE:
+
+        previous_node = node;
+        for(unsigned int i = 0; i < node.data.collision->array.size(); ++i)
+        {
+            next_node = node.data.collision->array.at(i);
+            map(next_node, func, previous_node);
+            previous_node = next_node;
+        }
+
+        return;
+        break;
+
+    case TRIE_MAP:
+        next_node = node.data.trie->root;
+        break;
+
+    case NODE: // Recursive identity check
+        next_node = *node.data.node;
+        break;
+
+    default:
+        std::cerr << "Unknown Node Type in trie::map_trie" << std::endl;
+        return;
+        break;
     }
 
-    else
+    if(next_node.type == NULL_NODE)
+        return;
+
+    return map(next_node, func, node);
+}
+
+void map(Trie *trie, trie_map_function func)
+{
+    Node trie_node(trie);
+    return map(trie_node, func, EMPTY_NODE_NC);
+}
+
+void map_func_to_trie(Node* new_trie, const object& function, Dictionary& context, const unsigned int& key, const object& value)
+{
+    object res;
+    call_func_on_item(res, function, value, context);
+    new_trie->data.trie = trie_assoc(Node(new_trie->data.trie), key_node(key), Node(res)).data.trie;
+}
+
+// Returns a new trie (via Node* trie) that has had the object_function called on each element. Trie is persistent so no mutation occurs
+void map(Node* trie, Node& node, new_trie_map_function map_function, const object& object_function, Dictionary& context, Node& previous_node)
+{
+    Node next_node = EMPTY_NODE_NC;
+
+    switch(node.type)
     {
-        out() << "Dictionary in map() is null" << std::endl;
-        correct_parsing = false;
+    case NULL_NODE:
+        return;
+        break;
+
+    case KEY:
+        break;
+
+    case OPTIC_OBJECT:
+        map_function(trie, object_function, context, previous_node.data.uint, node.data.obj);
+        break;
+
+    case ARRAY_NODE:
+
+        previous_node = node;
+        for(unsigned int i = 0; i < node.data.array->array.size(); ++i)
+        {
+            next_node = node.data.array->array.at(i);
+            map(trie, next_node, map_function, object_function, context, previous_node);
+            previous_node = next_node;
+        }
+
+        return;
+        break;
+
+    case BITMAP_INDEXED_NODE:
+
+        previous_node = node;
+        for(unsigned int i = 0; i < node.data.bitmap->array.size(); ++i)
+        {
+            next_node = node.data.bitmap->array.at(i);
+            map(trie, next_node, map_function, object_function, context, previous_node);
+            previous_node = next_node;
+        }
+
+        return;
+        break;
+
+    case HASH_COLLISION_NODE:
+
+        previous_node = node;
+        for(unsigned int i = 0; i < node.data.collision->array.size(); ++i)
+        {
+            next_node = node.data.collision->array.at(i);
+            map(trie, next_node, map_function, object_function, context, previous_node);
+            previous_node = next_node;
+        }
+
+        return;
+        break;
+
+    case TRIE_MAP:
+        next_node = node.data.trie->root;
+        break;
+
+    case NODE: // Recursive identity check
+        next_node = *node.data.node;
+        break;
+
+    default:
+        std::cerr << "Unknown Node Type in trie::map_trie" << std::endl;
+        return;
+        break;
+    }
+
+    if(next_node.type == NULL_NODE)
+        return;
+
+    return map(trie, next_node, map_function, object_function, context, node);
+}
+
+bool map(Trie* trie, object& result, new_trie_map_function map_function, const object& object_function, Dictionary& context)
+{
+    if(!trie)
+    {
+        result.type = NIL;
+        result.data.number = 0;
         return false;
     }
+
+    Node new_trie_node(trie);
+    Node begin_node(trie);
+    map(&new_trie_node, begin_node, map_function, object_function, context, EMPTY_NODE_NC);
+    result.type = TRIE;
+    result.data.trie = new_trie_node.data.trie;
+    return true;
+}
+
+bool map(Trie* trie, object& result, const object& function, Dictionary& context)
+{
+    return map(trie, result, map_func_to_trie, function, context);
+}
+
+void filter_func_to_trie(Node* new_trie, const object& function, Dictionary& context, const unsigned int& key, const object& value)
+{
+    object res;
+    call_func_on_item(res, function, value, context);
+
+    if(!res.data.boolean)
+        new_trie->data.trie = without(new_trie->data.trie, key_node(key));
 }
 
 bool filter(Trie* trie, object& result, const object& function, Dictionary& context)
 {
-    if(trie)
-    {
-        Iterator iter(trie);
-        Entry* entry_array = (Entry*) malloc(trie->count * sizeof(Entry));
-        unsigned int i = 0;
-
-        while(iter.has_next())
-        {
-            Entry entry = iter.next();
-            object res;
-            call_filter_func_on_item(res, function, entry.obj, context);
-
-            if(res.type == BOOL)
-            {
-                if(res.data.boolean)
-                {
-                    entry_array[i] = Entry(entry.key, entry.obj);
-                    ++i;
-                }
-            }
-        }
-
-        result.type = TRIE;
-        result.data.trie = create(entry_array, i);
-        free(entry_array);
-        return true;
-    }
-
-    else
-    {
-        out() << "Dictionary in filter() is null" << std::endl;
-        correct_parsing = false;
-        return false;
-    }
+    return map(trie, result, filter_func_to_trie, function, context);
 }
 
 } // trie namespace

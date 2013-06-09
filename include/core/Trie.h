@@ -30,9 +30,11 @@ Entry entry(Trie* trie, uint32_t key);
 object lookup(Trie* trie, uint32_t key);
 Trie* insert(Trie* trie, uint32_t key, const object& value);
 Trie* without(Trie* trie, uint32_t key);
-bool map(Trie* trie, object& result, const object& function, Dictionary& context);
+typedef void (*trie_map_function) (const unsigned int& key, const object& value);
+void map(Trie* trie, trie_map_function func); // Calls a trie_map_function for each entry, does not return a new trie
+bool map(Trie* trie, object& result, const object& function, Dictionary& context); // calls the object function for each entry, returning a new Trie
 bool filter(Trie* trie, object& result, const object& function, Dictionary& context);
-Iterator iterator(Trie* trie);
+Iterator iterator(Trie* trie); // Stateful iteration that creates garbage. Instead, you should prefer map and filter functions which create 0 garbage
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Trie implementation details
@@ -181,6 +183,9 @@ struct Trie
     Trie(uint32_t count, Node root, bool has_null, Node null_value) : count(count), root(root), has_null(has_null), null_value(null_value) { _meta = NULL; }
     Trie(Trie* meta, uint32_t count, Node root, bool has_null, Node null_value) : _meta(meta), count(count), root(root), has_null(has_null), null_value(null_value) { }
 };
+
+// Internal mapping function type
+typedef void (*new_trie_map_function) (Node* new_trie, const object& function, Dictionary& context, const unsigned int& key, const object& value);
 
 } // Trie namespace
 
