@@ -1383,6 +1383,19 @@ Iterator iterator(Trie* trie)
     return Iterator(trie);
 }
 
+// Macro to reduce code duplication
+#define NODE_MAP(type) previous_node = node; \
+for(unsigned int i = 0; i < node.data.type->array.size(); ++i) \
+{ \
+    next_node = node.data.type->array.at(i); \
+    map(next_node, func, previous_node); \
+    previous_node = next_node; \
+} \
+
+#define ARRAY_MAP NODE_MAP(array)
+#define BITMAP_MAP NODE_MAP(bitmap)
+#define COLLISION_MAP NODE_MAP(collision)
+
 // Calls func on each element of the Trie. Performs no mutation and does not return a new trie
 void map(Node& node, trie_map_function func, Node& previous_node)
 {
@@ -1402,41 +1415,17 @@ void map(Node& node, trie_map_function func, Node& previous_node)
         break;
 
     case ARRAY_NODE:
-
-        previous_node = node;
-        for(unsigned int i = 0; i < node.data.array->array.size(); ++i)
-        {
-            next_node = node.data.array->array.at(i);
-            map(next_node, func, previous_node);
-            previous_node = next_node;
-        }
-
+        ARRAY_MAP
         return;
         break;
 
     case BITMAP_INDEXED_NODE:
-
-        previous_node = node;
-        for(unsigned int i = 0; i < node.data.bitmap->array.size(); ++i)
-        {
-            next_node = node.data.bitmap->array.at(i);
-            map(next_node, func, previous_node);
-            previous_node = next_node;
-        }
-
+        BITMAP_MAP
         return;
         break;
 
     case HASH_COLLISION_NODE:
-
-        previous_node = node;
-        for(unsigned int i = 0; i < node.data.collision->array.size(); ++i)
-        {
-            next_node = node.data.collision->array.at(i);
-            map(next_node, func, previous_node);
-            previous_node = next_node;
-        }
-
+        COLLISION_MAP
         return;
         break;
 
@@ -1466,12 +1455,26 @@ void map(Trie *trie, trie_map_function func)
     return map(trie_node, func, EMPTY_NODE_NC);
 }
 
+// Map function called on each key/value pair. Apply the object_function to each entry, then set new_trie via assoc. No mutation
 void map_func_to_trie(Node* new_trie, const object& function, Dictionary& context, const unsigned int& key, const object& value)
 {
     object res;
     call_func_on_item(res, function, value, context);
     new_trie->data.trie = trie_assoc(Node(new_trie->data.trie), key_node(key), Node(res)).data.trie;
 }
+
+// Macro to reduce code duplication
+#define NODE_NEW_MAP(type) previous_node = node; \
+for(unsigned int i = 0; i < node.data.type->array.size(); ++i) \
+{ \
+    next_node = node.data.type->array.at(i); \
+    map(trie, next_node, map_function, object_function, context, previous_node); \
+    previous_node = next_node; \
+} \
+
+#define ARRAY_NEW_MAP NODE_NEW_MAP(array)
+#define BITMAP_NEW_MAP NODE_NEW_MAP(bitmap)
+#define COLLISION_NEW_MAP NODE_NEW_MAP(collision)
 
 // Returns a new trie (via Node* trie) that has had the object_function called on each element. Trie is persistent so no mutation occurs
 void map(Node* trie, Node& node, new_trie_map_function map_function, const object& object_function, Dictionary& context, Node& previous_node)
@@ -1492,41 +1495,17 @@ void map(Node* trie, Node& node, new_trie_map_function map_function, const objec
         break;
 
     case ARRAY_NODE:
-
-        previous_node = node;
-        for(unsigned int i = 0; i < node.data.array->array.size(); ++i)
-        {
-            next_node = node.data.array->array.at(i);
-            map(trie, next_node, map_function, object_function, context, previous_node);
-            previous_node = next_node;
-        }
-
+        ARRAY_NEW_MAP
         return;
         break;
 
     case BITMAP_INDEXED_NODE:
-
-        previous_node = node;
-        for(unsigned int i = 0; i < node.data.bitmap->array.size(); ++i)
-        {
-            next_node = node.data.bitmap->array.at(i);
-            map(trie, next_node, map_function, object_function, context, previous_node);
-            previous_node = next_node;
-        }
-
+        BITMAP_NEW_MAP
         return;
         break;
 
     case HASH_COLLISION_NODE:
-
-        previous_node = node;
-        for(unsigned int i = 0; i < node.data.collision->array.size(); ++i)
-        {
-            next_node = node.data.collision->array.at(i);
-            map(trie, next_node, map_function, object_function, context, previous_node);
-            previous_node = next_node;
-        }
-
+        COLLISION_NEW_MAP
         return;
         break;
 
@@ -1572,6 +1551,7 @@ bool map(Trie* trie, object& result, const object& function, Dictionary& context
     return map(trie, result, map_func_to_trie, function, context);
 }
 
+// filter function called on each key/value entry pair. If the object_function is false, we set new_trie to the Trie::without, no mutation
 void filter_func_to_trie(Node* new_trie, const object& function, Dictionary& context, const unsigned int& key, const object& value)
 {
     object res;
