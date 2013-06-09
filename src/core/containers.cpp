@@ -70,7 +70,10 @@ void print_trie_entry(const unsigned int& key, const object& value)
         break;
 
     case BOOL:
-        out() << value.data.boolean;
+        if(value.data.boolean)
+            out() << "true";
+        else
+            out() << "false";
         break;
 
     case LIST:

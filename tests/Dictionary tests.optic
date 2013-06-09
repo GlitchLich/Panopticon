@@ -10,6 +10,9 @@ tenOdd
 tenEven = filter(\x = x % 2 == 0 ten)
 tenEven
 
+boolDict = { truth = true lie = false }
+boolDict
+
 dictionary = { Turtles = true Octopi = "are cool" dictFunc x y = x + y Dragon = { test = 4 } }
 dictionary::Turtles
 
