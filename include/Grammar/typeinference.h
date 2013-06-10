@@ -4,42 +4,13 @@
 #include <string>
 #include <deque>
 #include <unordered_map>
+#include "include/core/types.h"
 
 namespace panopticon
 {
 
 namespace typing
 {
-
-//Forward Declarations
-struct TypeVariable;
-struct PolymorphicOperator;
-
-struct ParseError
-{
-    unsigned long long name;
-};
-
-struct TypeError
-{
-    unsigned long long name;
-};
-
-enum OperatorTypes{TYPE_VARIABLE,Null,MONO,POLY,FUNC,PARSE_ERROR,TYPE_ERROR,NONE,TYPE_OPERATOR};
-
-union OpType
-{
-    PolymorphicOperator* type_op;
-    TypeVariable* type_var;
-    ParseError parse_error;
-    TypeError type_error;
-};
-
-struct TypeOperator
-{
-    int type;
-    OpType data;
-};
 
 struct TypeVariable
 {

@@ -37,8 +37,6 @@
 namespace panopticon
 {
 
-
-
 // thread status
 enum ThreadStatus
 {
@@ -205,6 +203,42 @@ struct object
     Type type;
 };
 
+namespace typing
+{
+
+//Type Inference
+struct TypeVariable;
+struct PolymorphicOperator;
+
+struct ParseError
+{
+    unsigned long long name;
+};
+
+struct TypeError
+{
+    unsigned long long name;
+};
+
+enum OperatorTypes{TYPE_VARIABLE,Null,MONO,POLY,FUNC,PARSE_ERROR,TYPE_ERROR,NONE,TYPE_OPERATOR};
+
+union OpType
+{
+    PolymorphicOperator* type_op;
+    TypeVariable* type_var;
+    ParseError parse_error;
+    TypeError type_error;
+};
+
+struct TypeOperator
+{
+    int type;
+    OpType data;
+};
+
+}
+
+//Functions and Primitives
 struct Function
 {
     Variable name;
@@ -214,6 +248,7 @@ struct Function
     object body;
     bool evaluated;
     Thunk thunk_body;
+    typing::TypeOperator arity;
 };
 
 struct Primitive
@@ -223,21 +258,8 @@ struct Primitive
     int num_arguments;
     Array arguments;
     primitive_function p_func;
+    typing::TypeOperator arity;
 };
-
-#ifdef BRAUN_TREE
-struct List
-{
-    List* left;
-    object data;
-    List* right;
-};
-#else
-
-#endif
-
-
-
 
 } // panopticon namespace
 
