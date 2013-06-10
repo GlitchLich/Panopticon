@@ -156,7 +156,9 @@ void init()
 //    reverse_variable_name_lookup[8] = "arg8";
 //    reverse_variable_name_lookup[9] = "arg9";
 //    reverse_variable_name_lookup[10] = "arg10";
-//    get_string_hash("\\");
+    //3641448411
+//    std::cout << "hash : " << get_string_hash("\\") << std::endl;
+
 //    get_string_hash("1");
 //    get_string_hash("2");
 //    get_string_hash("3");

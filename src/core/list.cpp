@@ -433,7 +433,6 @@ inline TwoThreeFingerTree* two_three_cons(TwoThreeFingerTree* finger_tree, TwoTh
                         finger_tree->node.deep->left->three,
                         finger_tree->node.deep->left->four
                         );
-            //            two_three_element_count(node3);
             deep->node.deep->center = two_three_cons(finger_tree->node.deep->center,node3);
             //Append to the beginning and shift one to two.
             deep->node.deep->left->two = finger_tree->node.deep->left->one;

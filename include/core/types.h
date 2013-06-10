@@ -116,7 +116,16 @@ enum Type
     FT_DIGIT, // 35 for 23FingerTrees
     FT_ELEMENT, // 36 for 23FingerTrees
     FT_NODE2, // 37 for 23 FingerTrees
-    FT_NODE3 // 38 for 23 FingerTrees
+    FT_NODE3, // 38 for 23 FingerTrees
+
+    //New Thunk Stuff?
+    FUNCTION_DECLARATION,
+    FUNCTION_CALL,
+    IDENTIFIER,
+    LAMBDA,
+    RECURSIVE_CALL,
+    CASE,
+    THUNK
 };
 
 std::string type_string(Type type);
@@ -150,6 +159,17 @@ typedef bool Boolean;
 typedef bool (*operator_function) (object &, const object &, const object &);
 typedef bool (*unary_operator_function) (object &, const object &);
 typedef bool (*primitive_function) (object&, const Array& arguments);
+
+//Thunks
+typedef std::deque<object> Thunk;
+struct Function_Declaration;
+struct Function_Call;
+struct Identifier;
+struct Lambda;
+struct Recursive_call;
+struct Case;
+
+
 //typedef unsigned long long Variable;
 typedef uint32_t Variable;
 
@@ -167,7 +187,7 @@ union Data
     operator_function operator_func;
     unary_operator_function unary_operator_func;
     Primitive* primitive;
-
+    Thunk* thunk;
     //Only to be used for variable indentification!
     Variable variable_number;
 };
@@ -187,14 +207,13 @@ struct object
 
 struct Function
 {
-//    String name;
     Variable name;
     Dictionary heap;
     int num_arguments;
     Array arguments;
     object body;
-    Array reg;
     bool evaluated;
+    Thunk thunk_body;
 };
 
 struct Primitive
