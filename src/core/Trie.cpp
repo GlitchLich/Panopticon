@@ -220,7 +220,7 @@ void print_node(Node node)
         std::cout << "TRIE_MAP ";
         break;
 
-    case NODE: // Recursive identity check
+    case NODE:
         std::cout << "NODE ";
         break;
 
@@ -1387,7 +1387,7 @@ Iterator iterator(Trie* trie)
 #define NODE_MAP(type) previous_node = node; \
 for(unsigned int i = 0; i < node.data.type->array.size(); ++i) \
 { \
-    next_node = node.data.type->array.at(i); \
+    next_node = node.data.type->array._array[i]; \
     map(next_node, func, previous_node); \
     previous_node = next_node; \
 } \
@@ -1467,7 +1467,7 @@ void map_func_to_trie(Node* new_trie, const object& function, Dictionary& contex
 #define NODE_NEW_MAP(type) previous_node = node; \
 for(unsigned int i = 0; i < node.data.type->array.size(); ++i) \
 { \
-    next_node = node.data.type->array.at(i); \
+    next_node = node.data.type->array._array[i]; \
     map(trie, next_node, map_function, object_function, context, previous_node); \
     previous_node = next_node; \
 } \

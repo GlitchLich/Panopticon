@@ -17,7 +17,7 @@ namespace trie
 // Forward declarations
 struct Trie; // Persistant Hash Map
 struct Entry; // struct { uint32_t key, panopticon::object value }
-struct Iterator; // Trie HashMap iterator, use Entry Iterator::next() and bool Iterator::has_next()
+struct Iterator; // Trie HashMap iterator, use Entry Iterator::next() and bool Iterator::has_next(). Prefer the map and filter functions over this iterator.
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Trie Interface Functions
@@ -30,10 +30,10 @@ Entry entry(Trie* trie, uint32_t key);
 object lookup(Trie* trie, uint32_t key);
 Trie* insert(Trie* trie, uint32_t key, const object& value);
 Trie* without(Trie* trie, uint32_t key);
-typedef void (*trie_map_function) (const unsigned int& key, const object& value);
+typedef void (*trie_map_function) (const unsigned int& key, const object& value); // Function type used in map calls
 void map(Trie* trie, trie_map_function func); // Calls a trie_map_function for each entry, does not return a new trie
-bool map(Trie* trie, object& result, const object& function, Dictionary& context); // calls the object function for each entry, returning a new Trie
-bool filter(Trie* trie, object& result, const object& function, Dictionary& context);
+bool map(Trie* trie, object& result, const object& function, Dictionary& context); // calls the object function for each trie entry, returning a new Trie
+bool filter(Trie* trie, object& result, const object& function, Dictionary& context); // calls the object function for each trie entry, returning a new Trie from the true elements
 Iterator iterator(Trie* trie); // Stateful iteration that creates garbage. Instead, you should prefer map and filter functions which create 0 garbage
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -55,14 +55,14 @@ struct HashCollisionNode;
 // Trie types, used for type tags
 enum Type
 {
-    NULL_NODE = 0, // 0
-    KEY, // 1
-    OPTIC_OBJECT, // 2
-    ARRAY_NODE, // 3
+    NULL_NODE = 0,       // 0
+    KEY,                 // 1
+    OPTIC_OBJECT,        // 2
+    ARRAY_NODE,          // 3
     BITMAP_INDEXED_NODE, // 4
     HASH_COLLISION_NODE, // 5
-    TRIE_MAP, // 6
-    NODE // 7
+    TRIE_MAP,            // 6
+    NODE                 // 7
 };
 
 //////////////////
@@ -77,7 +77,7 @@ union NodeData
     BitmapIndexedNode* bitmap;
     HashCollisionNode* collision;
     Trie* trie;
-    Node* node; // Recursive referencing.
+    Node* node; // Recursive referencing. Used to determine nested changes.
 };
 
 // Binds Type tag with NodeData
@@ -146,7 +146,7 @@ NodeSeq* node_seq(Type type, const NArray& nodes, unsigned int i, NodeSeq* s, No
 NodeSeq* node_seq(Node node);
 NodeSeq* node_seq(Trie* trie);
 
-struct Iterator // Use this for Trie iteration
+struct Iterator // Use this for Trie iteration, however prefer the map and filter functions above.
 {
     Trie* trie;
     NodeSeq* ns;
@@ -180,8 +180,21 @@ struct Trie
     Node null_value;
     Trie* _meta;
 
-    Trie(uint32_t count, Node root, bool has_null, Node null_value) : count(count), root(root), has_null(has_null), null_value(null_value) { _meta = NULL; }
-    Trie(Trie* meta, uint32_t count, Node root, bool has_null, Node null_value) : _meta(meta), count(count), root(root), has_null(has_null), null_value(null_value) { }
+    Trie(uint32_t count, Node root, bool has_null, Node null_value) :
+        count(count),
+        root(root),
+        has_null(has_null),
+        null_value(null_value)
+    {
+        _meta = NULL;
+    }
+
+    Trie(Trie* meta, uint32_t count, Node root, bool has_null, Node null_value) :
+        _meta(meta),
+        count(count),
+        root(root),
+        has_null(has_null),
+        null_value(null_value) { }
 };
 
 // Internal mapping function type

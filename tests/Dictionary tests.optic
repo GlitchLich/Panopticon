@@ -1,6 +1,7 @@
 //Dictionary Tests!
 //FOUR different syntaxes, Horziontal vs Vertical, keyworded dict vs none
 
+
 ten = { one = 1 two = 2 three = 3 four = 4 five = 5 six = 6 seven = 7 eight = 8 nine = 9 ten = 10 }
 tenPlusTen = map(\x = x + 10 ten)
 ten
@@ -15,6 +16,8 @@ boolDict
 
 dictionary = { Turtles = true Octopi = "are cool" dictFunc x y = x + y Dragon = { test = 4 } }
 dictionary::Turtles
+lookup(dictionary "Turtles")
+lookup(dictionary "Octopi")
 
 yes = { yes = "yo" }
 yes
