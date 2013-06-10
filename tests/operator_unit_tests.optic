@@ -6,9 +6,11 @@ f = (+4)
 f(2)
 
 //Works with partial function application as well
+div :: (Num Num) -> Num
 div x y = x / y
 div9by = div(9)
 div9by(18)
+
 //Even works with infix partial application
 divBy9 = (`div` 9)
 divBy9(18)
@@ -25,16 +27,18 @@ partialStream(2 3 4)
 add1 = (+1)
 add2 = (+2)
 comp2 f g = \x y = g( f(x) f(y) )
-comp2 f g = (\x y -> g (f x) (f y))
 comp2(add1 add2)
 
-//length, returns length of an array
+//size, returns size of a list
 myArray = [0 1 2 3 4 5]
-length( [0 1 2 3 ] )
+myArray
+size( [0 1 2 3 ] )
 head( myArray )
 tail( myArray )
 last( myArray )
 init( myArray )
+
+
 
 //Reverse reverses an array
 reverse <<  myArray
@@ -183,6 +187,7 @@ lambdaList( (\x = x + 1) 23)
 twoLazy a = a[0]([2 3 4 5]) + a[1]([0 1 2 3])
 twoLazy( [ \x = x^2 \y = y^4 ] )
 
+lambdazForever :: 
 lambdazForever f x t
 	| t > 1 = f( lambdazForever( f x t-1 ) )
 	| _		= f(x)

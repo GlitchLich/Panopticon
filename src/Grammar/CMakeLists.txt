@@ -13,5 +13,6 @@ set(Panopticon_SRC
         ${CMAKE_CURRENT_SOURCE_DIR}/lexer.c
         ${CMAKE_CURRENT_SOURCE_DIR}/lexer.l
         ${CMAKE_CURRENT_SOURCE_DIR}/grammar.y
+        ${CMAKE_CURRENT_SOURCE_DIR}/typeinference.cpp
         PARENT_SCOPE
 )

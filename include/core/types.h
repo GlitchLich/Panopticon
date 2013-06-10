@@ -37,8 +37,6 @@
 namespace panopticon
 {
 
-
-
 // thread status
 enum ThreadStatus
 {
@@ -116,7 +114,16 @@ enum Type
     FT_DIGIT, // 35 for 23FingerTrees
     FT_ELEMENT, // 36 for 23FingerTrees
     FT_NODE2, // 37 for 23 FingerTrees
-    FT_NODE3 // 38 for 23 FingerTrees
+    FT_NODE3, // 38 for 23 FingerTrees
+
+    //New Thunk Stuff?
+    FUNCTION_DECLARATION,
+    FUNCTION_CALL,
+    IDENTIFIER,
+    LAMBDA,
+    RECURSIVE_CALL,
+    CASE,
+    THUNK
 };
 
 std::string type_string(Type type);
@@ -150,6 +157,17 @@ typedef bool Boolean;
 typedef bool (*operator_function) (object &, const object &, const object &);
 typedef bool (*unary_operator_function) (object &, const object &);
 typedef bool (*primitive_function) (object&, const Array& arguments);
+
+//Thunks
+typedef std::deque<object> Thunk;
+struct Function_Declaration;
+struct Function_Call;
+struct Identifier;
+struct Lambda;
+struct Recursive_call;
+struct Case;
+
+
 //typedef unsigned long long Variable;
 typedef uint32_t Variable;
 
@@ -167,7 +185,7 @@ union Data
     operator_function operator_func;
     unary_operator_function unary_operator_func;
     Primitive* primitive;
-
+    Thunk* thunk;
     //Only to be used for variable indentification!
     Variable variable_number;
 };
@@ -185,16 +203,52 @@ struct object
     Type type;
 };
 
+namespace typing
+{
+
+//Type Inference
+struct TypeVariable;
+struct PolymorphicOperator;
+
+struct ParseError
+{
+    unsigned long long name;
+};
+
+struct TypeError
+{
+    unsigned long long name;
+};
+
+enum OperatorTypes{TYPE_VARIABLE,Null,MONO,POLY,FUNC,PARSE_ERROR,TYPE_ERROR,NONE,TYPE_OPERATOR};
+
+union OpType
+{
+    PolymorphicOperator* type_op;
+    TypeVariable* type_var;
+    ParseError parse_error;
+    TypeError type_error;
+};
+
+struct TypeOperator
+{
+    int type;
+    OpType data;
+};
+
+}
+
+//Functions and Primitives
 struct Function
 {
-//    String name;
     Variable name;
     Dictionary heap;
     int num_arguments;
     Array arguments;
     object body;
-    Array reg;
     bool evaluated;
+    Thunk thunk_body;
+    typing::TypeOperator arity;
 };
 
 struct Primitive
@@ -204,21 +258,8 @@ struct Primitive
     int num_arguments;
     Array arguments;
     primitive_function p_func;
+    typing::TypeOperator arity;
 };
-
-#ifdef BRAUN_TREE
-struct List
-{
-    List* left;
-    object data;
-    List* right;
-};
-#else
-
-#endif
-
-
-
 
 } // panopticon namespace
 

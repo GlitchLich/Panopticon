@@ -14,5 +14,6 @@ set(Panopticon_SRC
         ${CMAKE_CURRENT_SOURCE_DIR}/container_primitives.h
         ${CMAKE_CURRENT_SOURCE_DIR}/Memory.h
         ${CMAKE_CURRENT_SOURCE_DIR}/Trie.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/thunk.h
 	PARENT_SCOPE
 )

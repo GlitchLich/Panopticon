@@ -149,11 +149,11 @@ bool call_function(object& A, const object& B, const object& C)
     }
 
     // Conflicts with partial application currently....solve this!
-    //    if(C.data.array->size()<function.data.function->arguments.size()-1)
-    //    {
-    //        partial_application(A,function,C);
-    //        return true;
-    //    }
+//    if(C.data.array->size()<function.data.function->arguments.size()-1)
+//    {
+//        partial_application(A,function,C);
+//        return true;
+//    }
 
     Dictionary context;
     context.insert(std::make_pair(function.data.function->name, function));
@@ -199,14 +199,14 @@ bool call_function(object& A, const object& B, const object& C)
     push_scope(&context);
     resolve_stack_from_parser(function.data.function->body, false);
 
-//TO DO: Fix Array Functors
-//    if(optic_stack.back().type == ARRAY)
-//    {
-//        object parse_array = mem_alloc(UNARY_OPERATION);
-//        parse_array.data.unary_operator_func = resolve_function_array;
-//        optic_stack.push_back(parse_array); // optimization: No need for mem_copy, UNARY_OPERATION doesn't allocate memory
-//        evaluate_top();
-//    }
+    //TO DO: Fix Array Functors
+    //    if(optic_stack.back().type == ARRAY)
+    //    {
+    //        object parse_array = mem_alloc(UNARY_OPERATION);
+    //        parse_array.data.unary_operator_func = resolve_function_array;
+    //        optic_stack.push_back(parse_array); // optimization: No need for mem_copy, UNARY_OPERATION doesn't allocate memory
+    //        evaluate_top();
+    //    }
 
     A = optic_stack.back(); // Move, no need to copy/free
     optic_stack.pop_back();
@@ -238,6 +238,8 @@ bool resolve_function_array(object& A, const object& B)
 
 bool partial_application(object& result_A, const object &func_B, const object &arguments_C)
 {
+
+    std::cout << "partial_application" << std::endl;
 
     //Function name/arg
     object name_array = mem_alloc(ARRAY);
