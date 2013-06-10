@@ -55,71 +55,69 @@ object get_hash(const object& obj, bool write = false)
     return result;
 }
 
-bool print_trie(const object& trie, bool endl)
+void print_trie_entry(const unsigned int& key, const object& value)
 {
-    trie::Iterator iter(trie.data.trie);
-    // std::cout << "Iter.has_next: " << iter.has_next() << std::endl;
-    out() << "{ ";
+    out() << "\"" << reverse_variable_name_lookup[key] << "\" : ";
 
-    while(iter.has_next())
+    switch(value.type)
     {
-        // std::cout << "ITER.has_next" << std::endl;
-        trie::Entry entry = iter.next();
-        // std::cout << "trie::Entry.key: " << entry.key << " value.type: " << entry.obj.type << std::endl;
-        out() << "\"" << reverse_variable_name_lookup[entry.key] << "\" : ";
+    case STRING:
+        out() << value.data.string->c_str();
+        break;
 
-        panopticon::object& value = entry.obj;
+    case NUMBER:
+        out() << value.data.number;
+        break;
 
-        switch(value.type)
-        {
-        case STRING:
-            out() << value.data.string->c_str();
-            break;
+    case BOOL:
+        if(value.data.boolean)
+            out() << "true";
+        else
+            out() << "false";
+        break;
 
-        case NUMBER:
-            out() << value.data.number;
-            break;
+    case LIST:
+        print_list(value, 1);
+        break;
 
-        case BOOL:
-            out() << value.data.boolean;
-            break;
+    case OPERATION_TREE:
+    case ARRAY:
+        print_array(value, 1);
+        break;
 
-        case LIST:
-            print_list(value, 1);
-            break;
+    case DICTIONARY:
+        print_dictionary(value);
+        break;
 
-        case OPERATION_TREE:
-        case ARRAY:
-            print_array(value, 1);
-            break;
+    case TRIE:
+        print_trie(value);
 
-        case DICTIONARY:
-            print_dictionary(value);
-            break;
+    case FUNCTION:
+        out() << "Function";
+        break;
 
-        case TRIE:
-            print_trie(value);
+    case NIL:
+        out() << "Nil";
+        break;
 
-        case FUNCTION:
-            out() << "Function";
-            break;
+    case VARIABLE:
+        out() << reverse_variable_name_lookup[value.data.variable_number];
+        break;
 
-        case NIL:
-            out() << "Nil";
-            break;
-
-        case VARIABLE:
-            out() << reverse_variable_name_lookup[value.data.variable_number];
-            break;
-
-        default:
-            break;
-        }
-
-        out() << " ";
+    default:
+        break;
     }
 
-    out() << " } ";
+    out() << " ";
+}
+
+bool print_trie(const object& trie, bool endl)
+{
+    out() << "{ ";
+
+    trie::map(trie.data.trie, print_trie_entry);
+
+    out() << "} ";
 
     if(endl)
         out() << std::endl;

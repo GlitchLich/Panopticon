@@ -1,6 +1,20 @@
 //Dictionary Tests!
 //FOUR different syntaxes, Horziontal vs Vertical, keyworded dict vs none
 
+ten = { one = 1 two = 2 three = 3 four = 4 five = 5 six = 6 seven = 7 eight = 8 nine = 9 ten = 10 }
+tenPlusTen = map(\x = x + 10 ten)
+ten
+tenPlusTen
+tenOdd = filter(\x = x % 2 == 1 ten)
+tenOdd
+tenEven = filter(\x = x % 2 == 0 ten)
+tenEven
+
+boolDict = { truth = true lie = false }
+boolDict
+
+dictionary = { Turtles = true Octopi = "are cool" dictFunc x y = x + y Dragon = { test = 4 } }
+dictionary::Turtles
 
 yes = { yes = "yo" }
 yes
@@ -79,6 +93,7 @@ print(insert(numKeys 666.6669 666.666))
 
 ten = { one = 1 two = 2 three = 3 four = 4 five = 5 six = 6 seven = 7 eight = 8 nine = 9 ten = 10 }
 ten
+print(ten)
 tenPlusTen = map(\x = x + 10 ten)
 tenPlusTen
 size(ten)
