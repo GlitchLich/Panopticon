@@ -273,6 +273,8 @@ TypeOperator analyze(object node, Environment* env, std::deque<TypeOperator> non
         break;
     case FUNCTION_DECLARATION:
         break;
+    case PRIMITIVE:
+        break;
     case LAMBDA:
         break;
     case RECURSIVE_CALL:
