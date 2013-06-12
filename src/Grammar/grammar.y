@@ -99,6 +99,12 @@ in ::= in start DELIMITER.
 in ::= in test DELIMITER.
 
 
+start ::= type_declaration(A).
+{
+    A.type;
+    optic::out() << "Type Declaration" << std::endl;
+}
+
 start ::= spec(A).
 {
 /*    std::cout << "Object of type: " << A.type << " hit the stack!" << std::endl;*/
@@ -1065,7 +1071,7 @@ expr(A) ::= NAME(B) LCURL string(C) RCURL.
     }
 }
 
-name_space(A) ::= NAME(B) COLONCOLON NAME(C).
+name_space(A) ::= NAME(B) PERIOD NAME(C).
 {
     std::cout << "Namespace" << std::endl;
     store_operations(A,B,C,optic::trie_lookup);
@@ -1076,7 +1082,7 @@ name_space(A) ::= NAME(B) COLONCOLON NAME(C).
     }
 }
 
-name_space(A) ::= function_call(B) COLONCOLON NAME(C).
+name_space(A) ::= function_call(B) PERIOD NAME(C).
 {
     store_operations(A,B,C,optic::trie_lookup);
     if (!panopticon::correct_parsing)
@@ -1086,7 +1092,7 @@ name_space(A) ::= function_call(B) COLONCOLON NAME(C).
     }
 }
 
-name_space(A) ::= name_space(B) COLONCOLON NAME(C).
+name_space(A) ::= name_space(B) PERIOD NAME(C).
 {
     store_operations(A,B,C,optic::trie_lookup);
     if (!panopticon::correct_parsing)
@@ -2117,6 +2123,83 @@ expr(A) ::= LBRAC expr(B) COMMA expr(C) RANGE expr(D) RBRAC.
     start_step.data.array->push_back(C);
     store_operations(A,start_step,D,optic::range_from_step_to,false);
 }
+
+//TYPE DECLARATIONS
+type_declaration(A) ::= NAME(B) COLONCOLON NAME(C) RIGHT_POINTER NAME(D).
+{
+    A = B;
+    A = C;
+    A = D;
+}
+
+type_declaration(A) ::= NAME(B) COLONCOLON LBRAC NAME(C) RBRAC RIGHT_POINTER NAME(D).
+{
+    A = B;
+    A = C;
+    A = D;
+}
+
+type_declaration(A) ::= NAME(B) COLONCOLON LBRAC NAME(C) RBRAC RIGHT_POINTER LBRAC NAME(D) RBRAC.
+{
+    A = B;
+    A = C;
+    A = D;
+}
+
+type_declaration(A) ::= NAME(B) COLONCOLON NAME(C) RIGHT_POINTER LBRAC NAME(D) RBRAC.
+{
+    A = B;
+    A = C;
+    A = D;
+}
+
+type_declaration(A) ::= NAME(B) COLONCOLON LPAREN name_chain(C) RPAREN RIGHT_POINTER NAME(D).
+{
+    A = B;
+    A = C;
+    A = D;
+}
+
+type_declaration(A) ::= NAME(B) COLONCOLON NAME(C) RIGHT_POINTER  LPAREN name_chain(D) RPAREN.
+{
+    A = B;
+    A = C;
+    A = D;
+}
+
+type_declaration(A) ::= NAME(B) COLONCOLON LPAREN name_chain(C) RPAREN RIGHT_POINTER  LPAREN name_chain(D) RPAREN.
+{
+    A = B;
+    A = C;
+    A = D;
+}
+
+
+//User defined data types
+type_chain(A) ::= name_chain(B) BITOR name_chain(C).
+{
+    A = B;
+    A = C;
+}
+
+type_chain(A) ::= type_chain(B) BITOR name_chain(C).
+{
+    A = B;
+    A = C;
+}
+
+type_declaration(A) ::= DATA name_chain(B) ASSIGN name_chain(C).
+{
+    A = B;
+    A = C;
+}
+
+type_declaration(A) ::= DATA name_chain(B) ASSIGN type_chain(C).
+{
+    A = B;
+    A = C;
+}
+
 
 //======================
 //Syntax ERROR HANDLING

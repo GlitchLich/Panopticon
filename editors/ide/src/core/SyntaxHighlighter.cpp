@@ -14,7 +14,7 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument* parent) :
     QStringList keywordPatterns;
     keywordPatterns << "\\blet\\b" << "\\bswitch\\b"
                     << "\\bif\\b" << "\\bthen\\b" << "\\belse\\b" << "\\bdict\\b"
-                    << "\\bcase\\b" << "\\bof\\b" << "\\bwhere\\b" << "\\bin\\b"
+                    << "\\bcase\\b" << "\\bof\\b" << "\\bwhere\\b" << "\\bin\\b" << "\\bdata\\b"
                     << "\\[" << "\\]" << "\\(" << "\\)" << "\\_" << "\\{" << "\\}"
                     << "\\:" << "\\|" << "\\." << "\\\\";
 

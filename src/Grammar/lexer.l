@@ -71,6 +71,7 @@ false     { yylval.bval = 0;return BOOLEAN;}
 "where"         { return WHERE;}
 "dict"  { return DICT; }
 "print"    {return PRINT;}
+"data"      {return DATA;}
 [ \t]   {
         col += (int) strlen(yytext);
 }               /* ignore but count white space */
@@ -80,8 +81,9 @@ false     { yylval.bval = 0;return BOOLEAN;}
     return NAME;
 }
 [+]+[+]          {  return PLUSPLUS; }
+"->"            {return RIGHT_POINTER; }
 "::"          {  return COLONCOLON; }
-    /*"."             {return PERIOD;}*/
+"."             {return PERIOD;}
 "+"           {  return PLUS; }
 "-"           {  return MINUS; }
 "*"           {  return TIMES; }
