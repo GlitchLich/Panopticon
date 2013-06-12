@@ -1,0 +1,9 @@
+//Type decalaratios and user data types
+
+data Tree = Branch left right | Leaf Number
+Branch :: (left right) -> Tree
+Leaf :: Number -> Tree
+myFunc :: a -> a
+myFunc :: a -> [a]
+myFunc :: [a] -> a
+myFunc :: [a] -> [a]
