@@ -7,11 +7,6 @@ add_definitions(-DPANOPTICON_VERSION_MAJOR=${PROJECT_VERSION_MAJOR})
 add_definitions(-DPANOPTICON_VERSION_MINOR=${PROJECT_VERSION_MINOR})
 add_definitions(-DPANOPTICON_VERSION_PATCH=${PROJECT_VERSION_PATCH})
 
-# If LLVM can't find your LLVM-config.cmake file you'll need to point at it
-if(CMAKE_SYSTEM_NAME STREQUAL Linux)
-    set(LLVM_DIR "/home/octopian/.local/share/llvm/cmake")
-endif()
-
 find_package(LLVM)
 
 # Define add_llvm_* macro's.
@@ -64,7 +59,6 @@ endif()
 find_package(OpenGL)
 
 if(CMAKE_SYSTEM_NAME STREQUAL Linux)
-    #include_directories("/usr/include/c++/4.7")
     add_definitions(-D__LINUX__)
     add_definitions(-DLINUX)
 endif()
@@ -74,7 +68,6 @@ if(CMAKE_SYSTEM_NAME STREQUAL Apple)
     add_definitions(-DAPPLE)
 endif()
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 include_directories("${PROJECT_SOURCE_DIR}/include")
 include_directories("${PROJECT_SOURCE_DIR}/editors")
 set(Panopticon_SRC ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
@@ -102,7 +95,7 @@ endif(PN_QT)
 add_executable(Panopticon ${Panopticon_SRC})
 
 TARGET_LINK_LIBRARIES(Panopticon ${OPENGL_LIBRARIES})
-target_link_libraries(Panopticon ${REQ_LLVM_LIBRARIES})
+TARGET_LINK_LIBRARIES(Panopticon ${REQ_LLVM_LIBRARIES})
 
 if(PN_QT)
     qt5_use_modules(Panopticon Core Gui Quick Widgets OpenGL Qml)

@@ -132,4 +132,7 @@ std::string type_string(Type type)
     }
 }
 
+// llvm classes
+llvm::IRBuilder<> ExprAST::Builder = llvm::IRBuilder<>(llvm::getGlobalContext());
+
 } // panopticon namespace

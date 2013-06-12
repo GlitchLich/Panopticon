@@ -24,7 +24,6 @@
 #define TYPES_H
 
 // llvm
-#include <string>
 #include <llvm/Analysis/Verifier.h>
 #include <llvm/DerivedTypes.h>
 #include <llvm/IRBuilder.h>
@@ -38,6 +37,7 @@
 #include <string>
 #include <cstring>
 #include <cstdio>
+#include <iostream>
 #include "core/errors.h"
 
 // local
@@ -287,12 +287,12 @@ public:
     // Error handling
     llvm::Value* errorV(const char* str)
     {
-        // std::cerr << str << std::endl;
+        std::cerr << str << std::endl;
         return 0;
     }
 
     static llvm::Module* module;
-    // static llvm::IRBuilder<> Builder(llvm::getGlobalContext());
+    static llvm::IRBuilder<> Builder;
     static std::unordered_map<std::string, llvm::Value*> namedValues;
 };
 
