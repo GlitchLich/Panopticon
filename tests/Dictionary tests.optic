@@ -287,7 +287,7 @@ nullVar{"Dragon"}
 notADict = 5
 notADict{"Dragon"}
 
-lookThatShitUp x y = d{x} * a[y]
+lookThatShitUp x y = lookup(d x) * a[y]
 	where
 		d = {
 			zero 	= 0
@@ -304,7 +304,7 @@ lookThatShitUp x y = d{x} * a[y]
 			14
 		]
 
-lookThatShitUp(
+lookThatShitUp("one" 0)
 
 //Horizontal nesting
 level1 = { level2 = dict { level3 = dict { level4 = dict { level5 = false } } } }

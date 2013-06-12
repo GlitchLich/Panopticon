@@ -23,12 +23,24 @@
 #ifndef TYPES_H
 #define TYPES_H
 
+// llvm
+#include <string>
+#include <llvm/Analysis/Verifier.h>
+#include <llvm/DerivedTypes.h>
+#include <llvm/IRBuilder.h>
+#include <llvm/LLVMContext.h>
+#include <llvm/Module.h>
+
+// stl
 #include <vector>
 #include <unordered_map>
 #include <stack>
 #include <string>
 #include <cstring>
+#include <cstdio>
 #include "core/errors.h"
+
+// local
 #include <list>
 
 //#define BRAUN_TREE 1
@@ -259,6 +271,77 @@ struct Primitive
     Array arguments;
     primitive_function p_func;
     typing::TypeOperator arity;
+};
+
+/////////////////////////////////////////
+/// llvm compilation classes and types
+/////////////////////////////////////////
+
+// Base class for expression nodes
+class ExprAST
+{
+public:
+    virtual ~ExprAST() {}
+    virtual llvm::Value* codeGen() = 0;
+
+    // Error handling
+    llvm::Value* errorV(const char* str)
+    {
+        // std::cerr << str << std::endl;
+        return 0;
+    }
+
+    static llvm::Module* module;
+    // static llvm::IRBuilder<> Builder(llvm::getGlobalContext());
+    static std::unordered_map<std::string, llvm::Value*> namedValues;
+};
+
+// Expresions for numeric literals such as 0.3, 1.0, and 666
+class NumberExprAST : public ExprAST
+{
+public:
+    NumberExprAST(double number) : number(number) {}
+    virtual llvm::Value* codeGen();
+
+protected:
+    double number;
+};
+
+// Expressions for a  single character such as 'l', '6', and '.'
+class CharExprAST : public ExprAST
+{
+public:
+    CharExprAST(const char& character) : character(character) {}
+    virtual llvm::Value* codeGen();
+
+protected:
+    char character;
+};
+
+// Represents a prototype for a function
+class PrototypeAST
+{
+public:
+    PrototypeAST(const std::string& name, std::vector<ExprAST*>& args)
+        : name(name), args(args) {}
+
+protected:
+    std::string name;
+    std::vector<ExprAST*> args;
+};
+
+// Expression class for functions themselves
+class FunctionAST : public ExprAST
+{
+public:
+    FunctionAST(PrototypeAST* proto, ExprAST* body)
+        : proto(proto), body(body) {}
+
+    virtual llvm::Value* codeGen();
+
+protected:
+    PrototypeAST* proto;
+    ExprAST* body;
 };
 
 } // panopticon namespace
