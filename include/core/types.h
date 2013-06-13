@@ -277,22 +277,26 @@ struct Primitive
 /// llvm compilation classes and types
 /////////////////////////////////////////
 
+// JIT compiled function type
+// the intptr_t is actually another jit_function that will need to be cast
+typedef intptr_t (*jit_function) ();
+
 // Base class for expression nodes
 class ExprAST
 {
 public:
     virtual ~ExprAST() {}
-    virtual llvm::Value* codeGen() = 0;
+    virtual llvm::Value* codeGen() const = 0;
+    virtual llvm::Type* type() const = 0;
 
     // Error handling
-    llvm::Value* errorV(const char* str)
+    static llvm::Value* errorV(const char* str)
     {
         std::cerr << str << std::endl;
         return 0;
     }
 
-    static llvm::Module* module;
-    static llvm::IRBuilder<> Builder;
+    static llvm::IRBuilder<> builder;
     static std::unordered_map<std::string, llvm::Value*> namedValues;
 };
 
@@ -301,7 +305,8 @@ class NumberExprAST : public ExprAST
 {
 public:
     NumberExprAST(double number) : number(number) {}
-    virtual llvm::Value* codeGen();
+    virtual llvm::Value* codeGen() const;
+    virtual llvm::Type* type() const;
 
 protected:
     double number;
@@ -312,22 +317,41 @@ class CharExprAST : public ExprAST
 {
 public:
     CharExprAST(const char& character) : character(character) {}
-    virtual llvm::Value* codeGen();
+    virtual llvm::Value* codeGen() const;
+    virtual llvm::Type* type() const;
 
 protected:
     char character;
+};
+
+// Function call, such as print(1), parsed via the parentheses ()
+class CallExprAST : public ExprAST
+{
+public:
+    CallExprAST(const std::string& callee, std::vector<ExprAST*>& args) :
+        callee(callee), args(args) {}
+
+    virtual llvm::Value* codeGen() const;
+    virtual llvm::Type* type() const;
+
+private:
+    std::string callee;
+    std::vector<ExprAST*> args;
 };
 
 // Represents a prototype for a function
 class PrototypeAST
 {
 public:
-    PrototypeAST(const std::string& name, std::vector<ExprAST*>& args)
+    PrototypeAST(const std::string& name, const std::vector<std::string>& args)
         : name(name), args(args) {}
+
+    llvm::FunctionType* functionType() const;
+    llvm::Function* codeGen() const;
 
 protected:
     std::string name;
-    std::vector<ExprAST*> args;
+    std::vector<std::string> args;
 };
 
 // Expression class for functions themselves
@@ -337,7 +361,8 @@ public:
     FunctionAST(PrototypeAST* proto, ExprAST* body)
         : proto(proto), body(body) {}
 
-    virtual llvm::Value* codeGen();
+    virtual llvm::Function* codeGen() const;
+    virtual llvm::Type* type() const;
 
 protected:
     PrototypeAST* proto;
