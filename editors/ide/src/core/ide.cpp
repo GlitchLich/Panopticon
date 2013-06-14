@@ -52,8 +52,8 @@ int main(int argc, char* argv[])
     panopticon::ide::MainWindow mainWindow;
     panopticon::ide::MAIN_WINDOW = &mainWindow;
 
-
-    int result = app.exec();
-    panopticon::shutdown();
+    panopticon::startup(); // initialize the language
+    int result = app.exec(); // run our GUI program
+    panopticon::shutdown(); // clean up after the language
     return result;
 }

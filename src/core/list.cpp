@@ -184,7 +184,7 @@ bool concat(object& A, const object& B, const object& C)
 //2-3 Finger Tree Implementation
 //======================================
 
-inline int two_three_node_shallow_element_count(TwoThreeFingerTree* a)
+int two_three_node_shallow_element_count(TwoThreeFingerTree* a)
 {
     if(a->type == FT_ELEMENT)
     {
@@ -200,7 +200,7 @@ inline int two_three_node_shallow_element_count(TwoThreeFingerTree* a)
     }
 }
 
-inline int two_three_node_deep_element_count(TwoThreeFingerTree* a)
+int two_three_node_deep_element_count(TwoThreeFingerTree* a)
 {
     int count = 0;
     if(a->type == FT_ELEMENT)
@@ -228,7 +228,7 @@ inline int two_three_node_deep_element_count(TwoThreeFingerTree* a)
     return count;
 }
 
-inline int two_three_digit_element_count(Digit* a)
+int two_three_digit_element_count(Digit* a)
 {
     int count = 0;
     switch(a->size)
@@ -309,7 +309,7 @@ int two_three_element_count(TwoThreeFingerTree* a)
     return count;
 }
 
-inline TwoThreeFingerTree* two_three_single(TwoThreeFingerTree* a)
+TwoThreeFingerTree* two_three_single(TwoThreeFingerTree* a)
 {
     TwoThreeFingerTree* single = new TwoThreeFingerTree();
     single->type = FT_SINGLE;
@@ -319,7 +319,7 @@ inline TwoThreeFingerTree* two_three_single(TwoThreeFingerTree* a)
     return single;
 }
 
-inline Digit* construct_digit()
+Digit* construct_digit()
 {
     Digit* digit = new Digit;
     digit->one = 0;
@@ -329,7 +329,7 @@ inline Digit* construct_digit()
     digit->size = 0;
 }
 
-inline TwoThreeFingerTree* two_three_deep()
+TwoThreeFingerTree* two_three_deep()
 {
     TwoThreeFingerTree* deep = new TwoThreeFingerTree();
     deep->type = FT_DEEP;
@@ -341,7 +341,7 @@ inline TwoThreeFingerTree* two_three_deep()
 }
 
 //Left-most finger, so recurse left-word.
-inline TwoThreeFingerTree* two_three_element(const object& a)
+TwoThreeFingerTree* two_three_element(const object& a)
 {
     TwoThreeFingerTree* tree = new TwoThreeFingerTree;
     tree->node.a = new object;
@@ -350,7 +350,7 @@ inline TwoThreeFingerTree* two_three_element(const object& a)
     return tree;
 }
 
-inline TwoThreeFingerTree* two_three_node3(
+TwoThreeFingerTree* two_three_node3(
         TwoThreeFingerTree* a,
         TwoThreeFingerTree* b,
         TwoThreeFingerTree* c
@@ -366,7 +366,7 @@ inline TwoThreeFingerTree* two_three_node3(
     return tree;
 }
 
-inline TwoThreeFingerTree* two_three_node2(
+TwoThreeFingerTree* two_three_node2(
         TwoThreeFingerTree* a,
         TwoThreeFingerTree* b
         )
@@ -380,7 +380,7 @@ inline TwoThreeFingerTree* two_three_node2(
     return tree;
 }
 
-inline TwoThreeFingerTree* two_three_cons(TwoThreeFingerTree* finger_tree, TwoThreeFingerTree* a)
+TwoThreeFingerTree* two_three_cons(TwoThreeFingerTree* finger_tree, TwoThreeFingerTree* a)
 {
     test_num++;
     if(finger_tree == 0)
@@ -452,7 +452,7 @@ inline TwoThreeFingerTree* two_three_cons(TwoThreeFingerTree* finger_tree, TwoTh
     }
 }
 
-inline TwoThreeFingerTree* two_three_append(TwoThreeFingerTree* finger_tree, TwoThreeFingerTree* a)
+TwoThreeFingerTree* two_three_append(TwoThreeFingerTree* finger_tree, TwoThreeFingerTree* a)
 {
     test_num++;
     if(finger_tree == 0)
@@ -522,7 +522,7 @@ inline TwoThreeFingerTree* two_three_append(TwoThreeFingerTree* finger_tree, Two
     }
 }
 
-inline TwoThreeFingerTree* two_three_head(TwoThreeFingerTree* finger_tree)
+TwoThreeFingerTree* two_three_head(TwoThreeFingerTree* finger_tree)
 {
     if(finger_tree == 0)
     {
@@ -546,7 +546,7 @@ inline TwoThreeFingerTree* two_three_head(TwoThreeFingerTree* finger_tree)
     }
 }
 
-inline TwoThreeFingerTree* two_three_last(TwoThreeFingerTree* finger_tree)
+TwoThreeFingerTree* two_three_last(TwoThreeFingerTree* finger_tree)
 {
     if(finger_tree == 0)
     {
@@ -590,7 +590,7 @@ inline TwoThreeFingerTree* two_three_last(TwoThreeFingerTree* finger_tree)
     }
 }
 
-inline TwoThreeFingerTree* tree_of_digits(Digit* digit)
+TwoThreeFingerTree* tree_of_digits(Digit* digit)
 {
     if(digit->size == 0)
     {
@@ -636,7 +636,7 @@ inline TwoThreeFingerTree* tree_of_digits(Digit* digit)
     }
 }
 
-inline Digit* node_to_digit(TwoThreeFingerTree* tree)
+Digit* node_to_digit(TwoThreeFingerTree* tree)
 {
     Digit* digit = construct_digit();
     if(tree->type == FT_NODE2)
@@ -662,7 +662,7 @@ inline Digit* node_to_digit(TwoThreeFingerTree* tree)
     }
 }
 
-inline TwoThreeFingerTree* two_three_tail(TwoThreeFingerTree* finger_tree)
+TwoThreeFingerTree* two_three_tail(TwoThreeFingerTree* finger_tree)
 {
     if(finger_tree == 0)
     {
@@ -988,19 +988,19 @@ TwoThreeFingerTree* two_three_list_concatenation(TwoThreeFingerTree* list,TwoThr
 }
 
 //List hooks
-inline TwoThreeFingerTree* two_three_list_cons(TwoThreeFingerTree* list,const object& obj)
+TwoThreeFingerTree* two_three_list_cons(TwoThreeFingerTree* list,const object& obj)
 {
     TwoThreeFingerTree* element = two_three_element(obj);
     return two_three_cons(list,element);
 }
 
-inline TwoThreeFingerTree* two_three_list_append(TwoThreeFingerTree* list,const object& obj)
+TwoThreeFingerTree* two_three_list_append(TwoThreeFingerTree* list,const object& obj)
 {
     TwoThreeFingerTree* element = two_three_element(obj);
     return two_three_append(list,element);
 }
 
-inline object two_three_list_head(TwoThreeFingerTree* list)
+object two_three_list_head(TwoThreeFingerTree* list)
 {
     TwoThreeFingerTree* element = two_three_head(list);
     return *(element->node.a);
@@ -1013,7 +1013,7 @@ object two_three_list_last(TwoThreeFingerTree* list)
 }
 
 
-inline bool two_three_print(TwoThreeFingerTree *list)
+bool two_three_print(TwoThreeFingerTree *list)
 {
     if(list == 0)
     {
@@ -1263,7 +1263,7 @@ TwoThreeFingerTree* two_three_digit_lookup_check(Digit* digit,int& index)
     return 0;
 }
 
-inline TwoThreeFingerTree* two_three_node3_lookup(TwoThreeFingerTree* tree, int& index)
+TwoThreeFingerTree* two_three_node3_lookup(TwoThreeFingerTree* tree, int& index)
 {
     int size_one, size_two, size_three;
 
@@ -1325,7 +1325,7 @@ inline TwoThreeFingerTree* two_three_node3_lookup(TwoThreeFingerTree* tree, int&
     return 0;
 }
 
-inline TwoThreeFingerTree* two_three_node2_lookup(TwoThreeFingerTree* tree, int &index)
+TwoThreeFingerTree* two_three_node2_lookup(TwoThreeFingerTree* tree, int &index)
 {
     int size_one, size_two;
 

@@ -23,12 +23,24 @@
 #ifndef TYPES_H
 #define TYPES_H
 
+// llvm
+#include <llvm/Analysis/Verifier.h>
+#include <llvm/DerivedTypes.h>
+#include <llvm/IRBuilder.h>
+#include <llvm/LLVMContext.h>
+#include <llvm/Module.h>
+
+// stl
 #include <vector>
 #include <unordered_map>
 #include <stack>
 #include <string>
 #include <cstring>
+#include <cstdio>
+#include <iostream>
 #include "core/errors.h"
+
+// local
 #include <list>
 
 //#define BRAUN_TREE 1
@@ -260,6 +272,102 @@ struct Primitive
     Array arguments;
     primitive_function p_func;
     typing::TypeDefinition arity;
+};
+
+/////////////////////////////////////////
+/// llvm compilation classes and types
+/////////////////////////////////////////
+
+// JIT compiled function type
+// the intptr_t is actually another jit_function that will need to be cast
+typedef intptr_t (*jit_function) ();
+
+// Base class for expression nodes
+class ExprAST
+{
+public:
+    virtual ~ExprAST() {}
+    virtual llvm::Value* codeGen() const = 0;
+    virtual llvm::Type* type() const = 0;
+
+    // Error handling
+    static llvm::Value* errorV(const char* str)
+    {
+        std::cerr << str << std::endl;
+        return 0;
+    }
+
+    static llvm::IRBuilder<> builder;
+    static std::unordered_map<std::string, llvm::Value*> namedValues;
+};
+
+// Expresions for numeric literals such as 0.3, 1.0, and 666
+class NumberExprAST : public ExprAST
+{
+public:
+    NumberExprAST(double number) : number(number) {}
+    virtual llvm::Value* codeGen() const;
+    virtual llvm::Type* type() const;
+
+protected:
+    double number;
+};
+
+// Expressions for a  single character such as 'l', '6', and '.'
+class CharExprAST : public ExprAST
+{
+public:
+    CharExprAST(const char& character) : character(character) {}
+    virtual llvm::Value* codeGen() const;
+    virtual llvm::Type* type() const;
+
+protected:
+    char character;
+};
+
+// Function call, such as print(1), parsed via the parentheses ()
+class CallExprAST : public ExprAST
+{
+public:
+    CallExprAST(const std::string& callee, std::vector<ExprAST*>& args) :
+        callee(callee), args(args) {}
+
+    virtual llvm::Value* codeGen() const;
+    virtual llvm::Type* type() const;
+
+private:
+    std::string callee;
+    std::vector<ExprAST*> args;
+};
+
+// Represents a prototype for a function
+class PrototypeAST
+{
+public:
+    PrototypeAST(const std::string& name, const std::vector<std::string>& args)
+        : name(name), args(args) {}
+
+    llvm::FunctionType* functionType() const;
+    llvm::Function* codeGen() const;
+
+protected:
+    std::string name;
+    std::vector<std::string> args;
+};
+
+// Expression class for functions themselves
+class FunctionAST : public ExprAST
+{
+public:
+    FunctionAST(PrototypeAST* proto, ExprAST* body)
+        : proto(proto), body(body) {}
+
+    virtual llvm::Function* codeGen() const;
+    virtual llvm::Type* type() const;
+
+protected:
+    PrototypeAST* proto;
+    ExprAST* body;
 };
 
 } // panopticon namespace

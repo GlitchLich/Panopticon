@@ -220,7 +220,7 @@ void print_node(Node node)
         std::cout << "TRIE_MAP ";
         break;
 
-    case NODE: // Recursive identity check
+    case NODE:
         std::cout << "NODE ";
         break;
 
@@ -1387,7 +1387,7 @@ Iterator iterator(Trie* trie)
 #define NODE_MAP(type) previous_node = node; \
 for(unsigned int i = 0; i < node.data.type->array.size(); ++i) \
 { \
-    next_node = node.data.type->array.at(i); \
+    next_node = node.data.type->array._array[i]; \
     map(next_node, func, previous_node); \
     previous_node = next_node; \
 } \
@@ -1467,7 +1467,7 @@ void map_func_to_trie(Node* new_trie, const object& function, Dictionary& contex
 #define NODE_NEW_MAP(type) previous_node = node; \
 for(unsigned int i = 0; i < node.data.type->array.size(); ++i) \
 { \
-    next_node = node.data.type->array.at(i); \
+    next_node = node.data.type->array._array[i]; \
     map(trie, next_node, map_function, object_function, context, previous_node); \
     previous_node = next_node; \
 } \
@@ -1529,6 +1529,7 @@ void map(Node* trie, Node& node, new_trie_map_function map_function, const objec
     return map(trie, next_node, map_function, object_function, context, node);
 }
 
+// More verbose helper function for mapping.
 bool map(Trie* trie, object& result, new_trie_map_function map_function, const object& object_function, Dictionary& context)
 {
     if(!trie)
@@ -1546,6 +1547,7 @@ bool map(Trie* trie, object& result, new_trie_map_function map_function, const o
     return true;
 }
 
+// Cleaner interface function for mapping
 bool map(Trie* trie, object& result, const object& function, Dictionary& context)
 {
     return map(trie, result, map_func_to_trie, function, context);
@@ -1561,6 +1563,7 @@ void filter_func_to_trie(Node* new_trie, const object& function, Dictionary& con
         new_trie->data.trie = without(new_trie->data.trie, key_node(key));
 }
 
+// Filter function interface
 bool filter(Trie* trie, object& result, const object& function, Dictionary& context)
 {
     return map(trie, result, filter_func_to_trie, function, context);

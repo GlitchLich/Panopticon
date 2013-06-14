@@ -22,15 +22,22 @@
 
 #include "include/core/heap.h"
 #include "include/core/Memory.h"
+#include "include/core/VM.h"
 
 namespace panopticon
 {
+
+void startup()
+{
+    return vm_init();
+}
 
 void shutdown()
 {
     panopticon::clear_heap();
     panopticon::gc_free_all();
     panopticon::gc_report();
+    vm_shutdown();
 }
 
 } // panopticon namespace

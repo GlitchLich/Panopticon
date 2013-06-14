@@ -1,6 +1,7 @@
 //Dictionary Tests!
 //FOUR different syntaxes, Horziontal vs Vertical, keyworded dict vs none
 
+
 ten = { one = 1 two = 2 three = 3 four = 4 five = 5 six = 6 seven = 7 eight = 8 nine = 9 ten = 10 }
 tenPlusTen = map(\x = x + 10 ten)
 ten
@@ -15,6 +16,8 @@ boolDict
 
 dictionary = { Turtles = true Octopi = "are cool" dictFunc x y = x + y Dragon = { test = 4 } }
 dictionary::Turtles
+lookup(dictionary "Turtles")
+lookup(dictionary "Octopi")
 
 yes = { yes = "yo" }
 yes
@@ -284,7 +287,7 @@ nullVar{"Dragon"}
 notADict = 5
 notADict{"Dragon"}
 
-lookThatShitUp x y = d{x} * a[y]
+lookThatShitUp x y = lookup(d x) * a[y]
 	where
 		d = {
 			zero 	= 0
@@ -301,7 +304,7 @@ lookThatShitUp x y = d{x} * a[y]
 			14
 		]
 
-lookThatShitUp(
+lookThatShitUp("one" 0)
 
 //Horizontal nesting
 level1 = { level2 = dict { level3 = dict { level4 = dict { level5 = false } } } }

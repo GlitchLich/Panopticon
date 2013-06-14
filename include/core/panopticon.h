@@ -40,6 +40,7 @@
 
 namespace panopticon {
 
+void startup(); // CALL THIS ON STARTUP TO INITIALIZE THE LANGUAGE
 void shutdown(); // CALL THIS ON SHUTDOWN TO CLEAN UP!
 
 /*
