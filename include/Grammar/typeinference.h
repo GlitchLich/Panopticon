@@ -14,18 +14,21 @@ namespace typing
 
 struct TypeVariable
 {
-    unsigned long long name;
-    std::deque<TypeOperator> types;
-    TypeOperator instance;
+    std::deque<TypeDefinition> product_types;
+    TypeDefinition instance;
 };
 
-struct PolymorphicOperator
+struct TypeOperator
 {
-    unsigned long long name;
-    std::deque<TypeOperator> types;
+    std::deque<TypeDefinition> product_types;
+    std::deque<TypeDefinition> sum_types;
+    bool is_sum = false;
 };
 
-typedef std::unordered_map<unsigned long long,TypeOperator> Environment;
+void init_inference_env();
+RESULT set_variable(Variable id, TypeDefinition& type);
+
+typedef std::unordered_map<Variable,TypeDefinition> Environment;
 typedef std::deque<Environment*> EnvMap;
 typedef EnvMap::iterator scope_iter_t;
 typedef Environment::iterator dict_iter_t;
@@ -39,11 +42,16 @@ extern int id_counter;
 extern char current_char;
 
 int next_id();
-unsigned long long next_variable_name();
+Variable next_variable_name();
 
-TypeOperator create_type_operator(int type);
+TypeDefinition create_type_operator(int type);
 TypeVariable copy_type(TypeVariable type);
-void print_type();
+
+void print_type(Variable type_def_name, int level = 0);
+
+bool create_type_def_product(object& A, object&B, object& C);
+bool create_type_def_sum(object& A, object&B, object& C);
+
 
 }
 

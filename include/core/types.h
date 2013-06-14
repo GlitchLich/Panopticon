@@ -151,7 +151,7 @@ namespace trie
 typedef double Number;
 //typedef std::vector<object> Array;
 typedef std::deque<object> Array;
-typedef std::unordered_map<unsigned long long, object> Dictionary;
+typedef std::unordered_map<uint32_t, object> Dictionary;
 typedef std::string String;
 typedef bool Boolean;
 typedef bool (*operator_function) (object &, const object &, const object &);
@@ -187,7 +187,7 @@ union Data
     Primitive* primitive;
     Thunk* thunk;
     //Only to be used for variable indentification!
-    Variable variable_number;
+    Variable variable;
 };
 
 // Constants
@@ -208,7 +208,7 @@ namespace typing
 
 //Type Inference
 struct TypeVariable;
-struct PolymorphicOperator;
+struct TypeOperator;
 
 struct ParseError
 {
@@ -224,15 +224,16 @@ enum OperatorTypes{TYPE_VARIABLE,Null,MONO,POLY,FUNC,PARSE_ERROR,TYPE_ERROR,NONE
 
 union OpType
 {
-    PolymorphicOperator* type_op;
+    TypeOperator* type_op;
     TypeVariable* type_var;
     ParseError parse_error;
     TypeError type_error;
 };
 
-struct TypeOperator
+struct TypeDefinition
 {
     int type;
+    Variable name;
     OpType data;
 };
 
@@ -248,7 +249,7 @@ struct Function
     object body;
     bool evaluated;
     Thunk thunk_body;
-    typing::TypeOperator arity;
+    typing::TypeDefinition arity;
 };
 
 struct Primitive
@@ -258,7 +259,7 @@ struct Primitive
     int num_arguments;
     Array arguments;
     primitive_function p_func;
-    typing::TypeOperator arity;
+    typing::TypeDefinition arity;
 };
 
 } // panopticon namespace

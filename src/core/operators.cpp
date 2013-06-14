@@ -97,10 +97,10 @@ void print_object_in_array(const object B,int arrayNum)
         out() << " NoExpandOperator";
         break;
     case panopticon::VARIABLE:
-        out() << " " << reverse_variable_name_lookup[B.data.variable_number];
+        out() << " " << reverse_variable_name_lookup[B.data.variable];
         break;
     case panopticon::UNDECLARED_VARIABLE:
-        out() << " " << reverse_variable_name_lookup[B.data.variable_number];
+        out() << " " << reverse_variable_name_lookup[B.data.variable];
         break;
     case LIST:
         print_list(B,arrayNum+1);
@@ -143,7 +143,7 @@ bool print_array(const object &A, int arrayNum,bool isTree)
 bool print_variable(const object& A)
 {
     object result = mem_alloc(NIL);
-    if(get_variable(A.data.variable_number,&result) == OK)
+    if(get_variable(A.data.variable,&result) == OK)
     {
         if(result.type==FUNCTION)
         {
@@ -151,25 +151,25 @@ bool print_variable(const object& A)
             {
                 object arguments; // empty, won't be used by call_function so no need to initialize
                 call_function(result, A, arguments);
-                out() << reverse_variable_name_lookup[A.data.variable_number] << ": " << print_object(result);
+                out() << reverse_variable_name_lookup[A.data.variable] << ": " << print_object(result);
             }
 
             else
             {
-                out() << "Function: " << reverse_variable_name_lookup[A.data.variable_number] << std::endl;
+                out() << "Function: " << reverse_variable_name_lookup[A.data.variable] << std::endl;
                 out() << "with arguments: " << result.data.function->arguments.size() << std::endl;
             }
         }
         else
         {
-            out() << reverse_variable_name_lookup[A.data.variable_number] << ": " << print_object(result);
+            out() << reverse_variable_name_lookup[A.data.variable] << ": " << print_object(result);
         }
 
     }
 
     else
     {
-        out() << "Undeclared Variable: " << reverse_variable_name_lookup[A.data.variable_number] << std::endl;
+        out() << "Undeclared Variable: " << reverse_variable_name_lookup[A.data.variable] << std::endl;
     }
 }
 
@@ -1262,15 +1262,15 @@ bool assign_variable(object& A, const object& B, const object& C)
     {
         create_function(A,B,C);
 
-        if(set_variable(B.data.array->at(0).data.variable_number, A) != OK)
+        if(set_variable(B.data.array->at(0).data.variable, A) != OK)
         {
-            out() << "Error. Unable to bind variable " << reverse_variable_name_lookup[B.data.variable_number] << std::endl;
+            out() << "Error. Unable to bind variable " << reverse_variable_name_lookup[B.data.variable] << std::endl;
         }
     }
 
     else if(B.type == UNDECLARED_VARIABLE)
     {
-        if(set_variable(B.data.variable_number, A) != OK)
+        if(set_variable(B.data.variable, A) != OK)
         {
             out() << "Error. Unable to bind variable " << B.data.string << std::endl;
             correct_parsing = false;

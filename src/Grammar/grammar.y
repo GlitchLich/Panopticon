@@ -24,6 +24,7 @@
 #include "include/core/stack.h"
 #include "include/core/Trie.h"
 #include "core/Memory.h"
+#include "include/Grammar/typeinference.h"
 
 #undef STRING
 #undef NUM
@@ -2124,12 +2125,21 @@ expr(A) ::= LBRAC expr(B) COMMA expr(C) RANGE expr(D) RBRAC.
     store_operations(A,start_step,D,optic::range_from_step_to,false);
 }
 
+
+//========================
 //TYPE DECLARATIONS
+//========================
 type_declaration(A) ::= NAME(B) COLONCOLON NAME(C) RIGHT_POINTER NAME(D).
 {
     A = B;
     A = C;
     A = D;
+}
+
+type_declaration(A) ::= NAME(B) COLONCOLON NAME(C).
+{
+    A = B;
+    A = C;
 }
 
 type_declaration(A) ::= NAME(B) COLONCOLON LBRAC NAME(C) RBRAC RIGHT_POINTER NAME(D).
@@ -2153,51 +2163,51 @@ type_declaration(A) ::= NAME(B) COLONCOLON NAME(C) RIGHT_POINTER LBRAC NAME(D) R
     A = D;
 }
 
-type_declaration(A) ::= NAME(B) COLONCOLON LPAREN name_chain(C) RPAREN RIGHT_POINTER NAME(D).
+/*type_declaration(A) ::= NAME(B) COLONCOLON name_chain(C) RIGHT_POINTER NAME(D).
+{
+    A = B;
+    A = C;
+    A = D;
+}*/
+
+/*type_declaration(A) ::= NAME(B) COLONCOLON NAME(C) RIGHT_POINTER  name_chain(D).
+{
+    A = B;
+    A = C;
+    A = D;
+}*/
+
+type_declaration(A) ::= NAME(B) COLONCOLON name_chain(C) RIGHT_POINTER name_chain(D).
 {
     A = B;
     A = C;
     A = D;
 }
 
-type_declaration(A) ::= NAME(B) COLONCOLON NAME(C) RIGHT_POINTER  LPAREN name_chain(D) RPAREN.
-{
-    A = B;
-    A = C;
-    A = D;
-}
-
-type_declaration(A) ::= NAME(B) COLONCOLON LPAREN name_chain(C) RPAREN RIGHT_POINTER  LPAREN name_chain(D) RPAREN.
-{
-    A = B;
-    A = C;
-    A = D;
-}
-
-
+//===========================
 //User defined data types
+//===========================
 type_chain(A) ::= name_chain(B) BITOR name_chain(C).
 {
-    A = B;
-    A = C;
+    A = optic::mem_alloc(optic::ARRAY);
+    A.data.array->push_back(B);
+    A.data.array->push_back(C);
 }
 
 type_chain(A) ::= type_chain(B) BITOR name_chain(C).
 {
     A = B;
-    A = C;
+    A.data.array->push_back(C);
 }
 
-type_declaration(A) ::= DATA name_chain(B) ASSIGN name_chain(C).
+type_declaration(A) ::= DATA NAME(B) ASSIGN name_chain(C).
 {
-    A = B;
-    A = C;
+    optic::typing::create_type_def_product(A,B,C);
 }
 
-type_declaration(A) ::= DATA name_chain(B) ASSIGN type_chain(C).
+type_declaration(A) ::= DATA NAME(B) ASSIGN type_chain(C).
 {
-    A = B;
-    A = C;
+    optic::typing::create_type_def_sum(A,B,C);
 }
 
 

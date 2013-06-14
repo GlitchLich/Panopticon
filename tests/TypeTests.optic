@@ -1,9 +1,20 @@
-//Type decalaratios and user data types
+	//Type decalaratios and user data types
 
-data Tree = Branch left right | Leaf Number
-Branch :: (left right) -> Tree
-Leaf :: Number -> Tree
-myFunc :: a -> a
-myFunc :: a -> [a]
-myFunc :: [a] -> a
-myFunc :: [a] -> [a]
+data Tree = Branch Tree Tree | Leaf Num
+
+data True = Bool
+data False = Bool
+data Bool = True | False
+data Vec2 = Num Num
+data Circle = Vec2 Num
+data Rectangle = Vec2 Vec2
+data Shape = Circle | Rectangle
+data Node = Node2 a a | Node3 a a a
+
+Branch 	:: Tree Tree -> Tree
+Leaf	:: Tree -> Num
+myCons	:: a
+myFunc 	:: a b c -> a
+myFunc 	:: a -> [a]
+myFunc 	:: [a] -> a
+myFunc 	:: [a] -> [a]

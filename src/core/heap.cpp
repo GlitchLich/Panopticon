@@ -4,6 +4,7 @@
 #include "../../include/core/heap.h"
 #include "include/core/operators.h"
 #include "core/Memory.h"
+#include "include/Grammar/typeinference.h"
 
 namespace panopticon
 {
@@ -21,6 +22,7 @@ void init_heap()
     scope_pointer = current_scope->end();
     dynamic_scope_pointer = global_scope.begin();
     register_primitive_functions();
+    typing::init_inference_env();
 }
 
 void clear_heap()

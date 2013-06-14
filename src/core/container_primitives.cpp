@@ -80,7 +80,7 @@ bool call_func_on_item(object& result, const object& function,const object& item
 
         else
         {
-            Variable arg_name = function.data.function->arguments.at(1).data.variable_number;
+            Variable arg_name = function.data.function->arguments.at(1).data.variable;
             context[arg_name] = optic_stack.back();
             optic_stack.pop_back();
             resolve_stack_from_parser(function.data.function->body, false);
@@ -139,7 +139,7 @@ bool call_filter_func_on_item(object& result, const object& function,const objec
 
         else
         {
-            Variable arg_name = function.data.function->arguments.at(1).data.variable_number;
+            Variable arg_name = function.data.function->arguments.at(1).data.variable;
             context[arg_name] = optic_stack.back();
             optic_stack.pop_back();
             resolve_stack_from_parser(function.data.function->body, false);
@@ -175,13 +175,13 @@ inline bool call_func_on_two_items(object& result, object& function,const object
 {
     optic_stack.push_back(item1);
     evaluate_top();
-    Variable arg_name = function.data.function->arguments.at(1).data.variable_number;
+    Variable arg_name = function.data.function->arguments.at(1).data.variable;
     context[arg_name] = optic_stack.back();
     optic_stack.pop_back();
 
     optic_stack.push_back(item2);
     evaluate_top();
-    arg_name = function.data.function->arguments.at(2).data.variable_number;
+    arg_name = function.data.function->arguments.at(2).data.variable;
     context[arg_name] = optic_stack.back();
     optic_stack.pop_back();
 
@@ -205,7 +205,7 @@ inline bool setup_array(object& array)
     else if(array.type == UNDECLARED_VARIABLE||array.type == VARIABLE)
     {
         object result;
-        if(get_variable(array.data.variable_number,&result) !=OK)
+        if(get_variable(array.data.variable,&result) !=OK)
         {
             out() << "Error: Attempting to map a non-Array of type: " << type_string(result.type) << std::endl;
             correct_parsing = false;
@@ -262,9 +262,9 @@ inline bool setup_argument(object& argument)
     else if(argument.type == UNDECLARED_VARIABLE||argument.type == VARIABLE)
     {
         object result;
-        if(get_variable(argument.data.variable_number,&result) !=OK)
+        if(get_variable(argument.data.variable,&result) !=OK)
         {
-            out() << "Error, Unknown variable: " <<reverse_variable_name_lookup[argument.data.variable_number] << std::endl;
+            out() << "Error, Unknown variable: " <<reverse_variable_name_lookup[argument.data.variable] << std::endl;
             correct_parsing = false;
             return false;
         }
@@ -308,9 +308,9 @@ bool setup_func(object& result, object& function)
     {
     case VARIABLE:
     case UNDECLARED_VARIABLE:
-        if(get_variable(function.data.variable_number, &function) != OK)
+        if(get_variable(function.data.variable, &function) != OK)
         {
-            out() << "Unable to find function: " << reverse_variable_name_lookup[function.data.variable_number] << " in current scope" << std::endl;
+            out() << "Unable to find function: " << reverse_variable_name_lookup[function.data.variable] << " in current scope" << std::endl;
             correct_parsing = false;
             return false;
         }
@@ -1458,7 +1458,7 @@ object type_to_string_object(const object& obj)
         break;
 
     case VARIABLE:
-        return mem_string_alloc(reverse_variable_name_lookup[obj.data.variable_number].c_str());
+        return mem_string_alloc(reverse_variable_name_lookup[obj.data.variable].c_str());
         break;
 
     default:
@@ -1499,179 +1499,179 @@ bool type_of(object& result, const Array& arguments)
 void register_container_primitives()
 {
     object psize = mem_alloc(PRIMITIVE);
-    int variable_number = get_string_hash("size");
-    psize.data.primitive->name = variable_number;
+    int variable = get_string_hash("size");
+    psize.data.primitive->name = variable;
     psize.data.primitive->num_arguments = 1;
     psize.data.primitive->p_func = size;
-    set_variable(variable_number, psize);
+    set_variable(variable, psize);
 
     object pzip = mem_alloc(PRIMITIVE);
-    variable_number = get_string_hash("zip");
-    pzip.data.primitive->name = variable_number;
+    variable = get_string_hash("zip");
+    pzip.data.primitive->name = variable;
     pzip.data.primitive->num_arguments = 3;
     pzip.data.primitive->p_func = zip;
-    set_variable(variable_number,pzip);
+    set_variable(variable,pzip);
 
     object pzip3 = mem_alloc(PRIMITIVE);
-    variable_number = get_string_hash("zip3");
-    pzip3.data.primitive->name = variable_number;
+    variable = get_string_hash("zip3");
+    pzip3.data.primitive->name = variable;
     pzip3.data.primitive->num_arguments = 4;
     pzip3.data.primitive->p_func = zip3;
-    set_variable(variable_number,pzip3);
+    set_variable(variable,pzip3);
 
     object pzipWith = mem_alloc(PRIMITIVE);
-    variable_number = get_string_hash("zipWith");
-    pzipWith.data.primitive->name = variable_number;
+    variable = get_string_hash("zipWith");
+    pzipWith.data.primitive->name = variable;
     pzipWith.data.primitive->num_arguments = 4;
     pzipWith.data.primitive->p_func = zipWith;
-    set_variable(variable_number,pzipWith);
+    set_variable(variable,pzipWith);
 
     object pzipWith3 = mem_alloc(PRIMITIVE);
-    variable_number = get_string_hash("zipWith3");
-    pzipWith3.data.primitive->name = variable_number;
+    variable = get_string_hash("zipWith3");
+    pzipWith3.data.primitive->name = variable;
     pzipWith3.data.primitive->num_arguments = 4;
     pzipWith3.data.primitive->p_func = zipWith3;
-    set_variable(variable_number,pzipWith3);
+    set_variable(variable,pzipWith3);
 
     object ptake = mem_alloc(PRIMITIVE);
-    variable_number = get_string_hash("take");
-    ptake.data.primitive->name = variable_number;
+    variable = get_string_hash("take");
+    ptake.data.primitive->name = variable;
     ptake.data.primitive->num_arguments = 3;
     ptake.data.primitive->p_func = take;
-    set_variable(variable_number,ptake);
+    set_variable(variable,ptake);
 
     object preverse = mem_alloc(PRIMITIVE);
-    variable_number = get_string_hash("reverse");
-    preverse.data.primitive->name = variable_number;
+    variable = get_string_hash("reverse");
+    preverse.data.primitive->name = variable;
     preverse.data.primitive->num_arguments = 2;
     preverse.data.primitive->p_func = reverse;
-    set_variable(variable_number,preverse);
+    set_variable(variable,preverse);
 
     object pinit = mem_alloc(PRIMITIVE);
-    variable_number = get_string_hash("init");
-    pinit.data.primitive->name = variable_number;
+    variable = get_string_hash("init");
+    pinit.data.primitive->name = variable;
     pinit.data.primitive->num_arguments = 3;
     pinit.data.primitive->p_func = init;
-    set_variable(variable_number,pinit);
+    set_variable(variable,pinit);
 
     object plast = mem_alloc(PRIMITIVE);
-    variable_number = get_string_hash("last");
-    plast.data.primitive->name = variable_number;
+    variable = get_string_hash("last");
+    plast.data.primitive->name = variable;
     plast.data.primitive->num_arguments = 2;
     plast.data.primitive->p_func = last;
-    set_variable(variable_number,plast);
+    set_variable(variable,plast);
 
     object ptail = mem_alloc(PRIMITIVE);
-    variable_number = get_string_hash("tail");
-    ptail.data.primitive->name = variable_number;
+    variable = get_string_hash("tail");
+    ptail.data.primitive->name = variable;
     ptail.data.primitive->num_arguments = 3;
     ptail.data.primitive->p_func = tail;
-    set_variable(variable_number,ptail);
+    set_variable(variable,ptail);
 
     object phead = mem_alloc(PRIMITIVE);
-    variable_number = get_string_hash("head");
-    phead.data.primitive->name = variable_number;
+    variable = get_string_hash("head");
+    phead.data.primitive->name = variable;
     phead.data.primitive->num_arguments = 3;
     phead.data.primitive->p_func = head;
-    set_variable(variable_number,phead);
+    set_variable(variable,phead);
 
     object pmap = mem_alloc(PRIMITIVE);
-    variable_number = get_string_hash("map");
-    pmap.data.primitive->name = variable_number;
+    variable = get_string_hash("map");
+    pmap.data.primitive->name = variable;
     pmap.data.primitive->num_arguments = 3;
     pmap.data.primitive->p_func = map;
-    set_variable(variable_number,pmap);
+    set_variable(variable,pmap);
 
     object pfoldl = mem_alloc(PRIMITIVE);
-    variable_number = get_string_hash("foldl");
-    pfoldl.data.primitive->name = variable_number;
+    variable = get_string_hash("foldl");
+    pfoldl.data.primitive->name = variable;
     pfoldl.data.primitive->num_arguments = 4;
     pfoldl.data.primitive->p_func = foldl;
-    set_variable(variable_number,pfoldl);
+    set_variable(variable,pfoldl);
 
     object pfoldl1 = mem_alloc(PRIMITIVE);
-    variable_number = get_string_hash("foldl1");
-    pfoldl1.data.primitive->name = variable_number;
+    variable = get_string_hash("foldl1");
+    pfoldl1.data.primitive->name = variable;
     pfoldl1.data.primitive->num_arguments = 4;
     pfoldl1.data.primitive->p_func = foldl1;
-    set_variable(variable_number,pfoldl1);
+    set_variable(variable,pfoldl1);
 
     object pfoldr = mem_alloc(PRIMITIVE);
-    variable_number = get_string_hash("foldr");
-    pfoldr.data.primitive->name = variable_number;
+    variable = get_string_hash("foldr");
+    pfoldr.data.primitive->name = variable;
     pfoldr.data.primitive->num_arguments = 4;
     pfoldr.data.primitive->p_func = foldr;
-    set_variable(variable_number,pfoldr);
+    set_variable(variable,pfoldr);
 
     object pfoldr1 = mem_alloc(PRIMITIVE);
-    variable_number = get_string_hash("foldr1");
-    pfoldr1.data.primitive->name = variable_number;
+    variable = get_string_hash("foldr1");
+    pfoldr1.data.primitive->name = variable;
     pfoldr1.data.primitive->num_arguments = 4;
     pfoldr1.data.primitive->p_func = foldr1;
-    set_variable(variable_number,pfoldr1);
+    set_variable(variable,pfoldr1);
 
     object pscanl = mem_alloc(PRIMITIVE);
-    variable_number = get_string_hash("scanl");
-    pscanl.data.primitive->name = variable_number;
+    variable = get_string_hash("scanl");
+    pscanl.data.primitive->name = variable;
     pscanl.data.primitive->num_arguments = 4;
     pscanl.data.primitive->p_func = scanl;
-    set_variable(variable_number,pscanl);
+    set_variable(variable,pscanl);
 
     object pscanl1 = mem_alloc(PRIMITIVE);
-    variable_number = get_string_hash("scanl1");
-    pscanl1.data.primitive->name = variable_number;
+    variable = get_string_hash("scanl1");
+    pscanl1.data.primitive->name = variable;
     pscanl1.data.primitive->num_arguments = 4;
     pscanl1.data.primitive->p_func = scanl1;
-    set_variable(variable_number,pscanl1);
+    set_variable(variable,pscanl1);
 
     object pscanr = mem_alloc(PRIMITIVE);
-    variable_number = get_string_hash("scanr");
-    pscanr.data.primitive->name = variable_number;
+    variable = get_string_hash("scanr");
+    pscanr.data.primitive->name = variable;
     pscanr.data.primitive->num_arguments = 4;
     pscanr.data.primitive->p_func = scanr;
-    set_variable(variable_number,pscanr);
+    set_variable(variable,pscanr);
 
     object pscanr1 = mem_alloc(PRIMITIVE);
-    variable_number = get_string_hash("scanr1");
-    pscanr1.data.primitive->name = variable_number;
+    variable = get_string_hash("scanr1");
+    pscanr1.data.primitive->name = variable;
     pscanr1.data.primitive->num_arguments = 4;
     pscanr1.data.primitive->p_func = scanr1;
-    set_variable(variable_number,pscanr1);
+    set_variable(variable,pscanr1);
 
     object pfilter = mem_alloc(PRIMITIVE);
-    variable_number = get_string_hash("filter");
-    pfilter.data.primitive->name = variable_number;
+    variable = get_string_hash("filter");
+    pfilter.data.primitive->name = variable;
     pfilter.data.primitive->num_arguments = 3;
     pfilter.data.primitive->p_func = filter;
-    set_variable(variable_number,pfilter);
+    set_variable(variable,pfilter);
 
     object plookup = mem_alloc(PRIMITIVE);
-    variable_number = get_string_hash("lookup");
-    plookup.data.primitive->name = variable_number;
+    variable = get_string_hash("lookup");
+    plookup.data.primitive->name = variable;
     plookup.data.primitive->num_arguments = 2;
     plookup.data.primitive->p_func = lookup;
-    set_variable(variable_number, plookup);
+    set_variable(variable, plookup);
 
     object pinsert = mem_alloc(PRIMITIVE);
-    variable_number = get_string_hash("insert");
-    pinsert.data.primitive->name = variable_number;
+    variable = get_string_hash("insert");
+    pinsert.data.primitive->name = variable;
     pinsert.data.primitive->num_arguments = 3;
     pinsert.data.primitive->p_func = insert;
-    set_variable(variable_number, pinsert);
+    set_variable(variable, pinsert);
 
     object premove = mem_alloc(PRIMITIVE);
-    variable_number = get_string_hash("remove");
-    premove.data.primitive->name = variable_number;
+    variable = get_string_hash("remove");
+    premove.data.primitive->name = variable;
     premove.data.primitive->num_arguments = 2;
     premove.data.primitive->p_func = remove;
-    set_variable(variable_number, premove);
+    set_variable(variable, premove);
 
     object ptype = mem_alloc(PRIMITIVE);
-    variable_number = get_string_hash("type");
-    ptype.data.primitive->name = variable_number;
+    variable = get_string_hash("type");
+    ptype.data.primitive->name = variable;
     ptype.data.primitive->num_arguments = 1;
     ptype.data.primitive->p_func = type_of;
-    set_variable(variable_number, ptype);
+    set_variable(variable, ptype);
 }
 
 } // panopticon namespace

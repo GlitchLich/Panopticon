@@ -673,7 +673,7 @@ object mem_alloc_variable(std::string string)
 {
     object obj;
     obj.type = UNDECLARED_VARIABLE;
-    obj.data.variable_number = get_string_hash(string);
+    obj.data.variable = get_string_hash(string);
     return obj;
 }
 
@@ -733,11 +733,11 @@ object mem_alloc(Type type)
         gc_register(obj);
         break;
     case VARIABLE:
-        obj.data.variable_number = 0;
+        obj.data.variable = 0;
         gc_register(obj);
         break;
     case UNDECLARED_VARIABLE:
-        obj.data.variable_number = 0;
+        obj.data.variable = 0;
         gc_register(obj);
         break;
     case OPERATION_TREE:
@@ -956,13 +956,13 @@ object mem_copy(const object &obj)
         //        increment_string();
         //        new_object.data.string = new String(obj.data.string->c_str());
         //        gc_register(new_object);
-        new_object.data.variable_number = obj.data.variable_number;
+        new_object.data.variable = obj.data.variable;
         break;
     case UNDECLARED_VARIABLE:
         //        increment_string();
         //        new_object.data.string = new String(obj.data.string->c_str());
         //        gc_register(new_object);
-        new_object.data.variable_number = obj.data.variable_number;
+        new_object.data.variable = obj.data.variable;
         break;
     case OPERATION_TREE:
         increment_array(OPERATION_TREE);

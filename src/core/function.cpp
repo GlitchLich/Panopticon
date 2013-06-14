@@ -35,14 +35,14 @@ bool create_function(object &A, const object &B, const object &C)
     {
         function->num_arguments = B.data.array->size();
         function->arguments = *B.data.array;
-        function->name = B.data.array->at(0).data.variable_number;
+        function->name = B.data.array->at(0).data.variable;
     }
 
     else if(B.type == UNDECLARED_VARIABLE || B.type == VARIABLE)
     {
         function->num_arguments = 0;
         function->arguments.push_back(B);
-        function->name = B.data.variable_number;
+        function->name = B.data.variable;
     }
 
     function->body = C;
@@ -103,9 +103,9 @@ bool call_function(object& A, const object& B, const object& C)
     case UNDECLARED_VARIABLE:
 
 
-        if(get_variable(B.data.variable_number, &function) != OK)
+        if(get_variable(B.data.variable, &function) != OK)
         {
-            out() << "Unable to find function: " << reverse_variable_name_lookup[B.data.variable_number] << " in current scope" << std::endl;
+            out() << "Unable to find function: " << reverse_variable_name_lookup[B.data.variable] << " in current scope" << std::endl;
             correct_parsing = false;
             return false;
         }
@@ -177,7 +177,7 @@ bool call_function(object& A, const object& B, const object& C)
             for(int i = 1; i < function.data.function->num_arguments && optic_stack.size() > 0; ++i)
             {
                 evaluate_top();
-                Variable arg_name = function.data.function->arguments.at(i).data.variable_number;
+                Variable arg_name = function.data.function->arguments.at(i).data.variable;
                 context.insert(std::make_pair(arg_name, optic_stack.back())); // optimization: insert into map without copy because nothing else is pointing to it
                 optic_stack.pop_back();
             }
@@ -190,7 +190,7 @@ bool call_function(object& A, const object& B, const object& C)
         {
             for(int i = function.data.function->arguments.size() - 2; i >= 0; --i)
             {
-                Variable arg_name = function.data.function->arguments.at(i).data.variable_number;
+                Variable arg_name = function.data.function->arguments.at(i).data.variable;
                 context.insert(std::make_pair(arg_name, C.data.array->at(i)));
             }
         }
@@ -244,7 +244,7 @@ bool partial_application(object& result_A, const object &func_B, const object &a
     //Function name/arg
     object name_array = mem_alloc(ARRAY);
     object name = mem_alloc(UNDECLARED_VARIABLE);
-    name.data.variable_number = 0;
+    name.data.variable = 0;
     name_array.data.array->push_front(name);
 
     //Function body
@@ -256,11 +256,11 @@ bool partial_application(object& result_A, const object &func_B, const object &a
     for(int i=vars.data.array->size();i<func_B.data.function->arguments.size()-1;++i)
     {
         object arg = mem_alloc(UNDECLARED_VARIABLE);
-        arg.data.variable_number = var_num;
+        arg.data.variable = var_num;
         name_array.data.array->push_back(arg);
 
         object var = mem_alloc(UNDECLARED_VARIABLE);
-        var.data.variable_number = var_num;
+        var.data.variable = var_num;
         vars.data.array->push_back(var);
         var_num++;
     }
@@ -284,11 +284,11 @@ bool create_operator_function(object& A, operator_function func, bool expand)
     //Function name/arg
     optic::object name_array = mem_alloc(optic::ARRAY);
     object name = mem_alloc(UNDECLARED_VARIABLE);
-    name.data.variable_number = 0;
+    name.data.variable = 0;
     object arg = mem_alloc(UNDECLARED_VARIABLE);
-    arg.data.variable_number = 1;
+    arg.data.variable = 1;
     object arg2 = mem_alloc(UNDECLARED_VARIABLE);
-    arg2.data.variable_number = 2;
+    arg2.data.variable = 2;
     name_array.data.array->push_front(name);
     name_array.data.array->push_back(arg);
     name_array.data.array->push_back(arg2);
@@ -306,15 +306,15 @@ bool left_section(object& A, object &B, operator_function func, bool expand)
     //Function name/arg
     optic::object name_array = mem_alloc(optic::ARRAY);
     object name = mem_alloc(UNDECLARED_VARIABLE);
-    name.data.variable_number = 0;
+    name.data.variable = 0;
     object arg = mem_alloc(UNDECLARED_VARIABLE);
-    arg.data.variable_number = 1;
+    arg.data.variable = 1;
     name_array.data.array->push_front(name);
     name_array.data.array->push_back(arg);
 
     //Function body
     object var = mem_alloc(UNDECLARED_VARIABLE);
-    var.data.variable_number = 1;
+    var.data.variable = 1;
     object body;
     store_operations(body,B,var,func,expand);
 
@@ -327,15 +327,15 @@ bool right_section(object& A, object &B, operator_function func, bool expand)
     //Function name/arg
     optic::object name_array = mem_alloc(optic::ARRAY);
     object name = mem_alloc(UNDECLARED_VARIABLE);
-    name.data.variable_number = 0;
+    name.data.variable = 0;
     object arg = mem_alloc(UNDECLARED_VARIABLE);
-    arg.data.variable_number = 1;
+    arg.data.variable = 1;
     name_array.data.array->push_front(name);
     name_array.data.array->push_back(arg);
 
     //Function body
     object var = mem_alloc(UNDECLARED_VARIABLE);
-    var.data.variable_number = 1;
+    var.data.variable = 1;
     object body;
     store_operations(body,var,B,func,expand);
 

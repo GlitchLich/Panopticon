@@ -19,7 +19,7 @@ object hash_number(const object& number)
 
     object hash;
     hash.type = VARIABLE;
-    hash.data.variable_number = get_string_hash(*string.data.string);
+    hash.data.variable = get_string_hash(*string.data.string);
     return hash;
 }
 
@@ -38,9 +38,9 @@ object get_hash(const object& obj, bool write = false)
 
     case STRING:
         if(write)
-            result.data.variable_number = get_string_hash(*obj.data.string);
+            result.data.variable = get_string_hash(*obj.data.string);
         else
-            result.data.variable_number = fnv1a(obj.data.string->c_str());
+            result.data.variable = fnv1a(obj.data.string->c_str());
         break;
 
     case NUMBER:
@@ -48,7 +48,7 @@ object get_hash(const object& obj, bool write = false)
         break;
 
     default:
-        result.data.variable_number = 0;
+        result.data.variable = 0;
         break;
     }
 
@@ -101,7 +101,7 @@ void print_trie_entry(const unsigned int& key, const object& value)
         break;
 
     case VARIABLE:
-        out() << reverse_variable_name_lookup[value.data.variable_number];
+        out() << reverse_variable_name_lookup[value.data.variable];
         break;
 
     default:
@@ -139,7 +139,7 @@ bool trie_lookup(object& value, const object& trie, const object& key)
     {
         object result;
 
-        if(get_variable(trie.data.variable_number, &result) == OK)
+        if(get_variable(trie.data.variable, &result) == OK)
         {
             if(result.type == TRIE)
             {
@@ -160,14 +160,14 @@ bool trie_lookup(object& value, const object& trie, const object& key)
         else
         {
             value.type = NIL;
-            out() << "Error: the variable \'" << reverse_variable_name_lookup[hashed_key.data.variable_number] << "\'' has not been declared." << std::endl;
+            out() << "Error: the variable \'" << reverse_variable_name_lookup[hashed_key.data.variable] << "\'' has not been declared." << std::endl;
             correct_parsing = false;
             return false;
         }
 
     }
 
-    value = trie::lookup(trie.data.trie, hashed_key.data.variable_number);
+    value = trie::lookup(trie.data.trie, hashed_key.data.variable);
     if(value.type != NIL && value.type == OPERATION_TREE)
     {
         optic_stack.push_back(value);
@@ -180,7 +180,7 @@ bool trie_lookup(object& value, const object& trie, const object& key)
     else
     {
         value.type = NIL;
-        out() << "No object found with key \'" << reverse_variable_name_lookup[hashed_key.data.variable_number] << "\'." << std::endl;
+        out() << "No object found with key \'" << reverse_variable_name_lookup[hashed_key.data.variable] << "\'." << std::endl;
         correct_parsing = false;
         return false;
     }
@@ -200,21 +200,21 @@ bool trie_contains(object& boolean, const object& trie, const object &key)
     }
 
     boolean.type = BOOL;
-    boolean.data.boolean = trie::contains(trie.data.trie, hashed_key.data.variable_number);
+    boolean.data.boolean = trie::contains(trie.data.trie, hashed_key.data.variable);
     return true;
 }
 
 bool trie_insert(object& trie_A, const object& string_B, const object& object_C)
 {
     object hashed_key = get_hash(string_B, true);
-    trie_A.data.trie = trie::insert(trie_A.data.trie, hashed_key.data.variable_number, object_C);
+    trie_A.data.trie = trie::insert(trie_A.data.trie, hashed_key.data.variable, object_C);
     return true;
 }
 
 bool trie_remove(object& trie_A, const object& string_B)
 {
     object hashed_key = get_hash(string_B);
-    trie_A.data.trie = trie::without(trie_A.data.trie, hashed_key.data.variable_number);
+    trie_A.data.trie = trie::without(trie_A.data.trie, hashed_key.data.variable);
 }
 
 bool create_trie(object& result_A, const object& B)
@@ -230,7 +230,7 @@ bool create_trie(object& result_A, const object& B)
             if(key.type == NUMBER || key.type == STRING)
                 key = get_hash(key);
 
-            result_A.data.trie = trie::insert(result_A.data.trie, key.data.variable_number, mem_copy(B.data.array->at(i+1)));
+            result_A.data.trie = trie::insert(result_A.data.trie, key.data.variable, mem_copy(B.data.array->at(i+1)));
         }
 
         else
@@ -243,7 +243,7 @@ bool create_trie(object& result_A, const object& B)
             optic_stack.push_back(result);
             evaluate_top();
 
-            result_A.data.trie = trie::insert(result_A.data.trie, B.data.array->at(i).data.array->at(0).data.variable_number, mem_copy(optic_stack.back()));
+            result_A.data.trie = trie::insert(result_A.data.trie, B.data.array->at(i).data.array->at(0).data.variable, mem_copy(optic_stack.back()));
             optic_stack.pop_back();
         }
     }
@@ -323,7 +323,7 @@ bool dictionary_lookup(object& value, const object& dict, const object& key)
     {
         object result;
 
-        if(get_variable(dict.data.variable_number, &result) == OK)
+        if(get_variable(dict.data.variable, &result) == OK)
         {
             if(result.type == DICTIONARY)
             {
@@ -344,14 +344,14 @@ bool dictionary_lookup(object& value, const object& dict, const object& key)
         else
         {
             value.type = NIL;
-            out() << "Error: the variable \'" << reverse_variable_name_lookup[key.data.variable_number] << "\'' has not been declared." << std::endl;
+            out() << "Error: the variable \'" << reverse_variable_name_lookup[key.data.variable] << "\'' has not been declared." << std::endl;
             correct_parsing = false;
             return false;
         }
 
     }
 
-    Dictionary::iterator find = dict.data.dictionary->find(key.data.variable_number);
+    Dictionary::iterator find = dict.data.dictionary->find(key.data.variable);
     if(find != dict.data.dictionary->end())
     {
         //        value = mem_copy(find->second);
@@ -369,7 +369,7 @@ bool dictionary_lookup(object& value, const object& dict, const object& key)
     else
     {
         value.type = NIL;
-        out() << "No object found with key \'" << reverse_variable_name_lookup[key.data.variable_number] << "\'." << std::endl;
+        out() << "No object found with key \'" << reverse_variable_name_lookup[key.data.variable] << "\'." << std::endl;
         correct_parsing = false;
         return false;
     }
@@ -387,7 +387,7 @@ bool dictionary_contains(object &boolean, const object &dict, const object &key)
     }
 
     boolean.type = BOOL;
-    boolean.data.boolean = dict.data.dictionary->find(key.data.variable_number) != dict.data.dictionary->end();
+    boolean.data.boolean = dict.data.dictionary->find(key.data.variable) != dict.data.dictionary->end();
     return true;
 }
 
@@ -399,14 +399,14 @@ bool dictionary_insert(object& dictionary_A,const object& string_B, const object
     {
         dictionary_A.data.dictionary->insert(
                     std::make_pair(
-                        string_B.data.variable_number,
+                        string_B.data.variable,
                         object_C
                         )
                     );
     }
     else
     {
-        out() << "Error:  Cannot insert key: " << reverse_variable_name_lookup[string_B.data.variable_number] << "into dictionary because this key already exists." << std::endl;
+        out() << "Error:  Cannot insert key: " << reverse_variable_name_lookup[string_B.data.variable] << "into dictionary because this key already exists." << std::endl;
         correct_parsing = false;
         return false;
     }
@@ -423,7 +423,7 @@ bool create_dictionary(object& result_A, const object& B)
         {
             result_A.data.dictionary->insert(
                         std::make_pair(
-                            B.data.array->at(i).data.variable_number,
+                            B.data.array->at(i).data.variable,
                             mem_copy(B.data.array->at(i+1))
                             )
                         );
@@ -440,7 +440,7 @@ bool create_dictionary(object& result_A, const object& B)
             evaluate_top();
             result_A.data.dictionary->insert(
                         std::make_pair(
-                            B.data.array->at(i).data.array->at(0).data.variable_number,
+                            B.data.array->at(i).data.array->at(0).data.variable,
                             mem_copy(optic_stack.back())
                             )
                         );
@@ -497,7 +497,7 @@ bool index(object& A, const object& B, const object& C)
             }
             break;
         case UNDECLARED_VARIABLE:
-            get_variable(C.data.variable_number,&result);
+            get_variable(C.data.variable,&result);
             //            index(A,B,mem_copy(result));
             index(A,B,result);
             break;
@@ -518,7 +518,7 @@ bool index(object& A, const object& B, const object& C)
         }
         break;
     case STRING:
-        if(get_variable(B.data.variable_number, &result) == OK)
+        if(get_variable(B.data.variable, &result) == OK)
         {
             if(result.type != FUNCTION)
             {
@@ -553,7 +553,7 @@ bool slice(object&A, const object& B, const object& C)
     if(B.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(B.data.variable_number,&result)==OK)
+        if(get_variable(B.data.variable,&result)==OK)
         {
             return slice(result,B,C);
         }
@@ -602,7 +602,7 @@ bool slice(object&A, const object& B, const object& C)
     else if(index1.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(index1.data.variable_number,&result)==OK)
+        if(get_variable(index1.data.variable,&result)==OK)
         {
             if(result.type!=NUMBER)
             {
@@ -656,7 +656,7 @@ bool slice(object&A, const object& B, const object& C)
     else if(index2.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(index2.data.variable_number,&result)==OK)
+        if(get_variable(index2.data.variable,&result)==OK)
         {
             if(result.type!=NUMBER)
             {
@@ -718,7 +718,7 @@ bool slice_beginning_to(object&A, const object& B, const object& C)
     if(B.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(B.data.variable_number,&result)==OK)
+        if(get_variable(B.data.variable,&result)==OK)
         {
             return slice_beginning_to(result,B,C);
         }
@@ -761,7 +761,7 @@ bool slice_to_end(object&A, const object& B, const object& C)
     if(B.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(B.data.variable_number,&result)==OK)
+        if(get_variable(B.data.variable,&result)==OK)
         {
             return slice_to_end(result,B,C);
         }
@@ -804,7 +804,7 @@ bool slice_all_with_step(object&A, const object& B, const object& C)
     if(B.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(B.data.variable_number,&result)==OK)
+        if(get_variable(B.data.variable,&result)==OK)
         {
             return slice_all_with_step(result,B,C);
         }
@@ -850,7 +850,7 @@ bool slice_beginning_to_with_step(object&A, const object& B, const object& C)
     if(B.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(B.data.variable_number,&result)==OK)
+        if(get_variable(B.data.variable,&result)==OK)
         {
             return slice_beginning_to_with_step(result,B,C);
         }
@@ -899,7 +899,7 @@ bool slice_beginning_to_with_step(object&A, const object& B, const object& C)
     else if(index1.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(index1.data.variable_number,&result)==OK)
+        if(get_variable(index1.data.variable,&result)==OK)
         {
             if(result.type!=NUMBER)
             {
@@ -953,7 +953,7 @@ bool slice_beginning_to_with_step(object&A, const object& B, const object& C)
     else if(index2.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(index2.data.variable_number,&result)==OK)
+        if(get_variable(index2.data.variable,&result)==OK)
         {
             if(result.type!=NUMBER)
             {
@@ -1011,7 +1011,7 @@ bool slice_to_end_with_step(object&A, const object& B, const object& C)
     if(B.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(B.data.variable_number,&result)==OK)
+        if(get_variable(B.data.variable,&result)==OK)
         {
             return slice_to_end_with_step(result,B,C);
         }
@@ -1060,7 +1060,7 @@ bool slice_to_end_with_step(object&A, const object& B, const object& C)
     else if(index1.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(index1.data.variable_number,&result)==OK)
+        if(get_variable(index1.data.variable,&result)==OK)
         {
             if(result.type!=NUMBER)
             {
@@ -1114,7 +1114,7 @@ bool slice_to_end_with_step(object&A, const object& B, const object& C)
     else if(index2.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(index2.data.variable_number,&result)==OK)
+        if(get_variable(index2.data.variable,&result)==OK)
         {
             if(result.type!=NUMBER)
             {
@@ -1178,7 +1178,7 @@ bool slice_with_step(object&A, const object& B, const object& C)
     if(B.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(B.data.variable_number,&result)==OK)
+        if(get_variable(B.data.variable,&result)==OK)
         {
             return slice_with_step(result,B,C);
         }
@@ -1228,7 +1228,7 @@ bool slice_with_step(object&A, const object& B, const object& C)
     else if(index1.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(index1.data.variable_number,&result)==OK)
+        if(get_variable(index1.data.variable,&result)==OK)
         {
             if(result.type!=NUMBER)
             {
@@ -1282,7 +1282,7 @@ bool slice_with_step(object&A, const object& B, const object& C)
     else if(index2.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(index2.data.variable_number,&result)==OK)
+        if(get_variable(index2.data.variable,&result)==OK)
         {
             if(result.type!=NUMBER)
             {
@@ -1336,7 +1336,7 @@ bool slice_with_step(object&A, const object& B, const object& C)
     else if(index3.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(index3.data.variable_number,&result)==OK)
+        if(get_variable(index3.data.variable,&result)==OK)
         {
             if(result.type!=NUMBER)
             {
@@ -1430,7 +1430,7 @@ bool slice_beginning_to_wrapping(object&A, const object& B, const object& C)
     if(B.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(B.data.variable_number,&result)==OK)
+        if(get_variable(B.data.variable,&result)==OK)
         {
             return slice_beginning_to(result,B,C);
         }
@@ -1481,7 +1481,7 @@ bool slice_to_end_wrapping(object&A, const object& B, const object& C)
     if(B.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(B.data.variable_number,&result)==OK)
+        if(get_variable(B.data.variable,&result)==OK)
         {
             return slice_to_end(result,B,C);
         }
@@ -1533,7 +1533,7 @@ bool slice_with_wrapping(object&A, const object& B, const object& C)
     if(B.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(B.data.variable_number,&result)==OK)
+        if(get_variable(B.data.variable,&result)==OK)
         {
             return slice(result,B,C);
         }
@@ -1582,7 +1582,7 @@ bool slice_with_wrapping(object&A, const object& B, const object& C)
     else if(index1.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(index1.data.variable_number,&result)==OK)
+        if(get_variable(index1.data.variable,&result)==OK)
         {
             if(result.type!=NUMBER)
             {
@@ -1636,7 +1636,7 @@ bool slice_with_wrapping(object&A, const object& B, const object& C)
     else if(index2.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(index2.data.variable_number,&result)==OK)
+        if(get_variable(index2.data.variable,&result)==OK)
         {
             if(result.type!=NUMBER)
             {
@@ -1698,7 +1698,7 @@ bool slice_beginning_to_with_step_wrapping(object&A, const object& B, const obje
     if(B.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(B.data.variable_number,&result)==OK)
+        if(get_variable(B.data.variable,&result)==OK)
         {
             return slice_beginning_to_with_step(result,B,C);
         }
@@ -1747,7 +1747,7 @@ bool slice_beginning_to_with_step_wrapping(object&A, const object& B, const obje
     else if(index1.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(index1.data.variable_number,&result)==OK)
+        if(get_variable(index1.data.variable,&result)==OK)
         {
             if(result.type!=NUMBER)
             {
@@ -1801,7 +1801,7 @@ bool slice_beginning_to_with_step_wrapping(object&A, const object& B, const obje
     else if(index2.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(index2.data.variable_number,&result)==OK)
+        if(get_variable(index2.data.variable,&result)==OK)
         {
             if(result.type!=NUMBER)
             {
@@ -1878,7 +1878,7 @@ bool slice_to_end_with_step_wrapping(object&A, const object& B, const object& C)
     if(B.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(B.data.variable_number,&result)==OK)
+        if(get_variable(B.data.variable,&result)==OK)
         {
             return slice_to_end_with_step(result,B,C);
         }
@@ -1927,7 +1927,7 @@ bool slice_to_end_with_step_wrapping(object&A, const object& B, const object& C)
     else if(index1.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(index1.data.variable_number,&result)==OK)
+        if(get_variable(index1.data.variable,&result)==OK)
         {
             if(result.type!=NUMBER)
             {
@@ -1981,7 +1981,7 @@ bool slice_to_end_with_step_wrapping(object&A, const object& B, const object& C)
     else if(index2.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(index2.data.variable_number,&result)==OK)
+        if(get_variable(index2.data.variable,&result)==OK)
         {
             if(result.type!=NUMBER)
             {
@@ -2045,7 +2045,7 @@ bool slice_with_step_wrapping(object&A, const object& B, const object& C)
     if(B.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(B.data.variable_number,&result)==OK)
+        if(get_variable(B.data.variable,&result)==OK)
         {
             return slice_with_step(result,B,C);
         }
@@ -2095,7 +2095,7 @@ bool slice_with_step_wrapping(object&A, const object& B, const object& C)
     else if(index1.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(index1.data.variable_number,&result)==OK)
+        if(get_variable(index1.data.variable,&result)==OK)
         {
             if(result.type!=NUMBER)
             {
@@ -2148,7 +2148,7 @@ bool slice_with_step_wrapping(object&A, const object& B, const object& C)
     else if(index2.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(index2.data.variable_number,&result)==OK)
+        if(get_variable(index2.data.variable,&result)==OK)
         {
             if(result.type!=NUMBER)
             {
@@ -2201,7 +2201,7 @@ bool slice_with_step_wrapping(object&A, const object& B, const object& C)
     else if(index3.type == UNDECLARED_VARIABLE)
     {
         object result;
-        if(get_variable(index3.data.variable_number,&result)==OK)
+        if(get_variable(index3.data.variable,&result)==OK)
         {
             if(result.type!=NUMBER)
             {
