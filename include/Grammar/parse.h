@@ -77,9 +77,11 @@ Variable arg10 = 10;
 */
 
 
-inline Variable get_string_hash(std::string string);
+Variable get_string_hash(std::string string);
 Variable get_float_hash(Number number);
 extern std::unordered_map<Variable,std::string> reverse_variable_name_lookup;
+
+// LLVM
 
 } // panopticon namespace
 
