@@ -253,6 +253,7 @@ bool exec(std::string string, std::string& output)
             case BOOLEAN:
                 t0.data.boolean = yylval.bval;
             }
+
             Parse(pParser, yv, t0);
         }
 
@@ -291,7 +292,7 @@ bool exec(std::string string, std::string& output)
 
 void command_line_loop()
 {
-    while ( ( n=read(fileno(stdin), buf, BUFS )) >  0)
+    while((n = read(fileno(stdin), buf, BUFS )) >  0)
     {
         buf[n]='\0';
         yy_scan_string(buf);
@@ -586,7 +587,7 @@ Variable arg9 = 9;
 Variable arg10 = 10;
 */
 
-inline Variable get_string_hash(std::string string)
+Variable get_string_hash(std::string string)
 {
     if(string_hash_map.find(string) == string_hash_map.end())
     {

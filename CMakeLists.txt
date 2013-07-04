@@ -17,12 +17,12 @@ include_directories(${LLVM_INCLUDE_DIRS})
 link_directories(${LLVM_LIBRARY_DIRS})
 llvm_map_components_to_libraries(REQ_LLVM_LIBRARIES jit native)
 
-set(ENV{CC} "clang")
-set(ENV{CXX} "clang++")
+#set(ENV{CC} "clang")
+#set(ENV{CXX} "clang++")
 
-SET(CMAKE_C_COMPILER "/usr/bin/clang")
-SET(CMAKE_CXX_COMPILER "/usr/bin/clang++")
-SET(CMAKE_CXX_COMPILER_ID "Clang")
+#SET(CMAKE_C_COMPILER "/usr/bin/clang")
+#SET(CMAKE_CXX_COMPILER "/usr/bin/clang++")
+#SET(CMAKE_CXX_COMPILER_ID "Clang")
 
 SET(CMAKE_AR      "/usr/bin/llvm-ar")
 SET(CMAKE_LINKER  "/usr/bin/llvm-ld")
@@ -36,9 +36,9 @@ SET(CMAKE_RANLIB  "/usr/bin/llvm-ranlib")
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules
                       ${CMAKE_MODULE_PATH})
 
-#if(CMAKE_COMPILER_IS_GNUCXX)
-#    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g")
-#endif()
+if(CMAKE_COMPILER_IS_GNUCXX)
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g")
+endif()
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     message("Compiling with Clang")
