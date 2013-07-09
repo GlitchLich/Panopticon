@@ -25,6 +25,7 @@
 
 #include "include/core/types.h"
 #include "include/core/VM.h"
+#include "llvm/Support/Casting.h"
 
 namespace panopticon {
 
@@ -40,6 +41,17 @@ public:
 
 protected:
     double number;
+};
+
+class BooleanExprAST : public ExprAST
+{
+public:
+    BooleanExprAST(bool boolean) : boolean(boolean) {}
+    virtual llvm::Value* codeGen() const;
+    virtual llvm::Type* type() const;
+
+protected:
+    bool boolean;
 };
 
 // Expressions for a  single character such as 'l', '6', and '.'
@@ -108,12 +120,20 @@ public:
       Subtract,
       Multiply,
       Divide,
+      Modulus,
       GreaterThan,
       LessThan,
       EqualTo,
       NotEqualTo,
       GreatherThanEq,
-      LessThanEq
+      LessThanEq,
+      And,
+      Or,
+      ShiftLeft,
+      ShiftRight,
+      BitAnd,
+      BitOr,
+      BitXOr
   };
   BinaryExprAST(int op, ExprAST *lhs, ExprAST *rhs)
     : op(op), lhs(lhs), rhs(rhs) {}

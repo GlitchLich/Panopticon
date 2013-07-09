@@ -64,6 +64,17 @@ llvm::Type* NumberExprAST::type() const
     return llvm::Type::getDoubleTy(getGlobalContext());
 }
 
+//Booleans
+Value* BooleanExprAST::codeGen() const
+{
+    return ConstantInt::get(llvm::Type::getInt1Ty(llvm::getGlobalContext()),(uint64_t)boolean);
+}
+
+llvm::Type* BooleanExprAST::type() const
+{
+    return llvm::Type::getInt1Ty(getGlobalContext());
+}
+
 //Chars
 Value* CharExprAST::codeGen() const
 {
@@ -213,17 +224,50 @@ Value* BinaryExprAST::codeGen() const
     Value *R = rhs->codeGen();
     if (L == 0 || R == 0) return 0;
 
+    Value* int_left;
+    Value* int_right;
+    Value* int_result;
+
     switch (op) {
     case Add: return builder.CreateFAdd(L, R, "addtmp");
     case Subtract: return builder.CreateFSub(L, R, "subtmp");
     case Multiply: return builder.CreateFMul(L, R, "multmp");
     case Divide: return builder.CreateFDiv(L, R, "divtmp");
+    case Modulus: return builder.CreateFRem(L, R, "modtmp");
     case LessThan: return builder.CreateFCmpULT(L, R, "lt_tmp");
     case GreaterThan: return builder.CreateFCmpUGT(L, R, "gt_tmp");
     case EqualTo: return builder.CreateFCmpUEQ(L, R, "eq_tmp");
     case NotEqualTo: return builder.CreateFCmpUNE(L, R, "neq_tmp");
     case GreatherThanEq: return builder.CreateFCmpUGE(L, R, "gte_tmp");
     case LessThanEq: return builder.CreateFCmpULE(L, R, "lte_tmp");
+    case And: return builder.CreateAnd(L, R, "and_tmp");
+    case Or: return builder.CreateOr(L, R, "or_tmp");
+    case ShiftLeft:
+        int_left = builder.CreateFPToUI(L,llvm::Type::getInt32Ty(llvm::getGlobalContext()),"castL_tmp");
+        int_right = builder.CreateFPToUI(R,llvm::Type::getInt32Ty(llvm::getGlobalContext()),"castR_tmp");
+        int_result = builder.CreateShl(int_left,int_right,"shiftL_tmp");
+        return builder.CreateSIToFP(int_result,llvm::Type::getDoubleTy(llvm::getGlobalContext()),"castDouble_tmp");
+    case ShiftRight:
+        int_left = builder.CreateFPToUI(L,llvm::Type::getInt32Ty(llvm::getGlobalContext()),"castL_tmp");
+        int_right = builder.CreateFPToUI(R,llvm::Type::getInt32Ty(llvm::getGlobalContext()),"castR_tmp");
+        int_result = builder.CreateAShr(int_left,int_right,"shiftR_tmp");
+        return builder.CreateSIToFP(int_result,llvm::Type::getDoubleTy(llvm::getGlobalContext()),"castDouble_tmp");
+    case BitAnd:
+        int_left = builder.CreateFPToUI(L,llvm::Type::getInt32Ty(llvm::getGlobalContext()),"castL_tmp");
+        int_right = builder.CreateFPToUI(R,llvm::Type::getInt32Ty(llvm::getGlobalContext()),"castR_tmp");
+        int_result = builder.CreateAnd(int_left,int_right,"band_tmp");
+        return builder.CreateSIToFP(int_result,llvm::Type::getDoubleTy(llvm::getGlobalContext()),"castDouble_tmp");
+    case BitOr:
+        int_left = builder.CreateFPToUI(L,llvm::Type::getInt32Ty(llvm::getGlobalContext()),"castL_tmp");
+        int_right = builder.CreateFPToUI(R,llvm::Type::getInt32Ty(llvm::getGlobalContext()),"castR_tmp");
+        int_result = builder.CreateOr(int_left,int_right,"bor_tmp");
+        return builder.CreateSIToFP(int_result,llvm::Type::getDoubleTy(llvm::getGlobalContext()),"castDouble_tmp");
+    case BitXOr:
+        int_left = builder.CreateFPToUI(L,llvm::Type::getInt32Ty(llvm::getGlobalContext()),"castL_tmp");
+        int_right = builder.CreateFPToUI(R,llvm::Type::getInt32Ty(llvm::getGlobalContext()),"castR_tmp");
+        int_result = builder.CreateXor(int_left,int_right,"bxor_tmp");
+        return builder.CreateSIToFP(int_result,llvm::Type::getDoubleTy(llvm::getGlobalContext()),"castDouble_tmp");
+
         //Error of some kind
     default: return errorV("invalid binary operator");
     }
