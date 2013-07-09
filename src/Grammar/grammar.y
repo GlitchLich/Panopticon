@@ -25,6 +25,7 @@
 #include "include/core/Trie.h"
 #include "core/Memory.h"
 #include "include/Grammar/typeinference.h"
+#include "include/Grammar/parse_ast.h"
 
 #undef STRING
 #undef NUM
@@ -111,17 +112,21 @@ start ::= spec(A).
 /*    std::cout << "Object of type: " << A.type << " hit the stack!" << std::endl;*/
 /*    optic::out() << "Object at end of parser: ";*/
 /*    print_object(A);*/
-    if(A.type!=optic::OPERATION_TREE)
-    {
-        optic::object a = mem_alloc(optic::OPERATION_TREE);
-        a.data.array->push_back(A);
-        optic::resolve_stack_from_parser(a, true);
-    }
-    else
-    {
-        optic::resolve_stack_from_parser(A, true);
+/*    if(A.type!=optic::OPERATION_TREE)*/
+/*    {*/
+/*        optic::object a = mem_alloc(optic::OPERATION_TREE);*/
+/*        a.data.array->push_back(A);*/
+/*        optic::resolve_stack_from_parser(a, true);*/
+/*    }*/
+/*    else*/
+/*    {*/
+/*        optic::resolve_stack_from_parser(A, true);*/
 /*        optic::resolve_stack_from_parser(flatten_tree(A), true);*/
-    }
+/*    }*/
+
+    //New LLVM JIT-compiler:
+    optic::FunctionAST* top_level = optic::convert_to_top_level_function(A.ast,A.ast->type());
+    optic::jit_compile(top_level,true,false);
 }
 
 spec(A) ::= assignment(B).
@@ -1300,7 +1305,7 @@ expr(A) ::= LPAREN expr(B) RPAREN.
 num(A) ::= NUM(B).
 {
     B.type = panopticon::NUMBER;
-    create_tree(A,B);
+    A.ast = B.ast;
 }
 
 string(A) ::= STRING(B).
@@ -1313,7 +1318,7 @@ string(A) ::= STRING(B).
 bool(A) ::= BOOLEAN(B).
 {
     B.type = panopticon::BOOL;
-    create_tree(A,B);
+    A.ast = B.ast;
 }
 
 //=======================
@@ -1385,7 +1390,7 @@ expr(A) ::= expr(B) PLUSPLUS expr(C). [APPEND]
 
 expr(A) ::= expr(B) PLUS expr(C).
 {
-    store_operations(A,B,C,&panopticon::plus);
+    A.ast = new optic::BinaryExprAST(optic::BinaryExprAST::Add,B.ast,C.ast);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -1395,7 +1400,7 @@ expr(A) ::= expr(B) PLUS expr(C).
 
 expr(A) ::= expr(B) MINUS expr(C).
 {
-    store_operations(A,B,C,&panopticon::minus);
+    A.ast = new optic::BinaryExprAST(optic::BinaryExprAST::Subtract,B.ast,C.ast);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -1405,7 +1410,7 @@ expr(A) ::= expr(B) MINUS expr(C).
 
 expr(A) ::= expr(B) DIVIDE expr(C).
 {
-    store_operations(A,B,C,&panopticon::divide);
+    A.ast = new optic::BinaryExprAST(optic::BinaryExprAST::Divide,B.ast,C.ast);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -1415,7 +1420,7 @@ expr(A) ::= expr(B) DIVIDE expr(C).
 
 expr(A) ::= expr(B) TIMES expr(C).
 {
-    store_operations(A,B,C,&panopticon::multiply);
+    A.ast = new optic::BinaryExprAST(optic::BinaryExprAST::Multiply,B.ast,C.ast);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -1425,7 +1430,7 @@ expr(A) ::= expr(B) TIMES expr(C).
 
 expr(A) ::= expr(B) MODULO expr(C).
 {
-    store_operations(A,B,C,&panopticon::modulo);
+    A.ast = new optic::BinaryExprAST(optic::BinaryExprAST::Modulus,B.ast,C.ast);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -1435,7 +1440,7 @@ expr(A) ::= expr(B) MODULO expr(C).
 
 expr(A) ::= expr(B) POW expr(C).
 {
-    store_operations(A,B,C,&panopticon::value_pow);
+    A.ast = new optic::BinaryExprAST(optic::BinaryExprAST::Power,B.ast,C.ast);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -1445,7 +1450,7 @@ expr(A) ::= expr(B) POW expr(C).
 
 expr(A) ::= expr(B) EQUALTO expr(C).
 {
-    store_operations(A,B,C,&panopticon::equal_to);
+    A.ast = new optic::BinaryExprAST(optic::BinaryExprAST::EqualTo,B.ast,C.ast);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -1455,7 +1460,7 @@ expr(A) ::= expr(B) EQUALTO expr(C).
 
 expr(A) ::= expr(B) NOTEQUALTO expr(C).
 {
-    store_operations(A,B,C,&panopticon::not_equal_to);
+    A.ast = new optic::BinaryExprAST(optic::BinaryExprAST::NotEqualTo,B.ast,C.ast);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -1465,7 +1470,7 @@ expr(A) ::= expr(B) NOTEQUALTO expr(C).
 
 expr(A) ::= expr(B) LESSTHAN expr(C).
 {
-    store_operations(A,B,C,&panopticon::less_than);
+    A.ast = new optic::BinaryExprAST(optic::BinaryExprAST::LessThan,B.ast,C.ast);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -1475,7 +1480,7 @@ expr(A) ::= expr(B) LESSTHAN expr(C).
 
 expr(A) ::= expr(B) GREATERTHAN expr(C).
 {
-    store_operations(A,B,C,&panopticon::greater_than);
+    A.ast = new optic::BinaryExprAST(optic::BinaryExprAST::GreaterThan,B.ast,C.ast);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -1485,7 +1490,7 @@ expr(A) ::= expr(B) GREATERTHAN expr(C).
 
 expr(A) ::= expr(B) LORE expr(C).
 {
-    store_operations(A,B,C,&panopticon::lore);
+    A.ast = new optic::BinaryExprAST(optic::BinaryExprAST::LessThanEq,B.ast,C.ast);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -1495,7 +1500,7 @@ expr(A) ::= expr(B) LORE expr(C).
 
 expr(A) ::= expr(B) GORE expr(C).
 {
-    store_operations(A,B,C,&panopticon::gore);
+    A.ast = new optic::BinaryExprAST(optic::BinaryExprAST::GreaterThanEq,B.ast,C.ast);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -1505,7 +1510,7 @@ expr(A) ::= expr(B) GORE expr(C).
 
 expr(A) ::= expr(B) AND expr(C).
 {
-    store_operations(A,B,C,&panopticon::value_and);
+    A.ast = new optic::BinaryExprAST(optic::BinaryExprAST::And,B.ast,C.ast);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -1515,7 +1520,7 @@ expr(A) ::= expr(B) AND expr(C).
 
 expr(A) ::= expr(B) OR expr(C).
 {
-    store_operations(A,B,C,&panopticon::value_or);
+    A.ast = new optic::BinaryExprAST(optic::BinaryExprAST::Or,B.ast,C.ast);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -1555,7 +1560,7 @@ expr(A) ::= NOT expr(B). [UMINUS]
 
 expr(A) ::= expr(B) SHIFTL expr(C).
 {
-    store_operations(A,B,C,&panopticon::shift_left);
+    A.ast = new optic::BinaryExprAST(optic::BinaryExprAST::ShiftLeft,B.ast,C.ast);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -1565,7 +1570,7 @@ expr(A) ::= expr(B) SHIFTL expr(C).
 
 expr(A) ::= expr(B) SHIFTR expr(C).
 {
-    store_operations(A,B,C,&panopticon::shift_right);
+    A.ast = new optic::BinaryExprAST(optic::BinaryExprAST::ShiftRight,B.ast,C.ast);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -1575,7 +1580,7 @@ expr(A) ::= expr(B) SHIFTR expr(C).
 
 expr(A) ::= expr(B) BITAND expr(C).
 {
-    store_operations(A,B,C,&panopticon::bit_and);
+    A.ast = new optic::BinaryExprAST(optic::BinaryExprAST::BitAnd,B.ast,C.ast);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
@@ -1585,7 +1590,7 @@ expr(A) ::= expr(B) BITAND expr(C).
 
 expr(A) ::= expr(B) BITXOR expr(C).
 {
-    store_operations(A,B,C,&panopticon::bit_xor);
+    A.ast = new optic::BinaryExprAST(optic::BinaryExprAST::BitXOr,B.ast,C.ast);
     if(!panopticon::correct_parsing)
     {
         while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);

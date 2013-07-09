@@ -25,6 +25,7 @@
 #include "core/Memory.h"
 #include "include/core/VM.h"
 #include <sstream>
+#include "llvm/Intrinsics.h"
 
 #define CHAR_SIZE sizeof(char) * 8
 
@@ -201,7 +202,7 @@ llvm::Function* FunctionAST::codeGen() const
 
 llvm::Type* FunctionAST::type() const
 {
-        return proto->return_arity;
+    return proto->return_arity;
 }
 
 //Variables
@@ -227,6 +228,8 @@ Value* BinaryExprAST::codeGen() const
     Value* int_left;
     Value* int_right;
     Value* int_result;
+    std::vector<Value*> argsVector;
+    std::vector<llvm::Type*> arg_type;
 
     switch (op) {
     case Add: return builder.CreateFAdd(L, R, "addtmp");
@@ -238,7 +241,7 @@ Value* BinaryExprAST::codeGen() const
     case GreaterThan: return builder.CreateFCmpUGT(L, R, "gt_tmp");
     case EqualTo: return builder.CreateFCmpUEQ(L, R, "eq_tmp");
     case NotEqualTo: return builder.CreateFCmpUNE(L, R, "neq_tmp");
-    case GreatherThanEq: return builder.CreateFCmpUGE(L, R, "gte_tmp");
+    case GreaterThanEq: return builder.CreateFCmpUGE(L, R, "gte_tmp");
     case LessThanEq: return builder.CreateFCmpULE(L, R, "lte_tmp");
     case And: return builder.CreateAnd(L, R, "and_tmp");
     case Or: return builder.CreateOr(L, R, "or_tmp");
@@ -267,15 +270,49 @@ Value* BinaryExprAST::codeGen() const
         int_right = builder.CreateFPToUI(R,llvm::Type::getInt32Ty(llvm::getGlobalContext()),"castR_tmp");
         int_result = builder.CreateXor(int_left,int_right,"bxor_tmp");
         return builder.CreateSIToFP(int_result,llvm::Type::getDoubleTy(llvm::getGlobalContext()),"castDouble_tmp");
+    case Power:
+        argsVector.push_back(L);
+        argsVector.push_back(R);
+        arg_type.push_back(argsVector.at(0)->getType());
+        Value* powFunc = llvm::Intrinsic::getDeclaration(module,llvm::Intrinsic::pow,arg_type);
+        return builder.CreateCall(powFunc,argsVector,"power_tmp");
 
         //Error of some kind
-    default: return errorV("invalid binary operator");
+//    default:
+//        return errorV("invalid binary operator");
     }
 }
 
 llvm::Type* BinaryExprAST::type() const
 {
-    return llvm::Type::getDoubleTy(getGlobalContext());
+    switch (op) {
+    case Add:
+    case Subtract:
+    case Multiply:
+    case Divide:
+    case Modulus:
+    case ShiftLeft:
+    case ShiftRight:
+    case BitAnd:
+    case BitOr:
+    case BitXOr:
+    case Power:
+        return llvm::Type::getDoubleTy(llvm::getGlobalContext());
+
+    case LessThan:
+    case GreaterThan:
+    case EqualTo:
+    case NotEqualTo:
+    case GreaterThanEq:
+    case LessThanEq:
+    case And:
+    case Or:
+        return llvm::Type::getInt1Ty(llvm::getGlobalContext());
+
+        //Error of some kind
+    default:
+        return llvm::Type::getVoidTy(llvm::getGlobalContext());
+    }
 }
 
 ExprAST* parseNumberExpr(double number)

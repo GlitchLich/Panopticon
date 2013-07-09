@@ -19,6 +19,7 @@
 #include <algorithm>
 #include "../../include/core/Memory.h"
 #include "include/core/VM.h"
+#include "include/Grammar/parse_ast.h"
 
 /**
  * We have to declare these here - they're not  in any header files
@@ -233,7 +234,8 @@ bool exec(std::string string, std::string& output)
             switch(yv)
             {
             case NUM:
-                t0.data.number = yylval.dval;
+//                t0.data.number = yylval.dval;
+                t0.ast = new NumberExprAST(yylval.dval);
                 break;
             case NAME:
 //                t0 = panopticon::mem_string_alloc(panopticon::UNDECLARED_VARIABLE,yylval.sval);
@@ -252,7 +254,9 @@ bool exec(std::string string, std::string& output)
                 }
                 break;
             case BOOLEAN:
-                t0.data.boolean = yylval.bval;
+//                t0.data.boolean = yylval.bval;
+                t0.ast = new BooleanExprAST(yylval.bval);
+                break;
             }
 
             Parse(pParser, yv, t0);

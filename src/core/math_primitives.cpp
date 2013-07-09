@@ -141,6 +141,7 @@ void parse_math_primitives()
     FunctionClosure divide = construct_math_primitive(BinaryExprAST::Divide,"divide");
     FunctionClosure multiply = construct_math_primitive(BinaryExprAST::Multiply,"multiply");
     FunctionClosure modulus = construct_math_primitive(BinaryExprAST::Modulus,"modulus");
+    FunctionClosure power = construct_math_primitive(BinaryExprAST::Power,"power");
     FunctionClosure shift_left = construct_math_primitive(BinaryExprAST::ShiftLeft,"shift_left");
     FunctionClosure shift_right = construct_math_primitive(BinaryExprAST::ShiftRight,"shift_right");
     FunctionClosure bit_and = construct_math_primitive(BinaryExprAST::BitAnd,"bit_and");
@@ -150,7 +151,7 @@ void parse_math_primitives()
     FunctionClosure lessThan = construct_boolean_math_primitive(BinaryExprAST::LessThan,"lessThan");
     FunctionClosure greaterThan = construct_boolean_math_primitive(BinaryExprAST::GreaterThan,"greaterThan");
     FunctionClosure lessThanOrEq = construct_boolean_math_primitive(BinaryExprAST::LessThanEq,"LessThanOrEq");
-    FunctionClosure greaterThsnOrEq = construct_boolean_math_primitive(BinaryExprAST::GreatherThanEq,"GreaterThanOrEq");
+    FunctionClosure greaterThsnOrEq = construct_boolean_math_primitive(BinaryExprAST::GreaterThanEq,"GreaterThanOrEq");
     FunctionClosure equalTo = construct_boolean_math_primitive(BinaryExprAST::EqualTo,"equalTo");
     FunctionClosure notEqualTo = construct_boolean_math_primitive(BinaryExprAST::NotEqualTo,"NotEqualTo");
 
@@ -160,27 +161,27 @@ void parse_math_primitives()
 //    final=clock()-init;
 //    std::cout << "TIME TO COMPILE FUNCTIONS: " << (double)final / ((double)CLOCKS_PER_SEC) << std::endl;
 
-    test_call_math_primitive("add", 2, 3);
-    test_call_math_primitive("subtract", 2, 3);
-    test_call_math_primitive("divide", 2, 3);
-    test_call_math_primitive("multiply", 2, 3);
-    test_call_math_primitive("modulus", 20, 3);
+//    test_call_math_primitive("add", 2, 3);
+//    test_call_math_primitive("subtract", 2, 3);
+//    test_call_math_primitive("divide", 2, 3);
+//    test_call_math_primitive("multiply", 2, 3);
+//    test_call_math_primitive("modulus", 20, 3);
 
-    test_call_bool_primitive("lessThan", 2, 3);
-    test_call_bool_primitive("greaterThan", 2, 3);
-    test_call_bool_primitive("LessThanOrEq", 2, 3);
-    test_call_bool_primitive("GreaterThanOrEq", 2, 3);
-    test_call_bool_primitive("equalTo", 2, 3);
-    test_call_bool_primitive("NotEqualTo", 2, 3);
+//    test_call_bool_primitive("lessThan", 2, 3);
+//    test_call_bool_primitive("greaterThan", 2, 3);
+//    test_call_bool_primitive("LessThanOrEq", 2, 3);
+//    test_call_bool_primitive("GreaterThanOrEq", 2, 3);
+//    test_call_bool_primitive("equalTo", 2, 3);
+//    test_call_bool_primitive("NotEqualTo", 2, 3);
 
-    test_call_math_primitive("shift_left", 2, 3);
-    test_call_math_primitive("shift_right", 2, 3);
-    test_call_math_primitive("bit_and", 2, 3);
-    test_call_math_primitive("bit_or", 2, 3);
-    test_call_math_primitive("bit_xor", 2, 3);
+//    test_call_math_primitive("shift_left", 2, 3);
+//    test_call_math_primitive("shift_right", 2, 3);
+//    test_call_math_primitive("bit_and", 2, 3);
+//    test_call_math_primitive("bit_or", 2, 3);
+//    test_call_math_primitive("bit_xor", 2, 3);
 
-    test_call_bool_compare_primitive("and", true, false);
-    test_call_bool_compare_primitive("or", true, false);
+//    test_call_bool_compare_primitive("and", true, false);
+//    test_call_bool_compare_primitive("or", true, false);
 }
 
 }
