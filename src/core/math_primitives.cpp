@@ -19,14 +19,14 @@ FunctionClosure construct_math_primitive(int op,std::string name)
     VariableExprAST* var_y = new VariableExprAST("y");
     BinaryExprAST* body = new BinaryExprAST(op,var_x,var_y);
 
-    double (*top_level)(double,double) = (double (*)(double,double))(intptr_t)jit_compile(new FunctionAST(proto,body));
-//    FunctionClosure closure = {
-//        jit_func,
-//        get_string_hash(name),
-//        2
-//    };
+    double (*primitive)(double,double) = (double (*)(double,double))(intptr_t)jit_compile(new FunctionAST(proto,body));
+    FunctionClosure closure = {
+        (void*)primitive,
+        get_string_hash(name),
+        2
+    };
 
-//    return closure;
+    return closure;
 }
 
 //Construct Boolean Math Primitive
@@ -44,14 +44,14 @@ FunctionClosure construct_boolean_math_primitive(int op,std::string name)
     VariableExprAST* var_y = new VariableExprAST("y");
     BinaryExprAST* body = new BinaryExprAST(op,var_x,var_y);
 
-    bool (*top_level)(double,double) = (bool (*)(double,double))(intptr_t)jit_compile(new FunctionAST(proto,body));
+    bool (*primitive)(double,double) = (bool (*)(double,double))(intptr_t)jit_compile(new FunctionAST(proto,body));
 
-//    FunctionClosure closure = {
-//        jit_func,
-//        get_string_hash(name),
-//        2
-//    };
-//    return closure;
+    FunctionClosure closure = {
+        (void*)primitive,
+        get_string_hash(name),
+        2
+    };
+    return closure;
 }
 
 void test_call_math_primitive(std::string name, double x, double y)

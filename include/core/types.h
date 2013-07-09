@@ -333,7 +333,7 @@ protected:
 //FunctionClosure
 struct FunctionClosure
 {
-    jit_function function_pointer;
+    void* function_pointer;
     Variable name;
     int num_arguments;
     typing::TypeDefinition arity;
@@ -343,7 +343,7 @@ struct FunctionClosure
 //ThunkClosure
 struct ThunkClosure
 {
-    jit_function function_pointer;
+    void* function_pointer;
     bool evaluated;
     llvm::Value* value;
 };
