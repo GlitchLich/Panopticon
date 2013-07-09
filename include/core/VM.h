@@ -14,7 +14,7 @@ void vm_init();
 void vm_shutdown();
 
 // JIT compile a function, returning the result as yet another function
-jit_function jit_compile(const FunctionAST& func);
+void* jit_compile(const FunctionAST *func);
 
 } // panopticon namespace
 

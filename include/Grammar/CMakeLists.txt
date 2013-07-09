@@ -13,5 +13,6 @@ set(Panopticon_SRC
         ${CMAKE_CURRENT_SOURCE_DIR}/conditionals.h
         ${CMAKE_CURRENT_SOURCE_DIR}/lexer.h
         ${CMAKE_CURRENT_SOURCE_DIR}/typeinference.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/parse_ast.h
 	PARENT_SCOPE
 )

@@ -24,11 +24,11 @@ llvm_map_components_to_libraries(REQ_LLVM_LIBRARIES jit native)
 #SET(CMAKE_CXX_COMPILER "/usr/bin/clang++")
 #SET(CMAKE_CXX_COMPILER_ID "Clang")
 
-SET(CMAKE_AR      "/usr/bin/llvm-ar")
-SET(CMAKE_LINKER  "/usr/bin/llvm-ld")
-SET(CMAKE_NM      "/usr/bin/llvm-nm")
-SET(CMAKE_OBJDUMP "/usr/bin/llvm-objdump")
-SET(CMAKE_RANLIB  "/usr/bin/llvm-ranlib")
+#SET(CMAKE_AR      "/usr/bin/llvm-ar")
+#SET(CMAKE_LINKER  "/usr/bin/llvm-ld")
+#SET(CMAKE_NM      "/usr/bin/llvm-nm")
+#SET(CMAKE_OBJDUMP "/usr/bin/llvm-objdump")
+#SET(CMAKE_RANLIB  "/usr/bin/llvm-ranlib")
 
 #message("Compiling with Clang")
 #set(CMAKE_CXX_FLAGS "-std=c++11 -stdlib=libc++ -g -O3 `llvm-config --cppflags --ldflags --libs core`")
@@ -42,8 +42,7 @@ endif()
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     message("Compiling with Clang")
-# `llvm-config --cppflags --ldflags --libs core`
-    set(CMAKE_CXX_FLAGS "-v -std=c++11 -g -O3")
+    set(CMAKE_CXX_FLAGS "-v -std=c++11 -stdlib=libc++ -g -O3")
 endif()
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")

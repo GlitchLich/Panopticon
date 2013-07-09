@@ -18,6 +18,7 @@
 #include "../include/core/heap.h"
 #include <algorithm>
 #include "../../include/core/Memory.h"
+#include "include/core/VM.h"
 
 /**
  * We have to declare these here - they're not  in any header files

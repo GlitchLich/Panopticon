@@ -2,6 +2,7 @@
 #include "llvm/Analysis/Verifier.h"
 #include "llvm/ExecutionEngine/ExecutionEngine.h"
 #include "llvm/ExecutionEngine/JIT.h"
+#include "llvm/Assembly/PrintModulePass.h"
 #include "llvm/DataLayout.h"
 #include "llvm/DerivedTypes.h"
 #include "llvm/IRBuilder.h"
@@ -9,11 +10,13 @@
 #include "llvm/Module.h"
 #include "llvm/Support/TargetSelect.h"
 #include "llvm/Transforms/Scalar.h"
+#include "llvm/Support/raw_ostream.h"
 
 #include <cstdio>
 
 #include "include/core/VM.h"
 #include "include/core/types.h"
+#include "include/core/math_primitives.h"
 
 namespace panopticon
 {
@@ -29,7 +32,7 @@ void vm_init()
     llvm::LLVMContext& context = llvm::getGlobalContext();
 
     // Make the module, which holds all the code
-    llvm::Module* module = new llvm::Module("panopticon JIT", context);
+    module = new llvm::Module("Panopticon JIT", context);
 
     // Create the JIT. This takes ownership of the module
     executionEngine = llvm::EngineBuilder(module).setErrorStr(&error_string).create();
@@ -42,6 +45,7 @@ void vm_init()
 
     passManager = new llvm::FunctionPassManager(module);
 
+//    passManager->add(llvm::createPrintModulePass(&llvm::outs()));
     // Setup the optimizer pipeline. Start with registering info about how
     // the target lays out data structures
     passManager->add(new llvm::DataLayout(*executionEngine->getDataLayout()));
@@ -57,6 +61,9 @@ void vm_init()
     passManager->add(llvm::createCFGSimplificationPass());
 
     passManager->doInitialization();
+
+    //Parse the Math primitive functions
+    parse_math_primitives();
 }
 
 void vm_shutdown()
@@ -65,18 +72,16 @@ void vm_shutdown()
     delete passManager;
 }
 
-jit_function jit_compile(const FunctionAST& func)
+void* jit_compile(const FunctionAST* func)
 {
-    llvm::Function* llvmFunc = func.codeGen();
+    llvm::Function* llvmFunc = func->codeGen();
+
+//    llvmFunc->print(llvm::outs());
 
     // JIT compile the function, return a function pointer
     void* funcPtr = executionEngine->getPointerToFunction(llvmFunc);
 
-    // Cast it to the right type
-    jit_function cFunc = (jit_function) (intptr_t) funcPtr;
-
-    // Finally, call it
-    return (jit_function) cFunc();
+    return funcPtr;
 }
 
 }

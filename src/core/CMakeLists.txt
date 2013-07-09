@@ -16,5 +16,6 @@ set(Panopticon_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/Trie.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/thunk.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/VM.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/math_primitives.cpp
     PARENT_SCOPE
 )

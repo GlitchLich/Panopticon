@@ -25,10 +25,18 @@
 
 // llvm
 #include <llvm/Analysis/Verifier.h>
+
+#ifdef __APPLE__
 #include <llvm/DerivedTypes.h>
 #include <llvm/IRBuilder.h>
 #include <llvm/LLVMContext.h>
 #include <llvm/Module.h>
+#else
+#include <llvm/DerivedTypes.h>
+#include <llvm/IRBuilder.h>
+#include <llvm/LLVMContext.h>
+#include <llvm/Module.h>
+#endif
 
 // stl
 #include <vector>
@@ -208,11 +216,15 @@ union Data
 extern const Data EMPTY_DATA;
 extern const object EMPTY_OBJECT;
 
+class ExprAST;
+class FunctionAST;
+
 struct object
 {
     Data data;
     bool* alive; // Handle to alive value, needs to be pointer because the object itself is pass by value. Used for Garbage Collection.
     Type type;
+    ExprAST* ast;
 };
 
 namespace typing
@@ -301,59 +313,7 @@ public:
     static std::unordered_map<std::string, llvm::Value*> namedValues;
 };
 
-// Expresions for numeric literals such as 0.3, 1.0, and 666
-class NumberExprAST : public ExprAST
-{
-public:
-    NumberExprAST(double number) : number(number) {}
-    virtual llvm::Value* codeGen() const;
-    virtual llvm::Type* type() const;
-
-protected:
-    double number;
-};
-
-// Expressions for a  single character such as 'l', '6', and '.'
-class CharExprAST : public ExprAST
-{
-public:
-    CharExprAST(const char& character) : character(character) {}
-    virtual llvm::Value* codeGen() const;
-    virtual llvm::Type* type() const;
-
-protected:
-    char character;
-};
-
-// Function call, such as print(1), parsed via the parentheses ()
-class CallExprAST : public ExprAST
-{
-public:
-    CallExprAST(const std::string& callee, std::vector<ExprAST*>& args) :
-        callee(callee), args(args) {}
-
-    virtual llvm::Value* codeGen() const;
-    virtual llvm::Type* type() const;
-
-private:
-    std::string callee;
-    std::vector<ExprAST*> args;
-};
-
-// Represents a prototype for a function
-class PrototypeAST
-{
-public:
-    PrototypeAST(const std::string& name, const std::vector<std::string>& args)
-        : name(name), args(args) {}
-
-    llvm::FunctionType* functionType() const;
-    llvm::Function* codeGen() const;
-
-protected:
-    std::string name;
-    std::vector<std::string> args;
-};
+class PrototypeAST;
 
 // Expression class for functions themselves
 class FunctionAST : public ExprAST
@@ -368,6 +328,24 @@ public:
 protected:
     PrototypeAST* proto;
     ExprAST* body;
+};
+
+//FunctionClosure
+struct FunctionClosure
+{
+    jit_function function_pointer;
+    Variable name;
+    int num_arguments;
+    typing::TypeDefinition arity;
+    Dictionary heap;
+};
+
+//ThunkClosure
+struct ThunkClosure
+{
+    jit_function function_pointer;
+    bool evaluated;
+    llvm::Value* value;
 };
 
 } // panopticon namespace
