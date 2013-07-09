@@ -76,7 +76,7 @@ void* jit_compile(const FunctionAST* func)
 {
     llvm::Function* llvmFunc = func->codeGen();
 
-//    llvmFunc->print(llvm::outs());
+    llvmFunc->print(llvm::outs());
 
     // JIT compile the function, return a function pointer
     void* funcPtr = executionEngine->getPointerToFunction(llvmFunc);
