@@ -102,6 +102,9 @@ enum Type
     DICTIONARY,// 6
     LIST,// 7
     TRIE, // 8
+    CHAR,
+    TRUE,
+    FALSE,
 
     //THE FOLLOWING ARE FOR INTERNAL USE ONLY,
     //NOT TO BE USED AS LANGUAGE CONSTRUCTS
@@ -301,6 +304,7 @@ public:
     virtual ~ExprAST() {}
     virtual llvm::Value* codeGen() const = 0;
     virtual llvm::Type* type() const = 0;
+    virtual void print() const = 0;
 
     // Error handling
     static llvm::Value* errorV(const char* str)
@@ -311,6 +315,9 @@ public:
 
     static llvm::IRBuilder<> builder;
     static std::unordered_map<std::string, llvm::Value*> namedValues;
+
+    enum AST_Type{BinaryOp,Function,Number,Char,True,False,FunctionCall,Variable,Prototype,Lambda,Let,LetRec,Apply};
+    virtual AST_Type getAST_Type() const = 0;
 };
 
 class PrototypeAST;
@@ -322,10 +329,11 @@ public:
     FunctionAST(PrototypeAST* proto, ExprAST* body)
         : proto(proto), body(body) {}
 
-    virtual llvm::Function* codeGen() const;
-    virtual llvm::Type* type() const;
+    llvm::Function* codeGen() const;
+    llvm::Type* type() const;
+    AST_Type getAST_Type() const;
+    void print() const;
 
-protected:
     PrototypeAST* proto;
     ExprAST* body;
 };

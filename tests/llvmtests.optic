@@ -1,22 +1,39 @@
 //LLVM tests
 
 1 + 2
+1 + 2 / 3 ^ ( 0.1 * 3.2 )
 1 - 2
 1 / 2
 1 * 2
 3 % 2
 2 ^ 7
-
 4 == 4
 4 != 4
 4 > 4
 4 < 4
 4 <= 4
 4 >= 4
-
 4 <<< 3
 4 >>> 3
 4 ^| 1
-
 true && false
 true || false
+
+//Type decalaratios and user data types
+
+data Tree = Branch Tree Tree | Leaf Num
+
+data Bool = True | False
+data Vec2 = Num Num
+data Circle = Vec2 Num
+data Rectangle = Vec2 Vec2
+data Shape = Circle | Rectangle
+data Node = Node2 a a | Node3 a a a
+
+Branch 	:: Tree Tree -> Tree
+Leaf	:: Tree -> Num
+myCons	:: a
+myFunc 	:: a b c -> a
+myFunc 	:: a -> [a]
+myFunc 	:: [a] -> a
+myFunc 	:: [a] -> [a]

@@ -108,7 +108,7 @@ union FingerTreeNode
 
 struct TwoThreeFingerTree
 {
-    int type = type;
+    int type;
     FingerTreeNode node;
 };
 

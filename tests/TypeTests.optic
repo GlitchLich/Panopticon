@@ -1,4 +1,4 @@
-	//Type decalaratios and user data types
+//Type decalaratios and user data types
 
 data Tree = Branch Tree Tree | Leaf Num
 

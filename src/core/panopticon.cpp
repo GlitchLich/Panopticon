@@ -23,13 +23,15 @@
 #include "include/core/heap.h"
 #include "include/core/Memory.h"
 #include "include/core/VM.h"
+#include "include/Grammar/typeinference.h"
 
 namespace panopticon
 {
 
 void startup()
 {
-    return vm_init();
+    typing::init();
+    vm_init();
 }
 
 void shutdown()

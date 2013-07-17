@@ -26,6 +26,7 @@ namespace panopticon
 llvm::FunctionPassManager* passManager = NULL;
 llvm::ExecutionEngine* executionEngine = NULL;
 llvm::Module* module = NULL;
+llvm::DataLayout* dataLayout = NULL;
 std::string error_string;
 
 void vm_init()
@@ -48,9 +49,11 @@ void vm_init()
     passManager = new llvm::FunctionPassManager(module);
 
 //    passManager->add(llvm::createPrintModulePass(&llvm::outs()));
+
     // Setup the optimizer pipeline. Start with registering info about how
     // the target lays out data structures
-    passManager->add(new llvm::DataLayout(*executionEngine->getDataLayout()));
+    dataLayout = new llvm::DataLayout(*executionEngine->getDataLayout());
+    passManager->add(dataLayout);
     // provide basic AliasAnalysis support for GVN.
     passManager->add(llvm::createBasicAliasAnalysisPass());
     // Do simple "peephole"optimiztion and bit-twiddling optzns.
@@ -113,6 +116,20 @@ void* jit_compile(const FunctionAST* func, bool call_func, bool print)
         }
 
     }
+
+    return funcPtr;
+}
+
+void* jit_compile_expr(const ExprAST *expr, bool print)
+{
+    llvm::Function* llvmFunc = (llvm::Function*)expr->codeGen();
+    llvmFunc->getReturnType();
+
+    if(print)
+        llvmFunc->print(llvm::outs());
+
+    // JIT compile the function, return a function pointer
+    void* funcPtr = executionEngine->getPointerToFunction(llvmFunc);
 
     return funcPtr;
 }

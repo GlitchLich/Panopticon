@@ -2,6 +2,7 @@
 #include <iostream>
 #include "include/Grammar/parse.h"
 #include <stdio.h>
+#include "include/core/VM.h"
 
 namespace panopticon
 {
@@ -9,241 +10,115 @@ namespace panopticon
 namespace typing
 {
 
-//Globals
-int id_counter = 0;
-char current_char = 'a';
-EnvMap global_scope;
-EnvMap::iterator dynamic_scope_pointer;
-Environment initial_scope;
-Environment::iterator scope_pointer;
-Environment* current_scope;
+int next_variable_id = 0;
+char next_variable_name = 'a';
 
-//====================================================
-//Environment and scoping
-//====================================================
-
-void init_inference_env()
+char get_next_variable_name()
 {
-    global_scope.push_back(&initial_scope);
-    current_scope = &initial_scope;
-    scope_pointer = current_scope->end();
-    dynamic_scope_pointer = global_scope.begin();
-
-    TypeOperator* num_op = new TypeOperator;
-    TypeDefinition num_def;
-    num_def.type = TYPE_OPERATOR;
-    num_def.data.type_op = num_op;
-    num_def.name = get_string_hash("Num");
-
-    TypeOperator* char_op = new TypeOperator;
-    TypeDefinition char_def;
-    char_def.type = TYPE_OPERATOR;
-    char_def.data.type_op = char_op;
-    char_def.name = get_string_hash("Char");
-
-    set_variable(num_def.name,num_def);
-    set_variable(char_def.name,char_def);
-}
-
-void clear_heap()
-{
-    while(global_scope.size())
+    next_variable_name = next_variable_name+1;
+    if(next_variable_name>122)
     {
-        global_scope.pop_back();
-    }
-}
-
-void push_scope(Environment *scope)
-{
-    global_scope.push_back(scope);
-    current_scope = scope;
-    scope_pointer = current_scope->begin();
-}
-
-void pop_scope()
-{
-    global_scope.pop_back();
-    current_scope = global_scope.back();
-    scope_pointer = current_scope->begin();
-}
-
-TypeDefinition get_variable(Variable id)
-{
-    dynamic_scope_pointer = global_scope.end();
-
-    // Iterate backwards through each scope
-    while(--dynamic_scope_pointer >= global_scope.begin())
-    {
-        // Check to see if that scope contains the variable we want
-        scope_pointer = (*dynamic_scope_pointer)->find(id);
-
-        // If it does assign the results and return OK
-        if(scope_pointer != (*dynamic_scope_pointer)->end())
-        {
-            // *result = mem_copy(scope_pointer->second);
-            return scope_pointer->second;
-        }
+        next_variable_name = 97;
     }
 
-    // If we get to the end we never found it. Return = NULL, return VARIABLE_NOT_FOUND
-    TypeDefinition type;
-    type.type = NONE;
-    return type;
+    return next_variable_name;
 }
 
-RESULT set_variable(Variable id, TypeDefinition& type)
-{
-    scope_pointer = current_scope->find(id);
-    //    if(scope_pointer == current_scope->end())
-    //    {
-    // current_scope->insert(std::make_pair(String(*variable_name), mem_copy(value)));
-    current_scope->insert(std::make_pair(id, type));
-    return OK;
-    //    }
+PrimitiveOperator* number = new PrimitiveOperator("Num",optic::NUMBER);
+PrimitiveOperator* boolean = new PrimitiveOperator("Bool",optic::BOOL);
+PrimitiveOperator* character = new PrimitiveOperator("Char",optic::CHAR);
+PrimitiveOperator* wildCard = new PrimitiveOperator("_",optic::VOID);
 
-    //    else
-    //    {
-    //        return VARIABLE_ALREADY_BOUND;
-    //    }
+typedef std::unordered_map<std::string,TypeDef*> Environment;
+Environment* env = new Environment;
+TypeVec* non_generics = new TypeVec;
+
+FunctionOperator* basic_math_primitive;
+FunctionOperator* boolean_math_primitive;
+FunctionOperator* boolean_boolean_primitive;
+
+void init()
+{
+    (*env)["true"] = boolean;
+    (*env)["false"] = boolean;
+    (*env)["_"] = wildCard;
+
+
+    TypeVec two_nums;
+    two_nums.push_back(number);
+    two_nums.push_back(number);
+
+    TypeVec math_types;
+    math_types.push_back(number);
+    math_types.push_back(new FunctionOperator("",two_nums));
+
+    TypeVec num_bool;
+    num_bool.push_back(number);
+    num_bool.push_back(boolean);
+
+    TypeVec boolean_math_types;
+    boolean_math_types.push_back(number);
+    boolean_math_types.push_back(new FunctionOperator("",num_bool));
+
+
+    TypeVec two_booleans;
+    two_booleans.push_back(boolean);
+    two_booleans.push_back(boolean);
+
+    TypeVec boolean_boolean_types;
+    boolean_boolean_types.push_back(boolean);
+    boolean_boolean_types.push_back(new FunctionOperator("",two_booleans));
+
+
+    //Math Primitive Types
+    basic_math_primitive = new FunctionOperator("",math_types);
+    boolean_math_primitive = new FunctionOperator("",boolean_math_types);
+    boolean_boolean_primitive = new FunctionOperator("",boolean_boolean_types);
+
+    //Basic Math Primitives
+    (*env)["add"] = basic_math_primitive;
+    (*env)["subtract"] = basic_math_primitive;
+    (*env)["divide"] = basic_math_primitive;
+    (*env)["multiply"] = basic_math_primitive;
+    (*env)["modulus"] = basic_math_primitive;
+    (*env)["power"] = basic_math_primitive;
+    (*env)["shift_left"] = basic_math_primitive;
+    (*env)["shift_right"] = basic_math_primitive;
+    (*env)["bit_and"] = basic_math_primitive;
+    (*env)["bit_or"] = basic_math_primitive;
+    (*env)["bit_xor"] = basic_math_primitive;
+
+    //Boolean Math Primitves
+    (*env)["lessThan"] = boolean_math_primitive;
+    (*env)["greaterThan"] = boolean_math_primitive;
+    (*env)["equalTo"] = boolean_math_primitive;
+    (*env)["lessThanOrEq"] = boolean_math_primitive;
+    (*env)["greaterThanOrEq"] = boolean_math_primitive;
+    (*env)["notEqualTo"] = boolean_math_primitive;
+
+    //Boolean Boolean Primitives
+    (*env)["and"] = boolean_boolean_primitive;
+    (*env)["or"] = boolean_boolean_primitive;
+
+    //    std::cout << "add :: " << (*env)["add"]->print_string() << std::endl;
+    //    std::cout << "lessThan :: " << (*env)["lessThan"]->print_string() << std::endl;
+    //    std::cout << "and :: " << (*env)["and"]->print_string() << std::endl;
 }
 
-//====================================================
-//TypeVariable
-//====================================================
-int next_id()
+TypeDef* prune(TypeDef* t)
 {
-    return id_counter++;
-}
-
-Variable next_variable_name()
-{
-    current_char = current_char+1;
-    if(current_char>122)
+    if(t->type() == TypeDef::TYPE_VAR)
     {
-        current_char = 97;
-    }
-    std::string name;
-    name += current_char;
-    return get_string_hash(name);
-}
-
-TypeDefinition create_type_variable()
-{
-    TypeDefinition n;
-    n.type = NONE;
-    TypeVariable* type_var = new TypeVariable;
-    //    type_var->id = next_id();
-    //    type_var->name = next_variable_name();
-    type_var->instance = n;
-    TypeDefinition t_op;
-    t_op.type = TYPE_VARIABLE;
-    t_op.name = next_variable_name();
-    t_op.data.type_var = type_var;
-    return t_op;
-}
-
-void print_type(Variable type_def_name, int level)
-{
-    TypeDefinition type_def = get_variable(type_def_name);
-
-    switch(type_def.type)
-    {
-    case TYPE_OPERATOR:
-        out() << reverse_variable_name_lookup[type_def_name];
-        if(type_def.data.type_op->is_sum)
-        {
-            out() << " ";
-            for(int i=0;i<type_def.data.type_op->sum_types.size();++i)
-            {
-                print_type(type_def.data.type_op->sum_types.at(i).name,1);
-
-                if(i<type_def.data.type_op->sum_types.size()-1)
-                {
-                    out() << " | ";
-                }
-            }
-        }
-        else
-        {
-            if(type_def.data.type_op->product_types.size() > 0)
-            {
-                out() << "[ ";
-                for(int i=0;i<type_def.data.type_op->product_types.size();++i)
-                {
-                    print_type(type_def.data.type_op->product_types.at(i).name,1);
-                    out() << " ";
-                }
-                out() << "]";
-            }
-        }
-        break;
-    case TYPE_VARIABLE:
-        out() << "var: ";
-        out() << reverse_variable_name_lookup[type_def_name];
-        if(type_def.data.type_var->product_types.size() > 0)
-        {
-            out() << "[ ";
-            for(int i=0;i<type_def.data.type_var->product_types.size();++i)
-            {
-                print_type(type_def.data.type_var->product_types.at(i).name,1);
-                out() << " ";
-            }
-            out() << "]";
-        }
-        break;
-    case NONE:
-    default:
-        out() << reverse_variable_name_lookup[type_def_name] << "?";
-        break;
-    }
-
-    if(level==0)
-    {
-        out() << std::endl;
-    }
-}
-
-void parse_error()
-{
-    out() << "Parse Error." << std::endl;
-}
-
-void type_error()
-{
-    out() << "Type Error." << std::endl;
-}
-
-//====================================================
-//TypeOperator
-//====================================================
-
-TypeDefinition create_poly_operator(Variable name, std::deque<TypeDefinition> types)
-{
-    TypeDefinition t_op;
-    t_op.type = TYPE_OPERATOR;
-    t_op.name = name;
-    t_op.data.type_op = new TypeOperator;
-    t_op.data.type_op->product_types = types;
-    return t_op;
-}
-
-TypeDefinition Boolean_type_op = create_poly_operator(get_string_hash("bool"),std::deque<TypeDefinition>());
-TypeDefinition Number_type_op = create_poly_operator(get_string_hash("num"),std::deque<TypeDefinition>());
-TypeDefinition String_type_op = create_poly_operator(get_string_hash("string"),std::deque<TypeDefinition>());
-
-//====================================================
-//Analysis
-//====================================================
-
-TypeDefinition prune(TypeDefinition t)
-{
-    if(t.type == TYPE_VARIABLE)
-    {
-        if(t.data.type_var->instance.type != NONE)
-        {
-            return prune(t.data.type_var->instance);
-        }
-        return t.data.type_var->instance;
+        //        if(((TypeVariable*)t)->instantiated)
+        //        {
+        //            TypeDef* new_t = prune(t);
+        //            return t;
+        //        }
+        //        else
+        //        {
+        //            return t;
+        //        }
+        return t;
     }
     else
     {
@@ -251,228 +126,367 @@ TypeDefinition prune(TypeDefinition t)
     }
 }
 
-//bool occurs_in(TypeOperator& v, Environment& env, std::deque<TypeOperator>& non_generics)
-//{
+bool occurs_in(TypeDef* t, TypeVec &types);
 
-//}
-
-//Takes TypeVariable
-bool occurs_in(TypeDefinition& v, Environment& env, std::deque<TypeDefinition>& non_generics)
+bool occurs_in_type(TypeDef* t, TypeDef* t2)
 {
-    //    return any(occursInType(t, t2) for t2 in types);
-
-    for(int i=0;i<v.data.type_var->product_types.size();++i)
+    TypeDef* pruned_t2 = prune(t2);
+    if(pruned_t2->get_name() == t->get_name())
     {
-
+        return true;
     }
-}
-
-//Takes TypeVariable
-bool is_generic(TypeDefinition& v, Environment& env, std::deque<TypeDefinition>& non_generics)
-{
-    return !occurs_in(v,env,non_generics);
-}
-
-TypeDefinition freshrec(const TypeDefinition& t, Environment& env, std::deque<TypeDefinition>& non_generics)
-{
-    TypeDefinition p = prune(t);
-    if(p.type == TYPE_VARIABLE)
+    else if(pruned_t2->type() == TypeDef::TYPE_OP)
     {
-        if(is_generic(p,env,non_generics))
+        return occurs_in(t,((TypeOperator*)pruned_t2)->types);
+    }
+
+    return false;
+}
+
+bool occurs_in(TypeDef* t, TypeVec& types)
+{
+    for(int i=0;i<types.size();++i)
+    {
+        if(occurs_in_type(t,types.at(i)))
         {
-            if(env.find(p.name) != env.end())
+            return true;
+        }
+    }
+    return false;
+}
+
+bool is_generic(TypeDef* t, TypeVec& non_generics)
+{
+    return !occurs_in(t,non_generics);
+}
+
+TypeDef* unify(TypeDef* t, Environment& env, TypeDef* t2)
+{
+    TypeDef* a = prune(t);
+    TypeDef* b = prune(t2);
+    //    std::cout << "unify:: t " << t->print_string() << " and t2 " << t2->print_string() << std::endl;
+
+    if(a->type() == TypeDef::TYPE_VAR)
+    {
+        //        if(a->get_name() != b->get_name())
+        //        {
+        if(occurs_in_type(a,b))
+        {
+            std::cout << "TypeError: Recursive unification with types " << a->get_name() << " and " << b->get_name() << std::endl;
+            correct_parsing = false;
+        }
+        //            std::cout << "a = b" << std::endl;
+        //            a = b;
+        //            std::cout << "unified test: " << a->print_string() << std::endl;
+        //        }
+        env[a->get_name()] = b;
+
+        return b;
+    }
+    else if(a->type() == TypeDef::TYPE_OP && b->type() == TypeDef::TYPE_VAR)
+    {
+        return unify(b,env,a);
+    }
+    else if(a->type() == TypeDef::TYPE_OP && b->type() == TypeDef::TYPE_OP)
+    {
+        if(a->get_name() != b->get_name() || ((TypeOperator*)a)->types.size() != ((TypeOperator*)b)->types.size())
+        {
+            std::cout << "TypeError: Type mismatch with types " << a->get_name() << " and " << b->get_name() << std::endl;
+            correct_parsing = false;
+        }
+        else
+        {
+            //            std::cout << "a->types.size() " << ((TypeOperator*)a)->types.size() << std::endl;
+            for(int i=0;i<((TypeOperator*)a)->types.size();++i)
             {
-                env[t.name] = create_type_variable();
+                ((TypeOperator*)a)->types.at(i) = unify(((TypeOperator*)a)->types.at(i),env,((TypeOperator*)b)->types.at(i));
+                //                std::cout << "unified test2: " << ((TypeOperator*)a)->types.at(i)->print_string() << std::endl;
             }
-            return env[t.name];
+            return a;
+        }
+    }
+    return a;
+}
+
+TypeDef* fresh_rec(TypeDef* t, Environment& mappings, TypeVec& non_generics)
+{
+    TypeDef* p = prune(t);
+    if(p->type() == TypeDef::TYPE_VAR)
+    {
+        if(is_generic(p,non_generics))
+        {
+            if(mappings.find(p->get_name()) == mappings.end())
+            {
+                mappings[p->get_name()] = new TypeVariable();
+            }
+            return mappings[p->get_name()];
         }
         else
         {
             return p;
         }
     }
-    else if(p.type == TYPE_OPERATOR)
+    else if(p->type() == TypeDef::TYPE_OP)
     {
-        TypeDefinition t_op;
-        t_op.type = TYPE_OPERATOR;
-        t_op.data.type_op = new TypeOperator;
-        t_op.name = p.name;
-
-        for(int i=0;i<p.data.type_op->product_types.size();++i)
+        TypeVec fresh_types;
+        for(int i=0;i<((TypeOperator*)p)->types.size();++i)
         {
-            TypeDefinition x = freshrec(p.data.type_op->product_types.at(i),env,non_generics);
-            if(x.type!=NONE)
-            {
-                t_op.data.type_op->product_types.push_back(x);
-            }
+            fresh_types.push_back(fresh_rec(((TypeOperator*)p)->types.at(i),mappings,non_generics));
         }
-
-        return t_op;
+        switch(((TypeOperator*)p)->sub_type)
+        {
+        case TypeOperator::Product:
+            return new ProductOperator(p->get_name(),fresh_types);
+        case TypeOperator::Sum:
+            return new SumOperator(p->get_name(),fresh_types);
+        case TypeOperator::Primitive:
+            return new PrimitiveOperator(p->get_name(),((PrimitiveOperator*)p)->optic_type);
+        case TypeOperator::Function:
+            return new FunctionOperator(p->get_name(),fresh_types);
+        }
     }
 }
 
-inline TypeDefinition fresh(TypeDefinition& t, std::deque<TypeDefinition>& non_generics)
+TypeDef* fresh(TypeDef* t, TypeVec& non_generics)
 {
-    Environment env;
-    return freshrec(t,env,non_generics);
+    Environment mappings;
+    return fresh_rec(t,mappings,non_generics);
 }
 
-
-inline TypeDefinition get_type(unsigned long long name, Environment& env, std::deque<TypeDefinition>& non_generics)
+TypeDef* get_type(std::string name, Environment& env, TypeVec& non_generics)
 {
     if(env.find(name) != env.end())
     {
-        return fresh(env[name], non_generics);
+        //        return fresh(env[name],non_generics);
+        return env[name];
     }
     else
     {
-        ParseError parseError = {name};
-        TypeDefinition perr;
-        perr.type = PARSE_ERROR;
-        perr.data.parse_error = parseError;
-        return perr;
+        out() << "ParseError, Undefined Symbol: " << name << std::endl;
+        correct_parsing = false;
     }
 }
 
-TypeDefinition analyze(object node, Environment* env, std::deque<TypeDefinition> non_generics)
+llvm::Type* convert_to_llvm(TypeDef* type,bool function_pointer = true)
 {
-    switch(node.type)
+//    std::cout << "llvm::Type* convert_to_llvm(TypeDef* type)" << std::endl;
+    std::cout << "converting type: " << type->print_string() << std::endl;
+    switch(type->type())
     {
-    case BOOL:
-        return Boolean_type_op;
-    case NUMBER:
-        return Number_type_op;
-    case VARIABLE:
-        break;
-    case FUNCTION_CALL:
-        break;
-    case FUNCTION_DECLARATION:
-        break;
-    case PRIMITIVE:
-        break;
-    case LAMBDA:
-        break;
-    case RECURSIVE_CALL:
-        break;
-    case CASE:
-        break;
-    case STRING:
-        return String_type_op;
-    }
-}
-
-void is_type_def_generic(optic::typing::TypeDefinition& type_def)
-{
-    if(isupper(reverse_variable_name_lookup[type_def.name].at(0)))
-    {
-        type_def.type = optic::typing::TYPE_OPERATOR;
-        type_def.data.type_op = new optic::typing::TypeOperator;
-    }
-    else
-    {
-        type_def.type = optic::typing::TYPE_VARIABLE;
-        type_def.data.type_var = new optic::typing::TypeVariable;
-
-        if(get_variable(type_def.name).type == NONE)
+    case TypeDef::TYPE_OP:
+        switch(((TypeOperator*)type)->sub_type)
         {
-            set_variable(type_def.name,type_def);
-        }
-    }
-}
-
-bool create_type_def_product(object &A, object &B, object &C)
-{
-    std::deque<optic::typing::TypeDefinition> product_types;
-
-    if(C.type == optic::ARRAY)
-    {
-        for(int i=0;i<C.data.array->size();++i)
+        case TypeOperator::Product:
         {
-            optic::typing::TypeDefinition product_def;
-            product_def.name = C.data.array->at(i).data.variable;
-            is_type_def_generic(product_def);
-            product_types.push_back(product_def);
-        }
-    }
-    else
-    {
-        optic::typing::TypeDefinition product_def;
-        product_def.name = C.data.variable;
-        is_type_def_generic(product_def);
-        product_types.push_back(product_def);
-    }
-
-    optic::typing::TypeOperator* type_op = new optic::typing::TypeOperator;
-    type_op->product_types = product_types;
-
-    optic::typing::TypeDefinition type_def;
-    type_def.type = optic::typing::TYPE_OPERATOR;
-    type_def.data.type_op = type_op;
-    type_def.name = B.data.variable;
-
-    optic::typing::set_variable(type_def.name,type_def);
-    optic::typing::print_type(type_def.name);
-}
-
-
-//TODO: implement type parameters
-bool create_type_def_sum(object &A, object &B, object &C)
-{
-    optic::typing::TypeOperator* sum = new optic::typing::TypeOperator;
-    sum->is_sum = true;
-
-    for(int i=0;i<C.data.array->size();++i)
-    {
-        const object& type_def_obj = C.data.array->at(i);
-        std::deque<optic::typing::TypeDefinition> product_types;
-
-        optic::typing::TypeDefinition sub_type_def;
-
-        if(type_def_obj.type == optic::ARRAY)
-        {
-            //Possiblly Old or New types
-
-            sub_type_def.name = type_def_obj.data.array->at(0).data.variable;
-            sub_type_def.type = optic::typing::TYPE_OPERATOR;
-
-            for(int i=1;i<type_def_obj.data.array->size();++i)
+//            std::cout << "Product" << std::endl;
+            ProductOperator* product = (ProductOperator*)type;
+            std::vector<llvm::Type*> types;
+            for(int i=0; i<product->types.size();++i)
             {
-                optic::typing::TypeDefinition product_def;
-                product_def.name = type_def_obj.data.array->at(i).data.variable;
-                is_type_def_generic(product_def);
-                product_types.push_back(product_def);
+                types.push_back(convert_to_llvm(product->types.at(i)));
             }
+            return llvm::StructType::get(llvm::getGlobalContext(),types,false);
+        }
+        case TypeOperator::Sum:
+//            std::cout << "Sum" << std::endl;
+            break;
+        case TypeOperator::Primitive:
+        {
+//            std::cout << "Primitive" << std::endl;
+            PrimitiveOperator* p = (PrimitiveOperator*)type;
+            switch(p->optic_type)
+            {
+            case optic::NUMBER:
+                return llvm::Type::getDoubleTy(llvm::getGlobalContext());
+            case optic::CHAR:
+                return llvm::Type::getInt8Ty(llvm::getGlobalContext());
+            case optic::BOOL:
+                return llvm::Type::getInt1Ty(llvm::getGlobalContext());
+            case optic::VOID:
+                return llvm::Type::getVoidTy(llvm::getGlobalContext());
+            }
+        }
+        case TypeOperator::Function:
+        {
+//            std::cout << "Function" << std::endl;
+            FunctionOperator* func = (FunctionOperator*)type;
+//            std::cout << "func->types.size: " << func->types.size() << std::endl;
+            llvm::Type* return_type = convert_to_llvm(func->types.at(1));
+            std::vector<llvm::Type*> arg_types;
+            arg_types.push_back(convert_to_llvm(func->types.at(0)));
+            if(function_pointer)
+            {
+                return llvm::PointerType::getUnqual(llvm::FunctionType::get(return_type,arg_types,false));
+            }
+            else
+            {
+                return llvm::FunctionType::get(return_type,arg_types,false);
+            }
+        }
+        }
+        break;
+    case TypeDef::TYPE_VAR:
+        return llvm::Type::getVoidTy(llvm::getGlobalContext());
+    }
+}
+
+TypeDef* analyze(ExprAST* expr,Environment& env,TypeVec& non_generics)
+{
+    assert(expr != 0);
+
+    switch(expr->getAST_Type())
+    {
+
+    case ExprAST::Variable:
+        std::cout << "analyze::Variable: "<< ((VariableExprAST*)expr)->Name << std::endl;
+        return get_type(((VariableExprAST*)expr)->Name,env,non_generics);
+    case ExprAST::BinaryOp:
+    {
+        std::cout << "analyze::BinaryOp" << std::endl;
+        TypeDef* bin_type;
+        BinaryExprAST* bin_op = (BinaryExprAST*)expr;
+        switch (bin_op->op) {
+        case BinaryExprAST::Add:
+        case BinaryExprAST::Subtract:
+        case BinaryExprAST::Multiply:
+        case BinaryExprAST::Divide:
+        case BinaryExprAST::Modulus:
+        case BinaryExprAST::ShiftLeft:
+        case BinaryExprAST::ShiftRight:
+        case BinaryExprAST::BitAnd:
+        case BinaryExprAST::BitOr:
+        case BinaryExprAST::BitXOr:
+        case BinaryExprAST::Power:
+            bin_type = basic_math_primitive;
+            break;
+        case BinaryExprAST::LessThan:
+        case BinaryExprAST::GreaterThan:
+        case BinaryExprAST::EqualTo:
+        case BinaryExprAST::NotEqualTo:
+        case BinaryExprAST::GreaterThanEq:
+        case BinaryExprAST::LessThanEq:
+            bin_type = boolean_math_primitive;
+            break;
+        case BinaryExprAST::And:
+        case BinaryExprAST::Or:
+            bin_type = boolean_boolean_primitive;
+            break;
+        }
+
+        TypeDef* lht = analyze(bin_op->lhs,env,non_generics);
+        TypeDef* rht = analyze(bin_op->rhs,env,non_generics);
+
+        TypeVec rhl_args;
+        rhl_args.push_back(rht);
+        rhl_args.push_back(number);
+
+        TypeVec rhl;
+        rhl.push_back(lht);
+        rhl.push_back(new FunctionOperator("",rhl_args));
+
+        FunctionOperator* unified = (FunctionOperator*)unify(new FunctionOperator("",rhl),env,bin_type);
+        //        std::cout << "env2 test: " << lht->get_name() << " " << env[lht->get_name()]->print_string() << std::endl;
+        return ((FunctionOperator*)unified->types.at(1))->types.at(1);
+    }
+
+        //Primitives
+    case ExprAST::Number:
+        std::cout << "analyze::Number" << std::endl;
+        return number;
+    case ExprAST::Char:
+        std::cout << "analyze::Char" << std::endl;
+        return character;
+    case ExprAST::True:
+        std::cout << "analyze::True" << std::endl;
+        return boolean;
+    case ExprAST::False:
+        std::cout << "analyze::False" << std::endl;
+        return boolean;
+
+        //Lambda
+    case ExprAST::Lambda:
+    {
+        std::cout << "analyze::lambda" << std::endl;
+        LambdaAST* lambda = (LambdaAST*)expr;
+        TypeVariable* arg_type = new TypeVariable;
+        Environment env2(env);
+        TypeVec non_generics2(non_generics);
+        if(lambda->proto->args.size()>0)
+        {
+            env2[lambda->proto->args.at(0)] = arg_type;
+            non_generics2.push_back(arg_type);
+        }
+
+        TypeDef* result_type = analyze(lambda->body,env2,non_generics2);
+
+        //        std::cout << "env var: " << arg_type->get_name() << " " << env2[arg_type->get_name()]->print_string() << std::endl;
+
+        TypeVec func_types;
+        if(lambda->proto->args.size()>0)
+        {
+            func_types.push_back(env2[arg_type->get_name()]);
         }
         else
         {
-            //Assume these have been or will be initialized before later
-            sub_type_def.name = C.data.array->at(i).data.variable;
+            func_types.push_back(wildCard);
         }
-
-        is_type_def_generic(sub_type_def);
-
-        if(sub_type_def.type == TYPE_OPERATOR)
-        {
-            sub_type_def.data.type_op->product_types = product_types;
-            if(type_def_obj.type == ARRAY)
-            {
-                if(get_variable(sub_type_def.name).type == NONE)
-                {
-                    set_variable(sub_type_def.name,sub_type_def);
-                }
-            }
-        }
-
-        sum->sum_types.push_back(sub_type_def);
+        func_types.push_back(result_type);
+        TypeDef* lambda_type = new FunctionOperator("",func_types);
+//        std::cout << "func_types.size " << func_types.size() << std::endl;
+//        std::cout << "lambda argument type: " << func_types.at(0)->print_string() << std::endl;
+        llvm::FunctionType* lambda_llvm_type = (llvm::FunctionType*)convert_to_llvm(lambda_type,false);
+        llvm::Type* lambda_pointer_type = llvm::PointerType::getUnqual(lambda_llvm_type);
+        lambda->arity = lambda_pointer_type;
+        lambda->proto->arity = lambda_llvm_type;
+        env.swap(env2);
+        return lambda_type;
+    }
+    case ExprAST::Let:
+    {
+        std::cout << "analyze::let" << std::endl;
+        LetAST* let = (LetAST*)expr;
+        TypeDef* let_type = analyze(let->body,env,non_generics);
+        let->arity = convert_to_llvm(let_type);
+        return let_type;
+    }
+    case ExprAST::LetRec:
+        break;
+    case ExprAST::Apply:
+    {
+        std::cout << "analyze::apply" << std::endl;
+        ApplyAST* apply = (ApplyAST*)expr;
+        TypeDef* func_type = analyze(apply->lambda,env,non_generics);
+        //        std::cout << "func_type: " << func_type->print_string() << std::endl;
+        TypeDef* arg_type = analyze(apply->arg,env,non_generics);
+        //        std::cout << "arg_type: " << arg_type->print_string() << std::endl;
+        TypeDef* result_type = new TypeVariable();
+        //        std::cout << "result_type: " << result_type->print_string() << std::endl;
+        TypeVec type_vec;
+        type_vec.push_back(arg_type);
+        type_vec.push_back(result_type);
+        TypeDef* unified = unify(new FunctionOperator("",type_vec),env,func_type);
+        apply->arity = convert_to_llvm(((FunctionOperator*)unified)->types.at(1));
+        return ((FunctionOperator*)unified)->types.at(1);
     }
 
-    optic::typing::TypeDefinition type_def;
-    type_def.type = optic::typing::TYPE_OPERATOR;
-    type_def.data.type_op = sum;
-    type_def.name = B.data.variable;
+    case ExprAST::Prototype:
+        out() << "Parsing Error: received ProtypeAST during TypeInference." << std::endl;
+        correct_parsing = false;
+        return new TypeVariable;
+    case ExprAST::Function:
+        out() << "Parsing Error: received FunctionAST during TypeInference." << std::endl;
+        correct_parsing = false;
+        return new TypeVariable;
+    case ExprAST::FunctionCall:
+        out() << "Parsing Error: received FunctionCallAST during TypeInference." << std::endl;
+        correct_parsing = false;
+        return new TypeVariable;
+    }
+}
 
-    optic::typing::set_variable(type_def.name,type_def);
-    optic::typing::print_type(type_def.name);
+TypeDef* analyze(ExprAST* expr)
+{
+    return analyze(expr,*env,*non_generics);
 }
 
 }

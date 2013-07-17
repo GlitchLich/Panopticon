@@ -239,8 +239,9 @@ bool exec(std::string string, std::string& output)
                 break;
             case NAME:
 //                t0 = panopticon::mem_string_alloc(panopticon::UNDECLARED_VARIABLE,yylval.sval);
-                t0 = mem_alloc(UNDECLARED_VARIABLE);
-                t0.data.variable = get_string_hash(std::string(yylval.sval));
+//                t0 = mem_alloc(UNDECLARED_VARIABLE);
+//                t0.data.variable = get_string_hash(std::string(yylval.sval));
+                t0.data.string = new String(yylval.sval);
                 if(yylval.sval!=0)
                 {
                     delete yylval.sval;

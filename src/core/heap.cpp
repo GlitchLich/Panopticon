@@ -22,7 +22,7 @@ void init_heap()
     scope_pointer = current_scope->end();
     dynamic_scope_pointer = global_scope.begin();
     register_primitive_functions();
-    typing::init_inference_env();
+//    typing::init_inference_env();
 }
 
 void clear_heap()

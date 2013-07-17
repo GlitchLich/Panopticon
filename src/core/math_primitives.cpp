@@ -1,6 +1,7 @@
 #include "include/core/math_primitives.h"
 #include "include/Grammar/parse.h"
 #include <time.h>
+#include "include/Grammar/typeinference.h"
 
 namespace panopticon
 {
@@ -13,13 +14,21 @@ FunctionClosure construct_math_primitive(int op,std::string name)
     std::vector<llvm::Type*> doubles;
     doubles.push_back(llvm::Type::getDoubleTy(llvm::getGlobalContext()));
     doubles.push_back(llvm::Type::getDoubleTy(llvm::getGlobalContext()));
-    PrototypeAST* proto = new PrototypeAST(name,args,doubles,llvm::Type::getDoubleTy(llvm::getGlobalContext()));
+
+    PrototypeAST* proto = new PrototypeAST(name,args);//,doubles,llvm::Type::getDoubleTy(llvm::getGlobalContext()));
+    proto->argument_arity = doubles;
+    proto->return_arity = llvm::Type::getDoubleTy(llvm::getGlobalContext());
 
     VariableExprAST* var_x = new VariableExprAST("x");
     VariableExprAST* var_y = new VariableExprAST("y");
     BinaryExprAST* body = new BinaryExprAST(op,var_x,var_y);
 
-    double (*primitive)(double,double) = (double (*)(double,double))(intptr_t)jit_compile(new FunctionAST(proto,body));
+    FunctionAST* func = new FunctionAST(proto,body);
+    LetAST* let = (LetAST*)transform_to_lambda_calculus(func);
+    std::cout << "type info: " << std::endl << optic::typing::analyze(let)->print_string() << std::endl;
+    std::cout << "================================================" << std::endl;
+
+    double (*primitive)(double,double) = (double (*)(double,double))(intptr_t)jit_compile_expr(let,true);
     FunctionClosure closure = {
         (void*)primitive,
         get_string_hash(name),
@@ -38,20 +47,27 @@ FunctionClosure construct_boolean_math_primitive(int op,std::string name)
     std::vector<llvm::Type*> doubles;
     doubles.push_back(llvm::Type::getDoubleTy(llvm::getGlobalContext()));
     doubles.push_back(llvm::Type::getDoubleTy(llvm::getGlobalContext()));
-    PrototypeAST* proto = new PrototypeAST(name,args,doubles,llvm::Type::getInt1Ty(llvm::getGlobalContext()));
+//    PrototypeAST* proto = new PrototypeAST(name,args,doubles,llvm::Type::getInt1Ty(llvm::getGlobalContext()));
+    PrototypeAST* proto = new PrototypeAST(name,args);//,doubles,llvm::Type::getDoubleTy(llvm::getGlobalContext()));
+    proto->argument_arity = doubles;
+    proto->return_arity = llvm::Type::getInt1Ty(llvm::getGlobalContext());
 
     VariableExprAST* var_x = new VariableExprAST("x");
     VariableExprAST* var_y = new VariableExprAST("y");
     BinaryExprAST* body = new BinaryExprAST(op,var_x,var_y);
 
-    bool (*primitive)(double,double) = (bool (*)(double,double))(intptr_t)jit_compile(new FunctionAST(proto,body));
+    FunctionAST* func = new FunctionAST(proto,body);
+    transform_to_lambda_calculus(func);
+    std::cout << "================================================" << std::endl;
 
-    FunctionClosure closure = {
-        (void*)primitive,
-        get_string_hash(name),
-        2
-    };
-    return closure;
+//    bool (*primitive)(double,double) = (bool (*)(double,double))(intptr_t)jit_compile(func);
+
+//    FunctionClosure closure = {
+//        (void*)primitive,
+//        get_string_hash(name),
+//        2
+//    };
+//    return closure;
 }
 
 FunctionClosure construct_boolean_compare_primitive(int op,std::string name)
@@ -62,20 +78,28 @@ FunctionClosure construct_boolean_compare_primitive(int op,std::string name)
     std::vector<llvm::Type*> doubles;
     doubles.push_back(llvm::Type::getInt1Ty(llvm::getGlobalContext()));
     doubles.push_back(llvm::Type::getInt1Ty(llvm::getGlobalContext()));
-    PrototypeAST* proto = new PrototypeAST(name,args,doubles,llvm::Type::getInt1Ty(llvm::getGlobalContext()));
+//    PrototypeAST* proto = new PrototypeAST(name,args,doubles,llvm::Type::getInt1Ty(llvm::getGlobalContext()));
+
+    PrototypeAST* proto = new PrototypeAST(name,args);//,doubles,llvm::Type::getDoubleTy(llvm::getGlobalContext()));
+    proto->argument_arity = doubles;
+    proto->return_arity = llvm::Type::getInt1Ty(llvm::getGlobalContext());
 
     VariableExprAST* var_x = new VariableExprAST("x");
     VariableExprAST* var_y = new VariableExprAST("y");
     BinaryExprAST* body = new BinaryExprAST(op,var_x,var_y);
 
-    bool (*primitive)(bool,bool) = (bool (*)(bool,bool))(intptr_t)jit_compile(new FunctionAST(proto,body));
+    FunctionAST* func = new FunctionAST(proto,body);
+    transform_to_lambda_calculus(func);
+    std::cout << "================================================" << std::endl;
 
-    FunctionClosure closure = {
-        (void*)primitive,
-        get_string_hash(name),
-        2
-    };
-    return closure;
+//    bool (*primitive)(bool,bool) = (bool (*)(bool,bool))(intptr_t)jit_compile(func);
+
+//    FunctionClosure closure = {
+//        (void*)primitive,
+//        get_string_hash(name),
+//        2
+//    };
+//    return closure;
 }
 
 void test_call_math_primitive(std::string name, double x, double y)
@@ -89,11 +113,13 @@ void test_call_math_primitive(std::string name, double x, double y)
     args.push_back(y_ast);
 
     CallExprAST* call_expr = new CallExprAST(name,args);
+    transform_to_lambda_calculus(call_expr);
+    std::cout << "================================================" << std::endl;
 
-    FunctionAST* top_level = convert_to_top_level_function(call_expr,llvm::Type::getDoubleTy(llvm::getGlobalContext()));
-    double (*compiled_function)() = (double (*)())(intptr_t)jit_compile(top_level);
-    std::cout << "Calling function: " << name << ", with arguments x: " << x << " , and y: " << y << std::endl;
-    std::cout << "result: " << compiled_function() << std::endl;
+//    FunctionAST* top_level = convert_to_top_level_function(call_expr,llvm::Type::getDoubleTy(llvm::getGlobalContext()));
+//    double (*compiled_function)() = (double (*)())(intptr_t)jit_compile(top_level);
+//    std::cout << "Calling function: " << name << ", with arguments x: " << x << " , and y: " << y << std::endl;
+//    std::cout << "result: " << compiled_function() << std::endl;
 }
 
 void test_call_bool_primitive(std::string name, double x, double y)
@@ -150,10 +176,10 @@ void parse_math_primitives()
 
     FunctionClosure lessThan = construct_boolean_math_primitive(BinaryExprAST::LessThan,"lessThan");
     FunctionClosure greaterThan = construct_boolean_math_primitive(BinaryExprAST::GreaterThan,"greaterThan");
-    FunctionClosure lessThanOrEq = construct_boolean_math_primitive(BinaryExprAST::LessThanEq,"LessThanOrEq");
-    FunctionClosure greaterThsnOrEq = construct_boolean_math_primitive(BinaryExprAST::GreaterThanEq,"GreaterThanOrEq");
+    FunctionClosure lessThanOrEq = construct_boolean_math_primitive(BinaryExprAST::LessThanEq,"lessThanOrEq");
+    FunctionClosure greaterThsnOrEq = construct_boolean_math_primitive(BinaryExprAST::GreaterThanEq,"greaterThanOrEq");
     FunctionClosure equalTo = construct_boolean_math_primitive(BinaryExprAST::EqualTo,"equalTo");
-    FunctionClosure notEqualTo = construct_boolean_math_primitive(BinaryExprAST::NotEqualTo,"NotEqualTo");
+    FunctionClosure notEqualTo = construct_boolean_math_primitive(BinaryExprAST::NotEqualTo,"notEqualTo");
 
     FunctionClosure and_func = construct_boolean_compare_primitive(BinaryExprAST::And,"and");
     FunctionClosure or_func = construct_boolean_compare_primitive(BinaryExprAST::Or,"or");
@@ -161,7 +187,7 @@ void parse_math_primitives()
 //    final=clock()-init;
 //    std::cout << "TIME TO COMPILE FUNCTIONS: " << (double)final / ((double)CLOCKS_PER_SEC) << std::endl;
 
-//    test_call_math_primitive("add", 2, 3);
+    test_call_math_primitive("add", 2, 3);
 //    test_call_math_primitive("subtract", 2, 3);
 //    test_call_math_primitive("divide", 2, 3);
 //    test_call_math_primitive("multiply", 2, 3);

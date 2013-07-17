@@ -27,17 +27,25 @@
 #include "include/core/VM.h"
 #include "llvm/Support/Casting.h"
 
+
+//Type Deviations! Functions that return different types based on different case statements?
+//Would it confuse the type checker too much?
+
 namespace panopticon {
 
+ExprAST* transform_to_lambda_calculus(ExprAST *expr);
 FunctionAST* convert_to_top_level_function(ExprAST* expr, llvm::Type *returnType);
 
 // Expresions for numeric literals such as 0.3, 1.0, and 666
 class NumberExprAST : public ExprAST
 {
 public:
+
     NumberExprAST(double number) : number(number) {}
     virtual llvm::Value* codeGen() const;
     virtual llvm::Type* type() const;
+    virtual AST_Type getAST_Type() const;
+    void print() const;
 
 protected:
     double number;
@@ -49,6 +57,8 @@ public:
     BooleanExprAST(bool boolean) : boolean(boolean) {}
     virtual llvm::Value* codeGen() const;
     virtual llvm::Type* type() const;
+    virtual AST_Type getAST_Type() const;
+    void print() const;
 
 protected:
     bool boolean;
@@ -61,6 +71,8 @@ public:
     CharExprAST(const char& character) : character(character) {}
     virtual llvm::Value* codeGen() const;
     virtual llvm::Type* type() const;
+    virtual AST_Type getAST_Type() const;
+    void print() const;
 
 protected:
     char character;
@@ -75,36 +87,46 @@ public:
 
     virtual llvm::Value* codeGen() const;
     virtual llvm::Type* type() const;
+    virtual AST_Type getAST_Type() const;
+    void print() const;
 
-private:
     std::string callee;
     std::vector<ExprAST*> args;
 };
 
 // Represents a prototype for a function
-class PrototypeAST
+class PrototypeAST : public ExprAST
 {
 public:
-    PrototypeAST(const std::string& name, const std::vector<std::string>& args,std::vector<llvm::Type*> argument_arity,llvm::Type* return_arity)
-        : name(name), args(args),argument_arity(argument_arity),return_arity(return_arity) {}
+    PrototypeAST(const std::string& name, const std::vector<std::string>& args)
+        : name(name), args(args){}
 
     llvm::Function* codeGen() const;
+    llvm::Type* type() const;
+    AST_Type getAST_Type() const;
 
     std::string name;
     std::vector<llvm::Type*> argument_arity;
     llvm::Type* return_arity;
-
-protected:
+    llvm::FunctionType* arity;
     std::vector<std::string> args;
+    void print() const;
+protected:
+
 };
 
 // VariableExprAST - Expression class for referencing a variable, like "a".
 class VariableExprAST : public ExprAST {
-  std::string Name;
+
 public:
   VariableExprAST(const std::string &name) : Name(name) {}
   virtual llvm::Value* codeGen() const;
   virtual llvm::Type* type() const;
+  virtual AST_Type getAST_Type() const;
+  void print() const;
+  std::string Name;
+
+  llvm::Type* arity;
 };
 
 ExprAST* ParseNumberExpr(double number);
@@ -112,8 +134,6 @@ ExprAST* parseVariable(std::string name);
 
 // BinaryExprAST - Expression class for a binary operator.
 class BinaryExprAST : public ExprAST {
-  ExprAST *lhs, *rhs;
-  int op;
 public:
   enum Op{
       Add,
@@ -140,7 +160,74 @@ public:
     : op(op), lhs(lhs), rhs(rhs) {}
   virtual llvm::Value* codeGen() const;
   virtual llvm::Type* type() const;
+  virtual AST_Type getAST_Type() const;
+  void print() const;
+
+  ExprAST *lhs, *rhs;
+  int op;
 };
+
+
+
+
+//================================================
+// Lambda-Calculus ASTs
+//================================================
+class LambdaAST : public ExprAST
+{
+public:
+    LambdaAST(PrototypeAST* proto, ExprAST* body)
+        : proto(proto), body(body) {}
+
+    virtual llvm::Function* codeGen() const;
+    virtual llvm::Type* type() const;
+    virtual AST_Type getAST_Type() const;
+    void print() const;
+
+    PrototypeAST* proto;
+    ExprAST* body;
+
+    llvm::Type* arity;
+};
+
+//Apply, can be used on LetAST's or LambdaAST's
+class ApplyAST : public ExprAST
+{
+public:
+    ApplyAST(ExprAST* lambda, ExprAST* arg) :
+        lambda(lambda), arg(arg)
+    {
+
+    }
+
+    virtual llvm::Value* codeGen() const;
+    virtual llvm::Type* type() const;
+    virtual AST_Type getAST_Type() const;
+    void print() const;
+
+    ExprAST* lambda;
+    ExprAST* arg;
+    llvm::Type* arity;
+};
+
+
+// Let Expression, without in
+class LetAST : public ExprAST
+{
+public:
+    LetAST(std::string name, ExprAST* body)
+        : name(name), body(body) {}
+
+    llvm::Function* codeGen() const;
+    llvm::Type* type() const;
+    AST_Type getAST_Type() const;
+    void print() const;
+
+    std::string name;
+    ExprAST* body;
+    llvm::Type* arity;
+};
+
 
 }
 
